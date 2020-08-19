@@ -1,25 +1,33 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
 
 # moment
 
 <!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-moment provides flexible time classes for representing mixed temporal
-granularities and custom calendar structures.
+moment provides flexible time classes for representing mixed temporal granularities
+and custom calendar structures.
 
 ## Installation
 
 <!-- You can install the released version of moment from [CRAN](https://CRAN.R-project.org) with: -->
 
 <!-- ``` r -->
-
 <!-- install.packages("moment") -->
-
 <!-- ``` -->
 
 And the development version from [GitHub](https://github.com/) with:
@@ -28,9 +36,8 @@ And the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("mitchelloharawild/moment")
 ```
-
 ## Example
 
-``` r
+```{r example}
 library(moment)
 ```
