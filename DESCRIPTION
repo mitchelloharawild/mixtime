@@ -9,7 +9,10 @@ Authors@R:
 Description: Flexible time classes for representing mixed temporal granularities
     and custom calendar structures.
 License: GPL-3
+URL: https://pkg.mitchelloharawild.com/moment/, https://github.com/mitchelloharawild/moment
+BugReports: https://github.com/mitchelloharawild/moment/issues
 Encoding: UTF-8
+Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
