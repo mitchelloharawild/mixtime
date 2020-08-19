@@ -7,6 +7,10 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R build
+status](https://github.com/mitchelloharawild/moment/workflows/R-CMD-check/badge.svg)](https://github.com/mitchelloharawild/moment/actions)
+[![Coverage
+status](https://codecov.io/gh/mitchelloharawild/moment/branch/master/graph/badge.svg)](https://codecov.io/github/mitchelloharawild/moment?branch=master)
 <!-- badges: end -->
 
 moment provides flexible time classes for representing mixed temporal
