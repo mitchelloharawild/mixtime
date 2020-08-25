@@ -4,7 +4,7 @@
 \alias{new_calendar}
 \title{Create a new calendar}
 \usage{
-new_calendar(granularity, origin = TRUE)
+new_calendar(granularity = list_of_time_units(), origin = logical())
 }
 \arguments{
 \item{granularity}{An origin-less identifier for the time increment of each value.}

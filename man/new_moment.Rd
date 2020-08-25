@@ -4,7 +4,7 @@
 \alias{new_moment}
 \title{Create a new moment}
 \usage{
-new_moment(x, calendar)
+new_moment(x = numeric(), calendar = new_calendar())
 }
 \arguments{
 \item{x}{The iterable value of the moment (for example, a value of 1 may indicate the first day).}

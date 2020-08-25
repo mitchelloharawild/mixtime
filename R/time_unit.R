@@ -15,9 +15,17 @@
 #' @export
 new_time_unit <- function(x, ..., class){
   vec_assert(x, ptype = integer(), size = 1L)
-  vctrs::new_vctr(
+  list_of_time_units(
+    list(
+      new_vctr(x, ..., class = c(class, "time_unit"))
+    )
+  )
+}
+
+list_of_time_units <- function(x = list()) {
+  new_list_of(
     x,
-    ...,
-    class = c(class, "time_unit")
+    ptype = new_vctr(integer(), class = "time_unit"),
+    class = "moment_time_units"
   )
 }

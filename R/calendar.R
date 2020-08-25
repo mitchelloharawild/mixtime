@@ -11,7 +11,7 @@
 #' @return A calendar data frame.
 #'
 #' @export
-new_calendar <- function(granularity, origin = TRUE){
+new_calendar <- function(granularity = list_of_time_units(), origin = logical()){
   vctrs::new_data_frame(
     list(granularity = granularity, origin = origin),
     class = "calendar"

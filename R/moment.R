@@ -6,8 +6,10 @@
 #' @param x The iterable value of the moment (for example, a value of 1 may indicate the first day).
 #' @param calendar The calendar structure over which the moment iterates. This can be created using `new_calendar()`.
 #'
+#' @importFrom rlang is_empty
 #' @export
-new_moment <- function(x, calendar) {
+new_moment <- function(x = numeric(), calendar = new_calendar()) {
+  calendar[[".rows"]] <- new_list_of(if(is_empty(x)) list() else list(seq_along(x)), .ptype = integer())
   vctrs::new_vctr(x, cal = calendar, class = "moment")
 }
 
