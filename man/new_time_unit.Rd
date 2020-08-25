@@ -7,7 +7,7 @@
 new_time_unit(x, class)
 }
 \arguments{
-\item{x}{The number of units}
+\item{x}{The number of units (must be an integer of length 1).}
 
 \item{class}{The class of the unit. Recommended class format is "tu_*", for
 example, "tu_month".}
