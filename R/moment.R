@@ -42,3 +42,12 @@ vec_arith.moment <- function(op, x, y, ...){
     new_moment(do.call(op, list(vec_data(x), vec_data(y))), x_cal)
   }
 }
+
+#' @export
+vec_cast.Date.moment <- function(x, to, ...) {
+  cal <- calendar_data(x)
+  if(any(!cal$origin)) abort("Only moments with origins can be converted to dates.")
+  abort("Moments cannot yet be converted to dates (awaiting daily moment support).")
+  # 1. Convert to date moment
+  # 2. Convert date moment to Date
+}
