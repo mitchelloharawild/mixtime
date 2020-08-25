@@ -100,3 +100,8 @@ vec_cast.Date.moment <- function(x, to, ...) {
   # 1. Convert to date moment
   # 2. Convert date moment to Date
 }
+
+#' @export
+vec_cast.character.moment <- function(x, to, ...) {
+  format(x)
+}
