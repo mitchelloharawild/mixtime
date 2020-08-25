@@ -2,6 +2,8 @@
 
 S3method(calendar_data,moment)
 S3method(format,moment)
+S3method(format,moment_time_units)
+S3method(format,time_unit)
 S3method(vec_arith,moment)
 S3method(vec_cast,Date.moment)
 S3method(vec_ptype_full,tu_month)
