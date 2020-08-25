@@ -31,6 +31,11 @@ The feature wishlist for this package includes:
 * Custom calendar structures (working days/hours, holiday effects, trading days)
 * Mixed temporal classes (daily and weekly granularities in same vector)
 
+Stretch goals for the package include:
+
+* Representing temporal nesting (2020-01-05 is nested by 2020-01 is nested by 2020)
+* `time_join()` operation which respects temporal nesting
+
 ## Installation
 
 <!-- You can install the released version of moment from [CRAN](https://CRAN.R-project.org) with: -->
