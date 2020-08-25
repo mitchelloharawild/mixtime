@@ -4,10 +4,12 @@
 \alias{new_time_unit}
 \title{Create a new time unit}
 \usage{
-new_time_unit(x, class)
+new_time_unit(x, ..., class)
 }
 \arguments{
 \item{x}{The number of units (must be an integer of length 1).}
+
+\item{...}{Additional attributes of the time unit (for example, timezones).}
 
 \item{class}{The class of the unit. Recommended class format is "tu_*", for
 example, "tu_month".}
