@@ -19,5 +19,6 @@ RoxygenNote: 7.1.1
 Suggests: 
     testthat
 Imports: 
-    lifecycle
+    lifecycle,
+    vctrs
 RdMacros: lifecycle
