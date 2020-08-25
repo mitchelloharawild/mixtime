@@ -56,4 +56,7 @@ devtools::install_github("mitchelloharawild/moment")
 library(moment)
 yearmonth(0:11) # By default, time classes have an origin
 yearmonth(0:11) - yearmonth(0) # However some operations can produce moments without origins
+
+yearquarter(0:5)
+yearquarter(0:5) - yearquarter(0)
 ```

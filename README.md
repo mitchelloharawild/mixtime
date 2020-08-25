@@ -62,4 +62,11 @@ yearmonth(0:11) - yearmonth(0) # However some operations can produce moments wit
 #> <moment[12]>
 #>  [1] 0 months  1 month   2 months  3 months  4 months  5 months  6 months 
 #>  [8] 7 months  8 months  9 months  10 months 11 months
+
+yearquarter(0:5)
+#> <moment[6]>
+#> [1] 1970 Q1 1970 Q2 1970 Q3 1970 Q4 1971 Q1 1971 Q2
+yearquarter(0:5) - yearquarter(0)
+#> <moment[6]>
+#> [1] 0 quarters 1 quarter  2 quarters 3 quarters 4 quarters 5 quarters
 ```
