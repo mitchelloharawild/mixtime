@@ -2,4 +2,5 @@
 
 export(new_calendar)
 export(new_moment)
+export(new_time_unit)
 importFrom(lifecycle,deprecate_soft)
