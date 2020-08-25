@@ -16,6 +16,16 @@ status](https://codecov.io/gh/mitchelloharawild/moment/branch/master/graph/badge
 moment provides flexible time classes for representing mixed temporal
 granularities and custom calendar structures.
 
+The feature wishlist for this package includes:
+
+  - Multiple temporal granularities (sub-daily, daily, weekly, monthly,
+    quarterly, etc.)
+  - Optional and custom temporal origins
+  - Custom calendar structures (working days/hours, holiday effects,
+    trading days)
+  - Mixed temporal classes (daily and weekly granularities in same
+    vector)
+
 ## Installation
 
 <!-- You can install the released version of moment from [CRAN](https://CRAN.R-project.org) with: -->
