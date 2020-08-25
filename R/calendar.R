@@ -17,3 +17,17 @@ new_calendar <- function(granularity, origin = TRUE){
     class = "calendar"
   )
 }
+
+#' Extract the calendar data from an object
+#'
+#' \lifecycle{experimental}
+#'
+#' @param x An object containing a calendar
+#'
+#' @examples
+#' calendar_data(yearmonth(0:11))
+#'
+#' @export
+calendar_data <- function(x) {
+  UseMethod("calendar_data")
+}

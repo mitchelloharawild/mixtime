@@ -13,10 +13,15 @@ new_moment <- function(x, calendar) {
 
 #' @export
 format.moment <- function(x, ...) {
-  cal <- attr(x, "cal")
+  cal <- calendar_data(x)
   if(cal$origin) {
     format_time(cal$granularity, vec_data(x))
   } else {
     sprintf("%i %s%s", x, vec_ptype_full(cal$granularity), ifelse(vec_data(x)>1, "s", ""))
   }
+}
+
+#' @export
+calendar_data.moment <- function(x) {
+  attr(x, "cal")
 }
