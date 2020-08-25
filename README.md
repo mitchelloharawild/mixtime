@@ -53,4 +53,8 @@ devtools::install_github("mitchelloharawild/moment")
 
 ``` r
 library(moment)
+yearmonth(0:11)
+#> <moment[12]>
+#>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
+#>  [9] 1970 Sep 1970 Oct 1970 Nov 1970 Dec
 ```

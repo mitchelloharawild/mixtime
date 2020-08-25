@@ -10,3 +10,13 @@
 new_moment <- function(x, calendar) {
   vctrs::new_vctr(x, cal = calendar, class = "moment")
 }
+
+#' @export
+format.moment <- function(x, ...) {
+  cal <- attr(x, "cal")
+  if(cal$origin) {
+    format_time(cal$granularity, vec_data(x))
+  } else {
+    sprintf("%i %s%s", x, vec_ptype_full(cal$granularity), ifelse(vec_data(x)>1, "s", ""))
+  }
+}

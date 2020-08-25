@@ -54,4 +54,5 @@ devtools::install_github("mitchelloharawild/moment")
 
 ```{r example}
 library(moment)
+yearmonth(0:11)
 ```
