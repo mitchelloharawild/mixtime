@@ -4,12 +4,12 @@
 \alias{new_calendar}
 \title{Create a new calendar}
 \usage{
-new_calendar(origin, granularity)
+new_calendar(granularity, origin = TRUE)
 }
 \arguments{
-\item{origin}{The initial time point for the calendar}
-
 \item{granularity}{An origin-less identifier for the time increment of each value.}
+
+\item{origin}{Logical identifier for if the origin is meaningful.}
 }
 \value{
 A calendar data frame.
