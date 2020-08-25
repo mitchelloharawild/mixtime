@@ -17,11 +17,28 @@ format.moment <- function(x, ...) {
   if(cal$origin) {
     format_time(cal$granularity, vec_data(x))
   } else {
-    sprintf("%i %s%s", x, vec_ptype_full(cal$granularity), ifelse(vec_data(x)>1, "s", ""))
+    sprintf("%i %s%s", x, vec_ptype_full(cal$granularity), ifelse(vec_data(x)!=1, "s", ""))
   }
 }
 
 #' @export
 calendar_data.moment <- function(x) {
   attr(x, "cal")
+}
+
+#' @export
+vec_arith.moment <- function(op, x, y, ...){
+  x_cal <- calendar_data(x)
+  y_cal <- calendar_data(y)
+  if(x_cal$origin && y_cal$origin) {
+    if(op != "-") abort(str_glue("Cannot use operation {op} with moments that both have origins."))
+    x_cal$origin <- FALSE
+    new_moment(do.call(op, list(vec_data(x), vec_data(y))), x_cal)
+  } else if(x_cal$origin || y_cal$origin) {
+    if(!vec_in(op, c("-", "+"))) abort(str_glue("Cannot use operation {op} with moments that have origins."))
+    origin_cal <- if(x_cal$origin) x_cal else y_cal
+    new_moment(do.call(op, list(vec_data(x), vec_data(y))), origin_cal)
+  } else {
+    new_moment(do.call(op, list(vec_data(x), vec_data(y))), x_cal)
+  }
 }

@@ -20,5 +20,7 @@ Suggests:
     testthat
 Imports: 
     lifecycle,
-    vctrs
+    vctrs,
+    stringr,
+    rlang
 RdMacros: lifecycle

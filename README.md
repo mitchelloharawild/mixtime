@@ -42,7 +42,8 @@ Stretch goals for the package include:
 
 <!-- ``` -->
 
-And the development version from [GitHub](https://github.com/) with:
+The development version can be installed from
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -53,8 +54,12 @@ devtools::install_github("mitchelloharawild/moment")
 
 ``` r
 library(moment)
-yearmonth(0:11)
+yearmonth(0:11) # By default, time classes have an origin
 #> <moment[12]>
 #>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
 #>  [9] 1970 Sep 1970 Oct 1970 Nov 1970 Dec
+yearmonth(0:11) - yearmonth(0) # However some operations can produce moments without origins
+#> <moment[12]>
+#>  [1] 0 months  1 month   2 months  3 months  4 months  5 months  6 months 
+#>  [8] 7 months  8 months  9 months  10 months 11 months
 ```
