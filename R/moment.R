@@ -68,6 +68,30 @@ vec_cast.moment.moment <- function(x, to, ...) {
   x
 }
 
+# #' @export
+# vec_proxy.moment <- function(x, ...) {
+#   r <- calendar_data(x)[[".rows"]]
+#   x <- vec_data(x)
+#   p <- vec_init(integer(), vec_size(x))
+#   for(i in seq_along(r)) p[r[[i]]] <- i
+#
+#   new_data_frame(list(x = x, p = p))
+# }
+
+#' @export
+`[.moment` <- function(x, i, ...){
+  cal <- calendar_data(x)
+  r <- cal[[".rows"]]
+  p <- vec_init(integer(), vec_size(x))
+  x <- NextMethod()
+  for(j in seq_along(r)) p[r[[j]]] <- j
+  p <- vec_group_loc(p[i])
+  cal <- cal[p$key,]
+  cal[[".rows"]] <- new_list_of(p$loc, ptype = integer())
+  attr(x, "cal") <- cal
+  x
+}
+
 #' @export
 vec_cast.Date.moment <- function(x, to, ...) {
   cal <- calendar_data(x)
