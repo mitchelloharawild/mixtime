@@ -69,4 +69,10 @@ yearquarter(0:5)
 yearquarter(0:5) - yearquarter(0)
 #> <moment[6]>
 #> [1] 0 quarters 1 quarter  2 quarters 3 quarters 4 quarters 5 quarters
+
+# Moments of different temporal granularities can be combined:
+c(yearmonth(0:11), yearquarter(0:3))
+#> <moment[16]>
+#>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
+#>  [9] 1970 Sep 1970 Oct 1970 Nov 1970 Dec 1970 Q1  1970 Q2  1970 Q3  1970 Q4
 ```

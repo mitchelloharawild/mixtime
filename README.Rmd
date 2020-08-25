@@ -59,4 +59,7 @@ yearmonth(0:11) - yearmonth(0) # However some operations can produce moments wit
 
 yearquarter(0:5)
 yearquarter(0:5) - yearquarter(0)
+
+# Moments of different temporal granularities can be combined:
+c(yearmonth(0:11), yearquarter(0:3))
 ```

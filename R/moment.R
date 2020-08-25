@@ -9,18 +9,26 @@
 #' @importFrom rlang is_empty
 #' @export
 new_moment <- function(x = numeric(), calendar = new_calendar()) {
-  calendar[[".rows"]] <- new_list_of(if(is_empty(x)) list() else list(seq_along(x)), .ptype = integer())
+  calendar[[".rows"]] <- new_list_of(if(is_empty(x)) list() else list(seq_along(x)), ptype = integer())
   vctrs::new_vctr(x, cal = calendar, class = "moment")
 }
 
 #' @export
 format.moment <- function(x, ...) {
-  cal <- calendar_data(x)
-  if(cal$origin) {
-    format_time(cal$granularity, vec_data(x))
-  } else {
-    sprintf("%i %s%s", x, vec_ptype_full(cal$granularity), ifelse(vec_data(x)!=1, "s", ""))
+  cd <- calendar_data(x)
+  x <- vec_data(x)
+  n_cal <- vec_size(cd)
+  out <- vector("list", n_cal)
+  for(i in seq_len(n_cal)) {
+    cal <- vec_slice(cd, i)
+    val <- x[cal[[".rows"]][[1]]]
+    out[[i]] <- if(cal$origin) {
+      format_time(cal$granularity[[1]], val)
+    } else {
+      sprintf("%i %s%s", val, vec_ptype_full(cal$granularity[[1]]), ifelse(val!=1, "s", ""))
+    }
   }
+  vec_c(!!!out)
 }
 
 #' @export
@@ -43,6 +51,21 @@ vec_arith.moment <- function(op, x, y, ...){
   } else {
     new_moment(do.call(op, list(vec_data(x), vec_data(y))), x_cal)
   }
+}
+
+#' @export
+vec_ptype2.moment.moment <- function(x, y, ...) {
+  x_cal <- calendar_data(x)
+  y_cal <- calendar_data(y)
+  y_cal[[".rows"]] <- as_list_of(lapply(y_cal[[".rows"]], `+`, sum(lengths(x_cal[[".rows"]]))))
+  attr(x, "cal") <- vec_rbind(x_cal, y_cal)
+  x
+}
+
+#' @export
+vec_cast.moment.moment <- function(x, to, ...) {
+  attr(x, "cal") <- calendar_data(to)
+  x
 }
 
 #' @export
