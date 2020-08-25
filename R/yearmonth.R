@@ -11,7 +11,7 @@ yearmonth <- function(x){
 
 #' @export
 yearmonth.numeric <- function(x){
-  tu <- new_time_unit(1L, "tu_month")
+  tu <- new_time_unit(1L, class = "tu_month")
   cal <- new_calendar(tu, origin = TRUE)
   new_moment(x, cal)
 }
