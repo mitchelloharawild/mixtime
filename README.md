@@ -52,6 +52,8 @@ devtools::install_github("mitchelloharawild/moment")
 
 ## Example
 
+Creating moments.
+
 ``` r
 library(moment)
 yearmonth(0:11) # By default, time classes have an origin
@@ -63,16 +65,29 @@ yearmonth(0:11) - yearmonth(0) # However some operations can produce moments wit
 #>  [1] 0 months  1 month   2 months  3 months  4 months  5 months  6 months 
 #>  [8] 7 months  8 months  9 months  10 months 11 months
 
-yearquarter(0:5)
-#> <moment[6]>
-#> [1] 1970 Q1 1970 Q2 1970 Q3 1970 Q4 1971 Q1 1971 Q2
-yearquarter(0:5) - yearquarter(0)
-#> <moment[6]>
-#> [1] 0 quarters 1 quarter  2 quarters 3 quarters 4 quarters 5 quarters
+yearquarter(0:3)
+#> <moment[4]>
+#> [1] 1970 Q1 1970 Q2 1970 Q3 1970 Q4
+yearquarter(0:3) - yearquarter(0)
+#> <moment[4]>
+#> [1] 0 quarters 1 quarter  2 quarters 3 quarters
 
 # Moments of different temporal granularities can be combined:
-c(yearmonth(0:11), yearquarter(0:3))
+c(yearquarter(0:3), yearmonth(0:11))
 #> <moment[16]>
+#>  [1] 1970 Q1  1970 Q2  1970 Q3  1970 Q4  1970 Jan 1970 Feb 1970 Mar 1970 Apr
+#>  [9] 1970 May 1970 Jun 1970 Jul 1970 Aug 1970 Sep 1970 Oct 1970 Nov 1970 Dec
+```
+
+Sequences of moments.
+
+``` r
+seq(yearmonth(0), yearmonth(10), by = 1)
+#> <moment[11]>
 #>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
-#>  [9] 1970 Sep 1970 Oct 1970 Nov 1970 Dec 1970 Q1  1970 Q2  1970 Q3  1970 Q4
+#>  [9] 1970 Sep 1970 Oct 1970 Nov
+seq(yearmonth(0), yearquarter(10), by = 1)
+#> <moment[11]>
+#>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
+#>  [9] 1970 Sep 1970 Oct 1970 Nov
 ```

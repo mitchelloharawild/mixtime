@@ -105,3 +105,16 @@ vec_cast.Date.moment <- function(x, to, ...) {
 vec_cast.character.moment <- function(x, to, ...) {
   format(x)
 }
+
+#' @export
+seq.moment <- function(from, to, by, length.out, along.with, ...){
+  vec_assert(by, numeric(), 1L)
+  vec_assert(from, size = 1)
+  vec_cast(to, from)
+  res <- seq.int(
+    vec_data(from), vec_data(to), by = vec_data(by)
+    # length.out = length.out, along.with = along.with, ...
+  )
+  attr(from, "cal")$.rows <- list(seq_along(res))
+  vec_restore(res, from)
+}

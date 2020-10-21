@@ -52,14 +52,23 @@ devtools::install_github("mitchelloharawild/moment")
 ```
 ## Example
 
+Creating moments.
+
 ```{r example}
 library(moment)
 yearmonth(0:11) # By default, time classes have an origin
 yearmonth(0:11) - yearmonth(0) # However some operations can produce moments without origins
 
-yearquarter(0:5)
-yearquarter(0:5) - yearquarter(0)
+yearquarter(0:3)
+yearquarter(0:3) - yearquarter(0)
 
 # Moments of different temporal granularities can be combined:
-c(yearmonth(0:11), yearquarter(0:3))
+c(yearquarter(0:3), yearmonth(0:11))
 ```
+Sequences of moments.
+
+```{r}
+seq(yearmonth(0), yearmonth(10), by = 1)
+seq(yearmonth(0), yearquarter(10), by = 1)
+```
+
