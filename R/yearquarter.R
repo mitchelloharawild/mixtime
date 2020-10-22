@@ -21,6 +21,11 @@ vec_ptype_full.tu_quarter <- function(x, ...) {
   "quarter"
 }
 
+#' @export
+vec_ptype_abbr.tu_quarter <- function(x, ...) {
+  "Q"
+}
+
 format_time.tu_quarter <- function(tu, x, ...){
   x <- vec_data(tu)*x
   paste0(1970 + x%/%4, " Q", x%%4 + 1)

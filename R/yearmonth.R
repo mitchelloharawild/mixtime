@@ -21,6 +21,11 @@ vec_ptype_full.tu_month <- function(x, ...) {
   "month"
 }
 
+#' @export
+vec_ptype_abbr.tu_month <- function(x, ...) {
+  "M"
+}
+
 format_time.tu_month <- function(tu, x, ...){
   x <- vec_data(tu)*x
   paste(1970 + x%/%12, month.abb[x%%12 + 1])

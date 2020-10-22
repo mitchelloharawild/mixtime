@@ -31,11 +31,15 @@ list_of_time_units <- function(x = list()) {
 }
 
 #' @export
-format.time_unit <- function(x, ...){
-  paste(vec_data(x), vec_ptype_full(x))
+format.time_unit <- function(x, ..., abbr = FALSE){
+  if(abbr) {
+    paste0(vec_data(x), vec_ptype_abbr(x))
+  } else {
+    paste(vec_data(x), vec_ptype_full(x))
+  }
 }
 
 #' @export
 format.moment_time_units <- function(x, ...){
-  vapply(x, format, character(1L))
+  vapply(x, format, character(1L), ...)
 }
