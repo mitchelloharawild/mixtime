@@ -16,7 +16,7 @@ new_moment <- function(x = numeric(), calendar = new_calendar()) {
 #' @export
 format.moment <- function(x, ...) {
   cd <- calendar_data(x)
-  x <- vec_data(x)
+  x <- vec_proxy(x)$x
   n_cal <- vec_size(cd)
   out <- vector("list", n_cal)
   for(i in seq_len(n_cal)) {
@@ -43,13 +43,15 @@ vec_arith.moment <- function(op, x, y, ...){
   if(x_cal$origin && y_cal$origin) {
     if(op != "-") abort(str_glue("Cannot use operation {op} with moments that both have origins."))
     x_cal$origin <- FALSE
-    new_moment(do.call(op, list(vec_data(x), vec_data(y))), x_cal)
+    new_moment(do.call(op, list(vec_proxy(x)$x, vec_proxy(y)$x)), x_cal)
   } else if(x_cal$origin || y_cal$origin) {
     if(!vec_in(op, c("-", "+"))) abort(str_glue("Cannot use operation {op} with moments that have origins."))
     origin_cal <- if(x_cal$origin) x_cal else y_cal
-    new_moment(do.call(op, list(vec_data(x), vec_data(y))), origin_cal)
+    duration_cal <- if(x_cal$origin) y_cal else x_cal
+    duration_cal$granularity <- vec_cast(duration_cal$granularity, origin_cal$granularity)
+    new_moment(do.call(op, list(vec_proxy(x)$x, vec_proxy(y)$x)), origin_cal)
   } else {
-    new_moment(do.call(op, list(vec_data(x), vec_data(y))), x_cal)
+    new_moment(do.call(op, list(vec_proxy(x)$x, vec_proxy(y)$x)), x_cal)
   }
 }
 
@@ -68,28 +70,21 @@ vec_cast.moment.moment <- function(x, to, ...) {
   x
 }
 
-# #' @export
-# vec_proxy.moment <- function(x, ...) {
-#   r <- calendar_data(x)[[".rows"]]
-#   x <- vec_data(x)
-#   p <- vec_init(integer(), vec_size(x))
-#   for(i in seq_along(r)) p[r[[i]]] <- i
-#
-#   new_data_frame(list(x = x, p = p))
-# }
+#' @export
+vec_proxy.moment <- function(x, ...) {
+  r <- calendar_data(x)[[".rows"]]
+  p <- vec_init(integer(), length(x))
+  for(i in seq_along(r)) p[r[[i]]] <- i
+  attributes(x) <- NULL
+  new_data_frame(list(x = x, p = p))
+}
 
 #' @export
-`[.moment` <- function(x, i, ...){
-  cal <- calendar_data(x)
-  r <- cal[[".rows"]]
-  p <- vec_init(integer(), vec_size(x))
-  x <- NextMethod()
-  for(j in seq_along(r)) p[r[[j]]] <- j
-  p <- vec_group_loc(p[i])
-  cal <- cal[p$key,]
-  cal[[".rows"]] <- new_list_of(p$loc, ptype = integer())
-  attr(x, "cal") <- cal
-  x
+vec_restore.moment <- function(x, to, ..., n = NULL) {
+  keep <- vec_group_loc(x$p)
+  cal <- calendar_data(to)[keep$key,]
+  cal$.rows <- keep$loc
+  new_moment(x$x, cal)
 }
 
 #' @export
