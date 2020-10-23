@@ -11,9 +11,14 @@ yearweek <- function(x){
 
 #' @export
 yearweek.numeric <- function(x){
-  tu <- new_time_unit(1L, class = "tu_week")
-  cal <- new_calendar(tu, origin = TRUE)
-  new_moment(x, cal)
+  new_moment(x, new_calendar(tu_week(1L), origin = TRUE))
+}
+
+#' @rdname yearweek
+#' @export
+tu_week <- function(x){
+  x <- vec_cast(x, integer())
+  new_time_unit(x, class = "tu_week")
 }
 
 #' @export

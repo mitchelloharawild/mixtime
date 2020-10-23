@@ -2,9 +2,12 @@
 % Please edit documentation in R/yearweek.R
 \name{yearweek}
 \alias{yearweek}
+\alias{tu_week}
 \title{yearweek}
 \usage{
 yearweek(x)
+
+tu_week(x)
 }
 \arguments{
 \item{x}{value}

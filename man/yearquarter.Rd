@@ -2,9 +2,12 @@
 % Please edit documentation in R/yearquarter.R
 \name{yearquarter}
 \alias{yearquarter}
+\alias{tu_quarter}
 \title{Yearquarter}
 \usage{
 yearquarter(x)
+
+tu_quarter(x)
 }
 \arguments{
 \item{x}{value}

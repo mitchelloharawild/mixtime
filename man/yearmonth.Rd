@@ -2,9 +2,12 @@
 % Please edit documentation in R/yearmonth.R
 \name{yearmonth}
 \alias{yearmonth}
+\alias{tu_month}
 \title{Yearmonth}
 \usage{
 yearmonth(x)
+
+tu_month(x)
 }
 \arguments{
 \item{x}{value}

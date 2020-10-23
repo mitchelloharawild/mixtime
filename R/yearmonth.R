@@ -11,9 +11,14 @@ yearmonth <- function(x){
 
 #' @export
 yearmonth.numeric <- function(x){
-  tu <- new_time_unit(1L, class = "tu_month")
-  cal <- new_calendar(tu, origin = TRUE)
-  new_moment(x, cal)
+  new_moment(x, new_calendar(tu_month(1L), origin = TRUE))
+}
+
+#' @rdname yearmonth
+#' @export
+tu_month <- function(x){
+  x <- vec_cast(x, integer())
+  new_time_unit(x, class = "tu_month")
 }
 
 #' @export
