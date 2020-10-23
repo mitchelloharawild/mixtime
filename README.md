@@ -115,4 +115,19 @@ tsibble::tsibble(time = c(yearquarter(0:3), yearmonth(0:5)), index = time)
 #>  8 1970 Apr
 #>  9 1970 May
 #> 10 1970 Jun
+tsibble::tsibble(time = c(yearquarter(0:3), yearmonth(0:5), Sys.Date()), index = time)
+#> # A tsibble: 11 x 1 [1Q, 1M, 1D]
+#>          time
+#>      <moment>
+#>  1    1970 Q1
+#>  2    1970 Q2
+#>  3    1970 Q3
+#>  4    1970 Q4
+#>  5   1970 Jan
+#>  6   1970 Feb
+#>  7   1970 Mar
+#>  8   1970 Apr
+#>  9   1970 May
+#> 10   1970 Jun
+#> 11 2020-10-23
 ```

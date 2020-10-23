@@ -9,6 +9,7 @@
 #' @importFrom rlang is_empty
 #' @export
 new_moment <- function(x = numeric(), calendar = new_calendar()) {
+  x <- vec_cast(x, double())
   # calendar[[".rows"]] <- new_list_of(if(is_empty(x)) list() else list(seq_along(x)), ptype = integer())
   vctrs::new_rcrd(list(x = x, c = vec_rep(1L, length(x))), cal = calendar, class = "moment")
 }

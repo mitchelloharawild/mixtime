@@ -76,5 +76,6 @@ Integration with tsibble.
 ```{r tsibble}
 tsibble::tsibble(time = yearmonth(0:5), index = time)
 tsibble::tsibble(time = c(yearquarter(0:3), yearmonth(0:5)), index = time)
+tsibble::tsibble(time = c(yearquarter(0:3), yearmonth(0:5), Sys.Date()), index = time)
 ```
 
