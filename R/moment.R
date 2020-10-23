@@ -13,8 +13,14 @@ new_moment <- function(x = numeric(), calendar = new_calendar()) {
   vctrs::new_rcrd(list(x = x, c = vec_rep(1L, length(x))), cal = calendar, class = "moment")
 }
 
+#' @export
 moment <- function(x, ...) {
   UseMethod("moment")
+}
+
+#' @export
+moment.default <- function(x, ...){
+  vec_cast(x, new_moment())
 }
 
 #' @export
@@ -65,9 +71,10 @@ vec_ptype2.moment.moment <- function(x, y, ...) {
 
 #' @export
 vec_cast.moment.moment <- function(x, to, ...) {
-  pos <- vec_match(calendar_data(x), calendar_data(to))
+  cal <- vec_unique(vec_rbind(calendar_data(x), calendar_data(to)))
+  pos <- vec_match(calendar_data(x), cal)
   field(x, "c") <- pos[field(x, "c")]
-  attr(x, "cal") <- calendar_data(to)
+  attr(x, "cal") <- cal
   x
 }
 
