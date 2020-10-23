@@ -26,7 +26,17 @@ vec_ptype_abbr.tu_quarter <- function(x, ...) {
   "Q"
 }
 
-format_time.tu_quarter <- function(tu, x, ...){
+#' @export
+format_time.tu_quarter <- function(tu, x, origin = TRUE, ...){
   x <- vec_data(tu)*x
-  paste0(1970 + x%/%4, " Q", x%%4 + 1)
+  if(origin) {
+    paste0(1970 + x%/%4, " Q", x%%4 + 1)
+  } else {
+    sprintf("%i %s%s", x, "quarter", ifelse(x!=1, "s", ""))
+  }
+}
+
+#' @export
+vec_cast.tu_month.tu_quarter <- function(x, to, ...){
+  new_time_unit(vec_data(x)*3L, class = "tu_month")
 }
