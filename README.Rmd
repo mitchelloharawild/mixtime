@@ -54,7 +54,7 @@ devtools::install_github("mitchelloharawild/moment")
 
 Creating moments.
 
-```{r example}
+```{r demo}
 library(moment)
 yearmonth(0:11) # By default, time classes have an origin
 yearmonth(0:11) - yearmonth(0) # However some operations can produce moments without origins
@@ -67,7 +67,7 @@ c(yearquarter(0:3), yearmonth(0:11))
 ```
 Sequences of moments.
 
-```{r}
+```{r sequence}
 seq(yearmonth(0), yearmonth(10), by = 1)
 ```
 
@@ -78,3 +78,14 @@ tsibble::tsibble(time = yearmonth(0:5), index = time)
 tsibble::tsibble(time = c(year(0), yearquarter(0:3), yearmonth(0:5), Sys.Date()), index = time)
 ```
 
+Change granularities by updating the calendar.
+
+```{r granularity}
+x <- yearmonth(0:11)
+tsibble::tsibble(
+  yearmonth = x,
+  yearquarter = set_time_units(x, tu_quarter(1)),
+  year = set_time_units(x, tu_year(1)),
+  index = yearmonth
+)
+```

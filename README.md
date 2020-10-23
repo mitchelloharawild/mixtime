@@ -118,3 +118,30 @@ tsibble::tsibble(time = c(year(0), yearquarter(0:3), yearmonth(0:5), Sys.Date())
 #> 11   1970 Jun
 #> 12 2020-10-23
 ```
+
+Change granularities by updating the calendar.
+
+``` r
+x <- yearmonth(0:11)
+tsibble::tsibble(
+  yearmonth = x,
+  yearquarter = set_time_units(x, tu_quarter(1)),
+  year = set_time_units(x, tu_year(1)),
+  index = yearmonth
+)
+#> # A tsibble: 12 x 3 [1M]
+#>    yearmonth yearquarter     year
+#>     <moment>    <moment> <moment>
+#>  1  1970 Jan     1970 Q1     1970
+#>  2  1970 Feb     1970 Q1     1970
+#>  3  1970 Mar     1970 Q1     1970
+#>  4  1970 Apr     1970 Q2     1970
+#>  5  1970 May     1970 Q2     1970
+#>  6  1970 Jun     1970 Q2     1970
+#>  7  1970 Jul     1970 Q3     1970
+#>  8  1970 Aug     1970 Q3     1970
+#>  9  1970 Sep     1970 Q3     1970
+#> 10  1970 Oct     1970 Q4     1970
+#> 11  1970 Nov     1970 Q4     1970
+#> 12  1970 Dec     1970 Q4     1970
+```

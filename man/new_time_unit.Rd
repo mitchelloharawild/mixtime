@@ -4,7 +4,7 @@
 \alias{new_time_unit}
 \title{Create a new time unit}
 \usage{
-new_time_unit(x, ..., class)
+new_time_unit(x = 1L, ..., class = NULL)
 }
 \arguments{
 \item{x}{The number of units (must be an integer of length 1).}

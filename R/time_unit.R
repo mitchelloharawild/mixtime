@@ -18,7 +18,51 @@ new_time_unit <- function(x = 1L, ..., class = NULL){
   new_vctr(x, ..., class = c(class, "time_unit"))
 }
 
+time_unit <- function(x, ...){
+  UseMethod("time_unit")
 }
+
+#' @export
+time_unit.moment <- function(x, ...){
+  calendar_data(x)$granularity
+}
+
+#' @rdname set_time_units
+#' @export
+`time_unit<-` <- function(x, value) {
+  UseMethod("time_unit<-")
+}
+
+#' Set the time units of a moment
+#'
+#' \lifecycle{experimental}
+#'
+#' Modify a moment's granularity to use a different granularity. This is HIGHLY
+#' experimental, and more of a proof of concept for how periods of time can be
+#' combined by changing the granularity.
+#'
+#' @param x A moment.
+#' @param value The new time unit
+#'
+#' @export
+set_time_units <- `time_unit<-`
+
+#' @export
+`time_unit<-.moment` <- function(x, value){
+  vec_assert(value, list_of_time_units(), size = 1L)
+  tu <- time_unit(x)
+  if(vec_size(tu) > 1) {
+    abort("Changing time units is not yet supported for mixed granularity moments.")
+  }
+  common_unit <- vec_data(vec_cast(value[[1]], tu[[1]]))
+  base_unit <- vec_data(tu[[1]])
+
+  field(x, "x") <- field(x, "x")%/%(common_unit/base_unit)
+
+  attr(x, "cal")$granularity <- value
+  x
+}
+
 
 list_of_time_units <- function(x = list()) {
   new_list_of(
