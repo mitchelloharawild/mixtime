@@ -18,7 +18,7 @@ year.numeric <- function(x){
 #' @export
 tu_year <- function(x){
   x <- vec_cast(x, integer())
-  new_time_unit(x, class = "tu_year")
+  list_of_time_units(list(new_time_unit(x, class = "tu_year")))
 }
 
 #' @export

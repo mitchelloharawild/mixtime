@@ -13,13 +13,11 @@
 #' @return A time unit.
 #'
 #' @export
-new_time_unit <- function(x, ..., class){
+new_time_unit <- function(x = 1L, ..., class = NULL){
   vec_assert(x, ptype = integer(), size = 1L)
-  list_of_time_units(
-    list(
-      new_vctr(x, ..., class = c(class, "time_unit"))
-    )
-  )
+  new_vctr(x, ..., class = c(class, "time_unit"))
+}
+
 }
 
 list_of_time_units <- function(x = list()) {
