@@ -4,9 +4,7 @@ index_valid.moment <- function(x) {
 
 interval_pull.moment <- function(x) {
   require_package("tsibble")
-  intvl <- paste(format(calendar_data(x)$granularity, abbr = TRUE), collapse = ", ")
-  val <- vctrs::new_vctr(1, class = "interval_hide_number")
-  tsibble::new_interval(.others = stats::setNames(list(val), intvl))
+  tsibble::interval_pull(calendar_data(x)$granularity)
 }
 
 # Sorry Earo for this terrible hack for formatting the interval.

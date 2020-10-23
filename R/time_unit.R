@@ -30,6 +30,13 @@ list_of_time_units <- function(x = list()) {
   )
 }
 
+interval_pull.moment_time_units <- function(x) {
+  # if(vec_size(x) == 1) return(interval_pull(x[[1]]))
+  intvl <- paste(format(x, abbr = TRUE), collapse = ", ")
+  val <- vctrs::new_vctr(1, class = "interval_hide_number")
+  tsibble::new_interval(.others = stats::setNames(list(val), intvl))
+}
+
 #' @export
 format.time_unit <- function(x, ..., abbr = FALSE){
   if(abbr) {
