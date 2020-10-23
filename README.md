@@ -86,8 +86,33 @@ seq(yearmonth(0), yearmonth(10), by = 1)
 #> <moment[11]>
 #>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
 #>  [9] 1970 Sep 1970 Oct 1970 Nov
-seq(yearmonth(0), yearquarter(10), by = 1)
-#> <moment[11]>
-#>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
-#>  [9] 1970 Sep 1970 Oct 1970 Nov
+```
+
+Integration with tsibble.
+
+``` r
+tsibble::tsibble(time = yearmonth(0:5), index = time)
+#> # A tsibble: 6 x 1 [1M]
+#>       time
+#>   <moment>
+#> 1 1970 Jan
+#> 2 1970 Feb
+#> 3 1970 Mar
+#> 4 1970 Apr
+#> 5 1970 May
+#> 6 1970 Jun
+tsibble::tsibble(time = c(yearquarter(0:3), yearmonth(0:5)), index = time)
+#> # A tsibble: 10 x 1 [1Q, 1M]
+#>        time
+#>    <moment>
+#>  1  1970 Q1
+#>  2  1970 Q2
+#>  3  1970 Q3
+#>  4  1970 Q4
+#>  5 1970 Jan
+#>  6 1970 Feb
+#>  7 1970 Mar
+#>  8 1970 Apr
+#>  9 1970 May
+#> 10 1970 Jun
 ```

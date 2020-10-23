@@ -69,6 +69,12 @@ Sequences of moments.
 
 ```{r}
 seq(yearmonth(0), yearmonth(10), by = 1)
-seq(yearmonth(0), yearquarter(10), by = 1)
+```
+
+Integration with tsibble.
+
+```{r tsibble}
+tsibble::tsibble(time = yearmonth(0:5), index = time)
+tsibble::tsibble(time = c(yearquarter(0:3), yearmonth(0:5)), index = time)
 ```
 
