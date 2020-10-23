@@ -66,7 +66,7 @@ vec_ptype2.moment.moment <- function(x, y, ...) {
   x_cal <- calendar_data(x)
   y_cal <- calendar_data(y)
   field(y, "c") <- field(y, "c") + vec_size(x_cal)
-  attr(x, "cal") <- vec_rbind(x_cal, y_cal)
+  attr(x, "cal") <- vec_unique(vec_rbind(x_cal, y_cal))
   x
 }
 
