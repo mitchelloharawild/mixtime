@@ -28,9 +28,14 @@ vec_ptype_abbr.tu_quarter <- function(x, ...) {
 
 #' @export
 format_time.tu_quarter <- function(tu, x, origin = TRUE, ...){
-  x <- vec_data(tu)*x
+  mult <- vec_data(tu)
+  x <- mult*x
   if(origin) {
-    paste0(1970 + x%/%4, " Q", x%%4 + 1)
+    if(mult > 1) {
+      sprintf("%i Q%i-Q%i", 1970 + x%/%4, x%%4 + 1, (x+mult-1)%%4 + 1)
+    } else {
+      paste0(1970 + x%/%4, " Q", x%%4 + 1)
+    }
   } else {
     sprintf("%i %s%s", x, "quarter", ifelse(x!=1, "s", ""))
   }

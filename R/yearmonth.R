@@ -28,9 +28,14 @@ vec_ptype_abbr.tu_month <- function(x, ...) {
 
 #' @export
 format_time.tu_month <- function(tu, x, origin = TRUE, ...){
-  x <- vec_data(tu)*x
+  mult <- vec_data(tu)
+  x <- mult*x
   if(origin) {
-    paste(1970 + x%/%12, month.abb[x%%12 + 1])
+    if(mult > 1) {
+      sprintf("%i %s-%s", 1970 + x%/%12, month.abb[x%%12 + 1], month.abb[(x+mult-1)%%12 + 1])
+    } else {
+      paste(1970 + x%/%12, month.abb[x%%12 + 1])
+    }
   } else {
     sprintf("%i %s%s", x, "month", ifelse(x!=1, "s", ""))
   }
