@@ -130,11 +130,33 @@
 <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/yearmonth.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="reference/yearmonth.html">yearmonth</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; &lt;moment[11]&gt;</span>
 <span class="co">#&gt;  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug</span>
-<span class="co">#&gt;  [9] 1970 Sep 1970 Oct 1970 Nov</span>
-<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/yearmonth.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="reference/yearquarter.html">yearquarter</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; &lt;moment[11]&gt;</span>
-<span class="co">#&gt;  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug</span>
 <span class="co">#&gt;  [9] 1970 Sep 1970 Oct 1970 Nov</span></pre></div>
+<p>Integration with tsibble.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tsibble/man/tsibble.html">tsibble</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="reference/yearmonth.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, index <span class="op">=</span> <span class="va">time</span><span class="op">)</span>
+<span class="co">#&gt; # A tsibble: 6 x 1 [1M]</span>
+<span class="co">#&gt;       time</span>
+<span class="co">#&gt;   &lt;moment&gt;</span>
+<span class="co">#&gt; 1 1970 Jan</span>
+<span class="co">#&gt; 2 1970 Feb</span>
+<span class="co">#&gt; 3 1970 Mar</span>
+<span class="co">#&gt; 4 1970 Apr</span>
+<span class="co">#&gt; 5 1970 May</span>
+<span class="co">#&gt; 6 1970 Jun</span>
+<span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tsibble/man/tsibble.html">tsibble</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="reference/yearquarter.html">yearquarter</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="reference/yearmonth.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span>, index <span class="op">=</span> <span class="va">time</span><span class="op">)</span>
+<span class="co">#&gt; # A tsibble: 10 x 1 [1Q, 1M]</span>
+<span class="co">#&gt;        time</span>
+<span class="co">#&gt;    &lt;moment&gt;</span>
+<span class="co">#&gt;  1  1970 Q1</span>
+<span class="co">#&gt;  2  1970 Q2</span>
+<span class="co">#&gt;  3  1970 Q3</span>
+<span class="co">#&gt;  4  1970 Q4</span>
+<span class="co">#&gt;  5 1970 Jan</span>
+<span class="co">#&gt;  6 1970 Feb</span>
+<span class="co">#&gt;  7 1970 Mar</span>
+<span class="co">#&gt;  8 1970 Apr</span>
+<span class="co">#&gt;  9 1970 May</span>
+<span class="co">#&gt; 10 1970 Jun</span></pre></div>
 </div>
 </div>
   </div>
