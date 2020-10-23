@@ -65,13 +65,15 @@ vec_ptype2.moment.moment <- function(x, y, ...) {
 
 #' @export
 vec_cast.moment.moment <- function(x, to, ...) {
+  pos <- vec_match(calendar_data(x), calendar_data(to))
+  field(x, "c") <- pos[field(x, "c")]
   attr(x, "cal") <- calendar_data(to)
   x
 }
 
 #' @export
 vec_restore.moment <- function(x, to, ..., n = NULL) {
-  attr(to, "cal") <- vec_slice(calendar_data(to), unique(x$c))
+  # attr(to, "cal") <- vec_slice(calendar_data(to), unique(x$c))
   NextMethod()
 }
 
