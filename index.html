@@ -159,6 +159,30 @@
 <span class="co">#&gt; 10   1970 May</span>
 <span class="co">#&gt; 11   1970 Jun</span>
 <span class="co">#&gt; 12 2020-10-23</span></pre></div>
+<p>Change granularities by updating the calendar.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/yearmonth.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span>
+<span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tsibble/man/tsibble.html">tsibble</a></span><span class="op">(</span>
+  yearmonth <span class="op">=</span> <span class="va">x</span>,
+  yearquarter <span class="op">=</span> <span class="fu"><a href="reference/time_unit&lt;-.html">set_time_units</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="reference/yearquarter.html">tu_quarter</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+  year <span class="op">=</span> <span class="fu"><a href="reference/time_unit&lt;-.html">set_time_units</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="reference/yearmonthday.html">tu_year</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
+  index <span class="op">=</span> <span class="va">yearmonth</span>
+<span class="op">)</span>
+<span class="co">#&gt; # A tsibble: 12 x 3 [1M]</span>
+<span class="co">#&gt;    yearmonth yearquarter     year</span>
+<span class="co">#&gt;     &lt;moment&gt;    &lt;moment&gt; &lt;moment&gt;</span>
+<span class="co">#&gt;  1  1970 Jan     1970 Q1     1970</span>
+<span class="co">#&gt;  2  1970 Feb     1970 Q1     1970</span>
+<span class="co">#&gt;  3  1970 Mar     1970 Q1     1970</span>
+<span class="co">#&gt;  4  1970 Apr     1970 Q2     1970</span>
+<span class="co">#&gt;  5  1970 May     1970 Q2     1970</span>
+<span class="co">#&gt;  6  1970 Jun     1970 Q2     1970</span>
+<span class="co">#&gt;  7  1970 Jul     1970 Q3     1970</span>
+<span class="co">#&gt;  8  1970 Aug     1970 Q3     1970</span>
+<span class="co">#&gt;  9  1970 Sep     1970 Q3     1970</span>
+<span class="co">#&gt; 10  1970 Oct     1970 Q4     1970</span>
+<span class="co">#&gt; 11  1970 Nov     1970 Q4     1970</span>
+<span class="co">#&gt; 12  1970 Dec     1970 Q4     1970</span></pre></div>
 </div>
 </div>
   </div>

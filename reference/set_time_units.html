@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a new time unit — new_time_unit • moment</title>
+<title>Set the time units of a moment — time_unit&lt;- • moment</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Create a new time unit — new_time_unit" />
+<meta property="og:title" content="Set the time units of a moment — time_unit&lt;-" />
 <meta property="og:description" content="" />
 
 
@@ -108,42 +108,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create a new time unit</h1>
+    <h1>Set the time units of a moment</h1>
     <small class="dont-index">Source: <a href='https://github.com/mitchelloharawild/moment/blob/master/R/time_unit.R'><code>R/time_unit.R</code></a></small>
-    <div class="hidden name"><code>new_time_unit.Rd</code></div>
+    <div class="hidden name"><code>set_time_units.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a></p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_time_unit</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1L</span>, <span class='va'>...</span>, class <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>time_unit</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
+
+<span class='fu'>set_time_units</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>value</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>The number of units (must be an integer of length 1).</p></td>
+      <td><p>A moment.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Additional attributes of the time unit (for example, timezones).</p></td>
-    </tr>
-    <tr>
-      <th>class</th>
-      <td><p>The class of the unit. Recommended class format is "tu_*", for
-example, "tu_month".</p></td>
+      <th>value</th>
+      <td><p>The new time unit</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A time unit.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A time unit describes the granularity of a calendar. The time unit class is
-used to identify how different time units nest another.</p>
+    <p>Modify a moment's granularity to use a different granularity. This is HIGHLY
+experimental, and more of a proof of concept for how periods of time can be
+combined by changing the granularity.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
