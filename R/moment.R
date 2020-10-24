@@ -19,6 +19,15 @@ moment <- function(x, ...) {
   UseMethod("moment")
 }
 
+#' Convert time class into a moment
+#'
+#' @param x A time value to convert to a moment
+#'
+#' @export
+as_moment <- function(x, ...) {
+  vec_cast(x, new_moment())
+}
+
 #' @export
 moment.default <- function(x, ...){
   vec_cast(x, new_moment())

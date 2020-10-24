@@ -67,3 +67,8 @@ format_time.tu_week <- function(tu, x, origin = TRUE, ...){
 vec_cast.tu_day.tu_week <- function(x, to, ...){
   new_time_unit(vec_data(x)*7L, class = "tu_day")
 }
+
+#' @export
+vec_cast.moment.yearweek <- function(x, to, ...){
+  vec_cast(yearweek(as.double(x)), to)
+}

@@ -50,3 +50,8 @@ format_time.tu_quarter <- function(tu, x, origin = TRUE, ...){
 vec_cast.tu_month.tu_quarter <- function(x, to, ...){
   new_time_unit(vec_data(x)*3L, class = "tu_month")
 }
+
+#' @export
+vec_cast.moment.yearquarter <- function(x, to, ...){
+  vec_cast(yearquarter(as.double(x)), to)
+}
