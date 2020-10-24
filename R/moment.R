@@ -81,9 +81,16 @@ vec_ptype2.moment.moment <- function(x, y, ...) {
 
 #' @export
 vec_cast.moment.moment <- function(x, to, ...) {
-  pos <- vec_match(calendar_data(x), calendar_data(to))
+  cal <- calendar_data(to)
+  cal_x <- calendar_data(x)
+  pos <- vec_match(cal_x, cal)
+  missing_cal <- is.na(pos)
+  if(any(missing_cal)) {
+    pos[missing_cal] <- nrow(cal) + seq_len(sum(missing_cal))
+    cal <- vec_rbind(cal, cal_x[missing_cal,])
+  }
   field(x, "c") <- pos[field(x, "c")]
-  attr(x, "cal") <- calendar_data(to)
+  attr(x, "cal") <- cal
   x
 }
 
