@@ -52,6 +52,14 @@ vec_cast.tu_quarter.tu_month <- function(x, to, ...){
 }
 
 #' @export
+vec_ptype2.moment.yearmonth <- function(x, y, ...){
+  vec_ptype2(x, yearmonth(double()))
+}
+#' @export
+vec_ptype2.yearmonth.moment <- function(x, y, ...){
+  vec_ptype2(yeamonth(double()), y)
+}
+#' @export
 vec_cast.moment.yearmonth <- function(x, to, ...){
   vec_cast(yearmonth(as.double(x)), to)
 }

@@ -69,6 +69,14 @@ vec_cast.tu_day.tu_week <- function(x, to, ...){
 }
 
 #' @export
+vec_ptype2.moment.yearweek <- function(x, y, ...){
+  vec_ptype2(x, yearweek(double()))
+}
+#' @export
+vec_ptype2.yearweek.moment <- function(x, y, ...){
+  vec_ptype2(yearweek(double()), y)
+}
+#' @export
 vec_cast.moment.yearweek <- function(x, to, ...){
   vec_cast(yearweek(as.double(x)), to)
 }
