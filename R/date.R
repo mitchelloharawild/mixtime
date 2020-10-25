@@ -54,3 +54,7 @@ format_time.tu_day <- function(tu, x, origin = TRUE, ...){
     sprintf("%i %s%s", x, "day", ifelse(x!=1, "s", ""))
   }
 }
+
+interval_pull.tu_day <- function(x) {
+  tsibble::new_interval(day = vec_data(x))
+}

@@ -63,6 +63,10 @@ format_time.tu_week <- function(tu, x, origin = TRUE, ...){
   }
 }
 
+interval_pull.tu_week <- function(x) {
+  tsibble::new_interval(week = vec_data(x))
+}
+
 #' @export
 vec_cast.tu_day.tu_week <- function(x, to, ...){
   new_time_unit(vec_data(x)*7L, class = "tu_day")

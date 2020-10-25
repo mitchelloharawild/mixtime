@@ -46,6 +46,10 @@ format_time.tu_quarter <- function(tu, x, origin = TRUE, ...){
   }
 }
 
+interval_pull.tu_quarter <- function(x) {
+  tsibble::new_interval(quarter = vec_data(x))
+}
+
 #' @export
 vec_cast.tu_month.tu_quarter <- function(x, to, ...){
   new_time_unit(vec_data(x)*3L, class = "tu_month")

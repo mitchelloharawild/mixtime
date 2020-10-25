@@ -55,6 +55,10 @@ format_time.tu_year <- function(tu, x, origin = TRUE, ...){
   }
 }
 
+interval_pull.tu_year <- function(x) {
+  tsibble::new_interval(year = vec_data(x))
+}
+
 #' @export
 vec_cast.tu_month.tu_year <- function(x, to, ...){
   new_time_unit(vec_data(x)*12L, class = "tu_month")
