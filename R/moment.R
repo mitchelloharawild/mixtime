@@ -141,7 +141,7 @@ vec_cast.moment.moment <- function(x, to, ...) {
 
 #' @export
 vec_restore.moment <- function(x, to, ..., n = NULL) {
-  # attr(to, "cal") <- vec_slice(calendar_data(to), unique(x$c))
+  if(!is_empty(x$c)) attr(to, "cal") <- vec_slice(calendar_data(to), unique(x$c))
   NextMethod()
 }
 
