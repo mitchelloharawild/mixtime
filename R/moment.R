@@ -143,6 +143,7 @@ vec_cast.moment.moment <- function(x, to, ...) {
 vec_restore.moment <- function(x, to, ..., n = NULL) {
   if(!is_empty(x$c) & !any(is.na(x$c))) {
     attr(to, "cal") <- vec_slice(calendar_data(to), unique(x$c))
+    x$c <- `attributes<-`(vctrs::vec_group_id(x$c), NULL)
   }
   NextMethod()
 }
