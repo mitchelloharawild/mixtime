@@ -67,7 +67,14 @@ calendar_data.moment <- function(x) {
 }
 
 #' @export
+#' @method vec_arith moment
 vec_arith.moment <- function(op, x, y, ...){
+  UseMethod("vec_arith.moment", y)
+}
+
+#' @export
+#' @method vec_arith.moment moment
+vec_arith.moment.moment <- function(op, x, y, ...) {
   x_cal <- calendar_data(x)
   y_cal <- calendar_data(y)
   if(x_cal$origin && y_cal$origin) {
@@ -83,6 +90,24 @@ vec_arith.moment <- function(op, x, y, ...){
   } else {
     new_moment(do.call(op, list(field(x, "x"), field(y, "x"))), x_cal)
   }
+}
+
+#' @export
+#' @method vec_arith.moment numeric
+vec_arith.moment.numeric <- function(op, x, y, ...) {
+  x_cal <- calendar_data(x)
+  if(!vec_in(op, c("+", "-"))) {
+    abort(str_glue("Cannot use operation {op} for a <moment> and <double>."))
+  }
+  x <- vec_recycle_common(x, y)
+  field(x[[1]], "x") <- vec_arith(op, field(x[[1]], "x"), x[[2]], ...)
+  x[[1]]
+}
+
+#' @export
+#' @method vec_arith.numeric moment
+vec_arith.numeric.moment <- function(op, x, y, ...) {
+  vec_arith.moment.numeric(op, y, x, ...)
 }
 
 #' @export
