@@ -19,6 +19,11 @@ moment <- function(x, ...) {
   UseMethod("moment")
 }
 
+#' @export
+moment.default <- function(x, ...){
+  vec_cast(x, new_moment())
+}
+
 #' Convert time class into a moment
 #'
 #' @param x A time value to convert to a moment
@@ -44,11 +49,6 @@ is_moment <- function(x) {
 }
 
 #' @export
-moment.default <- function(x, ...){
-  vec_cast(x, new_moment())
-}
-
-#' @export
 format.moment <- function(x, ...) {
   cal <- calendar_data(x)
   val <- field(x, "x")
@@ -59,6 +59,11 @@ format.moment <- function(x, ...) {
   fmt$val <- lapply(fmt$loc, vec_slice, x = val)
   fmt <- mapply(format_time, tu = fmt$tu, fmt$val, origin = fmt$origin, SIMPLIFY = FALSE)
   vec_c(!!!fmt)
+}
+
+#' @export
+`names<-.moment` <- function(x, value) {
+  x
 }
 
 #' @export
