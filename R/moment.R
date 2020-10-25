@@ -150,6 +150,11 @@ vec_cast.Date.moment <- function(x, to, ...) {
 }
 
 #' @export
+vec_cast.double.moment <- function(x, to, ...) {
+  field(x, "x")
+}
+
+#' @export
 vec_cast.character.moment <- function(x, to, ...) {
   format(x)
 }

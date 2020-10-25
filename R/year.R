@@ -26,12 +26,12 @@ vec_ptype2.moment.numeric <- function(x, y, ...){
   vec_ptype2(x, year(double()))
 }
 #' @export
-vec_ptype2.numeric.moment <- function(x, y, ...){
+vec_ptype2.double.moment <- function(x, y, ...){
   vec_ptype2(year(double()), y)
 }
 
 #' @export
-vec_cast.moment.numeric <- function(x, to, ...) {
+vec_cast.moment.double <- function(x, to, ...) {
   vec_cast(year(x-1970), to)
 }
 
