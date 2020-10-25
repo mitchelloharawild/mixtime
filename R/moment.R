@@ -28,6 +28,21 @@ as_moment <- function(x, ...) {
   vec_cast(x, new_moment())
 }
 
+#' Check if the object is a moment
+#'
+#' @param x An object.
+#'
+#' @return `TRUE` if the object inherits from the `moment` class.
+#'
+#' @examples
+#' is_moment(Sys.Date())
+#' is_moment(yearmonth(1))
+#'
+#' @export
+is_moment <- function(x) {
+  inherits(x, "moment")
+}
+
 #' @export
 moment.default <- function(x, ...){
   vec_cast(x, new_moment())
