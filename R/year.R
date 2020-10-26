@@ -11,7 +11,7 @@ year <- function(x){
 
 #' @export
 year.numeric <- function(x){
-  new_moment(x, new_calendar(tu_year(1L), origin = TRUE))
+  new_moment(x-1970, new_calendar(tu_year(1L), origin = TRUE))
 }
 
 #' @rdname yearmonthday
@@ -32,7 +32,7 @@ vec_ptype2.double.moment <- function(x, y, ...){
 
 #' @export
 vec_cast.moment.double <- function(x, to, ...) {
-  vec_cast(year(x-1970), to)
+  vec_cast(year(x), to)
 }
 
 #' @export
