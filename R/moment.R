@@ -152,9 +152,19 @@ vec_restore.moment <- function(x, to, ..., n = NULL) {
 vec_cast.Date.moment <- function(x, to, ...) {
   cal <- calendar_data(x)
   if(any(!cal$origin)) abort("Only moments with origins can be converted to dates.")
-  abort("Moments cannot yet be converted to dates (awaiting daily moment support).")
-  # 1. Convert to date moment
-  # 2. Convert date moment to Date
+  unit <- vapply(cal$granularity, vec_ptype_full, character(1L))
+  scale <- vapply(cal$granularity, vec_data, numeric(1L))
+  cal_id <- field(x, "c")
+  x <- field(x, "x")
+  out <- vec_split(x, cal_id)
+  origin <- .Date(0)
+  out$val <- lapply(vec_seq_along(out), function(i) {
+    u <- unit[out$key[[i]]]
+    if(u == "week") origin <- origin - 3
+    by <- paste(out$val[[i]] * scale[out$key[[i]]], u)
+    vec_c(!!!lapply(by, function(x) seq(origin, by = by, length.out = 2)[2]))
+  })
+  vec_c(!!!out$val)
 }
 
 #' @export
