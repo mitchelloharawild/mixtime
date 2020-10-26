@@ -78,6 +78,14 @@ vec_arith.moment <- function(op, x, y, ...){
 }
 
 #' @export
+#' @method vec_math moment
+vec_math.moment <- function(op, x, ...){
+  field(x, "x") <- vec_math(op, field(x, "x"))
+  if(is.logical(field(x, "x"))) return(field(x, "x"))
+  x
+}
+
+#' @export
 #' @method vec_arith.moment moment
 vec_arith.moment.moment <- function(op, x, y, ...) {
   x_cal <- calendar_data(x)
