@@ -57,8 +57,8 @@ format.moment <- function(x, ...) {
   fmt$tu <- cal$granularity[fmt$key]
   fmt$origin <- cal$origin[fmt$key]
   fmt$val <- lapply(fmt$loc, vec_slice, x = val)
-  fmt <- mapply(format_time, tu = fmt$tu, fmt$val, origin = fmt$origin, SIMPLIFY = FALSE)
-  vec_c(!!!fmt)
+  out <- mapply(format_time, tu = fmt$tu, fmt$val, origin = fmt$origin, SIMPLIFY = FALSE)
+  vec_c(!!!out)[order(vec_c(!!!fmt$loc))]
 }
 
 #' @export
