@@ -8,6 +8,9 @@
   register_s3_method("tsibble", "interval_pull", "tu_month")
   register_s3_method("tsibble", "interval_pull", "tu_quarter")
   register_s3_method("tsibble", "interval_pull", "tu_year")
+
+  register_s3_method("pillar", "pillar_shaft", "moment_time_units")
+
   invisible()
 }
 

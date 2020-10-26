@@ -92,3 +92,7 @@ format.time_unit <- function(x, ..., abbr = FALSE){
 format.moment_time_units <- function(x, ...){
   vapply(x, format, character(1L), ...)
 }
+
+pillar_shaft.moment_time_units <- function(x, ...) {
+  pillar::new_pillar_shaft_simple(format(x), align = "left")
+}

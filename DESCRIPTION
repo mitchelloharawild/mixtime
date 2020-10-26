@@ -18,7 +18,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,
-    tsibble
+    tsibble,
+    pillar
 Imports: 
     lifecycle,
     vctrs,
