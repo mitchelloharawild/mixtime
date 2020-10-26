@@ -170,7 +170,7 @@ vec_cast.Date.moment <- function(x, to, ...) {
     u <- unit[out$key[[i]]]
     if(u == "week") origin <- origin - 3
     by <- paste(out$val[[i]] * scale[out$key[[i]]], u)
-    vec_c(!!!lapply(by, function(x) seq(origin, by = by, length.out = 2)[2]))
+    vec_c(!!!lapply(by, function(x) seq(origin, by = x, length.out = 2)[2]))
   })
   vec_c(!!!out$val)
 }
