@@ -164,15 +164,15 @@ vec_cast.Date.moment <- function(x, to, ...) {
   scale <- vapply(cal$granularity, vec_data, numeric(1L))
   cal_id <- field(x, "c")
   x <- field(x, "x")
-  out <- vec_split(x, cal_id)
+  out <- vec_group_loc(cal_id)
   origin <- .Date(0)
   out$val <- lapply(vec_seq_along(out), function(i) {
     u <- unit[out$key[[i]]]
     if(u == "week") origin <- origin - 3
-    by <- paste(out$val[[i]] * scale[out$key[[i]]], u)
+    by <- paste(x[out$loc[[i]]] * scale[out$key[[i]]], u)
     vec_c(!!!lapply(by, function(x) seq(origin, by = x, length.out = 2)[2]))
   })
-  vec_c(!!!out$val)
+  vec_c(!!!out$val)[order(vec_c(!!!out$loc))]
 }
 
 #' @export
