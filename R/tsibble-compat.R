@@ -1,8 +1,8 @@
-index_valid.moment <- function(x) {
+index_valid.mixtime <- function(x) {
   TRUE
 }
 
-interval_pull.moment <- function(x) {
+interval_pull.mixtime <- function(x) {
   require_package("tsibble")
   tsibble::interval_pull(calendar_data(x)$granularity)
 }

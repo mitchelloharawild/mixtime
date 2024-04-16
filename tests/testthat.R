@@ -1,4 +1,4 @@
 library(testthat)
-library(moment)
+library(mixtime)
 
-test_check("moment")
+test_check("mixtime")

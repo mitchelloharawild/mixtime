@@ -4,7 +4,7 @@
 \alias{yearmonthday}
 \alias{tu_day}
 \alias{tu_year}
-\title{Moment date}
+\title{Date}
 \usage{
 yearmonthday(x)
 

@@ -3,14 +3,14 @@
 \name{time_unit<-}
 \alias{time_unit<-}
 \alias{set_time_units}
-\title{Set the time units of a moment}
+\title{Set the time units of a mixtime}
 \usage{
 time_unit(x) <- value
 
 set_time_units(x, value)
 }
 \arguments{
-\item{x}{A moment.}
+\item{x}{A mixtime.}
 
 \item{value}{The new time unit}
 }
@@ -18,7 +18,7 @@ set_time_units(x, value)
 \lifecycle{experimental}
 }
 \details{
-Modify a moment's granularity to use a different granularity. This is HIGHLY
+Modify a mixtime's granularity to use a different granularity. This is HIGHLY
 experimental, and more of a proof of concept for how periods of time can be
 combined by changing the granularity.
 }

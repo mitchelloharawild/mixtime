@@ -23,7 +23,7 @@ time_unit <- function(x, ...){
 }
 
 #' @export
-time_unit.moment <- function(x, ...){
+time_unit.mixtime <- function(x, ...){
   calendar_data(x)$granularity
 }
 
@@ -33,26 +33,26 @@ time_unit.moment <- function(x, ...){
   UseMethod("time_unit<-")
 }
 
-#' Set the time units of a moment
+#' Set the time units of a mixtime
 #'
 #' \lifecycle{experimental}
 #'
-#' Modify a moment's granularity to use a different granularity. This is HIGHLY
+#' Modify a mixtime's granularity to use a different granularity. This is HIGHLY
 #' experimental, and more of a proof of concept for how periods of time can be
 #' combined by changing the granularity.
 #'
-#' @param x A moment.
+#' @param x A mixtime.
 #' @param value The new time unit
 #'
 #' @export
 set_time_units <- `time_unit<-`
 
 #' @export
-`time_unit<-.moment` <- function(x, value){
+`time_unit<-.mixtime` <- function(x, value){
   vec_assert(value, list_of_time_units(), size = 1L)
   tu <- time_unit(x)
   if(vec_size(tu) > 1) {
-    abort("Changing time units is not yet supported for mixed granularity moments.")
+    abort("Changing time units is not yet supported for mixed granularity mixtimes.")
   }
   common_unit <- vec_data(vec_cast(value[[1]], tu[[1]]))
   base_unit <- vec_data(tu[[1]])
@@ -68,11 +68,11 @@ list_of_time_units <- function(x = list()) {
   new_list_of(
     x,
     ptype = new_vctr(integer(), class = "time_unit"),
-    class = "moment_time_units"
+    class = "mixtime_time_units"
   )
 }
 
-interval_pull.moment_time_units <- function(x) {
+interval_pull.mixtime_time_units <- function(x) {
   require_package("tsibble")
   if(vec_size(x) == 1) return(tsibble::interval_pull(x[[1]]))
   intvl <- paste(format(x, abbr = TRUE), collapse = ", ")
@@ -90,10 +90,10 @@ format.time_unit <- function(x, ..., abbr = FALSE){
 }
 
 #' @export
-format.moment_time_units <- function(x, ...){
+format.mixtime_time_units <- function(x, ...){
   vapply(x, format, character(1L), ...)
 }
 
-pillar_shaft.moment_time_units <- function(x, ...) {
+pillar_shaft.mixtime_time_units <- function(x, ...) {
   pillar::new_pillar_shaft_simple(format(x), align = "left")
 }

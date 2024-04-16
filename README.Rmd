@@ -13,15 +13,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-# moment
+# mixtime
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![R build status](https://github.com/mitchelloharawild/moment/workflows/R-CMD-check/badge.svg)](https://github.com/mitchelloharawild/moment/actions)
-[![Coverage status](https://codecov.io/gh/mitchelloharawild/moment/branch/master/graph/badge.svg)](https://codecov.io/github/mitchelloharawild/moment?branch=master)
+[![R build status](https://github.com/mitchelloharawild/mixtime/workflows/R-CMD-check/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions)
+[![Coverage status](https://codecov.io/gh/mitchelloharawild/mixtime/branch/master/graph/badge.svg)](https://codecov.io/github/mitchelloharawild/mixtime?branch=master)
 <!-- badges: end -->
 
-moment provides flexible time classes for representing mixed temporal granularities
+mixtime provides flexible time classes for representing mixed temporal granularities
 and custom calendar structures.
 
 The feature wishlist for this package includes:
@@ -38,34 +38,34 @@ Stretch goals for the package include:
 
 ## Installation
 
-<!-- You can install the released version of moment from [CRAN](https://CRAN.R-project.org) with: -->
+<!-- You can install the released version of mixtime from [CRAN](https://CRAN.R-project.org) with: -->
 
 <!-- ``` r -->
-<!-- install.packages("moment") -->
+<!-- install.packages("mixtime") -->
 <!-- ``` -->
 
 The development version can be installed from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mitchelloharawild/moment")
+devtools::install_github("mitchelloharawild/mixtime")
 ```
 ## Example
 
-Creating moments.
+Creating mixtimes.
 
 ```{r demo}
-library(moment)
+library(mixtime)
 yearmonth(0:11) # By default, time classes have an origin
-yearmonth(0:11) - yearmonth(0) # However some operations can produce moments without origins
+yearmonth(0:11) - yearmonth(0) # However some operations can produce mixtimes without origins
 
 yearquarter(0:3)
 yearquarter(0:3) - yearquarter(0)
 
-# Moments of different temporal granularities can be combined:
+# Different temporal granularities can be combined:
 c(yearquarter(0:3), yearmonth(0:11))
 ```
-Sequences of moments.
+Sequences of mixtimes.
 
 ```{r sequence}
 seq(yearmonth(0), yearmonth(10), by = 1)

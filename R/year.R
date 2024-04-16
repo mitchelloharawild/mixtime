@@ -11,7 +11,7 @@ year <- function(x){
 
 #' @export
 year.numeric <- function(x){
-  new_moment(x-1970, new_calendar(tu_year(1L), origin = TRUE))
+  new_mixtime(x-1970, new_calendar(tu_year(1L), origin = TRUE))
 }
 
 #' @rdname yearmonthday
@@ -22,16 +22,16 @@ tu_year <- function(x){
 }
 
 #' @export
-vec_ptype2.moment.numeric <- function(x, y, ...){
+vec_ptype2.mixtime.numeric <- function(x, y, ...){
   vec_ptype2(x, year(double()))
 }
 #' @export
-vec_ptype2.double.moment <- function(x, y, ...){
+vec_ptype2.double.mixtime <- function(x, y, ...){
   vec_ptype2(year(double()), y)
 }
 
 #' @export
-vec_cast.moment.double <- function(x, to, ...) {
+vec_cast.mixtime.double <- function(x, to, ...) {
   vec_cast(year(x), to)
 }
 

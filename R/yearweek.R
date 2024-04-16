@@ -11,7 +11,7 @@ yearweek <- function(x){
 
 #' @export
 yearweek.numeric <- function(x){
-  new_moment(x, new_calendar(tu_week(1L), origin = TRUE))
+  new_mixtime(x, new_calendar(tu_week(1L), origin = TRUE))
 }
 
 #' @rdname yearweek
@@ -73,14 +73,14 @@ vec_cast.tu_day.tu_week <- function(x, to, ...){
 }
 
 #' @export
-vec_ptype2.moment.yearweek <- function(x, y, ...){
+vec_ptype2.mixtime.yearweek <- function(x, y, ...){
   vec_ptype2(x, yearweek(double()))
 }
 #' @export
-vec_ptype2.yearweek.moment <- function(x, y, ...){
+vec_ptype2.yearweek.mixtime <- function(x, y, ...){
   vec_ptype2(yearweek(double()), y)
 }
 #' @export
-vec_cast.moment.yearweek <- function(x, to, ...){
+vec_cast.mixtime.yearweek <- function(x, to, ...){
   vec_cast(yearweek(as.double(x)), to)
 }

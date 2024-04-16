@@ -1,15 +1,15 @@
 # nocov start
 .onLoad <- function(...) {
-  register_s3_method("tsibble", "index_valid", "moment")
-  register_s3_method("tsibble", "interval_pull", "moment")
-  register_s3_method("tsibble", "interval_pull", "moment_time_units")
+  register_s3_method("tsibble", "index_valid", "mixtime")
+  register_s3_method("tsibble", "interval_pull", "mixtime")
+  register_s3_method("tsibble", "interval_pull", "mixtime_time_units")
   register_s3_method("tsibble", "interval_pull", "tu_day")
   register_s3_method("tsibble", "interval_pull", "tu_week")
   register_s3_method("tsibble", "interval_pull", "tu_month")
   register_s3_method("tsibble", "interval_pull", "tu_quarter")
   register_s3_method("tsibble", "interval_pull", "tu_year")
 
-  register_s3_method("pillar", "pillar_shaft", "moment_time_units")
+  register_s3_method("pillar", "pillar_shaft", "mixtime_time_units")
 
   invisible()
 }

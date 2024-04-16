@@ -11,7 +11,7 @@ yearmonth <- function(x){
 
 #' @export
 yearmonth.numeric <- function(x){
-  new_moment(x, new_calendar(tu_month(1L), origin = TRUE))
+  new_mixtime(x, new_calendar(tu_month(1L), origin = TRUE))
 }
 
 #' @rdname yearmonth
@@ -56,14 +56,14 @@ vec_cast.tu_quarter.tu_month <- function(x, to, ...){
 }
 
 #' @export
-vec_ptype2.moment.yearmonth <- function(x, y, ...){
+vec_ptype2.mixtime.yearmonth <- function(x, y, ...){
   vec_ptype2(x, yearmonth(double()))
 }
 #' @export
-vec_ptype2.yearmonth.moment <- function(x, y, ...){
+vec_ptype2.yearmonth.mixtime <- function(x, y, ...){
   vec_ptype2(yearmonth(double()), y)
 }
 #' @export
-vec_cast.moment.yearmonth <- function(x, to, ...){
+vec_cast.mixtime.yearmonth <- function(x, to, ...){
   vec_cast(yearmonth(as.double(x)), to)
 }

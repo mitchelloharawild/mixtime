@@ -1,4 +1,4 @@
-#' Moment date
+#' Date
 #'
 #' \lifecycle{experimental}
 #'
@@ -11,7 +11,7 @@ yearmonthday <- function(x){
 
 #' @export
 yearmonthday.numeric <- function(x){
-  new_moment(x, new_calendar(tu_day(1L), origin = TRUE))
+  new_mixtime(x, new_calendar(tu_day(1L), origin = TRUE))
 }
 
 #' @rdname yearmonthday
@@ -22,16 +22,16 @@ tu_day <- function(x){
 }
 
 #' @export
-vec_ptype2.moment.Date <- function(x, y, ...){
+vec_ptype2.mixtime.Date <- function(x, y, ...){
   vec_ptype2(x, yearmonthday(double()))
 }
 #' @export
-vec_ptype2.Date.moment <- function(x, y, ...){
+vec_ptype2.Date.mixtime <- function(x, y, ...){
   vec_ptype2(yearmonthday(double()), y)
 }
 
 #' @export
-vec_cast.moment.Date <- function(x, to, ...) {
+vec_cast.mixtime.Date <- function(x, to, ...) {
   vec_cast(yearmonthday(as.double(x)), to)
 }
 
