@@ -8,8 +8,6 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![R build
-status](https://github.com/mitchelloharawild/mixtime/workflows/R-CMD-check/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions)
 [![R-CMD-check](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
