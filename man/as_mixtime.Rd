@@ -8,6 +8,8 @@ as_mixtime(x, ...)
 }
 \arguments{
 \item{x}{A time value to convert to a mixtime}
+
+\item{...}{Additional arguments for methods}
 }
 \description{
 Convert time class into a mixtime

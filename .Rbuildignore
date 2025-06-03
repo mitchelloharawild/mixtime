@@ -1,6 +1,6 @@
 ^mixtime\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-^README\.Rmd$
+^README\.qmd$
 ^\.github$
-^\hex$
+^hex$

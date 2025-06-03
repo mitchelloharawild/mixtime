@@ -27,6 +27,7 @@ mixtime.default <- function(x, ...){
 #' Convert time class into a mixtime
 #'
 #' @param x A time value to convert to a mixtime
+#' @param ... Additional arguments for methods
 #'
 #' @export
 as_mixtime <- function(x, ...) {
@@ -79,10 +80,10 @@ vec_arith.mixtime <- function(op, x, y, ...){
 
 #' @export
 #' @method vec_math mixtime
-vec_math.mixtime <- function(op, x, ...){
-  field(x, "x") <- vec_math(op, field(x, "x"))
-  if(is.logical(field(x, "x"))) return(field(x, "x"))
-  x
+vec_math.mixtime <- function(.fn, .x, ...){
+  field(.x, "x") <- vec_math(.fn, field(.x, "x"))
+  if(is.logical(field(.x, "x"))) return(field(.x, "x"))
+  .x
 }
 
 #' @export
