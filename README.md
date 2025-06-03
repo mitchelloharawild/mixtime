@@ -10,8 +10,7 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![R build
 status](https://github.com/mitchelloharawild/mixtime/workflows/R-CMD-check/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions)
-[![Coverage
-status](https://codecov.io/gh/mitchelloharawild/mixtime/branch/master/graph/badge.svg)](https://codecov.io/github/mitchelloharawild/mixtime?branch=master)
+[![R-CMD-check](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 mixtime provides flexible time classes for representing mixed temporal
