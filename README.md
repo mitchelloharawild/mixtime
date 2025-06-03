@@ -1,7 +1,8 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mixtime
+<!-- README.md is generated from README.qmd. Please edit that file -->
+
+# mixtime <img src="man/figures/logo.svg" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 
@@ -34,16 +35,19 @@ Stretch goals for the package include:
 ## Installation
 
 <!-- You can install the released version of mixtime from [CRAN](https://CRAN.R-project.org) with: -->
+
 <!-- ``` r -->
+
 <!-- install.packages("mixtime") -->
+
 <!-- ``` -->
 
 The development version can be installed from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("mitchelloharawild/mixtime")
+# install.packages("remotes")
+remotes::install_github("mitchelloharawild/mixtime")
 ```
 
 ## Example
@@ -112,7 +116,7 @@ tsibble::tsibble(time = c(year(0), yearquarter(0:3), yearmonth(0:5), Sys.Date())
 #>  9   1970 Apr
 #> 10   1970 May
 #> 11   1970 Jun
-#> 12 2024-04-16
+#> 12 2025-06-03
 ```
 
 Change granularities by updating the calendar.
