@@ -18,11 +18,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2.9000
 Suggests: 
     testthat,
-    tsibble,
     pillar
 Imports: 
     lifecycle,
     vctrs,
     stringr,
-    rlang
+    rlang,
+    tsibble,
+    cli
 RdMacros: lifecycle

@@ -74,17 +74,17 @@ Integration with tsibble.
 
 ```{r tsibble}
 tsibble::tsibble(time = yearmonth(0:5), index = time)
-tsibble::tsibble(time = c(year(0), yearquarter(0:3), yearmonth(0:5), Sys.Date()), index = time)
+tsibble::tsibble(time = c(year(2010:2013), yearquarter(0:3), yearmonth(0:5), as.Date("2010-03-05") + 0:4), index = time)
 ```
 
-Change granularities by updating the calendar.
+<!-- Change granularities by updating the calendar. -->
 
-```{r granularity}
-x <- yearmonth(0:11)
-tsibble::tsibble(
-  yearmonth = x,
-  yearquarter = set_time_units(x, tu_quarter(1)),
-  year = set_time_units(x, tu_year(1)),
-  index = yearmonth
-)
-```
+<!-- ```{r granularity} -->
+<!-- x <- yearmonth(0:11) -->
+<!-- tsibble::tsibble( -->
+<!--   yearmonth = x, -->
+<!--   yearquarter = set_time_units(x, tu_quarter(1)), -->
+<!--   year = set_time_units(x, tu_year(1)), -->
+<!--   index = yearmonth -->
+<!-- ) -->
+<!-- ``` -->

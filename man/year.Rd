@@ -2,13 +2,16 @@
 % Please edit documentation in R/year.R
 \name{year}
 \alias{year}
-\title{Year}
+\title{Represent years}
 \usage{
 year(x)
 }
 \arguments{
-\item{x}{value}
+\item{x}{Another object to be coerced into years}
 }
 \description{
+Create or coerce using \code{year()}
+}
+\details{
 \lifecycle{experimental}
 }

@@ -4,7 +4,7 @@
 \alias{new_mixtime}
 \title{Create a new mixtime}
 \usage{
-new_mixtime(x = numeric(), calendar = new_calendar())
+new_mixtime(x = NULL)
 }
 \arguments{
 \item{x}{The iterable value of the mixtime (for example, a value of 1 may indicate the first day).}

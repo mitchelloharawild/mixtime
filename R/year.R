@@ -1,8 +1,10 @@
-#' Year
+#' Represent years
+#'
+#' Create or coerce using `year()`
 #'
 #' \lifecycle{experimental}
 #'
-#' @param x value
+#' @param x Another object to be coerced into years
 #'
 #' @export
 year <- function(x){
@@ -10,60 +12,40 @@ year <- function(x){
 }
 
 #' @export
-year.numeric <- function(x){
-  new_mixtime(x-1970, new_calendar(tu_year(1L), origin = TRUE))
-}
-
-#' @rdname yearmonthday
-#' @export
-tu_year <- function(x){
+new_year <- function(x) {
   x <- vec_cast(x, integer())
-  list_of_time_units(list(new_time_unit(x, class = "tu_year")))
+  vctrs::new_vctr(x, class = "mixtime_year")
 }
 
 #' @export
-vec_ptype2.mixtime.numeric <- function(x, y, ...){
-  vec_ptype2(x, year(double()))
-}
-#' @export
-vec_ptype2.double.mixtime <- function(x, y, ...){
-  vec_ptype2(year(double()), y)
+year.numeric <- function(x) {
+  new_mixtime(new_year(x - 1970L))
 }
 
 #' @export
-vec_cast.mixtime.double <- function(x, to, ...) {
-  vec_cast(year(x), to)
+format.mixtime_year <- function(x, ...) {
+  format(vec_data(x) + 1970L, ...)
 }
 
 #' @export
-vec_ptype_full.tu_year <- function(x, ...) {
-  "year"
-}
+index_valid.mixtime_year <- function(x) TRUE
 
 #' @export
-vec_ptype_abbr.tu_year <- function(x, ...) {
-  "Y"
+interval_pull.mixtime_year <- function(x) {
+  tsibble::new_interval(
+    year = tsibble::gcd_interval(x)
+  )
 }
 
+#' @importFrom vctrs vec_arith
+#' @method vec_arith mixtime_year
 #' @export
-format_time.tu_year <- function(tu, x, origin = TRUE, ...){
-  x <- vec_data(tu)*x
-  if(origin) {
-    format(1970 + x)
-  } else {
-    sprintf("%i %s%s", x, "year", ifelse(x!=1, "s", ""))
-  }
+vec_arith.mixtime_year <- function(op, x, y, ...) {
+  UseMethod("vec_arith.mixtime_year", y)
 }
-
-interval_pull.tu_year <- function(x) {
-  tsibble::new_interval(year = vec_data(x))
-}
-
+#' @method vec_arith.mixtime_year mixtime_year
 #' @export
-vec_cast.tu_month.tu_year <- function(x, to, ...){
-  new_time_unit(vec_data(x)*12L, class = "tu_month")
-}
-#' @export
-vec_cast.tu_quarter.tu_year <- function(x, to, ...){
-  new_time_unit(vec_data(x)*4L, class = "tu_quarter")
+vec_arith.mixtime_year.mixtime_year <- function(op, x, y, ...) {
+  if(!op %in% c("+", "-")) stop_incompatible_op(op, x, y)
+  vctrs::vec_arith_base(op, x, y)
 }
