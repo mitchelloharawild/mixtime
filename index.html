@@ -160,8 +160,8 @@
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/yearmonth.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span></span>
 <span><span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/tsibble.html" class="external-link">tsibble</a></span><span class="op">(</span></span>
 <span>  yearmonth <span class="op">=</span> <span class="va">x</span>,</span>
-<span>  yearquarter <span class="op">=</span> <span class="fu"><a href="reference/set_time_units.html">set_time_units</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="reference/yearquarter.html">tu_quarter</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  year <span class="op">=</span> <span class="fu"><a href="reference/set_time_units.html">set_time_units</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="reference/yearmonthday.html">tu_year</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  yearquarter <span class="op">=</span> <span class="fu">set_time_units</span><span class="op">(</span><span class="va">x</span>, <span class="fu">tu_quarter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  year <span class="op">=</span> <span class="fu">set_time_units</span><span class="op">(</span><span class="va">x</span>, <span class="fu">tu_year</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  index <span class="op">=</span> <span class="va">yearmonth</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tsibble: 12 x 3 [1M]</span></span>
