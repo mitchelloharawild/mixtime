@@ -73,6 +73,27 @@ seq.mixtime <- function(from, to, by, length.out, along.with, ...){
 
 vec_cast_to_mixtime <- function(x, to, ...) new_mixtime(x)
 
+vec_cast_from_mixtime <- function(x, to, ...) {
+  class(x) <- setdiff(class(x), "mixtime")
+  vec_cast(x, to, ...)
+}
+
+## Custom vec cast methods since some time classes don't have cast methods
+
+#' @export
+#' @method vec_cast.character mixtime
+vec_cast.character.mixtime <- function(x, to, ...) {
+  attr(x, "v") <- lapply(attr(x, "v"), as.character, ...)
+  vecvec::unvecvec(x)
+}
+
+#' @export
+#' @method vec_cast.double mixtime
+vec_cast.double.mixtime <- function(x, to, ...) {
+  attr(x, "v") <- lapply(attr(x, "v"), as.double, ...)
+  vecvec::unvecvec(x)
+}
+
 #' @export
 vec_ptype2.mixtime <- function(x, y, ...) {
   if (!isTRUE(index_valid(x)) || !isTRUE(index_valid(y))) {
@@ -80,5 +101,3 @@ vec_ptype2.mixtime <- function(x, y, ...) {
   }
   new_mixtime()
 }
-
-
