@@ -17,7 +17,7 @@ new_mixtime <- function(x = NULL) {
 
 #' @export
 mixtime <- function(...) {
-  vecvec::vecvec(..., class = "mixtime")
+  new_mixtime(rlang::list2(...))
 }
 
 #' Convert time class into a mixtime
