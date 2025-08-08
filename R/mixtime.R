@@ -16,13 +16,8 @@ new_mixtime <- function(x = NULL) {
 }
 
 #' @export
-mixtime <- function(x, ...) {
-  UseMethod("mixtime")
-}
-
-#' @export
-mixtime.default <- function(x, ...){
-  as_mixtime(x, ...)
+mixtime <- function(...) {
+  vecvec::vecvec(..., class = "mixtime")
 }
 
 #' Convert time class into a mixtime
