@@ -72,7 +72,7 @@ seq.mixtime <- function(from, to, by, length.out, along.with, ...){
   vec_restore(res, from)
 }
 
-vec_cast_to_mixtime <- function(x, to, ...) new_mixtime(x)
+vec_cast_to_mixtime <- function(x, to, ...) mixtime(x)
 
 vec_cast_from_mixtime <- function(x, to, ...) {
   class(x) <- setdiff(class(x), "mixtime")
