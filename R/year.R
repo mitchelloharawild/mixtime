@@ -5,9 +5,10 @@
 #' \lifecycle{experimental}
 #'
 #' @param x Another object to be coerced into years
+#' @param ... Arguments for methods.
 #'
 #' @export
-year <- function(x){
+year <- function(x, ...){
   UseMethod("year")
 }
 
@@ -18,8 +19,13 @@ new_year <- function(x) {
 }
 
 #' @export
-year.numeric <- function(x) {
+year.numeric <- function(x, ...) {
   new_mixtime(new_year(x - 1970L))
+}
+
+#' @export
+year.default <- function(x, ...) {
+  new_mixtime(new_year(as.integer(strftime(x, "%Y")) - 1970L))
 }
 
 #' @export

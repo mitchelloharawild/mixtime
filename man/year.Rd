@@ -4,10 +4,12 @@
 \alias{year}
 \title{Represent years}
 \usage{
-year(x)
+year(x, ...)
 }
 \arguments{
 \item{x}{Another object to be coerced into years}
+
+\item{...}{Arguments for methods.}
 }
 \description{
 Create or coerce using \code{year()}
