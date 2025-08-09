@@ -3,16 +3,17 @@
 #' A mixtime is a vector which describes a point in time. It uses a calendar
 #' definition to translate a vector of numbers into a point in time.
 #'
-#' @param x The iterable value of the mixtime (for example, a value of 1 may indicate the first day).
-#' @param calendar The calendar structure over which the mixtime iterates. This can be created using `new_calendar()`.
+#' @param x The list of time values to become a mixtime.
 #'
 #' @importFrom rlang is_empty
 #' @export
 new_mixtime <- function(x = NULL) {
-  if (!is.null(x) && !isTRUE(tsibble::index_valid(x))) {
+  validate_x <- vapply(x, tsibble::index_valid, logical(1L))
+
+  if (!all(validate_x)) {
     stop("A mixtime must contain only valid time points")
   }
-  vecvec::new_vecvec(list(x), class = "mixtime")
+  vecvec::new_vecvec(x, class = "mixtime")
 }
 
 #' @export

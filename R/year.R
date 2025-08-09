@@ -20,12 +20,12 @@ new_year <- function(x) {
 
 #' @export
 year.numeric <- function(x, ...) {
-  new_mixtime(new_year(x - 1970L))
+  mixtime(new_year(x - 1970L))
 }
 
 #' @export
 year.default <- function(x, ...) {
-  new_mixtime(new_year(as.integer(strftime(x, "%Y")) - 1970L))
+  mixtime(new_year(as.integer(strftime(x, "%Y")) - 1970L))
 }
 
 #' @export

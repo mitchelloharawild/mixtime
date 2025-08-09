@@ -1,7 +1,7 @@
 #' @inherit tsibble::yearquarter
 #' @export
 yearquarter <- function(x = NULL, ...) {
-  new_mixtime(
+  mixtime(
     tsibble::yearquarter(x, ...)
   )
 }
@@ -9,7 +9,7 @@ yearquarter <- function(x = NULL, ...) {
 #' @inherit tsibble::yearmonth
 #' @export
 yearmonth <- function(x = NULL, ...) {
-  new_mixtime(
+  mixtime(
     tsibble::yearmonth(x, ...)
   )
 }
@@ -17,7 +17,7 @@ yearmonth <- function(x = NULL, ...) {
 #' @inherit tsibble::yearweek
 #' @export
 yearweek <- function(x = NULL, ...) {
-  new_mixtime(
+  mixtime(
     tsibble::yearweek(x, ...)
   )
 }
