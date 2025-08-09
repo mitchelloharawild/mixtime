@@ -7,7 +7,7 @@
 #'
 #' @importFrom rlang is_empty
 #' @export
-new_mixtime <- function(x = NULL) {
+new_mixtime <- function(x = list()) {
   validate_x <- vapply(x, tsibble::index_valid, logical(1L))
 
   if (!all(validate_x)) {
