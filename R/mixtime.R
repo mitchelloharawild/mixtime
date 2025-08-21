@@ -8,7 +8,7 @@
 #' @importFrom rlang is_empty
 #' @export
 new_mixtime <- function(x = list()) {
-  validate_x <- vapply(x, tsibble::index_valid, logical(1L))
+  validate_x <- vapply(x, function(x) isTRUE(tsibble::index_valid(x)), logical(1L))
 
   if (!all(validate_x)) {
     stop("A mixtime must contain only valid time points")
