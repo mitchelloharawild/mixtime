@@ -4,12 +4,10 @@
 \alias{new_mixtime}
 \title{Create a new mixtime}
 \usage{
-new_mixtime(x = NULL)
+new_mixtime(x = list())
 }
 \arguments{
-\item{x}{The iterable value of the mixtime (for example, a value of 1 may indicate the first day).}
-
-\item{calendar}{The calendar structure over which the mixtime iterates. This can be created using \code{new_calendar()}.}
+\item{x}{The list of time values to become a mixtime.}
 }
 \description{
 A mixtime is a vector which describes a point in time. It uses a calendar
