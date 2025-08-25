@@ -45,7 +45,7 @@ index_valid.mixtime_year <- function(x) TRUE
 #' @export
 interval_pull.mixtime_year <- function(x) {
   tsibble::new_interval(
-    year = tsibble::gcd_interval(x)
+    year = tsibble::gcd_interval(vec_data(x))
   )
 }
 
