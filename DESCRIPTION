@@ -25,5 +25,6 @@ Imports:
     stringr,
     rlang,
     tsibble,
-    cli
+    cli,
+    S7
 RdMacros: lifecycle
