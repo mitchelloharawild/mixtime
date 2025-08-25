@@ -4,6 +4,26 @@ as.double.mixtime_gregorian <- function(x, ...) {
   as.double(vec_data(x))
 }
 
+#' @export
+Ops.mixtime_gregorian <- function(e1, e2) {
+  if(rlang::is_missing(e2)) {
+    stop("Unary operations on 'mixtime_gregorian' objects are not supported.", call. = FALSE)
+  }
+  is_mixtime_e1 <- inherits(e1, "mixtime_gregorian")
+  is_mixtime_e2 <- inherits(e2, "mixtime_gregorian")
+  if (is_mixtime_e1 && is_mixtime_e2) {
+    stop("Operations between two 'mixtime_gregorian' objects are not supported.", call. = FALSE)
+  }
+
+  if (is_mixtime_e1) {
+    vec_data(e1) <- do.call(.Generic, list(as.double(e1), e2))
+    return(e1)
+  } else {
+    vec_data(e2) <- do.call(.Generic, list(e1, as.double(e2)))
+    return(e2)
+  }
+}
+
 #' Represent years
 #'
 #' Create or coerce using `year()`
