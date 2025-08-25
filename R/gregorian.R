@@ -1,3 +1,9 @@
+#' @method as.double mixtime_gregorian
+#' @export
+as.double.mixtime_gregorian <- function(x, ...) {
+  as.double(vec_data(x))
+}
+
 #' Represent years
 #'
 #' Create or coerce using `year()`
@@ -15,7 +21,7 @@ year <- function(x, ...){
 #' @export
 new_year <- function(x) {
   x <- vec_cast(x, integer())
-  vctrs::new_vctr(x, class = "mixtime_year")
+  vctrs::new_vctr(x, class = c("mixtime_year", "mixtime_gregorian"))
 }
 
 #' @export
@@ -60,12 +66,12 @@ yearquarter <- function(x, ...){
 #' @export
 new_yearquarter <- function(x) {
   x <- vec_cast(x, integer())
-  vctrs::new_vctr(x, class = "mixtime_yearquarter")
+  vctrs::new_vctr(x, class = c("mixtime_yearquarter", "mixtime_gregorian"))
 }
 
 #' @export
-yearquarter.numeric <- function(x, ...) {
-  mixtime(new_yearquarter(x))
+yearquarter.numeric <- function(x, ..., tz = "UTC") {
+  mixtime(new_yearquarter(x, tz = tz))
 }
 
 #' @export
@@ -118,7 +124,7 @@ yearmonth <- function(x, ...){
 #' @export
 new_yearmonth <- function(x) {
   x <- vec_cast(x, integer())
-  vctrs::new_vctr(x, class = "mixtime_yearmonth")
+  vctrs::new_vctr(x, class = c("mixtime_yearmonth", "mixtime_gregorian"))
 }
 
 #' @export
@@ -141,7 +147,12 @@ yearmonth.POSIXt <- yearmonth.Date
 #' @export
 yearmonth.default <- function(x, ...) {
   yearmonth(as.Date(x), ...)
+
+  # continuous_time(granules = list(tu_year(1L)), chronon = tu_month(1L))))
 }
+
+# 1970-01-01
+# yearmonthday <- continuous_time(granules = list(tu_year(1L), tu_month(1L)), chronon = tu_day(1L))
 
 #' @export
 format.mixtime_yearmonth <- function(x, ...) {
@@ -176,7 +187,7 @@ yearweek <- function(x, ...){
 #' @export
 new_yearweek <- function(x) {
   x <- vec_cast(x, integer())
-  vctrs::new_vctr(x, class = "mixtime_yearweek")
+  vctrs::new_vctr(x, class = c("mixtime_yearweek", "mixtime_gregorian"))
 }
 
 #' @export
