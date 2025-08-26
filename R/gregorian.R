@@ -12,16 +12,19 @@ Ops.mixtime_gregorian <- function(e1, e2) {
   is_mixtime_e1 <- inherits(e1, "mixtime_gregorian")
   is_mixtime_e2 <- inherits(e2, "mixtime_gregorian")
   if (is_mixtime_e1 && is_mixtime_e2) {
-    stop("Operations between two 'mixtime_gregorian' objects are not supported.", call. = FALSE)
+    # stop("Operations between two 'mixtime_gregorian' objects are not supported.", call. = FALSE)
+    # Temporarily allowable for ggtime development, to be formalised as `<duration>` methods later
+    return(do.call(.Generic, list(as.double(e1), as.double(e2))))
   }
 
   if (is_mixtime_e1) {
-    vec_data(e1) <- do.call(.Generic, list(as.double(e1), e2))
-    return(e1)
+    out <- do.call(.Generic, list(as.double(e1), e2))
+    attributes(out) <- attributes(e1)
   } else {
-    vec_data(e2) <- do.call(.Generic, list(e1, as.double(e2)))
-    return(e2)
+    out <- do.call(.Generic, list(e1, as.double(e2)))
+    attributes(out) <- attributes(e2)
   }
+  out
 }
 
 #' Represent years
@@ -40,7 +43,7 @@ year <- function(x, ...){
 
 #' @export
 new_year <- function(x) {
-  x <- vec_cast(x, integer())
+  
   vctrs::new_vctr(x, class = c("mixtime_year", "mixtime_gregorian"))
 }
 
@@ -85,7 +88,6 @@ yearquarter <- function(x, ...){
 
 #' @export
 new_yearquarter <- function(x) {
-  x <- vec_cast(x, integer())
   vctrs::new_vctr(x, class = c("mixtime_yearquarter", "mixtime_gregorian"))
 }
 
@@ -143,7 +145,7 @@ yearmonth <- function(x, ...){
 
 #' @export
 new_yearmonth <- function(x) {
-  x <- vec_cast(x, integer())
+  
   vctrs::new_vctr(x, class = c("mixtime_yearmonth", "mixtime_gregorian"))
 }
 
@@ -206,7 +208,7 @@ yearweek <- function(x, ...){
 
 #' @export
 new_yearweek <- function(x) {
-  x <- vec_cast(x, integer())
+  
   vctrs::new_vctr(x, class = c("mixtime_yearweek", "mixtime_gregorian"))
 }
 
