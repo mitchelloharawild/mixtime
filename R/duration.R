@@ -14,7 +14,7 @@
 #' This is a low-level constructor function that creates duration objects.
 #'
 #' @export
-#' @rdname duration
+#' @name duration
 new_duration <- function(...) {
   vctrs::new_vctr(list2(...), class = "mt_duration")
 }
