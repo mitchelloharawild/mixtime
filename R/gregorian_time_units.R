@@ -45,24 +45,49 @@ tu_second <- S7::new_class("tu_second", parent = mt_unit)
 #' @export
 tu_millisecond <- S7::new_class("tu_millisecond", parent = mt_unit)
 
-#' Find the ratio between two time units
+#' Calendrical algebra for converting between time units
 #'
-#' This S7 generic function calculates the ratio between two time units,
-#' optionally at a specific time point.
+#' This S7 generic function defines the calendrical relationships between two 
+#' time units, and is the building block for defining calendars in mixtime. It
+#' calculates how many `x` time units fit into one `y` unit. Some cyclical
+#' granularities are context-dependent (such as the number of days in a month),
+#' and so an optional time point can be provided with `at`.
 #'
-#' @param x First time unit
-#' @param y Second time unit  
+#' @param x The primary time unit
+#' @param y The time unit to convert `x` into
 #' @param at Optional time point for context-dependent ratios
 #'
-#' @return Numeric ratio of x to y
+#' @return Numeric describing how many `x` time units fit into `y` at time `at`.
+#' 
+#' @details
+#' 
+#' The methods are dispatched based on the shortest path along defined methods.
+#' This allows for defining only the direct relationships between adjacent
+#' time units, and relying on graph traversal to find how to convert between
+#' more distant units. For example the number of seconds in an hour can be
+#' calculated from the number of seconds in a minute and then number of minutes
+#' in an hour.
+#' 
+#' If a method is defined for converting between time units of different 
+#' calendar systems (e.g., Gregorian calendar days to Chinese calendar days),
+#' then that method can be used to convert times at any granularity between the
+#' two systems.
 #' 
 #' @examples
-#' # Ratio of years to months
-#' time_unit_ratio(tu_year(1), tu_month(1))
+#' # There are 12 months in a year
+#' calendar_algebra(tu_year(1L), tu_month(1L))
 #' 
+#' # There are 7 days in a week
+#' calendar_algebra(tu_week(1L), tu_day(1L))
+#' 
+#' # There are 3600 seconds in an hour
+#' calendar_algebra(tu_hour(1L), tu_second(1L))
+#' 
+#' # There are 18 "2 months" in 3 years
+#' calendar_algebra(tu_year(3L), tu_month(2L))
 #'
 #' @export
-time_unit_ratio <- S7::new_generic("time_unit_ratio", c("x", "y"))
+calendar_algebra <- S7::new_generic("calendar_algebra", c("x", "y"))
 
 #' Default method for time unit ratio comparison
 #' 
@@ -70,22 +95,26 @@ time_unit_ratio <- S7::new_generic("time_unit_ratio", c("x", "y"))
 #' by swapping the arguments and taking the reciprocal.
 #'
 #' @export
-S7::method(time_unit_ratio, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
+S7::method(calendar_algebra, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
+  # Check if x and y are the same class
+  if (S7_class_id(x) == S7_class_id(y)) {
+    return(as.integer(x)/as.integer(y))
+  }
+
   # Try to find a method with arguments swapped
   # (This feels unsafe for finding exact matching of S7 dispatch.)
   
-  if (!is.null(y_env <- time_unit_ratio@methods[[S7_class_id(attr(y, "S7_class"))]])) {
-    if (S7_class_id(attr(x, "S7_class")) %in% names(y_env)) {
+  if (!is.null(y_env <- calendar_algebra@methods[[S7_class_id(y)]])) {
+    if (S7_class_id(x) %in% names(y_env)) {
       # Matching inverse method found, use it with inversion.
-      return(1/time_unit_ratio(y, x, at = at))
+      return(1/calendar_algebra(y, x, at = at))
     }
   }
   
   # No specific method defined between these classes
   # Attempt graph traversal to find a sequence of methods
-  path <- S7_graph_dispatch(time_unit_ratio, x, y)
+  path <- S7_graph_dispatch(calendar_algebra, x, y)
 
-  browser()
   path[[1]] <- x
   path[[length(path)]] <- y
   # Initialise intermediate classes with 1L
@@ -93,68 +122,79 @@ S7::method(time_unit_ratio, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
 
   result <- path[[1]]
   for (i in seq(2, length.out = length(path)-1)) {
-    ## QUESTION: Why does this not work with `generic` instead of `time_unit_ratio`? S7 bug?
+    ## QUESTION: Why does this not work with `generic` instead of `calendar_algebra`? S7 bug?
 
-    result <- time_unit_ratio(result, path[[i]])
+    result <- calendar_algebra(result, path[[i]])
     # Class the result with the next class in the path
     result <- attr(path[[i]], "S7_class")(as.integer(result))
   }
 
-  browser()
+  attributes(result) <- NULL
   result
 }
 
 
 #' @export
-S7::method(time_unit_ratio, list(tu_quarter, tu_year)) <- function(x, y, at = NULL) {
-  as.integer(y)*4*as.integer(x)
+S7::method(calendar_algebra, list(tu_year, tu_quarter)) <- function(x, y, at = NULL) {
+  as.integer(x)*4*as.integer(y)
 }
 
 #' @export
-S7::method(time_unit_ratio, list(tu_month, tu_year)) <- function(x, y, at = NULL) {
-  as.integer(y)*12/as.integer(x)
+S7::method(calendar_algebra, list(tu_year, tu_month)) <- function(x, y, at = NULL) {
+  as.integer(x)*12/as.integer(y)
 }
 
 #' @export
-S7::method(time_unit_ratio, list(tu_day, tu_week)) <- function(x, y, at = NULL) {
-  as.integer(y)*7/as.integer(x)
+S7::method(calendar_algebra, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
+  # TODO: Handle leap years if `at` is provided
+  as.integer(x)*365/as.integer(y)
 }
 
 #' @export
-S7::method(time_unit_ratio, list(tu_hour, tu_day)) <- function(x, y, at = NULL) {
-  as.integer(y)*24/as.integer(x)
+S7::method(calendar_algebra, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
+  as.integer(x)*3/as.integer(y)
 }
 
 #' @export
-S7::method(time_unit_ratio, list(tu_minute, tu_hour)) <- function(x, y, at = NULL) {
-  as.integer(y)*60/as.integer(x)
+S7::method(calendar_algebra, list(tu_week, tu_day)) <- function(x, y, at = NULL) {
+  as.integer(x)*7/as.integer(y)
 }
 
 #' @export
-S7::method(time_unit_ratio, list(tu_second, tu_minute)) <- function(x, y, at = NULL) {
+S7::method(calendar_algebra, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
+  as.integer(x)*24/as.integer(y)
+}
+
+#' @export
+S7::method(calendar_algebra, list(tu_hour, tu_minute)) <- function(x, y, at = NULL) {
+  as.integer(x)*60/as.integer(y)
+}
+
+#' @export
+S7::method(calendar_algebra, list(tu_minute, tu_second)) <- function(x, y, at = NULL) {
   # if(at %in% .leap.seconds) 61 else 60
 
-  as.integer(y)*60/as.integer(x)
+  as.integer(x)*60/as.integer(y)
 }
 
 #' @export
-S7::method(time_unit_ratio, list(tu_millisecond, tu_second)) <- function(x, y, at = NULL) {
-  as.integer(y)*1000/as.integer(x)
+S7::method(calendar_algebra, list(tu_second, tu_millisecond)) <- function(x, y, at = NULL) {
+  as.integer(x)*1000/as.integer(y)
 }
 
 #' @export
-S7::method(time_unit_ratio, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
+S7::method(calendar_algebra, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
   # lubridate::days_in_month(at)
   stop("Not yet supported: Durations between days and months require a specific date context to calculate ratio")
 }
 
 ### S7 methods graph dispatch
-time_unit_ratio_pathway <- function(x, y) {
-  time_unit_ratio@dispatch_args
+calendar_algebra_pathway <- function(x, y) {
+  calendar_algebra@dispatch_args
 
-  S7:::methods_rec(time_unit_ratio@methods, character())
+  S7:::methods_rec(calendar_algebra@methods, character())
 
-  time_unit_ratio@methods$`mixtime::mt_unit`$`mixtime::mt_unit`
+  calendar_algebra@methods$`mixtime::mt_unit`$`mixtime::mt_unit`
   
-  names(time_unit_ratio@methods)
+  names(calendar_algebra@methods)
 }

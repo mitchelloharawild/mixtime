@@ -32,7 +32,12 @@ S7_graph_dispatch <- function(generic, start, end) {
   classes[int_path]
 }
 
-S7_class_id <- function(x) paste(x@package, x@name, sep = "::")
+S7_class_id <- function(x) {
+  if(inherits(x, "S7_object") && !inherits(x, "S7_class")) {
+    x <- attr(x, "S7_class")
+  }
+  paste(x@package, x@name, sep = "::")
+}
 
 traverse_methods <- function(x) {
   if (!is.environment(x)) {
