@@ -22,7 +22,6 @@ Suggests:
 Imports: 
     lifecycle,
     vctrs,
-    stringr,
     rlang,
     tsibble,
     cli,
