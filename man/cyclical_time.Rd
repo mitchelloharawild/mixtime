@@ -4,14 +4,12 @@
 \alias{cyclical_time}
 \title{Cyclical time representation}
 \usage{
-cyclical_time(chronon, cycle, granules = list())
+cyclical_time(chronon, cycle)
 }
 \arguments{
 \item{chronon}{A time unit object representing the chronon (e.g., \code{tu_month(1L)})}
 
 \item{cycle}{A time unit object representing the cycle (e.g., \code{tu_year(1L)})}
-
-\item{granules}{An optional list of time unit objects used in the display (e.g., \code{list(tu_quarter(1L))})}
 }
 \value{
 An function used to create cyclical time points.

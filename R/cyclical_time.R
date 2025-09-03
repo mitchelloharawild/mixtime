@@ -9,7 +9,6 @@
 #' 
 #' @param chronon A time unit object representing the chronon (e.g., `tu_month(1L)`)
 #' @param cycle A time unit object representing the cycle (e.g., `tu_year(1L)`)
-#' @param granules An optional list of time unit objects used in the display (e.g., `list(tu_quarter(1L))`)
 #' 
 #' @return An function used to create cyclical time points.
 #' 
@@ -21,10 +20,11 @@
 #' month_of_year <- cyclical_time(tu_month(1L), tu_year(1L))
 #' month_of_year(Sys.Date())
 #' 
-cyclical_time <- function(chronon, cycle, granules = list()) {
-  if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
-    stop("All elements in granules must be time unit objects", call. = FALSE)
-  }
+#' @export
+cyclical_time <- function(chronon, cycle) {
+  # if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
+  #   stop("All elements in granules must be time unit objects", call. = FALSE)
+  # }
   
   if (!inherits(chronon, "mixtime::mt_unit")) {
     stop("`chronon` must be a time unit object", call. = FALSE)
@@ -49,7 +49,16 @@ cyclical_time <- function(chronon, cycle, granules = list()) {
     vctrs::new_vctr(
       .data, 
       class = c("mt_cyclical", "mt_time"),
-      tz = tz, granules = granules, chronon = chronon, cycle = cycle
+      tz = tz, chronon = chronon, cycle = cycle
     )
   }
+}
+
+#' @export
+format.mt_cyclical <- function(x, ...) {
+  chronon <- attr(x, "chronon")
+  cycle <- attr(x, "cycle")
+  tz <- attr(x, "tz")
+
+  cyclical_labels(chronon, cycle, vec_data(x))
 }
