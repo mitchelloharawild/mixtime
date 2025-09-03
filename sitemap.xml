@@ -4,9 +4,15 @@
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/as_mixtime.html</loc></url>
+<url><loc>/reference/calendar_algebra.html</loc></url>
+<url><loc>/reference/continuous_time.html</loc></url>
+<url><loc>/reference/cyclical_time.html</loc></url>
+<url><loc>/reference/duration.html</loc></url>
+<url><loc>/reference/gregorian_time_units.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/is_mixtime.html</loc></url>
 <url><loc>/reference/mixtime-package.html</loc></url>
+<url><loc>/reference/mt_unit.html</loc></url>
 <url><loc>/reference/new_mixtime.html</loc></url>
 <url><loc>/reference/year.html</loc></url>
 <url><loc>/reference/yearmonth.html</loc></url>
