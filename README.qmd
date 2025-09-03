@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# mixtime <img src="man/figures/logo.svg" align="right" height="139" alt="" />
+# mixtime <a href="https://pkg.mitchelloharawild.com/mixtime/"><img src="man/figures/logo.svg" align="right" height="139" alt="mixtime website" /></a>
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
@@ -63,11 +63,6 @@ yearquarter(0:3) - yearquarter(0)
 
 # Different temporal granularities can be combined:
 c(yearquarter(0:3), yearmonth(0:11))
-```
-Sequences of mixtimes.
-
-```{r sequence}
-seq(yearmonth(0), yearmonth(10), by = 1)
 ```
 
 Integration with tsibble.
