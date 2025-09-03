@@ -15,5 +15,12 @@
 #' # Labels for days in a week
 #' cyclical_labels(tu_day(1L), tu_week(1L), 1:7)
 #' 
+#' # Labels for weeks in a year, defaulted from time_unit_abbr()
+#' cyclical_labels(tu_week(1L), tu_year(1L), 1:52)
+#' 
 #' @export
 cyclical_labels <- S7::new_generic("cyclical_labels", c("granule", "cycle"))
+
+method(cyclical_labels, list(mt_unit, mt_unit)) <- function(granule, cycle, i) {
+  paste0(time_unit_abbr(granule), i)
+}

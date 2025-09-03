@@ -25,4 +25,7 @@ cyclical_labels(tu_month(1L), tu_year(1L), 1:12)
 # Labels for days in a week
 cyclical_labels(tu_day(1L), tu_week(1L), 1:7)
 
+# Labels for weeks in a year, defaulted from time_unit_abbr()
+cyclical_labels(tu_week(1L), tu_year(1L), 1:52)
+
 }
