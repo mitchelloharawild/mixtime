@@ -60,7 +60,7 @@ granules form a cyclical time point (e.g. day of the week).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cyclical_time</span><span class="op">(</span><span class="va">chronon</span>, <span class="va">cycle</span>, granules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cyclical_time</span><span class="op">(</span><span class="va">chronon</span>, <span class="va">cycle</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -74,10 +74,6 @@ granules form a cyclical time point (e.g. day of the week).</p>
 <dt id="arg-cycle">cycle<a class="anchor" aria-label="anchor" href="#arg-cycle"></a></dt>
 <dd><p>A time unit object representing the cycle (e.g., <code>tu_year(1L)</code>)</p></dd>
 
-
-<dt id="arg-granules">granules<a class="anchor" aria-label="anchor" href="#arg-granules"></a></dt>
-<dd><p>An optional list of time unit objects used in the display (e.g., <code>list(tu_quarter(1L))</code>)</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -88,14 +84,13 @@ granules form a cyclical time point (e.g. day of the week).</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">day_of_week</span> <span class="op">&lt;-</span> <span class="fu">cyclical_time</span><span class="op">(</span><span class="fu"><a href="gregorian_time_units.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="gregorian_time_units.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in cyclical_time(tu_day(1L), tu_week(1L)):</span> could not find function "cyclical_time"</span>
 <span class="r-in"><span><span class="fu">day_of_week</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in day_of_week(Sys.Date()):</span> could not find function "day_of_week"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mt_cyclical[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Wed</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">month_of_year</span> <span class="op">&lt;-</span> <span class="fu">cyclical_time</span><span class="op">(</span><span class="fu"><a href="gregorian_time_units.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="gregorian_time_units.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in cyclical_time(tu_month(1L), tu_year(1L)):</span> could not find function "cyclical_time"</span>
 <span class="r-in"><span><span class="fu">month_of_year</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in month_of_year(Sys.Date()):</span> could not find function "month_of_year"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `method(calendar_algebra, list(mixtime::tu_day, mixtime::tu_month))`(x = structure(1L, class = c("mixtime::tu_day", "mixtime::mt_unit", "integer", "S7_object"), S7_class = structure(function (.data = integer(0)) S7::new_object(mt_unit(.data = .data)), name = "tu_day", parent = structure(function (.data = integer(0)) S7::new_object(integer(.data = .data)), name = "mt_unit", parent = structure(list(    class = "integer", constructor_name = "integer", constructor = function (.data = integer(0))     .data, validator = function (object)     {        if (base_class(object) != name) {            sprintf("Underlying data must be &lt;%s&gt; not &lt;%s&gt;",                 name, base_class(object))        }    }), class = "S7_base_class"), package = "mixtime", properties = list(), abstract = FALSE, constructor = function (.data = integer(0)) S7::new_object(integer(.data = .data)), class = c("S7_class", "S7_object")), package = "mixtime", properties = list(), abstract = FALSE, constructor = function (.data = integer(0)) S7::new_object(mt_unit(.data = .data)), class = c("S7_class", "S7_object"))), y = structure(1L, class = c("mixtime::tu_month", "mixtime::mt_unit", "integer", "S7_object"), S7_class = structure(function (.data = integer(0)) S7::new_object(mt_unit(.data = .data)), name = "tu_month", parent = structure(function (.data = integer(0)) S7::new_object(integer(.data = .data)), name = "mt_unit", parent = structure(list(    class = "integer", constructor_name = "integer", constructor = function (.data = integer(0))     .data, validator = function (object)     {        if (base_class(object) != name) {            sprintf("Underlying data must be &lt;%s&gt; not &lt;%s&gt;",                 name, base_class(object))        }    }), class = "S7_base_class"), package = "mixtime", properties = list(), abstract = FALSE, constructor = function (.data = integer(0)) S7::new_object(integer(.data = .data)), class = c("S7_class", "S7_object")), package = "mixtime", properties = list(), abstract = FALSE, constructor = function (.data = integer(0)) S7::new_object(mt_unit(.data = .data)), class = c("S7_class", "S7_object"))), ...):</span> Not yet supported: Durations between days and months require a specific date context to calculate ratio</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
