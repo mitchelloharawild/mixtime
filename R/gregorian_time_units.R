@@ -99,13 +99,3 @@ S7::method(calendar_algebra, list(tu_day, tu_month)) <- function(x, y, at = NULL
   stop("Not yet supported: Durations between days and months require a specific date context to calculate ratio")
 }
 
-### S7 methods graph dispatch
-calendar_algebra_pathway <- function(x, y) {
-  calendar_algebra@dispatch_args
-
-  S7:::methods_rec(calendar_algebra@methods, character())
-
-  calendar_algebra@methods$`mixtime::mt_unit`$`mixtime::mt_unit`
-  
-  names(calendar_algebra@methods)
-}
