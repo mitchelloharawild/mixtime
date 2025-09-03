@@ -1,7 +1,3 @@
-#' Base S7 class for time units
-#'
-#' @export
-mt_unit <- S7::new_class("mt_unit", parent = S7::class_integer)
 # TODO: the parent class should ideally be double.
 # This requires a rework of the methods to not calculate the value as a ratio of non-1L durations...
 # But this could cause problems with identifying the appropriate range of time specified.
