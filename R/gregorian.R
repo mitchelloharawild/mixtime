@@ -92,8 +92,8 @@ new_yearquarter <- function(x) {
 }
 
 #' @export
-yearquarter.numeric <- function(x, ..., tz = "UTC") {
-  mixtime(new_yearquarter(x, tz = tz))
+yearquarter.numeric <- function(x, ...) {
+  mixtime(new_yearquarter(x))
 }
 
 #' @export
