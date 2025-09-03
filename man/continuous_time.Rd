@@ -4,15 +4,15 @@
 \alias{continuous_time}
 \title{Continuous time representation}
 \usage{
-continuous_time(granules = list(), chronon)
+continuous_time(chronon, granules = list())
 }
 \arguments{
-\item{granules}{A list of time unit objects representing the granules (e.g., \code{list(tu_year(1), tu_month(1))})}
-
 \item{chronon}{A time unit object representing the chronon (e.g., \code{tu_day(1)})}
+
+\item{granules}{A list of time unit objects representing the granules (e.g., \code{list(tu_year(1), tu_month(1))})}
 }
 \value{
-An S7 class used to create continuous time points.
+An function used to create continuous time points.
 }
 \description{
 \code{continuous_time()} creates a continuous time representation using specified
@@ -23,13 +23,13 @@ time unit (e.g., days, hours).
 \examples{
 
 # A yearmonth time representation with months as the chronon
-yw <- continuous_time(list(tu_year(1L)), tu_week(1L))
+yw <- continuous_time(tu_week(1L), list(tu_year(1L)))
 yw(Sys.Date())
 
-yqm <- continuous_time(list(tu_year(1L), tu_quarter(1L)), tu_month(1L))
-yqm(1234)
+yqm <- continuous_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
+yqm(1:100)
 
-yd <- continuous_time(list(tu_year(1L)), tu_day(1L))
+yd <- continuous_time(tu_day(1L), list(tu_year(1L)))
 yd(Sys.Date())
 
 }

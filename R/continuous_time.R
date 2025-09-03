@@ -13,21 +13,21 @@
 #' @param granules A list of time unit objects representing the granules (e.g., `list(tu_year(1), tu_month(1))`)
 #' @param chronon A time unit object representing the chronon (e.g., `tu_day(1)`)
 #' 
-#' @return An S7 class used to create continuous time points.
+#' @return An function used to create continuous time points.
 #' 
 #' @examples
 #' 
 #' # A yearmonth time representation with months as the chronon
-#' yw <- continuous_time(list(tu_year(1L)), tu_week(1L))
+#' yw <- continuous_time(tu_week(1L), list(tu_year(1L)))
 #' yw(Sys.Date())
 #' 
-#' yqm <- continuous_time(list(tu_year(1L), tu_quarter(1L)), tu_month(1L))
+#' yqm <- continuous_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
 #' yqm(1:100)
 #' 
-#' yd <- continuous_time(list(tu_year(1L)), tu_day(1L))
+#' yd <- continuous_time(tu_day(1L), list(tu_year(1L)))
 #' yd(Sys.Date())
 #' 
-continuous_time <- function(granules = list(), chronon) {
+continuous_time <- function(chronon, granules = list()) {
   if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
     stop("All elements in granules must be time unit objects", call. = FALSE)
   }
