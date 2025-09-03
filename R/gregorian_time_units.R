@@ -97,3 +97,14 @@ method(calendar_algebra, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
   stop("Not yet supported: Durations between days and months require a specific date context to calculate ratio")
 }
 
+### Cyclical labels for Gregorian time units
+#' @export
+method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {
+  month.abb[i]
+}
+
+#' @export
+method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i) {
+  # TODO: Add offset for different week starting days
+  format(as.Date(i - 4L), "%a")
+}
