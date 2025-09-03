@@ -7,6 +7,7 @@
 #' @importFrom lifecycle deprecate_soft
 #' @importFrom rlang abort warn inform
 #' @importFrom stringr str_glue
+#' @importFrom S7 method method<-
 #' @import vctrs
 ## usethis namespace: end
 NULL
