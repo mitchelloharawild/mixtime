@@ -41,6 +41,54 @@ tu_second <- S7::new_class("tu_second", parent = mt_unit)
 #' @export
 tu_millisecond <- S7::new_class("tu_millisecond", parent = mt_unit)
 
+### Time unit labels for Gregorian time units
+
+#' @export
+method(time_unit_full, tu_year) <- function(x) "year"
+#' @export
+method(time_unit_abbr, tu_year) <- function(x) "Y"
+
+#' @export
+method(time_unit_full, tu_quarter) <- function(x) "quarter"
+#' @export
+method(time_unit_abbr, tu_quarter) <- function(x) "Q"
+
+#' @export
+method(time_unit_full, tu_month) <- function(x) "month"
+#' @export
+method(time_unit_abbr, tu_month) <- function(x) "M"
+
+#' @export
+method(time_unit_full, tu_week) <- function(x) "week"
+#' @export
+method(time_unit_abbr, tu_week) <- function(x) "W"
+
+#' @export
+method(time_unit_full, tu_day) <- function(x) "day"
+#' @export
+method(time_unit_abbr, tu_day) <- function(x) "D"
+
+#' @export
+method(time_unit_full, tu_hour) <- function(x) "hour"
+#' @export
+method(time_unit_abbr, tu_hour) <- function(x) "h"
+
+#' @export
+method(time_unit_full, tu_minute) <- function(x) "minute"
+#' @export
+method(time_unit_abbr, tu_minute) <- function(x) "min"
+
+#' @export
+method(time_unit_full, tu_second) <- function(x) "second"
+#' @export
+method(time_unit_abbr, tu_second) <- function(x) "s"
+
+#' @export
+method(time_unit_full, tu_millisecond) <- function(x) "millisecond"
+#' @export
+method(time_unit_abbr, tu_millisecond) <- function(x) "ms"
+
+
 ### Calendar algebra methods for Gregorian time units
 
 #' @export
