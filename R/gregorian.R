@@ -43,7 +43,6 @@ year <- function(x, ...){
 
 #' @export
 new_year <- function(x) {
-  
   vctrs::new_vctr(x, class = c("mixtime_year", "mixtime_gregorian"))
 }
 

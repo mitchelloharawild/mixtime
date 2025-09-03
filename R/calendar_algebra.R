@@ -46,9 +46,9 @@ calendar_algebra <- S7::new_generic("calendar_algebra", c("x", "y"))
 #' 
 #' When no specific method is defined, attempts to find the inverse ratio
 #' by swapping the arguments and taking the reciprocal.
-#'
-#' @export
-S7::method(calendar_algebra, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
+#' 
+#' @noRd
+method(calendar_algebra, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {
     return(as.integer(x)/as.integer(y))
