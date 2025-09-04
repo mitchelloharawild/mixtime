@@ -66,10 +66,12 @@ continuous_time <- function(chronon, granules = list()) {
       cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
     }
 
-    vctrs::new_vctr(
-      .data, 
-      class = c("mt_continuous", "mt_time"),
-      tz = tz, granules = granules, chronon = chronon
+    mixtime(
+      vctrs::new_vctr(
+        .data, 
+        class = c("mt_continuous", "mt_time"),
+        tz = tz, granules = granules, chronon = chronon
+      )
     )
   }
 }
