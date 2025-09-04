@@ -117,13 +117,9 @@ interval_pull.mt_continuous <- function(x) {
   tsbl_unit <- vec_match(S7_class_id(chronon), tsbl_interval_units)
 
   interval <- list(vec_data(chronon))
-  names(interval) <- tsbl_unit
+  names(interval) <- names(tsbl_interval_units)[tsbl_unit]
 
-  inject(tsibble::new_interval())
-
-  tsibble::new_interval(
-    week = tsibble::gcd_interval(vec_data(x))
-  )
+  inject(tsibble::new_interval(!!!interval))
 }
 
 tsbl_interval_units <- c(
