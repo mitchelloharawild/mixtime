@@ -22,10 +22,6 @@ time unit (e.g., days, hours).
 }
 \examples{
 
-# A year-week time representation with weeks as the chronon
-yw <- continuous_time(tu_week(1L), list(tu_year(1L)))
-yw(Sys.Date())
-
 # A year-month time representation with months as the chronon
 ym <- continuous_time(tu_month(1L), list(tu_year(1L)))
 ym(Sys.Date())
@@ -38,5 +34,8 @@ yqm(Sys.Date())
 # A year-day time representation with days as the chronon
 yd <- continuous_time(tu_day(1L), list(tu_year(1L)))
 yd(Sys.Date())
+
+ymd_h <- continuous_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
+ymd_h(Sys.time())
 
 }
