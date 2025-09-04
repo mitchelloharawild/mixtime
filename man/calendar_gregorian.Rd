@@ -4,7 +4,6 @@
 \alias{tu_year}
 \alias{tu_quarter}
 \alias{tu_month}
-\alias{tu_week}
 \alias{tu_day}
 \alias{tu_hour}
 \alias{tu_minute}
@@ -17,8 +16,6 @@ tu_year(.data = integer(0))
 tu_quarter(.data = integer(0))
 
 tu_month(.data = integer(0))
-
-tu_week(.data = integer(0))
 
 tu_day(.data = integer(0))
 

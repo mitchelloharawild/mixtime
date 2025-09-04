@@ -25,12 +25,6 @@ S7::method(time_unit_abbr, tu_month) <- function(x) "M"
 
 #' @rdname calendar_gregorian
 #' @export
-tu_week <- S7::new_class("tu_week", parent = mt_unit)
-S7::method(time_unit_full, tu_week) <- function(x) "week"
-S7::method(time_unit_abbr, tu_week) <- function(x) "W"
-
-#' @rdname calendar_gregorian
-#' @export
 tu_day <- S7::new_class("tu_day", parent = mt_unit)
 S7::method(time_unit_full, tu_day) <- function(x) "day"
 S7::method(time_unit_abbr, tu_day) <- function(x) "D"
@@ -74,9 +68,6 @@ S7::method(calendar_algebra, list(tu_year, tu_day)) <- function(x, y, at = NULL)
 }
 S7::method(calendar_algebra, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
   as.integer(x)*3/as.integer(y)
-}
-S7::method(calendar_algebra, list(tu_week, tu_day)) <- function(x, y, at = NULL) {
-  as.integer(x)*7/as.integer(y)
 }
 S7::method(calendar_algebra, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
   # TODO: Handle timezones if `at` is provided
@@ -137,8 +128,4 @@ S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
 ### Cyclical labels for Gregorian time units
 S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {
   month.abb[i]
-}
-S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i) {
-  # TODO: Add offset for different week starting days
-  format(as.Date(i-1L), "%a")
 }
