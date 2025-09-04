@@ -102,3 +102,36 @@ format.mt_continuous <- function(x, ...) {
   # For example, year-week-day would show 2023-W15-Wed for the 3rd day of the 15th week of 2023.
   inject(paste(!!!parts, sep = "-"))
 }
+
+
+#' @importFrom tsibble index_valid
+#' @export
+index_valid.mt_continuous <- function(x) TRUE
+
+#' @importFrom tsibble interval_pull
+#' @export
+interval_pull.mt_continuous <- function(x) {
+  chronon <- time_chronon(x)
+  tsbl_unit <- vec_match(S7_class_id(chronon), tsbl_interval_units)
+
+  interval <- list(vec_data(chronon))
+  names(interval) <- tsbl_unit
+
+  inject(tsibble::new_interval())
+
+  tsibble::new_interval(
+    week = tsibble::gcd_interval(vec_data(x))
+  )
+}
+
+tsbl_interval_units <- c(
+  "year" = "mixtime::tu_year",
+  "quarter" = "mixtime::tu_quarter",
+  "month" = "mixtime::tu_month",
+  "week" = "mixtime::tu_week",
+  "day" = "mixtime::tu_day",
+  "hour" = "mixtime::tu_hour",
+  "minute" = "mixtime::tu_minute",
+  "second" = "mixtime::tu_second",
+  "millisecond" = "mixtime::tu_millisecond"
+)
