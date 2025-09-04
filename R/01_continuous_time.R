@@ -56,7 +56,7 @@ continuous_time <- function(chronon, granules = list()) {
 
   function(.data, tz = "UTC") {
     # Cast from Date, POSIXct, etc.
-    if (!is.numeric(.data)) {
+    if (!is.numeric(.data) || !is.null(attributes(.data))) {
       # Drop the remainder, we only want the chronon here
       # TODO: Optionally preserve the remainder as fractional chronons
       .data <- chronon_cast(time_chronon(.data), chronon, vec_data(.data))$chronon
