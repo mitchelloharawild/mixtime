@@ -79,14 +79,16 @@ units, which is efficient for regular time units.</p>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An integer vector of chronons measured in the <code>to</code> time unit.</p>
-    </div>
+    <p>An list of two elements:</p><ul><li><p><code>chronon</code>: integer vector of chronons measured in the <code>to</code> time unit.</p></li>
+<li><p><code>remainder</code>: integer vector of the remainder (in <code>from</code> time unit) after
+converting to the <code>to</code> time unit.</p></li>
+</ul></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Convert day 14 since epoch into weeks since epoch</span></span></span>
-<span class="r-in"><span><span class="fu">chronon_cast</span><span class="op">(</span><span class="fu"><a href="gregorian_time_units.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="gregorian_time_units.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">14L</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in chronon_cast(tu_day(1L), tu_week(1L), 14L):</span> could not find function "chronon_cast"</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Convert day 16 since epoch into weeks since epoch (and remainder days)</span></span></span>
+<span class="r-in"><span><span class="fu">chronon_cast</span><span class="op">(</span><span class="fu"><a href="gregorian_time_units.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="gregorian_time_units.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">16L</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in chronon_cast(tu_day(1L), tu_week(1L), 16L):</span> could not find function "chronon_cast"</span>
 </code></pre></div>
     </div>
   </div>
