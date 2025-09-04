@@ -38,14 +38,14 @@ cyclical_time <- function(chronon, cycle) {
   function(.data, tz = "UTC") {
     # Cast to continuous time from Date, POSIXct, etc.
     if (!is.numeric(.data)) {
-      .data <- chronon_cast(time_chronon(.data), chronon, .data)$chronon
+      .data <- chronon_cast(time_chronon(.data), chronon, vec_data(.data))$chronon
     }
 
     # Reduce to cyclical time using modulo arithmetic
     .data <- .data%%calendar_algebra(cycle, chronon) + 1L
 
     if (!is.character(tz) || length(tz) != 1L) {
-      cli::cli_abort("{.tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
+      cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
     }
 
     vctrs::new_vctr(

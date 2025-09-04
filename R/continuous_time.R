@@ -59,11 +59,11 @@ continuous_time <- function(chronon, granules = list()) {
     if (!is.numeric(.data)) {
       # Drop the remainder, we only want the chronon here
       # TODO: Optionally preserve the remainder as fractional chronons
-      .data <- chronon_cast(time_chronon(.data), chronon, .data)$chronon
+      .data <- chronon_cast(time_chronon(.data), chronon, vec_data(.data))$chronon
     }
 
     if (!is.character(tz) || length(tz) != 1L) {
-      cli::cli_abort("{.tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
+      cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
     }
 
     vctrs::new_vctr(
