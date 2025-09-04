@@ -79,9 +79,11 @@ S7::method(calendar_algebra, list(tu_week, tu_day)) <- function(x, y, at = NULL)
   as.integer(x)*7/as.integer(y)
 }
 S7::method(calendar_algebra, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
+  # TODO: Handle timezones if `at` is provided
   as.integer(x)*24/as.integer(y)
 }
 S7::method(calendar_algebra, list(tu_hour, tu_minute)) <- function(x, y, at = NULL) {
+  # TODO: Handle timezones if `at` is provided
   as.integer(x)*60/as.integer(y)
 }
 S7::method(calendar_algebra, list(tu_minute, tu_second)) <- function(x, y, at = NULL) {
@@ -92,10 +94,34 @@ S7::method(calendar_algebra, list(tu_minute, tu_second)) <- function(x, y, at = 
 S7::method(calendar_algebra, list(tu_second, tu_millisecond)) <- function(x, y, at = NULL) {
   as.integer(x)*1000/as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
-  # lubridate::days_in_month(at)
-  stop("Not yet supported: Durations between days and months require a specific date context to calculate ratio")
+# S7::method(calendar_algebra, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
+#   # lubridate::days_in_month(at)
+#   stop("Not yet supported: Durations between days and months require a specific date context to calculate ratio")
+# }
+
+# S7::method(calendar_algebra, list(tu_day, tu_year)) <- function(x, y, at = NULL) {
+#   # lubridate::leap_year(at) ? 366 : 365
+#   stop("Not yet supported: Durations between days and years require a specific date context to calculate ratio")
+# }
+
+
+### Chronon casting between Gregorian time units
+S7::method(chronon_cast, list(tu_day, tu_month)) <- function(from, to, x) {
+  # Convert from days to month (essentially dropping the day component)
+
+  # TODO: should be swapped out to arithmetic on integer days since epoch
+  x <- as.POSIXlt(x)
+  ((x$year-70L)*12L + x$mon) / calendar_algebra(to, tu_month(1L))
 }
+
+S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
+  # Convert from days to year (essentially dropping the day component)
+
+  # TODO: should be swapped out to arithmetic on integer days since epoch
+  x <- as.POSIXlt(x)
+  (x$year-70L) / calendar_algebra(to, tu_year(1L))
+}
+
 
 ### Cyclical labels for Gregorian time units
 S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {

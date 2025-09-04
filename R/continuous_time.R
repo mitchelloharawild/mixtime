@@ -17,13 +17,20 @@
 #' 
 #' @examples
 #' 
-#' # A yearmonth time representation with months as the chronon
+#' # A year-week time representation with weeks as the chronon
 #' yw <- continuous_time(tu_week(1L), list(tu_year(1L)))
 #' yw(Sys.Date())
 #' 
+#' # A year-month time representation with months as the chronon
+#' ym <- continuous_time(tu_month(1L), list(tu_year(1L)))
+#' ym(Sys.Date())
+#' 
+#' # A year-quarter-month time representation with months as the chronon
 #' yqm <- continuous_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
 #' yqm(1:100)
+#' yqm(Sys.Date())
 #' 
+#' # A year-day time representation with days as the chronon
 #' yd <- continuous_time(tu_day(1L), list(tu_year(1L)))
 #' yd(Sys.Date())
 #' 
@@ -49,7 +56,9 @@ continuous_time <- function(chronon, granules = list()) {
 
   function(.data, tz = "UTC") {
     # Cast from Date, POSIXct, etc.
-    .data <- time_cast(.data, chronon)
+    if (!is.numeric(.data)) {
+      .data <- chronon_cast(time_chronon(.data), chronon, .data)
+    }
 
     if (!is.character(tz) || length(tz) != 1L) {
       cli::cli_abort("{.tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
@@ -74,6 +83,7 @@ format.mt_continuous <- function(x, ...) {
   parts <- rep(list(numeric(length(x))), n_units <- length(units))
   parts[[n_units]] <- vec_data(x)
   for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
+    # TODO: Rework for accuracy when irregular time units are involved
     ratio <- calendar_algebra(units[[i-1L]], units[[i]])
     parts[[i - 1L]] <- parts[[i]] %/% ratio
     parts[[i]] <- parts[[i]] %% ratio + 1L # (+1L to make 1-indexed for display)

@@ -24,6 +24,6 @@ units. The default method uses \code{calendar_algebra()} to cast between time
 units, which is efficient for regular time units.
 }
 \examples{
-#' # Convert 14 days into weeks
+# Convert day 14 since epoch into weeks since epoch
 chronon_cast(tu_day(1L), tu_week(1L), 14L)
 }
