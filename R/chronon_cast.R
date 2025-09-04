@@ -16,16 +16,36 @@
 #' @param to The time unit to convert `x` into (e.g., `tu_week(1L)`).
 #' @param x An integer vector of chronons measured in the `from` time unit.
 #' 
-#' @return An integer vector of chronons measured in the `to` time unit.
+#' @return An list of two elements:
+#' - `chronon`: integer vector of chronons measured in the `to` time unit.
+#' - `remainder`: integer vector of the remainder (in `from` time unit) after
+#'  converting to the `to` time unit.
 #' 
 #' @examples
-#' # Convert day 14 since epoch into weeks since epoch
-#' chronon_cast(tu_day(1L), tu_week(1L), 14L)
+#' # Convert day 16 since epoch into weeks since epoch (and remainder days)
+#' chronon_cast(tu_day(1L), tu_week(1L), 16L)
 chronon_cast <- S7::new_generic("chronon_cast", c("from", "to"))
 
 #' @export
 S7::method(chronon_cast, list(mt_unit, mt_unit)) <- function(from, to, x) {
-  # TODO: Apply graph dispatch to find shortest path between from and to
-  # (with fallback to calendar_algebra conversions)
-  as.integer(x) %/% calendar_algebra(to, from)
+  # No casting needed for identical time units
+  if (identical(from, to)) {
+    return(
+      list(
+        chronon = vec_data(x),
+        remainder = rep(1L, length(x))
+      )
+    )
+  }
+
+  # TODO: Apply graph dispatch to find shortest path between from and to using
+  # known conversions between time units (e.g. tu_day -> tu_month)
+
+  ## Fallback to calendar_algebra for regular time units
+  x <- as.integer(x)
+  divisor <- calendar_algebra(to, from)
+  list(
+    chronon = x %/% divisor,
+    remainder = x %% divisor + 1L
+  )
 }

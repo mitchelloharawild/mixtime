@@ -38,7 +38,7 @@ cyclical_time <- function(chronon, cycle) {
   function(.data, tz = "UTC") {
     # Cast to continuous time from Date, POSIXct, etc.
     if (!is.numeric(.data)) {
-      .data <- chronon_cast(time_chronon(.data), chronon, .data)
+      .data <- chronon_cast(time_chronon(.data), chronon, .data)$chronon
     }
 
     # Reduce to cyclical time using modulo arithmetic

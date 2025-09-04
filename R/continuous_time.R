@@ -57,7 +57,9 @@ continuous_time <- function(chronon, granules = list()) {
   function(.data, tz = "UTC") {
     # Cast from Date, POSIXct, etc.
     if (!is.numeric(.data)) {
-      .data <- chronon_cast(time_chronon(.data), chronon, .data)
+      # Drop the remainder, we only want the chronon here
+      # TODO: Optionally preserve the remainder as fractional chronons
+      .data <- chronon_cast(time_chronon(.data), chronon, .data)$chronon
     }
 
     if (!is.character(tz) || length(tz) != 1L) {
@@ -83,12 +85,12 @@ format.mt_continuous <- function(x, ...) {
   parts <- rep(list(numeric(length(x))), n_units <- length(units))
   parts[[n_units]] <- vec_data(x)
   for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
-    # TODO: Rework for accuracy when irregular time units are involved
-    ratio <- calendar_algebra(units[[i-1L]], units[[i]])
-    parts[[i - 1L]] <- parts[[i]] %/% ratio
-    parts[[i]] <- parts[[i]] %% ratio + 1L # (+1L to make 1-indexed for display)
+    mod <- chronon_cast(units[[i]], units[[i-1L]], parts[[i]])
+    parts[[i - 1L]] <- mod$chronon
+    parts[[i]] <- mod$remainder
   }
   # Add epoch offset to the largest granule
+  # TODO: Replace calendar_algebra for suppor of irregular time units
   parts[[1L]] <- parts[[1L]] + calendar_algebra(tu_year(1970L), units[[1L]])
 
   # Use cyclical labels for all but the largest granule
@@ -96,7 +98,7 @@ format.mt_continuous <- function(x, ...) {
     parts[[i]] <- cyclical_labels(units[[i]], units[[i-1L]], parts[[i]])
   }
 
-  inject(paste(!!!parts, sep = "-"))
   # The largest granule is displayed continuously, smaller units are displayed cyclically
   # For example, year-week-day would show 2023-W15-Wed for the 3rd day of the 15th week of 2023.
+  inject(paste(!!!parts, sep = "-"))
 }

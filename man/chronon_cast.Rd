@@ -14,7 +14,12 @@ chronon_cast(from, to, ...)
 \item{x}{An integer vector of chronons measured in the \code{from} time unit.}
 }
 \value{
-An integer vector of chronons measured in the \code{to} time unit.
+An list of two elements:
+\itemize{
+\item \code{chronon}: integer vector of chronons measured in the \code{to} time unit.
+\item \code{remainder}: integer vector of the remainder (in \code{from} time unit) after
+converting to the \code{to} time unit.
+}
 }
 \description{
 This function converts between chronons measured in different time units. It
@@ -24,6 +29,6 @@ units. The default method uses \code{calendar_algebra()} to cast between time
 units, which is efficient for regular time units.
 }
 \examples{
-# Convert day 14 since epoch into weeks since epoch
-chronon_cast(tu_day(1L), tu_week(1L), 14L)
+# Convert day 16 since epoch into weeks since epoch (and remainder days)
+chronon_cast(tu_day(1L), tu_week(1L), 16L)
 }

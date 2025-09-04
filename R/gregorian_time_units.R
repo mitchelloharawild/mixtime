@@ -107,19 +107,30 @@ S7::method(calendar_algebra, list(tu_second, tu_millisecond)) <- function(x, y, 
 
 ### Chronon casting between Gregorian time units
 S7::method(chronon_cast, list(tu_day, tu_month)) <- function(from, to, x) {
-  # Convert from days to month (essentially dropping the day component)
+  # Modulo arithmetic to convert from days to months
+  if (calendar_algebra(to, tu_month(1L)) != 1L) {
+    stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
+  }
 
   # TODO: should be swapped out to arithmetic on integer days since epoch
-  x <- as.POSIXlt(x)
-  ((x$year-70L)*12L + x$mon) / calendar_algebra(to, tu_month(1L))
+  x <- as.POSIXlt(as.Date(x))
+  list(
+    chronon = (x$year-70L)*12L + x$mon,
+    remainder = x$mday + 1L
+  )
 }
 
 S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
-  # Convert from days to year (essentially dropping the day component)
+  # Modulo arithmetic to convert from days to years
+  if (calendar_algebra(to, tu_year(1L)) != 1L) {
+    stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
+  }
 
-  # TODO: should be swapped out to arithmetic on integer days since epoch
-  x <- as.POSIXlt(x)
-  (x$year-70L) / calendar_algebra(to, tu_year(1L))
+  x <- as.POSIXlt(as.Date(x))
+  list(
+    chronon = x$year-70L,
+    remainder = x$yday + 1L
+  )
 }
 
 
