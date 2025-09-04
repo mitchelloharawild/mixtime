@@ -39,3 +39,20 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
   # TODO: Add offset for different week starting days
   format(as.Date(i-1L), "%a")
 }
+
+#' ISO 8601 year-week time representation
+#'
+#' Create or coerce using `yearweek()`.
+#'
+#' \lifecycle{experimental}
+#'
+#' @param .data Another object to be coerced into ISO 8601 year-weeks.
+#' @param ... Arguments for methods.
+#'
+#' @examples
+#' 
+#' yearweek(Sys.Date())
+#' yearweek(0:52)
+#' 
+#' @export
+yearweek <- continuous_time(granules = list(tu_year(1L)), chronon = tu_week(1L))

@@ -10,7 +10,7 @@ tu_week(.data = integer(0))
 ISO 8601 time classes
 }
 \examples{
-yw <- continuous_time(tu_week(1L), list(tu_weekyear(1L)))
+yw <- continuous_time(tu_week(1L), list(tu_year(1L)))
 yw(Sys.Date())
 
 
