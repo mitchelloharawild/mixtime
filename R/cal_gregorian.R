@@ -5,56 +5,56 @@
 
 #' Gregorian time unit classes
 #'
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_year <- S7::new_class("tu_year", parent = mt_unit)
 S7::method(time_unit_full, tu_year) <- function(x) "year"
 S7::method(time_unit_abbr, tu_year) <- function(x) "Y"
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_quarter <- S7::new_class("tu_quarter", parent = mt_unit)
 S7::method(time_unit_full, tu_quarter) <- function(x) "quarter"
 S7::method(time_unit_abbr, tu_quarter) <- function(x) "Q"
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_month <- S7::new_class("tu_month", parent = mt_unit)
 S7::method(time_unit_full, tu_month) <- function(x) "month"
 S7::method(time_unit_abbr, tu_month) <- function(x) "M"
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_week <- S7::new_class("tu_week", parent = mt_unit)
 S7::method(time_unit_full, tu_week) <- function(x) "week"
 S7::method(time_unit_abbr, tu_week) <- function(x) "W"
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_day <- S7::new_class("tu_day", parent = mt_unit)
 S7::method(time_unit_full, tu_day) <- function(x) "day"
 S7::method(time_unit_abbr, tu_day) <- function(x) "D"
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_hour <- S7::new_class("tu_hour", parent = mt_unit)
 S7::method(time_unit_full, tu_hour) <- function(x) "hour"
 S7::method(time_unit_abbr, tu_hour) <- function(x) "h"
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_minute <- S7::new_class("tu_minute", parent = mt_unit)
 S7::method(time_unit_full, tu_minute) <- function(x) "minute"
 S7::method(time_unit_abbr, tu_minute) <- function(x) "min"
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_second <- S7::new_class("tu_second", parent = mt_unit)
 S7::method(time_unit_full, tu_second) <- function(x) "second"
 S7::method(time_unit_abbr, tu_second) <- function(x) "s"
 
 
-#' @rdname gregorian_time_units
+#' @rdname calendar_gregorian
 #' @export
 tu_millisecond <- S7::new_class("tu_millisecond", parent = mt_unit)
 S7::method(time_unit_full, tu_millisecond) <- function(x) "millisecond"
