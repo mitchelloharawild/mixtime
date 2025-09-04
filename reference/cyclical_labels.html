@@ -42,7 +42,7 @@ between time units. These functions should return locale specific labels."><meta
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Friendly labels for cyclical relationships</h1>
-    <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/cyclical_labels.R" class="external-link"><code>R/cyclical_labels.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/01_cyclical_labels.R" class="external-link"><code>R/01_cyclical_labels.R</code></a></small>
     <div class="hidden name"><code>cyclical_labels.Rd</code></div>
     </div>
 
@@ -75,15 +75,15 @@ between time units. These functions should return locale specific labels.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Labels for months in a year</span></span></span>
-<span class="r-in"><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="fu"><a href="gregorian_time_units.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="gregorian_time_units.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Labels for days in a week</span></span></span>
-<span class="r-in"><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="fu"><a href="gregorian_time_units.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="gregorian_time_units.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Thu" "Fri" "Sat" "Sun" "Mon" "Tue" "Wed"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Labels for weeks in a year, defaulted from time_unit_abbr()</span></span></span>
-<span class="r-in"><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="fu"><a href="gregorian_time_units.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="gregorian_time_units.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">52</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">52</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "W1"  "W2"  "W3"  "W4"  "W5"  "W6"  "W7"  "W8"  "W9"  "W10" "W11" "W12"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] "W13" "W14" "W15" "W16" "W17" "W18" "W19" "W20" "W21" "W22" "W23" "W24"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [25] "W25" "W26" "W27" "W28" "W29" "W30" "W31" "W32" "W33" "W34" "W35" "W36"</span>
