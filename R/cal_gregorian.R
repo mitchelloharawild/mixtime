@@ -124,8 +124,45 @@ S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
   )
 }
 
-
 ### Cyclical labels for Gregorian time units
 S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {
   month.abb[i]
 }
+
+
+#' Gregorian continuous time representations
+#' 
+#' \lifecycle{experimental}
+#' 
+#' @param .data Another object to be coerced into the specified time.
+#' @param tz Timezone, defaults to "UTC".
+#' @param ... Arguments for methods.
+#' 
+#' @examples
+#' 
+#' year(Sys.Date())
+#' 
+#' @rdname gregorian-continuous
+year <- continuous_time(
+  chronon = tu_year(1L)
+)
+
+#' @examples
+#' 
+#' yearquarter(Sys.Date())
+#' 
+#' @rdname gregorian-continuous
+yearquarter <- continuous_time(
+  granules = list(tu_year(1L)),
+  chronon = tu_quarter(1L)
+)
+
+#' @examples
+#' 
+#' yearmonth(Sys.Date())
+#' 
+#' @rdname gregorian-continuous
+yearmonth <- continuous_time(
+  granules = list(tu_year(1L)),
+  chronon = tu_month(1L)
+)

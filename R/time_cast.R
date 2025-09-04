@@ -1,3 +1,6 @@
+# TODO: Consider reworking into a user-facing function that inherits granules 
+# from `x` rebased onto chronon `to`.
+
 time_cast <- function(x, to, ...) {
   UseMethod("time_cast")
 }
