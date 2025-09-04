@@ -129,5 +129,5 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 }
 S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i) {
   # TODO: Add offset for different week starting days
-  format(as.Date(i), "%a")
+  format(as.Date(i-1L), "%a")
 }
