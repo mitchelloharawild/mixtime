@@ -7,7 +7,7 @@
 time_chronon(x, ...)
 }
 \arguments{
-\item{x}{A time object (e.g., \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXct}, \code{\link[=continuous_time]{continuous_time()}}, etc.)}
+\item{x}{A time object (e.g., \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXct}, \code{\link[=linear_time]{linear_time()}}, etc.)}
 }
 \value{
 A time unit object representing the chronon (e.g., \code{tu_day(1L)})
@@ -25,5 +25,5 @@ time_chronon(Sys.Date())
 time_chronon(Sys.time())
 
 # The chronon of a continuous time year and month is 1 month
-time_chronon(continuous_time(tu_month(1L), list(tu_year(1L)))(Sys.Date()))
+time_chronon(linear_time(tu_month(1L), list(tu_year(1L)))(Sys.Date()))
 }

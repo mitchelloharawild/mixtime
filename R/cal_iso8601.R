@@ -1,7 +1,7 @@
 #' ISO 8601 time classes
 #' 
 #' @examples
-#' yw <- continuous_time(tu_week(1L), list(tu_year(1L)))
+#' yw <- linear_time(tu_week(1L), list(tu_year(1L)))
 #' yw(Sys.Date())
 #' 
 #' 
@@ -55,4 +55,4 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
 #' yearweek(0:52)
 #' 
 #' @export
-yearweek <- continuous_time(granules = list(tu_year(1L)), chronon = tu_week(1L))
+yearweek <- linear_time(granules = list(tu_year(1L)), chronon = tu_week(1L))

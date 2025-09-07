@@ -3,9 +3,9 @@
 # #' @export
 # mt_time <- S7::new_class("mt_time", parent = S7::class_integer)
 
-#' Continuous time representation
+#' Linear time representation
 #' 
-#' `continuous_time()` creates a continuous time representation using specified
+#' `linear_time()` creates a linear time representation using specified
 #' granules and a chronon. Granules are larger time units that define the structure
 #' of time (e.g., years, months), while the chronon is the smallest indivisible
 #' time unit (e.g., days, hours).
@@ -18,22 +18,22 @@
 #' @examples
 #' 
 #' # A year-month time representation with months as the chronon
-#' ym <- continuous_time(tu_month(1L), list(tu_year(1L)))
+#' ym <- linear_time(tu_month(1L), list(tu_year(1L)))
 #' ym(Sys.Date())
 #' 
 #' # A year-quarter-month time representation with months as the chronon
-#' yqm <- continuous_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
+#' yqm <- linear_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
 #' yqm(1:100)
 #' yqm(Sys.Date())
 #' 
 #' # A year-day time representation with days as the chronon
-#' yd <- continuous_time(tu_day(1L), list(tu_year(1L)))
+#' yd <- linear_time(tu_day(1L), list(tu_year(1L)))
 #' yd(Sys.Date())
 #' 
-#' ymd_h <- continuous_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
+#' ymd_h <- linear_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
 #' ymd_h(Sys.time())
 #' 
-continuous_time <- function(chronon, granules = list()) {
+linear_time <- function(chronon, granules = list()) {
   if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
     stop("All elements in granules must be time unit objects", call. = FALSE)
   }
@@ -46,7 +46,7 @@ continuous_time <- function(chronon, granules = list()) {
 
   # It is unclear to me how S7 can store granules and chronon in attributes
   # S7::new_class(
-  #   "mt_continuous", parent = mt_time,
+  #   "mt_linear", parent = mt_time,
   #   properties = list(
   #     .data = S7::class_integer,
   #     tz = S7::class_character
@@ -68,7 +68,7 @@ continuous_time <- function(chronon, granules = list()) {
     mixtime(
       vctrs::new_vctr(
         .data, 
-        class = c("mt_continuous", "mt_time"),
+        class = c("mt_linear", "mt_time"),
         tz = tz, granules = granules, chronon = chronon
       )
     )
@@ -77,7 +77,7 @@ continuous_time <- function(chronon, granules = list()) {
 
 #' @importFrom rlang inject
 #' @export
-format.mt_continuous <- function(x, ...) {
+format.mt_linear <- function(x, ...) {
   # Cascading formatting based on granules and chronon
   units <- c(
     attr(x, "granules"),
@@ -107,11 +107,11 @@ format.mt_continuous <- function(x, ...) {
 
 #' @importFrom tsibble index_valid
 #' @export
-index_valid.mt_continuous <- function(x) TRUE
+index_valid.mt_linear <- function(x) TRUE
 
 #' @importFrom tsibble interval_pull
 #' @export
-interval_pull.mt_continuous <- function(x) {
+interval_pull.mt_linear <- function(x) {
   chronon <- time_chronon(x)
   tsbl_unit <- vec_match(S7_class_id(chronon), tsbl_interval_units)
 
@@ -134,16 +134,16 @@ tsbl_interval_units <- c(
 )
 
 #' @importFrom vctrs vec_arith
-#' @method vec_arith mt_continuous
+#' @method vec_arith mt_linear
 #' @export
-vec_arith.mt_continuous <- function(op, x, y, ...) {
-  UseMethod("vec_arith.mt_continuous", y)
+vec_arith.mt_linear <- function(op, x, y, ...) {
+  UseMethod("vec_arith.mt_linear", y)
 }
 
 #' @importFrom vctrs vec_arith_base
-#' @method vec_arith.mt_continuous integer
+#' @method vec_arith.mt_linear integer
 #' @export
-vec_arith.mt_continuous.integer <- function(op, x, y, ...) {
+vec_arith.mt_linear.integer <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
     stop("Only integer addition and subtraction supported for continuous time", call. = FALSE)
   }

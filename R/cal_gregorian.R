@@ -144,7 +144,7 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 #' 
 #' @rdname gregorian-continuous
 #' @export
-year <- continuous_time(
+year <- linear_time(
   chronon = tu_year(1L)
 )
 
@@ -154,7 +154,7 @@ year <- continuous_time(
 #' 
 #' @rdname gregorian-continuous
 #' @export
-yearquarter <- continuous_time(
+yearquarter <- linear_time(
   granules = list(tu_year(1L)),
   chronon = tu_quarter(1L)
 )
@@ -165,7 +165,7 @@ yearquarter <- continuous_time(
 #' 
 #' @rdname gregorian-continuous
 #' @export
-yearmonth <- continuous_time(
+yearmonth <- linear_time(
   granules = list(tu_year(1L)),
   chronon = tu_month(1L)
 )
