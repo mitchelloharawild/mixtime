@@ -60,7 +60,7 @@ time object, such as continuous time or cyclical time representations.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A time object (e.g., <a href="https://rdrr.io/r/base/Dates.html" class="external-link">base::Date</a>, <a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">base::POSIXct</a>, <code><a href="continuous_time.html">continuous_time()</a></code>, etc.)</p></dd>
+<dd><p>A time object (e.g., <a href="https://rdrr.io/r/base/Dates.html" class="external-link">base::Date</a>, <a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">base::POSIXct</a>, <code><a href="linear_time.html">linear_time()</a></code>, etc.)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -80,8 +80,8 @@ time object, such as continuous time or cyclical time representations.</p>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in time_chronon(Sys.time()):</span> could not find function "time_chronon"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The chronon of a continuous time year and month is 1 month</span></span></span>
-<span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="continuous_time.html">continuous_time</a></span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in time_chronon(continuous_time(tu_month(1L), list(tu_year(1L)))(Sys.Date())):</span> could not find function "time_chronon"</span>
+<span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="linear_time.html">linear_time</a></span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in time_chronon(linear_time(tu_month(1L), list(tu_year(1L)))(Sys.Date())):</span> could not find function "time_chronon"</span>
 </code></pre></div>
     </div>
   </div>

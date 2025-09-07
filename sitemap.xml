@@ -8,13 +8,13 @@
 <url><loc>/reference/calendar_gregorian.html</loc></url>
 <url><loc>/reference/calendar_iso8601.html</loc></url>
 <url><loc>/reference/chronon_cast.html</loc></url>
-<url><loc>/reference/continuous_time.html</loc></url>
 <url><loc>/reference/cyclical_labels.html</loc></url>
 <url><loc>/reference/cyclical_time.html</loc></url>
 <url><loc>/reference/duration.html</loc></url>
 <url><loc>/reference/gregorian-continuous.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/is_mixtime.html</loc></url>
+<url><loc>/reference/linear_time.html</loc></url>
 <url><loc>/reference/mixtime-package.html</loc></url>
 <url><loc>/reference/mt_unit.html</loc></url>
 <url><loc>/reference/new_mixtime.html</loc></url>
