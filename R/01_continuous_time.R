@@ -132,3 +132,20 @@ tsbl_interval_units <- c(
   "second" = "mixtime::tu_second",
   "millisecond" = "mixtime::tu_millisecond"
 )
+
+#' @importFrom vctrs vec_arith
+#' @method vec_arith mt_continuous
+#' @export
+vec_arith.mt_continuous <- function(op, x, y, ...) {
+  UseMethod("vec_arith.mt_continuous", y)
+}
+
+#' @importFrom vctrs vec_arith_base
+#' @method vec_arith.mt_continuous integer
+#' @export
+vec_arith.mt_continuous.integer <- function(op, x, y, ...) {
+  if (!op %in% c("+", "-")) {
+    stop("Only integer addition and subtraction supported for continuous time", call. = FALSE)
+  }
+  vec_restore(vec_arith_base(op, x, y, ...), x)
+}

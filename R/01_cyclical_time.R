@@ -64,3 +64,21 @@ format.mt_cyclical <- function(x, ...) {
 
   cyclical_labels(chronon, cycle, vec_data(x))
 }
+
+#' @importFrom vctrs vec_arith
+#' @method vec_arith mt_cyclical
+#' @export
+vec_arith.mt_cyclical <- function(op, x, y, ...) {
+  UseMethod("vec_arith.mt_cyclical", y)
+}
+
+#' @importFrom vctrs vec_arith_base
+#' @method vec_arith.mt_cyclical integer
+#' @export
+vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
+  if (!op %in% c("+", "-")) {
+    stop("Only integer addition and subtraction supported for cyclical time", call. = FALSE)
+  }
+  period <- calendar_algebra(attr(x, "cycle"), attr(x, "chronon"))
+  vec_restore((vec_arith_base(op, vec_data(x), y, ...) - 1L) %% period + 1L, x)
+}
