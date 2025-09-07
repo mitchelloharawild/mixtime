@@ -78,6 +78,12 @@ linear_time <- function(chronon, granules = list()) {
 #' @importFrom rlang inject
 #' @export
 format.mt_linear <- function(x, ...) {
+    as.character(x)
+}
+
+#' @method vec_cast.character mt_linear
+#' @export
+vec_cast.character.mt_linear <- function(x, to, ...) {
   # Cascading formatting based on granules and chronon
   units <- c(
     attr(x, "granules"),

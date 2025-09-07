@@ -58,6 +58,12 @@ cyclical_time <- function(chronon, cycle) {
 
 #' @export
 format.mt_cyclical <- function(x, ...) {
+    as.character(x)
+}
+
+#' @method vec_cast.character mt_cyclical
+#' @export
+vec_cast.character.mt_cyclical <- function(x, to, ...) {
   chronon <- attr(x, "chronon")
   cycle <- attr(x, "cycle")
   tz <- attr(x, "tz")
