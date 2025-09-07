@@ -71,6 +71,18 @@ vec_cast.character.mt_cyclical <- function(x, to, ...) {
   cyclical_labels(chronon, cycle, vec_data(x))
 }
 
+#' @method vec_cast.integer mt_cyclical
+#' @export
+vec_cast.integer.mt_cyclical <- function(x, to, ...) {
+  vec_cast(vec_data(x), integer())
+}
+
+#' @method vec_cast.double mt_cyclical
+#' @export
+vec_cast.double.mt_cyclical <- function(x, to, ...) {
+  vec_cast(vec_data(x), double())
+}
+
 #' @importFrom vctrs vec_arith
 #' @method vec_arith mt_cyclical
 #' @export

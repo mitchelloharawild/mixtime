@@ -110,6 +110,18 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   inject(paste(!!!parts, sep = "-"))
 }
 
+#' @method vec_cast.integer mt_linear
+#' @export
+vec_cast.integer.mt_linear <- function(x, to, ...) {
+  vec_cast(vec_data(x), integer())
+}
+
+#' @method vec_cast.double mt_linear
+#' @export
+vec_cast.double.mt_linear <- function(x, to, ...) {
+  vec_cast(vec_data(x), double())
+}
+
 
 #' @importFrom tsibble index_valid
 #' @export
