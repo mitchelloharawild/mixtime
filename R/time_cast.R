@@ -29,7 +29,7 @@ time_cast.default <- function(x, to, ...) {
 #' @export
 vec_cast.Date.mt_linear <- function(x, ...) {
   chronon <- time_chronon(x)
-  as.Date(chronon_cast(chronon, tu_day(1L), vec_data(x))$chronon)
+  as.Date(chronon_divmod(chronon, tu_day(1L), vec_data(x))$chronon)
 }
 
 #' @method vec_cast.POSIXct mt_linear
@@ -37,7 +37,7 @@ vec_cast.Date.mt_linear <- function(x, ...) {
 vec_cast.POSIXct.mt_linear <- function(x, ...) {
   chronon <- time_chronon(x)
   as.POSIXct(
-    chronon_cast(chronon, tu_second(1L), vec_data(x))$chronon,
+    chronon_divmod(chronon, tu_second(1L), vec_data(x))$chronon,
     origin = "1970-01-01", tz = attr(x, "tz")
   )
 }

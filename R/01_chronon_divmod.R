@@ -23,11 +23,14 @@
 #' 
 #' @examples
 #' # Convert day 16 since epoch into weeks since epoch (and remainder days)
-#' chronon_cast(tu_day(1L), tu_week(1L), 16L)
-chronon_cast <- S7::new_generic("chronon_cast", c("from", "to"))
+#' chronon_divmod(tu_day(1L), tu_week(1L), 16L)
+#' 
+#' # Convert week 4 since epoch into days since epoch
+#' chronon_divmod(tu_week(1L), tu_day(1L), 4L)
+chronon_divmod <- S7::new_generic("chronon_divmod", c("from", "to"))
 
 #' @export
-S7::method(chronon_cast, list(mt_unit, mt_unit)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # No casting needed for identical time units
   if (identical(from, to)) {
     return(

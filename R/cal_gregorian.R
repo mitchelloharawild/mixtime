@@ -96,7 +96,7 @@ S7::method(calendar_algebra, list(tu_second, tu_millisecond)) <- function(x, y, 
 # }
 
 ### Chronon casting between Gregorian time units
-S7::method(chronon_cast, list(tu_day, tu_month)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
   if (calendar_algebra(to, tu_month(1L)) != 1L) {
     stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
@@ -109,7 +109,7 @@ S7::method(chronon_cast, list(tu_day, tu_month)) <- function(from, to, x) {
     remainder = x$mday - 1L
   )
 }
-S7::method(chronon_cast, list(tu_month, tu_day)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
   # Convert to months since epoch
   x <- calendar_algebra(from, tu_month(1L))*x
   
@@ -122,7 +122,7 @@ S7::method(chronon_cast, list(tu_month, tu_day)) <- function(from, to, x) {
 }
 
 
-S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to years
   if (calendar_algebra(to, tu_year(1L)) != 1L) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
@@ -134,7 +134,7 @@ S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
     remainder = x$yday + 1L
   )
 }
-S7::method(chronon_cast, list(tu_year, tu_day)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
   # Convert to months since epoch
   x <- calendar_algebra(from, tu_year(1L))*x
   

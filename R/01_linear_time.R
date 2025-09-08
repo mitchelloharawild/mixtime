@@ -58,7 +58,7 @@ linear_time <- function(chronon, granules = list()) {
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
       # Drop the remainder, we only want the chronon here
       # TODO: Optionally preserve the remainder as fractional chronons
-      .data <- chronon_cast(time_chronon(.data), chronon, vec_data(.data))$chronon
+      .data <- chronon_divmod(time_chronon(.data), chronon, vec_data(.data))$chronon
     }
 
     if (!is.character(tz) || length(tz) != 1L) {
@@ -92,7 +92,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   parts <- rep(list(numeric(length(x))), n_units <- length(units))
   parts[[n_units]] <- vec_data(x)
   for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
-    mod <- chronon_cast(units[[i]], units[[i-1L]], parts[[i]])
+    mod <- chronon_divmod(units[[i]], units[[i-1L]], parts[[i]])
     parts[[i - 1L]] <- mod$chronon
     parts[[i]] <- mod$remainder + 1L
   }

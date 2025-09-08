@@ -11,7 +11,7 @@ tu_week <- S7::new_class("tu_week", parent = mt_unit)
 S7::method(time_unit_full, tu_week) <- function(x) "week"
 S7::method(time_unit_abbr, tu_week) <- function(x) "W"
 
-S7::method(chronon_cast, list(tu_day, tu_week)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_day, tu_week)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   list(
     chronon = (x - 4) %/% 7L,
@@ -19,7 +19,7 @@ S7::method(chronon_cast, list(tu_day, tu_week)) <- function(from, to, x) {
   )
 }
 
-S7::method(chronon_cast, list(tu_week, tu_day)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_week, tu_day)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   list(
     chronon = x*7L + 4L,
@@ -27,7 +27,7 @@ S7::method(chronon_cast, list(tu_week, tu_day)) <- function(from, to, x) {
   )
 }
 
-S7::method(chronon_cast, list(tu_week, tu_year)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_week, tu_year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
   if (calendar_algebra(to, tu_year(1L)) != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
