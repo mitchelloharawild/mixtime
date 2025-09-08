@@ -14,8 +14,16 @@ S7::method(time_unit_abbr, tu_week) <- function(x) "W"
 S7::method(chronon_cast, list(tu_day, tu_week)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   list(
-    chronon = (x - 3) %/% 7L,
-    remainder = (x - 3) %% 7 + 1L
+    chronon = (x - 4) %/% 7L,
+    remainder = (x - 4) %% 7L
+  )
+}
+
+S7::method(chronon_cast, list(tu_week, tu_day)) <- function(from, to, x) {
+  # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
+  list(
+    chronon = x*7L + 4L,
+    remainder = 0L
   )
 }
 
@@ -31,7 +39,7 @@ S7::method(chronon_cast, list(tu_week, tu_year)) <- function(from, to, x) {
   x <- as.POSIXlt(as.Date(x*7))
   list(
     chronon = x$year-70L,
-    remainder = (x$yday - x$wday + 11) %/% 7
+    remainder = (x$yday - x$wday + 10) %/% 7
   )
 }
 

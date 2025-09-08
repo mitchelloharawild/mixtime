@@ -95,7 +95,6 @@ S7::method(calendar_algebra, list(tu_second, tu_millisecond)) <- function(x, y, 
 #   stop("Not yet supported: Durations between days and years require a specific date context to calculate ratio")
 # }
 
-
 ### Chronon casting between Gregorian time units
 S7::method(chronon_cast, list(tu_day, tu_month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
@@ -106,10 +105,22 @@ S7::method(chronon_cast, list(tu_day, tu_month)) <- function(from, to, x) {
   # TODO: should be swapped out to arithmetic on integer days since epoch
   x <- as.POSIXlt(as.Date(x))
   list(
-    chronon = (x$year-70L)*12L + x$mon,
-    remainder = x$mday + 1L
+    chronon = (x$year-70L)*12L + x$mon - 1L,
+    remainder = x$mday - 1L
   )
 }
+S7::method(chronon_cast, list(tu_month, tu_day)) <- function(from, to, x) {
+  # Convert to months since epoch
+  x <- calendar_algebra(from, tu_month(1L))*x
+  
+  # TODO: should be swapped out to arithmetic on integer months since epoch
+
+  list(
+    chronon = unclass(ISOdate(1970L + x%/%12L, (x+1L)%%12L+1L, 1L, 0L, 0L, 0L))/86400L,
+    remainder = 0L
+  )
+}
+
 
 S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to years
@@ -123,6 +134,17 @@ S7::method(chronon_cast, list(tu_day, tu_year)) <- function(from, to, x) {
     remainder = x$yday + 1L
   )
 }
+S7::method(chronon_cast, list(tu_year, tu_day)) <- function(from, to, x) {
+  # Convert to months since epoch
+  x <- calendar_algebra(from, tu_year(1L))*x
+  
+  # TODO: should be swapped out to arithmetic on integer months since epoch
+  list(
+    chronon = unclass(ISOdate(1970L + x, 1L, 1L, 0L, 0L, 0L))/86400L,
+    remainder = 0L
+  )
+}
+
 
 ### Cyclical labels for Gregorian time units
 S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {
@@ -150,7 +172,7 @@ year <- linear_time(
 
 #' @examples
 #' 
-#' yearquarter(Sys.Date())
+#' yearquarter(0:7)
 #' 
 #' @rdname gregorian-continuous
 #' @export

@@ -94,7 +94,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
     mod <- chronon_cast(units[[i]], units[[i-1L]], parts[[i]])
     parts[[i - 1L]] <- mod$chronon
-    parts[[i]] <- mod$remainder
+    parts[[i]] <- mod$remainder + 1L
   }
   # Add epoch offset to the largest granule
   # TODO: Replace calendar_algebra for suppor of irregular time units
