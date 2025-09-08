@@ -101,7 +101,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   parts[[1L]] <- parts[[1L]] + calendar_algebra(tu_year(1970L), units[[1L]])
 
   # Use cyclical labels for all but the largest granule
-  for (i in seq(2L, by = -1L, length.out = n_units - 1L)) {
+  for (i in seq(length(units), by = -1L, length.out = n_units - 1L)) {
     parts[[i]] <- cyclical_labels(units[[i]], units[[i-1L]], parts[[i]])
   }
 
