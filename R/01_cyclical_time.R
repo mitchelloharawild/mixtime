@@ -42,7 +42,7 @@ cyclical_time <- function(chronon, cycle) {
     }
 
     # Reduce to cyclical time using modulo arithmetic
-    .data <- .data%%calendar_algebra(cycle, chronon) + 1L
+    .data <- .data%%chronon_cardinality(cycle, chronon) + 1L
 
     if (!is.character(tz) || length(tz) != 1L) {
       cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
@@ -97,6 +97,6 @@ vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
     stop("Only integer addition and subtraction supported for cyclical time", call. = FALSE)
   }
-  period <- calendar_algebra(attr(x, "cycle"), attr(x, "chronon"))
+  period <- chronon_cardinality(attr(x, "cycle"), attr(x, "chronon"))
   vec_restore((vec_arith_base(op, vec_data(x), y, ...) - 1L) %% period + 1L, x)
 }

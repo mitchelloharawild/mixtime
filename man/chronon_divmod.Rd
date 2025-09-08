@@ -25,7 +25,7 @@ converting to the \code{to} time unit.
 This function converts between chronons measured in different time units. It
 is used internally for converting between different continuous time types,
 and is particularly useful for efficiently converting between irregular time
-units. The default method uses \code{calendar_algebra()} to cast between time
+units. The default method uses \code{chronon_cardinality()} to cast between time
 units, which is efficient for regular time units.
 }
 \examples{

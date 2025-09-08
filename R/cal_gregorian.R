@@ -56,41 +56,41 @@ S7::method(time_unit_abbr, tu_millisecond) <- function(x) "ms"
 
 
 ### Calendar algebra S7::methods for Gregorian time units
-S7::method(calendar_algebra, list(tu_year, tu_quarter)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_year, tu_quarter)) <- function(x, y, at = NULL) {
   as.integer(x)*4*as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_year, tu_month)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_year, tu_month)) <- function(x, y, at = NULL) {
   as.integer(x)*12/as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
   # TODO: Handle leap years if `at` is provided
   as.integer(x)*365/as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
   as.integer(x)*3/as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
   # TODO: Handle timezones if `at` is provided
   as.integer(x)*24/as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_hour, tu_minute)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_hour, tu_minute)) <- function(x, y, at = NULL) {
   # TODO: Handle timezones if `at` is provided
   as.integer(x)*60/as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_minute, tu_second)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_minute, tu_second)) <- function(x, y, at = NULL) {
   # if(at %in% .leap.seconds) 61 else 60
 
   as.integer(x)*60/as.integer(y)
 }
-S7::method(calendar_algebra, list(tu_second, tu_millisecond)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(tu_second, tu_millisecond)) <- function(x, y, at = NULL) {
   as.integer(x)*1000/as.integer(y)
 }
-# S7::method(calendar_algebra, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
+# S7::method(chronon_cardinality, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
 #   # lubridate::days_in_month(at)
 #   stop("Not yet supported: Durations between days and months require a specific date context to calculate ratio")
 # }
 
-# S7::method(calendar_algebra, list(tu_day, tu_year)) <- function(x, y, at = NULL) {
+# S7::method(chronon_cardinality, list(tu_day, tu_year)) <- function(x, y, at = NULL) {
 #   # lubridate::leap_year(at) ? 366 : 365
 #   stop("Not yet supported: Durations between days and years require a specific date context to calculate ratio")
 # }
@@ -98,7 +98,7 @@ S7::method(calendar_algebra, list(tu_second, tu_millisecond)) <- function(x, y, 
 ### Chronon casting between Gregorian time units
 S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
-  if (calendar_algebra(to, tu_month(1L)) != 1L) {
+  if (chronon_cardinality(to, tu_month(1L)) != 1L) {
     stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
   }
 
@@ -111,7 +111,7 @@ S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
 }
 S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
   # Convert to months since epoch
-  x <- calendar_algebra(from, tu_month(1L))*x
+  x <- chronon_cardinality(from, tu_month(1L))*x
   
   # TODO: should be swapped out to arithmetic on integer months since epoch
 
@@ -124,7 +124,7 @@ S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
 
 S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to years
-  if (calendar_algebra(to, tu_year(1L)) != 1L) {
+  if (chronon_cardinality(to, tu_year(1L)) != 1L) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
   }
 
@@ -136,7 +136,7 @@ S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
 }
 S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
   # Convert to months since epoch
-  x <- calendar_algebra(from, tu_year(1L))*x
+  x <- chronon_cardinality(from, tu_year(1L))*x
   
   # TODO: should be swapped out to arithmetic on integer months since epoch
   list(

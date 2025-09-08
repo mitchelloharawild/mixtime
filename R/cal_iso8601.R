@@ -29,7 +29,7 @@ S7::method(chronon_divmod, list(tu_week, tu_day)) <- function(from, to, x) {
 
 S7::method(chronon_divmod, list(tu_week, tu_year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
-  if (calendar_algebra(to, tu_year(1L)) != 1L) {
+  if (chronon_cardinality(to, tu_year(1L)) != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
   # TODO: should be swapped out to arithmetic on integer days since epoch

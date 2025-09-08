@@ -7,12 +7,12 @@ time_cast <- function(x, to, ...) {
 
 #' @export
 time_cast.Date <- function(x, to, ...) {
-  as.integer(x)%/%calendar_algebra(to, tu_day(1L))
+  as.integer(x)%/%chronon_cardinality(to, tu_day(1L))
 }
 
 #' @export
 time_cast.POSIXt <- function(x, to, ...) {
-  as.integer(x)%/%calendar_algebra(to, tu_second(1L))
+  as.integer(x)%/%chronon_cardinality(to, tu_second(1L))
 }
 
 #' @export

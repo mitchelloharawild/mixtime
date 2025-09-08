@@ -1,6 +1,6 @@
 # TODO: Conversions between chronons from one time unit to another.
 # This is especially efficient for converting irregular time units.
-# Defaults to calendar_algebra() which is efficient for regular time conversions
+# Defaults to chronon_cardinality() which is efficient for regular time conversions
 # (e.g. days in a week).
 
 
@@ -9,7 +9,7 @@
 #' This function converts between chronons measured in different time units. It
 #' is used internally for converting between different continuous time types,
 #' and is particularly useful for efficiently converting between irregular time
-#' units. The default method uses `calendar_algebra()` to cast between time
+#' units. The default method uses `chronon_cardinality()` to cast between time
 #' units, which is efficient for regular time units.
 #' 
 #' @param from The time unit that `x` is measured in (e.g., `tu_day(1L)`).
@@ -44,9 +44,9 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # TODO: Apply graph dispatch to find shortest path between from and to using
   # known conversions between time units (e.g. tu_day -> tu_month)
 
-  ## Fallback to calendar_algebra for regular time units
+  ## Fallback to chronon_cardinality for regular time units
   x <- as.integer(x)
-  divisor <- calendar_algebra(to, from)
+  divisor <- chronon_cardinality(to, from)
   list(
     chronon = x %/% divisor,
     remainder = x %% divisor + 1L
