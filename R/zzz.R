@@ -3,8 +3,8 @@
 
   vec_cast_generics <- vctrs_exports[startsWith(vctrs_exports, "vec_cast.")]
   # Register vec_cast.*.mixtime methods
-  # lapply(vec_cast_generics, register_s3_method,
-  #        pkg = "vctrs", class = "mixtime", fun = vec_cast_from_mixtime)
+  lapply(vec_cast_generics, register_s3_method,
+         pkg = "vctrs", class = "mixtime", fun = vec_cast_from_mixtime)
   # Register vec_cast.mixtime.* methods
   lapply(sub("^vec_cast", "mixtime", vec_cast_generics), register_s3_method,
          pkg = "vctrs", generic = "vec_cast", fun = vec_cast_to_mixtime)
