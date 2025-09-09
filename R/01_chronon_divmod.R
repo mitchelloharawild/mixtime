@@ -42,10 +42,9 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   }
 
   # TODO: Apply graph dispatch to find shortest path between from and to using
-  # known conversions between time units (e.g. tu_day -> tu_month)
+  # divmod conversions between time units (e.g. tu_day -> tu_month)
 
   ## Fallback to chronon_cardinality for regular time units
-  x <- as.integer(x)
   divisor <- chronon_cardinality(to, from)
   list(
     chronon = x %/% divisor,
