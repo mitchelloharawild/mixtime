@@ -49,6 +49,6 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   divisor <- chronon_cardinality(to, from)
   list(
     chronon = x %/% divisor,
-    remainder = x %% divisor + 1L
+    remainder = x %% divisor
   )
 }
