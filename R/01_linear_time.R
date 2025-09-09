@@ -171,4 +171,13 @@ vec_arith.mt_linear.integer <- function(op, x, y, ...) {
 #' @method vec_arith.mt_linear double
 #' @export
 vec_arith.mt_linear.double <- vec_arith.mt_linear.integer
+
+
+#' @method vec_arith.mt_linear mt_linear
+#' @export
+vec_arith.mt_linear.mt_linear <- function(op, x, y, ...) {
+  if (!op %in% c("+", "-")) {
+    stop("Only numeric addition and subtraction supported for continuous time", call. = FALSE)
+  }
+  vec_arith_base(op, x, y, ...)
 }
