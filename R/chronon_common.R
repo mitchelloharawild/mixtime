@@ -17,16 +17,16 @@
 #' 
 #' @examples
 #' 
-#' # Find common chronon between days and weeks
+#' # The common chronon between days and weeks is a day
 #' chronon_common(tu_day(1L), tu_week(1L))
 #' 
-#' # Find common chronon between weeks, and months
+#' # The common chronon between days and months is a day
 #' chronon_common(tu_week(1L), tu_month(1L))
 #' 
-#' # # Find common chronon between hours, months, and years
+#' # The common chronon between hours, months, and years is an hour
 #' chronon_common(tu_hour(1L), tu_month(1L), tu_year(1L))
 #' 
-#' # Find common chronon between months, quarters, and years
+#' # The common chronon between months, quarters, and years is a month
 #' chronon_common(tu_month(1L), tu_quarter(1L), tu_year(1L))
 #' 
 chronon_common <- function(..., .ptype = NULL) {
