@@ -85,19 +85,19 @@ an error is raised.</p></dd>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Find common chronon between days and weeks</span></span></span>
+<span class="r-in"><span><span class="co"># The common chronon between days and weeks is a day</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_iso8601.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in chronon_common(tu_day(1L), tu_week(1L)):</span> could not find function "chronon_common"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Find common chronon between weeks, and months</span></span></span>
+<span class="r-in"><span><span class="co"># The common chronon between days and months is a day</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_iso8601.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in chronon_common(tu_week(1L), tu_month(1L)):</span> could not find function "chronon_common"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># # Find common chronon between hours, months, and years</span></span></span>
+<span class="r-in"><span><span class="co"># The common chronon between hours, months, and years is an hour</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_hour</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in chronon_common(tu_hour(1L), tu_month(1L), tu_year(1L)):</span> could not find function "chronon_common"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Find common chronon between months, quarters, and years</span></span></span>
+<span class="r-in"><span><span class="co"># The common chronon between months, quarters, and years is a month</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_quarter</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in chronon_common(tu_month(1L), tu_quarter(1L), tu_year(1L)):</span> could not find function "chronon_common"</span>
 <span class="r-in"><span></span></span>
