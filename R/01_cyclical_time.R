@@ -35,10 +35,10 @@ cyclical_time <- function(chronon, cycle) {
   
   # TODO: Ensure c(granules, chronon) are in decreasing order of size
 
-  function(.data, tz = "UTC") {
+  function(.data, tz = "UTC", discrete = TRUE) {
     # Cast to continuous time from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
-      .data <- chronon_divmod(time_chronon(.data), chronon, vec_data(.data))$chronon
+      .data <- chronon_convert(.data, chronon, discrete = discrete)
     }
 
     # Reduce to cyclical time using modulo arithmetic

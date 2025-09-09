@@ -172,6 +172,9 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 #' 
 #' @param .data Another object to be coerced into the specified time.
 #' @param tz Timezone, defaults to "UTC".
+#' @param discrete If `TRUE`, the number of chronons since Unix epoch that
+#' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
+#'  of chronons is returned (analagous to time using a continuous time model).
 #' @param ... Arguments for methods.
 #' 
 #' @examples

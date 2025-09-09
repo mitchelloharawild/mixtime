@@ -6,16 +6,20 @@
 \alias{yearmonth}
 \title{Gregorian continuous time representations}
 \usage{
-year(.data, tz = "UTC")
+year(.data, tz = "UTC", discrete = TRUE)
 
-yearquarter(.data, tz = "UTC")
+yearquarter(.data, tz = "UTC", discrete = TRUE)
 
-yearmonth(.data, tz = "UTC")
+yearmonth(.data, tz = "UTC", discrete = TRUE)
 }
 \arguments{
 \item{.data}{Another object to be coerced into the specified time.}
 
 \item{tz}{Timezone, defaults to "UTC".}
+
+\item{discrete}{If \code{TRUE}, the number of chronons since Unix epoch that
+\code{.data} falls into is returned as an integer. If \code{FALSE}, a fractional number
+of chronons is returned (analagous to time using a continuous time model).}
 
 \item{...}{Arguments for methods.}
 }
@@ -27,7 +31,7 @@ yearmonth(.data, tz = "UTC")
 year(Sys.Date())
 
 
-yearquarter(Sys.Date())
+yearquarter(0:7)
 
 
 yearmonth(Sys.Date())

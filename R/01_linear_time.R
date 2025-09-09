@@ -53,12 +53,12 @@ linear_time <- function(chronon, granules = list()) {
   #   )
   # )
 
-  function(.data, tz = "UTC") {
+  function(.data, tz = "UTC", discrete = TRUE) {
     # Cast from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
       # Drop the remainder, we only want the chronon here
       # TODO: Optionally preserve the remainder as fractional chronons
-      .data <- chronon_divmod(time_chronon(.data), chronon, vec_data(.data))$chronon
+      .data <- chronon_convert(.data, chronon, discrete = discrete)
     }
 
     if (!is.character(tz) || length(tz) != 1L) {

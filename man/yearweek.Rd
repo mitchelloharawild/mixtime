@@ -4,12 +4,16 @@
 \alias{yearweek}
 \title{ISO 8601 year-week time representation}
 \usage{
-yearweek(.data, tz = "UTC")
+yearweek(.data, tz = "UTC", discrete = TRUE)
 }
 \arguments{
 \item{.data}{Another object to be coerced into ISO 8601 year-weeks.}
 
-\item{...}{Arguments for methods.}
+\item{tz}{Timezone, defaults to "UTC".}
+
+\item{discrete}{If \code{TRUE}, the number of chronons since Unix epoch that
+\code{.data} falls into is returned as an integer. If \code{FALSE}, a fractional number
+of chronons is returned (analagous to time using a continuous time model).}
 }
 \description{
 Create or coerce using \code{yearweek()}.
