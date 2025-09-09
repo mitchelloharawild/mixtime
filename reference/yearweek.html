@@ -50,7 +50,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">yearweek</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">yearweek</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -61,8 +61,14 @@
 <dd><p>Another object to be coerced into ISO 8601 year-weeks.</p></dd>
 
 
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments for methods.</p></dd>
+<dt id="arg-tz">tz<a class="anchor" aria-label="anchor" href="#arg-tz"></a></dt>
+<dd><p>Timezone, defaults to "UTC".</p></dd>
+
+
+<dt id="arg-discrete">discrete<a class="anchor" aria-label="anchor" href="#arg-discrete"></a></dt>
+<dd><p>If <code>TRUE</code>, the number of chronons since Unix epoch that
+<code>.data</code> falls into is returned as an integer. If <code>FALSE</code>, a fractional number
+of chronons is returned (analagous to time using a continuous time model).</p></dd>
 
 </dl></div>
     <div id="details">

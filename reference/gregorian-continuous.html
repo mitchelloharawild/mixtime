@@ -50,11 +50,11 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">year</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">year</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">yearquarter</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span>
+<span><span class="fu">yearquarter</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">yearmonth</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">yearmonth</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="st">"UTC"</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -69,6 +69,12 @@
 <dd><p>Timezone, defaults to "UTC".</p></dd>
 
 
+<dt id="arg-discrete">discrete<a class="anchor" aria-label="anchor" href="#arg-discrete"></a></dt>
+<dd><p>If <code>TRUE</code>, the number of chronons since Unix epoch that
+<code>.data</code> falls into is returned as an integer. If <code>FALSE</code>, a fractional number
+of chronons is returned (analagous to time using a continuous time model).</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Arguments for methods.</p></dd>
 
@@ -81,8 +87,8 @@
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (start == end) {    return(start)}:</span> missing value where TRUE/FALSE needed</span>
+<span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
