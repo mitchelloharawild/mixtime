@@ -1,3 +1,7 @@
+## TODO: These functions are crude internal implementations of graph algorithms
+## that should ideally be refactored to share common code, or provided by a
+## package implementing graph algorithms.
+
 S7_graph_dispatch <- function(generic, start, end) {
   # Get the methods for the generic function (the graph dispatch edges)
   method_signatures <- traverse_methods(generic@methods)
@@ -185,4 +189,129 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
   
   # No path found
   return(integer(0))
+}
+
+S7_graph_glb <- function(generic, chronons) {
+  # Get the methods for the generic function (the graph dispatch edges)
+  method_signatures <- traverse_methods(generic@methods)
+  
+  # Find all unique classes (the graph dispatch nodes)
+  classes <- vec_unique(vec_unchop(method_signatures))
+
+  S7_signature_id <- function(sig) {
+    # If the argument is an S7 class, return the class identifiers (package and name)
+    if (!is.list(sig)) return(S7_class_id(sig))
+    
+    # Iterate within the signature to access S7 classes
+    lapply(sig, S7_signature_id)
+  }
+  
+  chr_signatures <- S7_signature_id(method_signatures)
+  chr_classes <- lapply(classes, S7_class_id)
+
+  int_nodes <- seq_along(classes)
+  int_edges <- vec_match(vec_unchop(chr_signatures), chr_classes)
+  int_edge_to <- int_edges[seq(1, length(int_edges), by = 2)]
+  int_edge_from <- int_edges[seq(2, length(int_edges), by = 2)]
+  
+  int_chronons <- vec_match(lapply(chronons, attr, which = "S7_class"), classes)
+
+  int_glb <- greatest_lower_bound(
+    from = int_edge_from,
+    to = int_edge_to,
+    nodes = int_chronons
+  )
+
+  if(rlang::is_empty(int_glb)) {
+    stop(
+      "One or more of the provided chronons do not share a common chronon.",
+      call. = FALSE
+    )
+  }
+
+  # Return glb
+  classes[[int_glb]]
+}
+
+# Finds the greatest lower bound that contains all `nodes` in a graph defined by
+# directed edges from `from` to `to`.
+greatest_lower_bound <- function(from = integer(), to = integer(), nodes = integer()) {
+  if (length(nodes) == 1) {
+    return(nodes)
+  }
+  all_nodes <- unique(c(from, to))
+  
+  # Build parent map: each node -> set of its parents
+  parent_map <- split(from, to)
+  
+  # Helper: Function to get all ancestors (including self) for a node
+  get_ancestors <- function(node) {
+    stack <- node
+    visited <- logical()
+    ancestors <- node
+    while (length(stack) > 0) {
+      current <- stack[[1]]
+      stack <- stack[-1]
+      parents <- parent_map[[as.character(current)]]
+      # visit parents not yet visited
+      if (!is.null(parents)) {
+        new_parents <- setdiff(parents, ancestors)
+        if (length(new_parents) > 0) {
+          ancestors <- c(ancestors, new_parents)
+          stack <- c(stack, new_parents)
+        }
+      }
+    }
+    ancestors
+  }
+  
+  # Find all ancestors for each node in 'nodes'
+  ancestors_list <- lapply(nodes, get_ancestors)
+  
+  # The GLB are the nodes that are common to all ancestor sets
+  common_ancestors <- Reduce(intersect, ancestors_list)
+  
+  if (length(common_ancestors) == 0)
+    return(integer(0)) # No common ancestor
+  
+  # Among common ancestors, pick the one that is farthest from root (i.e., closest to nodes)
+  # For this, compute for each such node the minimal distance to any of the target nodes
+  
+  node_depth <- function(target, candidate) {
+    # Walk down from candidate to target
+    # We'll perform BFS from candidate to target
+    queue <- list(candidate)
+    depth_map <- setNames(0, candidate)
+    visited <- candidate
+    while (length(queue) > 0) {
+      current <- queue[[1]]
+      queue <- queue[-1]
+      if (current == target) {
+        return(depth_map[[as.character(current)]])
+      }
+      # Find "children" (those where current is parent)
+      children <- to[which(from == current)]
+      new_children <- setdiff(children, visited)
+      if (length(new_children) > 0) {
+        queue <- c(queue, new_children)
+        new_depths <- depth_map[[as.character(current)]] + 1
+        depth_map <- c(depth_map, setNames(rep(new_depths, length(new_children)), new_children))
+        visited <- c(visited, new_children)
+      }
+    }
+    Inf # No path found
+  }
+
+  distance_to_nodes <- function(candidate) {
+    # For each node in the set, find the length of the path from candidate to node
+    min(vapply(nodes, node_depth, numeric(1L), candidate = candidate), na.rm = TRUE)
+  }
+  
+  # For each common ancestor, compute max depth to any node in 'nodes'.
+  # Take the one with *minimal* (i.e., greatest lower bound, or furthest from root)
+  depths <- vapply(common_ancestors, distance_to_nodes, numeric(1L))
+  # The greatest lower bound is the one with minimal distance to its furthest descendant in 'nodes'
+  glb <- common_ancestors[which.min(depths)]
+  
+  as.integer(glb)
 }
