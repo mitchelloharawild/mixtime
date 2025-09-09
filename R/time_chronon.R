@@ -23,7 +23,7 @@ S7::method(time_chronon, S7::new_S3_class("mt_linear")) <- function(x) {
   attr(x, "chronon")
 }
 
-S7::method(time_chronon, S7::new_S3_class("mt_linear")) <- function(x) {
+S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {
   attr(x, "chronon")
 }
 

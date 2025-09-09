@@ -63,8 +63,10 @@ S7::method(chronon_cardinality, list(tu_year, tu_month)) <- function(x, y, at = 
   as.integer(x)*12/as.integer(y)
 }
 S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
-  # TODO: Handle leap years if `at` is provided
-  as.integer(x)*365/as.integer(y)
+  if (is.null(at)) {
+    stop("The number of days in a year requires the time context `at`.", call. = FALSE)
+  }
+  is_leap_year(1970L + as.integer(at)) + 365L
 }
 S7::method(chronon_cardinality, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
   as.integer(x)*3/as.integer(y)
@@ -100,13 +102,6 @@ S7::method(chronon_cardinality, list(tu_month, tu_day)) <- function(x, y, at = N
   year <- 1970L + at %/% 12
   month <- ((at + 1L) %% 12) + 1L
   monthdays[month] + (month == 2L & is_leap_year(year))
-}
-
-S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
-  if (is.null(at)) {
-    stop("The number of days in a year requires the time context `at`.", call. = FALSE)
-  }
-  is_leap_year(1970L + as.integer(at)) + 365L
 }
 
 ### Chronon casting between Gregorian time units
