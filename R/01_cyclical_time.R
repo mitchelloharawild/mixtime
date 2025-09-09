@@ -100,3 +100,7 @@ vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
   period <- chronon_cardinality(attr(x, "cycle"), attr(x, "chronon"))
   vec_restore((vec_arith_base(op, vec_data(x), y, ...) - 1L) %% period + 1L, x)
 }
+#' @importFrom vctrs vec_arith_base
+#' @method vec_arith.mt_cyclical double
+#' @export
+vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
