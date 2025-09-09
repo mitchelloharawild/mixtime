@@ -46,7 +46,7 @@ provided with at."><meta property="og:image" content="/logo.svg"><!-- mathjax --
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Cardinality between time units</h1>
-    <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/01_calendar_algebra.R" class="external-link"><code>R/01_calendar_algebra.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/01_chronon_cardinality.R" class="external-link"><code>R/01_chronon_cardinality.R</code></a></small>
     <div class="hidden name"><code>chronon_cardinality.Rd</code></div>
     </div>
 
@@ -107,7 +107,7 @@ two systems.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># There are 7 days in a week</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_cardinality</span><span class="op">(</span><span class="fu"><a href="calendar_iso8601.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (start == end) {    return(start)}:</span> missing value where TRUE/FALSE needed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># There are 3600 seconds in an hour</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_cardinality</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_hour</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_second</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -116,6 +116,18 @@ two systems.</p>
 <span class="r-in"><span><span class="co"># There are 18 "2 months" in 3 years</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_cardinality</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">3L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 18</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># There are 365 days in 2025 (a common year)</span></span></span>
+<span class="r-in"><span><span class="fu">chronon_cardinality</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, at <span class="op">=</span> <span class="fu"><a href="gregorian-continuous.html">year</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2025-01-01"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># There are 366 days in 2024 (a leap year)</span></span></span>
+<span class="r-in"><span><span class="fu">chronon_cardinality</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, at <span class="op">=</span> <span class="fu"><a href="gregorian-continuous.html">year</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-01-01"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># There are 29 days in February 2024 (a leap year)</span></span></span>
+<span class="r-in"><span><span class="fu">chronon_cardinality</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, at <span class="op">=</span> <span class="fu"><a href="gregorian-continuous.html">yearmonth</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-02-01"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
