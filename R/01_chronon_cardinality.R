@@ -1,3 +1,6 @@
+# TODO: Reverse `x` and `y` in the generic definition to match chronon_divmod
+# and usual reading of how many "days in month".
+
 #' Cardinality between time units
 #'
 #' This S7 generic function defines the calendrical relationships between two 
@@ -41,6 +44,15 @@
 #' 
 #' # There are 18 "2 months" in 3 years
 #' chronon_cardinality(tu_year(3L), tu_month(2L))
+#' 
+#' # There are 365 days in 2025 (a common year)
+#' chronon_cardinality(tu_year(1L), tu_day(1L), at = year(as.Date("2025-01-01")))
+#' 
+#' # There are 366 days in 2024 (a leap year)
+#' chronon_cardinality(tu_year(1L), tu_day(1L), at = year(as.Date("2024-01-01")))
+#' 
+#' # There are 29 days in February 2024 (a leap year)
+#' chronon_cardinality(tu_month(1L), tu_day(1L), at = yearmonth(as.Date("2024-02-01")))
 #'
 #' @export
 chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))

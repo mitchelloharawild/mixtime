@@ -11,6 +11,10 @@ tu_week <- S7::new_class("tu_week", parent = mt_unit)
 S7::method(time_unit_full, tu_week) <- function(x) "week"
 S7::method(time_unit_abbr, tu_week) <- function(x) "W"
 
+S7::method(chronon_cardinality, list(tu_week, tu_day)) <- function(x, y, at = NULL) {
+  as.integer(x)*7L*as.integer(y)
+}
+
 S7::method(chronon_divmod, list(tu_day, tu_week)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   list(

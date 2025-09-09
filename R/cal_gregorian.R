@@ -85,15 +85,29 @@ S7::method(chronon_cardinality, list(tu_minute, tu_second)) <- function(x, y, at
 S7::method(chronon_cardinality, list(tu_second, tu_millisecond)) <- function(x, y, at = NULL) {
   as.integer(x)*1000/as.integer(y)
 }
-# S7::method(chronon_cardinality, list(tu_day, tu_month)) <- function(x, y, at = NULL) {
-#   # lubridate::days_in_month(at)
-#   stop("Not yet supported: Durations between days and months require a specific date context to calculate ratio")
-# }
 
-# S7::method(chronon_cardinality, list(tu_day, tu_year)) <- function(x, y, at = NULL) {
-#   # lubridate::leap_year(at) ? 366 : 365
-#   stop("Not yet supported: Durations between days and years require a specific date context to calculate ratio")
-# }
+monthdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
+
+is_leap_year <- function(year) {
+  (year %% 4L == 0L & year %% 100L != 0L) | (year %% 400L == 0L)
+}
+
+S7::method(chronon_cardinality, list(tu_month, tu_day)) <- function(x, y, at = NULL) {
+  if (is.null(at)) {
+    stop("The number of days in a month requires the time context `at`.", call. = FALSE)
+  }
+  at <- as.integer(at)
+  year <- 1970L + at %/% 12
+  month <- ((at + 1L) %% 12) + 1L
+  monthdays[month] + (month == 2L & is_leap_year(year))
+}
+
+S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
+  if (is.null(at)) {
+    stop("The number of days in a year requires the time context `at`.", call. = FALSE)
+  }
+  is_leap_year(1970L + as.integer(at)) + 365L
+}
 
 ### Chronon casting between Gregorian time units
 S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
