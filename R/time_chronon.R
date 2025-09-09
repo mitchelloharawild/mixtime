@@ -16,11 +16,16 @@
 #' time_chronon(Sys.time())
 #' 
 #' # The chronon of a continuous time year and month is 1 month
-#' time_chronon(linear_time(tu_month(1L), list(tu_year(1L)))(Sys.Date()))
+#' time_chronon(yearmonth(Sys.Date()))
+#' 
+#' # The common chronon of a mixed time object is the finest chronon
+#' time_chronon(c(yearmonth(Sys.Date()), Sys.Date()))
+#' 
+#' @export
 time_chronon <- S7::new_generic("time_unit", "x")
 
-S7::method(time_chronon, S7::new_S3_class("mt_linear")) <- function(x) {
-  attr(x, "chronon")
+S7::method(time_chronon, S7::new_S3_class("mixtime")) <- function(x) {
+  chronon_common(!!!lapply(attr(x, "v"), time_chronon))
 }
 
 S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {

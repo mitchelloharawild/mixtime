@@ -25,5 +25,9 @@ time_chronon(Sys.Date())
 time_chronon(Sys.time())
 
 # The chronon of a continuous time year and month is 1 month
-time_chronon(linear_time(tu_month(1L), list(tu_year(1L)))(Sys.Date()))
+time_chronon(yearmonth(Sys.Date()))
+
+# The common chronon of a mixed time object is the finest chronon
+time_chronon(c(yearmonth(Sys.Date()), Sys.Date()))
+
 }
