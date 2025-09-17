@@ -122,10 +122,23 @@ S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
   # Convert to months since epoch
   x <- chronon_cardinality(from, tu_month(1L))*x
   
-  # TODO: should be swapped out to arithmetic on integer months since epoch
+
+  year <- x%/%12L + 1970L
+  month <- (x%%12L) + 1L
+
+  # Start of the month in days since epoch
+  result <- 
+    # Years since 1970
+    365 * (year - 1970) +
+    # Leap days since 1970
+    (year - 1968)%/%4 - (year - 1900)%/%100 + (year - 1600)%/%400 + 
+    # Days this year before this month
+    (367 * month - 362)%/%12 +
+    (month > 2) * (-2 + is_leap_year(year))
+
 
   list(
-    chronon = unclass(ISOdate(1970L + x%/%12L, (x+1L)%%12L+1L, 1L, 0L, 0L, 0L))/86400L,
+    chronon = result,
     remainder = 0L
   )
 }
@@ -144,10 +157,10 @@ S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
   )
 }
 S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
-  # Convert to months since epoch
+  # Convert to years since epoch
   x <- chronon_cardinality(from, tu_year(1L))*x
   
-  # TODO: should be swapped out to arithmetic on integer months since epoch
+  # TODO: should be swapped out to arithmetic on integer years since epoch
   list(
     chronon = unclass(ISOdate(1970L + x, 1L, 1L, 0L, 0L, 0L))/86400L,
     remainder = 0L
