@@ -4,7 +4,7 @@
 \alias{tu_week}
 \title{ISO 8601 time classes}
 \usage{
-tu_week(.data = integer(0))
+tu_week(x = integer(0))
 }
 \description{
 ISO 8601 time classes

@@ -66,7 +66,7 @@ chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
 method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {
-    return(as.integer(x)/as.integer(y))
+    return(x@x/y@x)
   }
 
   # Try to find a method with arguments swapped
@@ -78,7 +78,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
       return(1/chronon_cardinality(y, x, at = at))
     }
   }
-  
+
   # No specific method defined between these classes
   # Attempt graph traversal to find a sequence of methods
   path <- S7_graph_dispatch(chronon_cardinality, x, y)
@@ -94,9 +94,8 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
 
     result <- chronon_cardinality(result, path[[i]])
     # Class the result with the next class in the path
-    result <- attr(path[[i]], "S7_class")(as.integer(result))
+    result <- attr(path[[i]], "S7_class")(result)
   }
 
-  attributes(result) <- NULL
-  result
+  result@x
 }

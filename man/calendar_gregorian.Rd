@@ -11,21 +11,21 @@
 \alias{tu_millisecond}
 \title{Gregorian time unit classes}
 \usage{
-tu_year(.data = integer(0))
+tu_year(x = integer(0))
 
-tu_quarter(.data = integer(0))
+tu_quarter(x = integer(0))
 
-tu_month(.data = integer(0))
+tu_month(x = integer(0))
 
-tu_day(.data = integer(0))
+tu_day(x = integer(0))
 
-tu_hour(.data = integer(0))
+tu_hour(x = integer(0))
 
-tu_minute(.data = integer(0))
+tu_minute(x = integer(0))
 
-tu_second(.data = integer(0))
+tu_second(x = integer(0))
 
-tu_millisecond(.data = integer(0))
+tu_millisecond(x = integer(0))
 }
 \description{
 Gregorian time unit classes

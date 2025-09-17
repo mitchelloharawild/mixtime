@@ -4,7 +4,7 @@
 \alias{mt_unit}
 \title{Base S7 class for time units}
 \usage{
-mt_unit(.data = integer(0))
+mt_unit(x = integer(0))
 }
 \description{
 Base S7 class for time units
