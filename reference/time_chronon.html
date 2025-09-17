@@ -73,11 +73,13 @@ time object, such as continuous time or cyclical time representations.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The chronon of a Date object is 1 day</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_day&gt; int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_day&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ x: int 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The chronon of a POSIXct object is 1 second</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_second&gt; int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_second&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ x: int 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The chronon of a continuous time year and month is 1 month</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="gregorian-continuous.html">yearmonth</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
