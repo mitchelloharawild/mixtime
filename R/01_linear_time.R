@@ -181,3 +181,20 @@ vec_arith.mt_linear.mt_linear <- function(op, x, y, ...) {
   }
   vec_arith_base(op, x, y, ...)
 }
+
+#' @method vec_cast.Date mt_linear
+#' @export
+vec_cast.Date.mt_linear <- function(x, ...) {
+  chronon <- time_chronon(x)
+  as.Date(chronon_divmod(chronon, tu_day(1L), vec_data(x))$chronon)
+}
+
+#' @method vec_cast.POSIXct mt_linear
+#' @export
+vec_cast.POSIXct.mt_linear <- function(x, ...) {
+  chronon <- time_chronon(x)
+  as.POSIXct(
+    chronon_divmod(chronon, tu_second(1L), vec_data(x))$chronon,
+    origin = "1970-01-01", tz = attr(x, "tz")
+  )
+}
