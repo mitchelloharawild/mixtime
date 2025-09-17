@@ -114,7 +114,7 @@ S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
   # TODO: should be swapped out to arithmetic on integer days since epoch
   x <- as.POSIXlt(as.Date(x))
   list(
-    chronon = (x$year-70L)*12L + x$mon - 1L,
+    chronon = (x$year-70L)*12L + x$mon,
     remainder = x$mday - 1L
   )
 }
