@@ -53,7 +53,10 @@ linear_time <- function(chronon, granules = list()) {
   #   )
   # )
 
-  function(.data, tz = "UTC", discrete = TRUE) {
+  function(.data, tz = lubridate::tz(.data), discrete = TRUE) {
+    # Get timezone from .data
+    force(tz)
+
     # Cast from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
       # Drop the remainder, we only want the chronon here
