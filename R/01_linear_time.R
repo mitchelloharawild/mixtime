@@ -178,7 +178,10 @@ vec_arith.mt_linear.integer <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
     stop("Only numeric addition and subtraction supported for continuous time", call. = FALSE)
   }
-  vec_restore(vec_arith_base(op, x, y, ...), x)
+  res <- vec_arith_base(op, x, y, ...)
+  # TODO: This should be vec_restore(), but it needs integer->double support
+  attributes(res) <- attributes(x)
+  res
 }
 #' @importFrom vctrs vec_arith_base
 #' @method vec_arith.mt_linear double
