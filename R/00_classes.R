@@ -1,5 +1,6 @@
 #' Base S7 class for time units
-#'
+#' 
+#' @rdname mt_unit
 #' @export
 mt_unit_s3 <- S7::new_S3_class(
   "mixtime::mt_unit", 
@@ -11,4 +12,5 @@ mt_unit_s3 <- S7::new_S3_class(
   }
 )
 
+#' @rdname mt_unit
 mt_unit <- S7::new_class("mt_unit", parent = mt_unit_s3)

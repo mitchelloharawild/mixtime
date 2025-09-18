@@ -4,7 +4,7 @@
 \alias{yearweek}
 \title{ISO 8601 year-week time representation}
 \usage{
-yearweek(.data, tz = "UTC", discrete = TRUE)
+yearweek(.data, tz = NULL, discrete = TRUE)
 }
 \arguments{
 \item{.data}{Another object to be coerced into ISO 8601 year-weeks.}

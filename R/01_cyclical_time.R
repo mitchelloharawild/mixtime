@@ -35,9 +35,11 @@ cyclical_time <- function(chronon, cycle) {
   
   # TODO: Ensure c(granules, chronon) are in decreasing order of size
 
-  function(.data, tz = lubridate::tz(.data), discrete = TRUE) {
+  function(.data, tz = NULL, discrete = TRUE) {
     # Get timezone from .data
-    force(tz)
+    if (is.null(tz)) {
+      tz <- suppressWarnings(lubridate::tz(.data))
+    }
     
     # Cast to continuous time from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
