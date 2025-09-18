@@ -43,8 +43,54 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
 
   # TODO: Apply graph dispatch to find shortest path between from and to using
   # divmod conversions between time units (e.g. tu_day -> tu_month)
+  path <- S7_graph_dispatch(
+    unique(c(
+      # Chronon divmod should be directional
+      method_signatures(chronon_divmod),
+      # Chronon cardinality is a undirected fallback
+      method_signatures(chronon_cardinality)
+    )),
+    from,
+    to
+  )
 
-  ## Fallback to chronon_cardinality for regular time units
+  path[[1]] <- from
+  path[[length(path)]] <- to
+  # Initialise intermediate classes with 1L
+  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
+
+  chronon <- numeric(length(path))
+  chronon[[1]] <- vec_data(x)
+  remainder <- numeric(length(path)-1L)
+  # Forward convert chronons
+  for (i in seq(2, length.out = length(path)-1)) {
+    result <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], chronon[[i-1L]])
+    chronon[[i]] <- result$chronon
+    remainder[[i-1L]] <- result$remainder
+  }
+
+  # Backward convert remainder
+  for (i in seq(length(remainder), by = -1L, length.out = length(remainder) - 1L)) {
+    remainder[[i-1L]] <- remainder[[i-1L]] + chronon_cardinality(path[[i]], path[[i-1L]], chronon[[i]])*remainder[[i]]
+  }
+
+  list(
+    chronon = chronon[[length(chronon)]],
+    remainder = remainder[[1L]]
+  )
+
+}
+
+chronon_divmod_dispatch <- function(from, to, x) {
+  if (is.null(chronon_divmod@methods[[S7_class_id(from)]][[S7_class_id(to)]])) {
+    return(chronon_divmod_regular(from, to, x))
+  } else {
+    return(chronon_divmod(from, to, x))
+  }
+}
+
+## Fallback to chronon_cardinality for regular time units
+chronon_divmod_regular <- function(from, to, x) {
   divisor <- chronon_cardinality(to, from)
   list(
     chronon = x %/% divisor,

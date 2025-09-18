@@ -26,12 +26,32 @@
 chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 
 chronon_convert_impl <- function(x, from, to, discrete) {
-  divmod <- chronon_divmod(from, to, x)
-  if (discrete) {
-    return(as.integer(divmod$chronon))
-  } else {
-    return(divmod$chronon + divmod$remainder/chronon_cardinality(to, from, divmod$chronon))
+  path <- S7_graph_dispatch(
+    unique(c(
+      # Chronon divmod should be directional
+      method_signatures(chronon_divmod),
+      # Chronon cardinality is a undirected fallback
+      method_signatures(chronon_cardinality)
+    )),
+    from,
+    to
+  )
+
+  path[[1]] <- from
+  path[[length(path)]] <- to
+  # Initialise intermediate classes with 1L
+  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
+
+  # Convert chronons along the path
+  for (i in seq(2, length.out = length(path)-1)) {
+    res <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], x)
+    part <- chronon_cardinality(path[[i]], path[[i-1L]], floor(res$chronon))
+    x <- res$chronon + res$remainder/part
   }
+
+  if (discrete) x <- floor(x)
+  
+  x
 }
 
 method(chronon_convert, S7::new_S3_class("mt_linear")) <- function(x, to, discrete = FALSE, ...) {

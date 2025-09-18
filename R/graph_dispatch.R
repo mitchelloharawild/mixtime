@@ -2,12 +2,13 @@
 ## that should ideally be refactored to share common code, or provided by a
 ## package implementing graph algorithms.
 
-S7_graph_dispatch <- function(generic, start, end) {
-  # Get the methods for the generic function (the graph dispatch edges)
-  method_signatures <- traverse_methods(generic@methods)
-  
+method_signatures <- function(generic) {
+  traverse_methods(generic@methods)
+}
+
+S7_graph_dispatch <- function(signatures, start, end) {
   # Find all unique classes (the graph dispatch nodes)
-  classes <- vec_unique(vec_unchop(method_signatures))
+  classes <- vec_unique(vec_unchop(signatures))
 
   S7_signature_id <- function(sig) {
     # If the argument is an S7 class, return the class identifiers (package and name)
@@ -17,7 +18,7 @@ S7_graph_dispatch <- function(generic, start, end) {
     lapply(sig, S7_signature_id)
   }
   
-  chr_signatures <- S7_signature_id(method_signatures)
+  chr_signatures <- S7_signature_id(signatures)
   chr_classes <- lapply(classes, S7_class_id)
 
   int_nodes <- seq_along(classes)
@@ -191,12 +192,9 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
   return(integer(0))
 }
 
-S7_graph_glb <- function(generic, chronons) {
-  # Get the methods for the generic function (the graph dispatch edges)
-  method_signatures <- traverse_methods(generic@methods)
-  
+S7_graph_glb <- function(signatures, chronons) {
   # Find all unique classes (the graph dispatch nodes)
-  classes <- vec_unique(vec_unchop(method_signatures))
+  classes <- vec_unique(vec_unchop(signatures))
 
   S7_signature_id <- function(sig) {
     # If the argument is an S7 class, return the class identifiers (package and name)
@@ -206,7 +204,7 @@ S7_graph_glb <- function(generic, chronons) {
     lapply(sig, S7_signature_id)
   }
   
-  chr_signatures <- S7_signature_id(method_signatures)
+  chr_signatures <- S7_signature_id(signatures)
   chr_classes <- lapply(classes, S7_class_id)
 
   int_nodes <- seq_along(classes)

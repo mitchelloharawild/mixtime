@@ -81,7 +81,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
 
   # No specific method defined between these classes
   # Attempt graph traversal to find a sequence of methods
-  path <- S7_graph_dispatch(chronon_cardinality, x, y)
+  path <- S7_graph_dispatch(method_signatures(chronon_cardinality), x, y)
 
   path[[1]] <- x
   path[[length(path)]] <- y
