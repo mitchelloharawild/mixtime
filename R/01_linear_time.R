@@ -93,7 +93,13 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
     list(attr(x, "chronon"))
   )
   parts <- rep(list(numeric(length(x))), n_units <- length(units))
-  parts[[n_units]] <- vec_data(x)
+  x <- vec_data(x)
+  if(is_discrete <- is.integer(x)) {
+    parts[[n_units]] <- x
+  } else {
+    parts[[n_units]] <- floor(x)
+    frac <- x - parts[[n_units]]
+  }
   for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
     mod <- chronon_divmod(units[[i]], units[[i-1L]], parts[[i]])
     parts[[i - 1L]] <- mod$chronon
@@ -106,6 +112,10 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   # Use cyclical labels for all but the largest granule
   for (i in seq(length(units), by = -1L, length.out = n_units - 1L)) {
     parts[[i]] <- cyclical_labels(units[[i]], units[[i-1L]], parts[[i]])
+  }
+
+  if(!is_discrete) {
+    parts[[n_units + 1L]] <- sprintf("%.1f%%", frac*100)
   }
 
   # The largest granule is displayed continuously, smaller units are displayed cyclically
