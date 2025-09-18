@@ -81,7 +81,7 @@ linear_time <- function(chronon, granules = list()) {
 #' @importFrom rlang inject
 #' @export
 format.mt_linear <- function(x, ...) {
-    as.character(x)
+  as.character(x)
 }
 
 #' @method vec_cast.character mt_linear

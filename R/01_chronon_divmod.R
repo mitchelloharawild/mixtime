@@ -59,9 +59,9 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # Initialise intermediate classes with 1L
   path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
 
-  chronon <- numeric(length(path))
+  chronon <- vector("list", length(path))
   chronon[[1]] <- vec_data(x)
-  remainder <- numeric(length(path)-1L)
+  remainder <- vector("list", length(path)-1L)
   # Forward convert chronons
   for (i in seq(2, length.out = length(path)-1)) {
     result <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], chronon[[i-1L]])
