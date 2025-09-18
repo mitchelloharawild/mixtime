@@ -102,3 +102,12 @@ vec_ptype2.mixtime <- function(x, y, ...) {
   }
   new_mixtime()
 }
+
+#' @export
+#' @importFrom vctrs vec_proxy_order
+vec_proxy_order.mixtime <- function(x, ...) {
+  if (length(attr(x, "v")) > 1L) {
+    cli::cli_abort("Ordering mixtime objects with multiple granularities is not yet supported.")
+  }
+  order(vctrs::vec_data(vecvec::unvecvec(x)))
+}
