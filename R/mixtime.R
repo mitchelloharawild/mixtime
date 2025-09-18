@@ -109,5 +109,5 @@ vec_proxy_order.mixtime <- function(x, ...) {
   if (length(attr(x, "v")) > 1L) {
     cli::cli_abort("Ordering mixtime objects with multiple granularities is not yet supported.")
   }
-  order(vctrs::vec_data(vecvec::unvecvec(x)))
+  vec_proxy_order(vctrs::vec_data(vecvec::unvecvec(x)))
 }
