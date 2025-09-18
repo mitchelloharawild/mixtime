@@ -12,7 +12,7 @@ S7::method(time_unit_full, tu_week) <- function(x) "week"
 S7::method(time_unit_abbr, tu_week) <- function(x) "W"
 
 S7::method(chronon_cardinality, list(tu_week, tu_day)) <- function(x, y, at = NULL) {
-  x@x*7L/y@x
+  vec_data(x)*7L/vec_data(y)
 }
 
 S7::method(chronon_divmod, list(tu_day, tu_week)) <- function(from, to, x) {

@@ -57,10 +57,10 @@ S7::method(time_unit_abbr, tu_millisecond) <- function(x) "ms"
 
 ### Calendar algebra S7::methods for Gregorian time units
 S7::method(chronon_cardinality, list(tu_year, tu_quarter)) <- function(x, y, at = NULL) {
-  x@x*4/y@x
+  vec_data(x)*4/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_year, tu_month)) <- function(x, y, at = NULL) {
-  x@x*12/y@x
+  vec_data(x)*12/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
@@ -69,23 +69,23 @@ S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NU
   is_leap_year(1970L + as.integer(at)) + 365L
 }
 S7::method(chronon_cardinality, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
-  x@x*3/y@x
+  vec_data(x)*3/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
   # TODO: Handle timezones if `at` is provided
-  x@x*24/y@x
+  vec_data(x)*24/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_hour, tu_minute)) <- function(x, y, at = NULL) {
   # TODO: Handle timezones if `at` is provided
-  x@x*60/y@x
+  vec_data(x)*60/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_minute, tu_second)) <- function(x, y, at = NULL) {
   # if(at %in% .leap.seconds) 61 else 60
 
-  x@x*60/y@x
+  vec_data(x)*60/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_second, tu_millisecond)) <- function(x, y, at = NULL) {
-  x@x*1000/y@x
+  vec_data(x)*1000/vec_data(y)
 }
 
 monthdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)

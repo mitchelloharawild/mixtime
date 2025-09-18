@@ -66,7 +66,7 @@ chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
 method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {
-    return(x@x/y@x)
+    return(vec_data(x)/vec_data(y))
   }
 
   # Try to find a method with arguments swapped
@@ -97,5 +97,5 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
     result <- attr(path[[i]], "S7_class")(result)
   }
 
-  result@x
+  vec_data(result)
 }
