@@ -49,7 +49,7 @@ chronon_convert_impl <- function(x, from, to, discrete) {
     x <- res$chronon + res$remainder/part
   }
 
-  if (discrete) x <- floor(x)
+  if (discrete) x <- as.integer(x)
   
   x
 }
