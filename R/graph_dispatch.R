@@ -19,18 +19,18 @@ S7_graph_dispatch <- function(signatures, start, end) {
   }
   
   chr_signatures <- S7_signature_id(signatures)
-  chr_classes <- lapply(classes, S7_class_id)
+  chr_classes <- vapply(classes, S7_class_id, character(1L))
 
   int_nodes <- seq_along(classes)
-  int_edges <- vec_match(vec_unchop(chr_signatures), chr_classes)
+  int_edges <- vec_match(unlist(chr_signatures), chr_classes)
   int_edge_from <- int_edges[seq(1, length(int_edges), by = 2)]
   int_edge_to <- int_edges[seq(2, length(int_edges), by = 2)]
   
   int_path <- bfs_shortest_path(
     from = int_edge_from,
     to = int_edge_to,
-    start = vec_match(list(attr(start, "S7_class")), classes),
-    end = vec_match(list(attr(end, "S7_class")), classes)
+    start = vec_match(S7_class_id(start), chr_classes),
+    end = vec_match(S7_class_id(end), chr_classes)
   )
 
   # Instantiate path of classed S7 objects for dispatch
@@ -205,14 +205,14 @@ S7_graph_glb <- function(signatures, chronons) {
   }
   
   chr_signatures <- S7_signature_id(signatures)
-  chr_classes <- lapply(classes, S7_class_id)
+  chr_classes <- vapply(classes, S7_class_id, character(1L))
 
   int_nodes <- seq_along(classes)
-  int_edges <- vec_match(vec_unchop(chr_signatures), chr_classes)
+  int_edges <- vec_match(unlist(chr_signatures), chr_classes)
   int_edge_to <- int_edges[seq(1, length(int_edges), by = 2)]
   int_edge_from <- int_edges[seq(2, length(int_edges), by = 2)]
   
-  int_chronons <- vec_match(lapply(chronons, attr, which = "S7_class"), classes)
+  int_chronons <- vec_match(vapply(chronons, S7_class_id, character(1L)), chr_classes)
 
   int_glb <- greatest_lower_bound(
     from = int_edge_from,
