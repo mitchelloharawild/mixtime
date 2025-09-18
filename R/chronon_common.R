@@ -29,6 +29,7 @@
 #' # The common chronon between months, quarters, and years is a month
 #' chronon_common(tu_month(1L), tu_quarter(1L), tu_year(1L))
 #' 
+#' @export
 chronon_common <- function(..., .ptype = NULL) {
   # TODO: Validate that the supplied .ptype can represent all input chronons
   if (!is.null(.ptype)) return(.ptype)
