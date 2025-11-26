@@ -166,6 +166,23 @@ tsbl_interval_units <- c(
   "millisecond" = "mixtime::tu_millisecond"
 )
 
+#' @importFrom vctrs vec_math
+#' @method vec_math mt_linear
+#' @export
+vec_math.mt_linear <- function(.fn, .x, ...) {
+  if (.fn == "mean") {
+    res <- vctrs::vec_math_base(.fn, .x, ...)
+    if (is.integer(.x)) {
+      res <- as.integer(res)
+    }
+    return(vec_restore(res, .x))
+  }
+  if (.fn %in% c("is.nan", "is.finite", "is.infinite")) {
+    return(vctrs::vec_math_base(.fn, .x, ...))
+  }
+  stop(sprintf("Math function '%s' not supported for continuous time", .fn), call. = FALSE)
+}
+
 #' @importFrom vctrs vec_arith
 #' @method vec_arith mt_linear
 #' @export
