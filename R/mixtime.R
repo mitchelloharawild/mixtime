@@ -52,26 +52,6 @@ vec_ptype_full.mixtime <- function(x, ...) "mixtime"
 #' @export
 vec_ptype_abbr.mixtime <- function(x, ...) "mixtime"
 
-#' @export
-seq.mixtime <- function(from, to, by, length.out, along.with, ...){
-  vec_assert(from, size = 1)
-  if(!missing(along.with)) {
-    length.out <- vec_size(along.with)
-  }
-  res <- if(!missing(by)) {
-    by <- vec_cast(by, numeric())
-    if(missing(to)) {
-      seq.int(field(from, "x"), by = by, length.out = length.out)
-    } else {
-      seq.int(field(from, "x"), field(to, "x"), by = by)
-    }
-  } else {
-    seq.int(field(from, "x"), field(to, "x"), length.out = length.out)
-  }
-  res <- list(x = res, c = vec_rep(1L, vec_size(res)))
-  vec_restore(res, from)
-}
-
 vec_cast_to_mixtime <- function(x, to, ...) mixtime(x)
 
 vec_cast_from_mixtime <- function(x, to, ...) {

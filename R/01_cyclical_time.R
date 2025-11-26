@@ -109,3 +109,33 @@ vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
 #' @method vec_arith.mt_cyclical double
 #' @export
 vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
+
+#' @export
+seq.mt_cyclical <- function(from, to,
+                            # by = ((to - from)/(length.out - 1),
+                             ...) {
+  # Capture extra arguments
+  args <- rlang::list2(...)
+  
+  # Convert mt_cyclical to numeric for seq() method
+  if (!missing(from) && inherits(from, "mt_cyclical")) {
+    ptype <- from
+    args$from <- vctrs::vec_data(from)
+  }
+  if (!missing(to) && inherits(to, "mt_cyclical")) {
+    # Require compatible cyclical time objects for from:to
+    if (!is.null(args$from)) {
+      vec_assert(to, from)
+    } else {
+      ptype <- to
+    }
+    args$to <- vctrs::vec_data(to)
+  }
+
+  # Call the usual numeric seq() method
+  res <- rlang::inject(seq(!!!args))
+
+  # Restore mt_cyclical attributes
+  period <- chronon_cardinality(attr(ptype, "cycle"), attr(ptype, "chronon"))
+  vec_restore((res - 1L) %% period + 1L, ptype)
+}
