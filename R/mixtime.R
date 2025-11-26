@@ -77,7 +77,10 @@ vec_cast.double.mixtime <- function(x, to, ...) {
 
 #' @export
 vec_ptype2.mixtime <- function(x, y, ...) {
-  if (!isTRUE(index_valid(x)) || !isTRUE(index_valid(y))) {
+  x_is_time <- !isTRUE(index_valid(x))
+  y_is_time <- !isTRUE(index_valid(y))
+
+  if (!(x_is_time && y_is_time) && !(is.numeric(x) || is.numeric(y))) {
     vctrs::stop_incompatible_type(x, y, x_arg = "", y_arg = "")
   }
   new_mixtime()
