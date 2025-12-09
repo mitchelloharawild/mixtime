@@ -167,10 +167,26 @@ S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
   }
 
-  x <- as.POSIXlt(as.Date(x))
+  z   <- x + 719468L
+
+  # Find year components
+  era <- z %/% 146097L                  # era of 400-year cycles
+  doe <- z - era * 146097L              # day-of-era (0..146096)
+  yoe <- (400L * doe + 591L) %/% 146097L# year-of-era (0..399)
+
+  doy <- doe -
+        (1461L * yoe) %/% 4L +
+        (yoe + 3L) %/% 100L -
+        (yoe * 3L) %/% 400L            # day-of-year (0..366)
+
+  mp  <- (5L * doy + 2L) %/% 153L       # month since March (0..11)
+  year  <- yoe + era * 400L + (mp %/% 10L)
+  ly <- is_leap_year(year)
+  yday <- (doy + 59 + ly) %% (365L + ly)
+  
   list(
-    chronon = x$year-70L,
-    remainder = x$yday + 1L
+    chronon = year-1970L,
+    remainder = yday
   )
 }
 S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
@@ -200,7 +216,6 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 #' @param discrete If `TRUE`, the number of chronons since Unix epoch that
 #' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
 #'  of chronons is returned (analagous to time using a continuous time model).
-#' @param ... Arguments for methods.
 #' 
 #' @examples
 #' 
