@@ -111,11 +111,28 @@ S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
     stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
   }
 
-  # TODO: should be swapped out to arithmetic on integer days since epoch
-  x <- as.POSIXlt(as.Date(x))
+  # Shift to days since 0000-03-01 (algorithm anchor)
+  z   <- x + 719468L
+
+  # Find year components
+  era <- z %/% 146097L                  # era of 400-year cycles
+  doe <- z - era * 146097L              # day-of-era (0..146096)
+  yoe <- (400L * doe + 591L) %/% 146097L# year-of-era (0..399)
+
+  doy <- doe -
+        (1461L * yoe) %/% 4L +
+        (yoe + 3L) %/% 100L -
+        (yoe * 3L) %/% 400L            # day-of-year (0..365)
+
+  mp  <- (5L * doy + 2L) %/% 153L       # month since March (0..11)
+
+  day   <- doy - (153L * mp + 2L) %/% 5L  # day of month (0..31)
+  month <- mp + 3L - 12L * (mp %/% 10L)
+  year  <- yoe + era * 400L + (mp %/% 10L)
+
   list(
-    chronon = (x$year-70L)*12L + x$mon,
-    remainder = x$mday - 1L
+    chronon = (year-1970L)*12L + month - 1L,
+    remainder = day
   )
 }
 S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
