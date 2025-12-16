@@ -27,6 +27,12 @@ tu_second(.data = 1L)
 
 tu_millisecond(.data = 1L)
 }
+\arguments{
+\item{.data}{The number of time units}
+}
+\value{
+A time unit for the Gregorian calendar system.
+}
 \description{
 Gregorian time unit classes
 }

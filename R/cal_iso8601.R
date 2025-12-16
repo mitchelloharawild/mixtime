@@ -1,9 +1,12 @@
 #' ISO 8601 time classes
 #' 
+#' @inheritParams mt_unit
+#' 
+#' @return A time unit for the ISO 8601 "isoweek" calendar
+#' 
 #' @examples
 #' yw <- linear_time(tu_week(1L), list(tu_year(1L)))
 #' yw(Sys.Date())
-#' 
 #' 
 #' @rdname calendar_iso8601
 #' @export

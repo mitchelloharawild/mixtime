@@ -6,12 +6,17 @@
 \usage{
 tu_week(.data = 1L)
 }
+\arguments{
+\item{.data}{The number of time units}
+}
+\value{
+A time unit for the ISO 8601 "isoweek" calendar
+}
 \description{
 ISO 8601 time classes
 }
 \examples{
 yw <- linear_time(tu_week(1L), list(tu_year(1L)))
 yw(Sys.Date())
-
 
 }

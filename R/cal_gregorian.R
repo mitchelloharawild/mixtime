@@ -5,6 +5,10 @@
 
 #' Gregorian time unit classes
 #'
+#' @inheritParams mt_unit
+#' 
+#' @return A time unit for the Gregorian calendar system.
+#' 
 #' @rdname calendar_gregorian
 #' @export
 tu_year <- S7::new_class("tu_year", parent = mt_unit)
