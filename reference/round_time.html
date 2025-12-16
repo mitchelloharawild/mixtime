@@ -89,23 +89,17 @@ to the requested unit.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Round POSIXct to the nearest minute (preserving tz)</span></span></span>
 <span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2020-01-01 12:34:56"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">round_time</span><span class="op">(</span><span class="va">t</span>, unit <span class="op">=</span> <span class="st">"minute"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Can't find method for generic `chronon_divmod(from, to)`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> - from: &lt;character&gt;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> - to  : &lt;mixtime::tu_second&gt;</span>
+<span class="r-in"><span><span class="fu">round_time</span><span class="op">(</span><span class="va">t</span>, unit <span class="op">=</span> <span class="fu"><a href="calendar_gregorian.html">tu_minute</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2020-01-01 12:35:00 UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Floor to the nearest hour</span></span></span>
-<span class="r-in"><span><span class="fu">floor_time</span><span class="op">(</span><span class="va">t</span>, unit <span class="op">=</span> <span class="st">"hour"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Can't find method for generic `chronon_divmod(from, to)`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> - from: &lt;character&gt;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> - to  : &lt;mixtime::tu_second&gt;</span>
+<span class="r-in"><span><span class="fu">floor_time</span><span class="op">(</span><span class="va">t</span>, unit <span class="op">=</span> <span class="fu"><a href="calendar_gregorian.html">tu_hour</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2020-01-01 12:00:00 UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Ceiling a Date (treated as midnight-of-day rounding)</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">ceiling_time</span><span class="op">(</span><span class="va">d</span>, unit <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Can't find method for generic `chronon_divmod(from, to)`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> - from: &lt;character&gt;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> - to  : &lt;mixtime::tu_day&gt;</span>
+<span class="r-in"><span><span class="fu">ceiling_time</span><span class="op">(</span><span class="va">d</span>, unit <span class="op">=</span> <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2020-02-01"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
