@@ -8,6 +8,8 @@ time_chronon(x, ...)
 }
 \arguments{
 \item{x}{A time object (e.g., \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXct}, \code{\link[=linear_time]{linear_time()}}, etc.)}
+
+\item{...}{Additional arguments for methods.}
 }
 \value{
 A time unit object representing the chronon (e.g., \code{tu_day(1L)})

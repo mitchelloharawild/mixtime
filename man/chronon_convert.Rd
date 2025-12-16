@@ -12,6 +12,7 @@ chronon_convert(x, ...)
 \item{to}{The target chronon to convert to (a time unit object)}
 
 \item{discrete}{If \code{TRUE}, the number of target chronons since Unix epoch
+\item{...}{Additional arguments for methods.
 that \code{x} falls into is returned as an integer. If \code{FALSE}, a fractional
 number of target chronons is returned (analagous to time using a continuous
 time model).}

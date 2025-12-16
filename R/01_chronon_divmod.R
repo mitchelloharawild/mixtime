@@ -15,6 +15,7 @@
 #' @param from The time unit that `x` is measured in (e.g., `tu_day(1L)`).
 #' @param to The time unit to convert `x` into (e.g., `tu_week(1L)`).
 #' @param x An integer vector of chronons measured in the `from` time unit.
+#' @param ... Additional arguments for methods.
 #' 
 #' @return An list of two elements:
 #' - `chronon`: integer vector of chronons measured in the `to` time unit.
@@ -27,6 +28,8 @@
 #' 
 #' # Convert week 4 since epoch into days since epoch
 #' chronon_divmod(tu_week(1L), tu_day(1L), 4L)
+#'
+#' @export
 chronon_divmod <- S7::new_generic("chronon_divmod", c("from", "to"))
 
 #' @export

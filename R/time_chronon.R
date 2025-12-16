@@ -4,6 +4,7 @@
 #' time object, such as continuous time or cyclical time representations.
 #' 
 #' @param x A time object (e.g., [base::Date], [base::POSIXct], [linear_time()], etc.)
+#' @param ... Additional arguments for methods.
 #' 
 #' @return A time unit object representing the chronon (e.g., `tu_day(1L)`)
 #' 

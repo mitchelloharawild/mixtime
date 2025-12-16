@@ -4,7 +4,7 @@
 \name{mt_unit_s3}
 \alias{mt_unit_s3}
 \alias{mt_unit}
-\title{Base S7 class for time units}
+\title{Base S7 classes for time units}
 \format{
 An object of class \code{S7_S3_class} of length 3.
 }
@@ -13,7 +13,15 @@ mt_unit_s3
 
 mt_unit(.data = 1L)
 }
+\arguments{
+\item{.data}{The number of time units}
+}
+\value{
+A time unit object of class \code{mt_unit}
+}
 \description{
+Base S7 classes for time units
+
 Base S7 class for time units
 }
 \keyword{datasets}

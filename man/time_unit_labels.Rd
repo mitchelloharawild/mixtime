@@ -11,6 +11,8 @@ time_unit_abbr(x, ...)
 }
 \arguments{
 \item{x}{A time unit object (e.g., \code{tu_month(1L)})}
+
+\item{...}{Additional arguments for methods.}
 }
 \value{
 A string representing the time unit

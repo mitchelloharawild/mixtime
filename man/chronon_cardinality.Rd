@@ -11,6 +11,8 @@ chronon_cardinality(x, y, ...)
 
 \item{y}{The time unit to convert \code{x} into}
 
+\item{...}{Additional arguments for methods.}
+
 \item{at}{Optional time point for context-dependent cardinality, defined in
 terms of \code{y} (e.g., if \code{y} is \code{tu_month()}, then \code{at} could be a
 \code{yearmonth()})}

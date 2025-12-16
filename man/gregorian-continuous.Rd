@@ -20,8 +20,6 @@ yearmonth(.data, tz = NULL, discrete = TRUE)
 \item{discrete}{If \code{TRUE}, the number of chronons since Unix epoch that
 \code{.data} falls into is returned as an integer. If \code{FALSE}, a fractional number
 of chronons is returned (analagous to time using a continuous time model).}
-
-\item{...}{Arguments for methods.}
 }
 \description{
 \lifecycle{experimental}

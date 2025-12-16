@@ -9,9 +9,10 @@
 #' sizes are context-dependent (such as the number of days in a month),
 #' and so an optional time point defined in terms of `y` chronons can be
 #' provided with `at`.
-#'
+#' 
 #' @param x The primary time unit
 #' @param y The time unit to convert `x` into
+#' @param ... Additional arguments for methods.
 #' @param at Optional time point for context-dependent cardinality, defined in
 #' terms of `y` (e.g., if `y` is `tu_month()`, then `at` could be a 
 #' `yearmonth()`)

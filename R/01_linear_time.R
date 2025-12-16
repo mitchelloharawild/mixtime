@@ -33,6 +33,7 @@
 #' ymd_h <- linear_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
 #' ymd_h(Sys.time())
 #' 
+#' @export
 linear_time <- function(chronon, granules = list()) {
   if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
     stop("All elements in granules must be time unit objects", call. = FALSE)

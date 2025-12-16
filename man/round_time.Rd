@@ -14,9 +14,9 @@ round_time(x, unit, ...)
 POSIXct, POSIXlt and other objects that inherit from POSIXt. The returned
 object will be of the same class as the input.}
 
-\item{...}{Additional arguments passed to specific implementations.}
+\item{unit}{A time unit (or object coercible to a time unit, e.g. "day").}
 
-\item{units}{A time unit (or object coercible to a time unit, e.g. "day").}
+\item{...}{Additional arguments passed to specific implementations.}
 }
 \value{
 An object of the same class as x with its time components adjusted
@@ -30,14 +30,14 @@ time class, as rounded by the attributes of the \code{unit}.
 \examples{
 # Round POSIXct to the nearest minute (preserving tz)
 t <- as.POSIXct("2020-01-01 12:34:56", tz = "UTC")
-round_time(t, units = "minute")
+round_time(t, unit = "minute")
 
 # Floor to the nearest hour
-floor_time(t, units = "hour")
+floor_time(t, unit = "hour")
 
 # Ceiling a Date (treated as midnight-of-day rounding)
 d <- as.Date("2020-01-01")
-ceiling_time(d, units = "day")
+ceiling_time(d, unit = "day")
 
 }
 \seealso{

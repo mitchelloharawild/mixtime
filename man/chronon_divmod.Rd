@@ -11,6 +11,8 @@ chronon_divmod(from, to, ...)
 
 \item{to}{The time unit to convert \code{x} into (e.g., \code{tu_week(1L)}).}
 
+\item{...}{Additional arguments for methods.}
+
 \item{x}{An integer vector of chronons measured in the \code{from} time unit.}
 }
 \value{

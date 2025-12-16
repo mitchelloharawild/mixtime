@@ -5,6 +5,7 @@
 #' time, and durations.
 #' 
 #' @param x A time unit object (e.g., `tu_month(1L)`)
+#' @param ... Additional arguments for methods.
 #' 
 #' @return A string representing the time unit
 #' 

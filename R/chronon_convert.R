@@ -1,8 +1,9 @@
 #' Convert between chronons
-#' 
+#'
 #' @param x A linear time object (of class `mt_linear`)
 #' @param to The target chronon to convert to (a time unit object)
 #' @param discrete If `TRUE`, the number of target chronons since Unix epoch 
+#' @param ... Additional arguments for methods.
 #' that `x` falls into is returned as an integer. If `FALSE`, a fractional 
 #' number of target chronons is returned (analagous to time using a continuous
 #' time model).
