@@ -2,20 +2,24 @@
 % Please edit documentation in R/chronon_convert.R
 \name{chronon_convert}
 \alias{chronon_convert}
+\alias{chronon_convert.S7_methods}
 \title{Convert between chronons}
 \usage{
 chronon_convert(x, ...)
+
+chronon_convert.S7_methods(x, to, discrete = FALSE)
 }
 \arguments{
 \item{x}{A linear time object (of class \code{mt_linear})}
 
-\item{to}{The target chronon to convert to (a time unit object)}
-
-\item{discrete}{If \code{TRUE}, the number of target chronons since Unix epoch
 \item{...}{Additional arguments for methods.
 that \code{x} falls into is returned as an integer. If \code{FALSE}, a fractional
 number of target chronons is returned (analagous to time using a continuous
 time model).}
+
+\item{to}{The target chronon to convert to (a time unit object)}
+
+\item{discrete}{If \code{TRUE}, the number of target chronons since Unix epoch}
 }
 \value{
 A numeric or integer representing the time since Unix epoch in terms of the target

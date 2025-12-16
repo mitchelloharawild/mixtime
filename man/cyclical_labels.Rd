@@ -2,14 +2,21 @@
 % Please edit documentation in R/01_cyclical_labels.R
 \name{cyclical_labels}
 \alias{cyclical_labels}
+\alias{cyclical_labels.S7_methods}
 \title{Friendly labels for cyclical relationships}
 \usage{
 cyclical_labels(granule, cycle, ...)
+
+cyclical_labels.S7_methods(granule, cycle, i)
 }
 \arguments{
 \item{granule}{A time unit object representing the granule (e.g., \code{tu_month(1L)})}
 
 \item{cycle}{A time unit object representing the cycle (e.g., \code{tu_year(1L)})}
+
+\item{...}{Additional arguments for methods.}
+
+\item{i}{Integer vector representing the position within the cycle.}
 }
 \value{
 Character vector of labels for the time point within the cycle.

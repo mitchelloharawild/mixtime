@@ -58,6 +58,11 @@
 #' @export
 chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
 
+
+#' @rdname chronon_cardinality
+chronon_cardinality.S7_methods <- function(x, y, at = NULL) S7_method_docs()
+
+
 #' Default method for time unit ratio comparison
 #' 
 #' When no specific method is defined, attempts to find the inverse ratio

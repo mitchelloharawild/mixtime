@@ -2,9 +2,12 @@
 % Please edit documentation in R/01_chronon_divmod.R
 \name{chronon_divmod}
 \alias{chronon_divmod}
+\alias{chronon_divmod.S7_methods}
 \title{Convert between chronons of different time units}
 \usage{
 chronon_divmod(from, to, ...)
+
+chronon_divmod.S7_methods(from, to, x)
 }
 \arguments{
 \item{from}{The time unit that \code{x} is measured in (e.g., \code{tu_day(1L)}).}
@@ -36,4 +39,5 @@ chronon_divmod(tu_day(1L), tu_week(1L), 16L)
 
 # Convert week 4 since epoch into days since epoch
 chronon_divmod(tu_week(1L), tu_day(1L), 4L)
+
 }

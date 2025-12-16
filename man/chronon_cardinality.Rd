@@ -2,9 +2,12 @@
 % Please edit documentation in R/01_chronon_cardinality.R
 \name{chronon_cardinality}
 \alias{chronon_cardinality}
+\alias{chronon_cardinality.S7_methods}
 \title{Cardinality between time units}
 \usage{
 chronon_cardinality(x, y, ...)
+
+chronon_cardinality.S7_methods(x, y, at = NULL)
 }
 \arguments{
 \item{x}{The primary time unit}

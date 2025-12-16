@@ -26,6 +26,10 @@
 #' @export
 chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 
+#' @rdname chronon_convert
+chronon_convert.S7_methods <- function(x, to, discrete = FALSE) S7_method_docs()
+
+
 chronon_convert_impl <- function(x, from, to, discrete) {
   path <- S7_graph_dispatch(
     unique(c(
