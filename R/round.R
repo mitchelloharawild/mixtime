@@ -63,7 +63,7 @@ ceiling_time.default <- function(x, unit, ...) {
     from = unit,
     to = time_chronon(x),
     # Special handling of ceiling to round .0 up
-    x = ceiling(trunc(chronon_convert(x, unit)) + 0.5)
+    x = ceiling(floor(chronon_convert(x, unit)) + 0.5)
   )$chronon
   attributes(res) <- attributes(x)
   res
