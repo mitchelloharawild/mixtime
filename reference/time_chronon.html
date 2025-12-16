@@ -62,6 +62,10 @@ time object, such as continuous time or cyclical time representations.</p>
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A time object (e.g., <a href="https://rdrr.io/r/base/Dates.html" class="external-link">base::Date</a>, <a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">base::POSIXct</a>, <code><a href="linear_time.html">linear_time()</a></code>, etc.)</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments for methods.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -81,11 +85,11 @@ time object, such as continuous time or cyclical time representations.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The chronon of a continuous time year and month is 1 month</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="gregorian-continuous.html">yearmonth</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_month&gt; int 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The common chronon of a mixed time object is the finest chronon</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="gregorian-continuous.html">yearmonth</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_day&gt; int 1</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

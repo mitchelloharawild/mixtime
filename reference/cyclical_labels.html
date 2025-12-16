@@ -52,7 +52,9 @@ between time units. These functions should return locale specific labels.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cyclical_labels</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cyclical_labels.S7_methods</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">i</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -65,6 +67,14 @@ between time units. These functions should return locale specific labels.</p>
 
 <dt id="arg-cycle">cycle<a class="anchor" aria-label="anchor" href="#arg-cycle"></a></dt>
 <dd><p>A time unit object representing the cycle (e.g., <code>tu_year(1L)</code>)</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments for methods.</p></dd>
+
+
+<dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
+<dd><p>Integer vector representing the position within the cycle.</p></dd>
 
 </dl></div>
     <div id="value">

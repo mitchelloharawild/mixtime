@@ -50,7 +50,9 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">chronon_convert</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">chronon_convert</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">chronon_convert.S7_methods</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -61,15 +63,19 @@
 <dd><p>A linear time object (of class <code>mt_linear</code>)</p></dd>
 
 
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments for methods.
+that <code>x</code> falls into is returned as an integer. If <code>FALSE</code>, a fractional
+number of target chronons is returned (analagous to time using a continuous
+time model).</p></dd>
+
+
 <dt id="arg-to">to<a class="anchor" aria-label="anchor" href="#arg-to"></a></dt>
 <dd><p>The target chronon to convert to (a time unit object)</p></dd>
 
 
 <dt id="arg-discrete">discrete<a class="anchor" aria-label="anchor" href="#arg-discrete"></a></dt>
-<dd><p>If <code>TRUE</code>, the number of target chronons since Unix epoch
-that <code>x</code> falls into is returned as an integer. If <code>FALSE</code>, a fractional
-number of target chronons is returned (analagous to time using a continuous
-time model).</p></dd>
+<dd><p>If <code>TRUE</code>, the number of target chronons since Unix epoch</p></dd>
 
 </dl></div>
     <div id="value">
@@ -83,17 +89,17 @@ chronon's precision.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert from months since epoch to years since epoch</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_convert</span><span class="op">(</span><span class="fu"><a href="gregorian-continuous.html">yearmonth</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 55.91667</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert from days since epoch to months since epoch</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_convert</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 671.2581</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 671.4839</span>
 <span class="r-in"><span><span class="fu">chronon_convert</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 671</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert from seconds since epoch to hours since epoch</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_convert</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_hour</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 490357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 490518.5</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

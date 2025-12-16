@@ -74,25 +74,24 @@
 <code>.data</code> falls into is returned as an integer. If <code>FALSE</code>, a fractional number
 of chronons is returned (analagous to time using a continuous time model).</p></dd>
 
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments for methods.</p></dd>
-
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">year</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2025</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[8]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1970-Q1 1970-Q2 1970-Q3 1970-Q4 1971-Q1 1971-Q2 1971-Q3 1971-Q4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘vecvec’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2025-Dec</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
