@@ -25,5 +25,6 @@ Imports:
     rlang,
     tsibble,
     cli,
-    S7
+    S7,
+    vecvec
 RdMacros: lifecycle
