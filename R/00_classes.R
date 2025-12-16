@@ -1,4 +1,4 @@
-#' Base S7 class for time units
+#' Base S7 classes for time units
 #' 
 #' @rdname mt_unit
 #' @export
@@ -12,5 +12,12 @@ mt_unit_s3 <- S7::new_S3_class(
   }
 )
 
+#' Base S7 class for time units
+#' 
+#' @param .data The number of time units
+#' 
+#' @return A time unit object of class `mt_unit`
+#' 
+#' @export
 #' @rdname mt_unit
 mt_unit <- S7::new_class("mt_unit", parent = mt_unit_s3)
