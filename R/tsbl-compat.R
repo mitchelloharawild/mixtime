@@ -34,7 +34,7 @@ fmt_interval <- function (x, ...) {
   if (all(vec_proxy(x) == 0))
     return("?")
   n <- n_fields(x)
-  micro <- ifelse(cli::is_utf8_output(), "µs", "us")
+  micro <- ifelse(cli::is_utf8_output(), "\u00b5s", "us")
   defaults <- vec_c("Y", "Q", "M", "W", "D", "h", "m", "s",
                     "ms", micro, "ns", "")
   n_defaults <- vec_size(defaults)
