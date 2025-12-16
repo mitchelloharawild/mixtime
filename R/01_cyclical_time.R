@@ -37,8 +37,9 @@ cyclical_time <- function(chronon, cycle) {
 
   function(.data, tz = NULL, discrete = TRUE) {
     # Get timezone from .data
-    if (is.null(tz)) {
-      tz <- suppressWarnings(lubridate::tz(.data))
+    if (!is.null(tz)) {
+      cli::cli_abort("Specifying `tz` is not yet supported for cyclical time.")
+      # tz <- suppressWarnings(lubridate::tz(.data))
     }
     
     # Cast to continuous time from Date, POSIXct, etc.
@@ -49,9 +50,9 @@ cyclical_time <- function(chronon, cycle) {
     # Reduce to cyclical time using modulo arithmetic
     .data <- .data%%chronon_cardinality(cycle, chronon) + 1L
 
-    if (!is.character(tz) || length(tz) != 1L) {
-      cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
-    }
+    # if (!is.character(tz) || length(tz) != 1L) {
+    #   cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
+    # }
 
     vctrs::new_vctr(
       .data, 

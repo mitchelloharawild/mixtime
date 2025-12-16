@@ -55,8 +55,9 @@ linear_time <- function(chronon, granules = list()) {
 
   function(.data, tz = NULL, discrete = TRUE) {
     # Get timezone from .data
-    if (is.null(tz)) {
-      tz <- suppressWarnings(lubridate::tz(.data))
+    if (!is.null(tz)) {
+      cli::cli_abort("Specifying `tz` is not yet supported for linear time.")
+      # tz <- suppressWarnings(lubridate::tz(.data))
     }
 
     # Cast from Date, POSIXct, etc.
@@ -66,9 +67,9 @@ linear_time <- function(chronon, granules = list()) {
       .data <- chronon_convert(.data, chronon, discrete = discrete)
     }
 
-    if (!is.character(tz) || length(tz) != 1L) {
-      cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
-    }
+    # if (!is.character(tz) || length(tz) != 1L) {
+    #   cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
+    # }
 
     mixtime(
       vctrs::new_vctr(
