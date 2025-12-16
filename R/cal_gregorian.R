@@ -104,7 +104,7 @@ S7::method(chronon_cardinality, list(tu_month, tu_day)) <- function(x, y, at = N
   }
   at <- as.integer(at)
   year <- 1970L + at %/% 12
-  month <- ((at + 1L) %% 12) + 1L
+  month <- (at %% 12) + 1L
   monthdays[month] + (month == 2L & is_leap_year(year))
 }
 
@@ -116,23 +116,16 @@ S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
   }
 
   # Shift to days since 0000-03-01 (algorithm anchor)
-  z   <- x + 719468L
-
-  # Find year components
-  era <- z %/% 146097L                  # era of 400-year cycles
-  doe <- z - era * 146097L              # day-of-era (0..146096)
-  yoe <- (400L * doe + 591L) %/% 146097L# year-of-era (0..399)
-
-  doy <- doe -
-        (1461L * yoe) %/% 4L +
-        (yoe + 3L) %/% 100L -
-        (yoe * 3L) %/% 400L            # day-of-year (0..365)
-
-  mp  <- (5L * doy + 2L) %/% 153L       # month since March (0..11)
-
-  day   <- doy - (153L * mp + 2L) %/% 5L  # day of month (0..31)
-  month <- mp + 3L - 12L * (mp %/% 10L)
-  year  <- yoe + era * 400L + (mp %/% 10L)
+  z <- x + 719468L
+  
+  era   <- (z >= 0L) * (z %/% 146097L) + (z < 0L) * ((z - 146096L) %/% 146097L)
+  doe   <- z - era * 146097L                      # day-of-era [0, 146096]
+  yoe   <- (doe - doe %/% 1460L + doe %/% 36524L - doe %/% 146096L) %/% 365L
+  doy   <- doe - (365L * yoe + yoe %/% 4L - yoe %/% 100L + yoe %/% 400L)
+  mp    <- (5L * doy + 2L) %/% 153L               # month prime [0, 11]
+  day   <- doy - (153L * mp + 2L) %/% 5L          # day [0, 30]
+  month <- mp + 3L - 12L * (mp >= 10L)            # month [1, 12]
+  year  <- yoe + era * 400L + (month <= 2L)       # year (proleptic Gregorian)
 
   list(
     chronon = (year-1970L)*12L + month - 1L,
@@ -143,8 +136,8 @@ S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
   # Convert to months since epoch
   x <- chronon_cardinality(from, tu_month(1L))*x
   
-
   year <- x%/%12L + 1970L
+  ly <- as.integer(is_leap_year(year))
   month <- (x%%12L) + 1L
 
   # Start of the month in days since epoch
@@ -155,8 +148,7 @@ S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
     (year - 1968)%/%4 - (year - 1900)%/%100 + (year - 1600)%/%400 + 
     # Days this year before this month
     (367 * month - 362)%/%12 +
-    (month > 2) * (-2 + is_leap_year(year))
-
+    (month > 2) * (-2 + ly) - ly
 
   list(
     chronon = result,
@@ -171,20 +163,17 @@ S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
   }
 
-  z   <- x + 719468L
+  # Shift to days since 0000-03-01 (algorithm anchor)
+  z     <- x + 719468L
 
-  # Find year components
-  era <- z %/% 146097L                  # era of 400-year cycles
-  doe <- z - era * 146097L              # day-of-era (0..146096)
-  yoe <- (400L * doe + 591L) %/% 146097L# year-of-era (0..399)
+  era   <- (z >= 0L) * (z %/% 146097L) + (z < 0L) * ((z - 146096L) %/% 146097L)
+  doe   <- z - era * 146097L                      # day-of-era [0, 146096]
+  yoe   <- (doe - doe %/% 1460L + doe %/% 36524L - doe %/% 146096L) %/% 365L
+  doy   <- doe - (365L * yoe + yoe %/% 4L - yoe %/% 100L + yoe %/% 400L)
+  mp    <- (5L * doy + 2L) %/% 153L               # month prime [0, 11]
+  month <- mp + 3L - 12L * (mp >= 10L)            # month [1, 12]
+  year  <- yoe + era * 400L + (month <= 2L)       # year (proleptic Gregorian)
 
-  doy <- doe -
-        (1461L * yoe) %/% 4L +
-        (yoe + 3L) %/% 100L -
-        (yoe * 3L) %/% 400L            # day-of-year (0..366)
-
-  mp  <- (5L * doy + 2L) %/% 153L       # month since March (0..11)
-  year  <- yoe + era * 400L + (mp %/% 10L)
   ly <- is_leap_year(year)
   yday <- (doy + 59 + ly) %% (365L + ly)
   
