@@ -8,7 +8,7 @@ method_signatures <- function(generic) {
 
 S7_graph_dispatch <- function(signatures, start, end) {
   # Find all unique classes (the graph dispatch nodes)
-  classes <- vec_unique(vec_unchop(signatures))
+  classes <- vec_unique(list_unchop(signatures))
 
   S7_signature_id <- function(sig) {
     # If the argument is an S7 class, return the class identifiers (package and name)
@@ -194,7 +194,7 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
 
 S7_graph_glb <- function(signatures, chronons) {
   # Find all unique classes (the graph dispatch nodes)
-  classes <- vec_unique(vec_unchop(signatures))
+  classes <- vec_unique(list_unchop(signatures))
 
   S7_signature_id <- function(sig) {
     # If the argument is an S7 class, return the class identifiers (package and name)
@@ -293,7 +293,7 @@ greatest_lower_bound <- function(from = integer(), to = integer(), nodes = integ
       if (length(new_children) > 0) {
         queue <- c(queue, new_children)
         new_depths <- depth_map[[as.character(current)]] + 1
-        depth_map <- c(depth_map, setNames(rep(new_depths, length(new_children)), new_children))
+        depth_map <- c(depth_map, `names<-`(rep(new_depths, length(new_children)), new_children))
         visited <- c(visited, new_children)
       }
     }
