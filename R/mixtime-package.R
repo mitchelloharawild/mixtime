@@ -5,6 +5,7 @@
 # roxygen namespace tags. Modify with care!
 ## usethis namespace: start
 #' @importFrom S7 method method<-
+#' @import lifecycle
 #' @import vctrs
 ## usethis namespace: end
 NULL
