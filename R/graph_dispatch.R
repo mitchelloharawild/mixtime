@@ -279,7 +279,7 @@ greatest_lower_bound <- function(from = integer(), to = integer(), nodes = integ
     # Walk down from candidate to target
     # We'll perform BFS from candidate to target
     queue <- list(candidate)
-    depth_map <- setNames(0, candidate)
+    depth_map <- `names<-`(0, candidate)
     visited <- candidate
     while (length(queue) > 0) {
       current <- queue[[1]]
