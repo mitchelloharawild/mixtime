@@ -20,6 +20,13 @@ tu_week <- S7::new_class("tu_week", parent = mt_unit)
 S7::method(time_unit_full, tu_week) <- function(x) "week"
 S7::method(time_unit_abbr, tu_week) <- function(x) "W"
 
+# 1:1 mapping for isoyears to years 
+# TODO - this is not entirely accurate, but is currently necessary
+# for converting the 1970 epoch in the print method
+S7::method(chronon_cardinality, list(tu_year, tu_isoyear)) <- function(x, y, at = NULL) {
+  vec_data(x)*1L/vec_data(y)
+}
+
 S7::method(chronon_cardinality, list(tu_week, tu_day)) <- function(x, y, at = NULL) {
   vec_data(x)*7L/vec_data(y)
 }
