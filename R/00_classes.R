@@ -8,7 +8,12 @@ mt_unit_s3 <- S7::new_S3_class(
   }
 )
 
-#' Base S7 class for time units
+#' Base S7 class for creating new time units
+#' 
+#' This class is the primative class for time units, and should 
+#' be extended from when creating new time units. A new class
+#' is typically created with S7 using: 
+#' `tu_day <- S7::new_class("tu_day", parent = mt_unit)`
 #' 
 #' @param .data The number of time units
 #' 
