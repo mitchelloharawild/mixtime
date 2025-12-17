@@ -109,9 +109,9 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
     parts[[i - 1L]] <- mod$chronon
     parts[[i]] <- mod$remainder + 1L
   }
+
   # Add epoch offset to the largest granule
-  # TODO: Replace chronon_cardinality for support of irregular time units
-  parts[[1L]] <- parts[[1L]] + 1970L #chronon_cardinality(tu_year(1970L), units[[1L]])
+  parts[[1L]] <- parts[[1L]] - chronon_convert(year(-1970L), units[[1L]])
 
   # Use cyclical labels for all but the largest granule
   for (i in seq(length(units), by = -1L, length.out = n_units - 1L)) {
