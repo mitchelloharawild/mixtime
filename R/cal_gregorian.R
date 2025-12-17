@@ -202,8 +202,6 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 
 #' Gregorian continuous time representations
 #' 
-#' \lifecycle{experimental}
-#' 
 #' @param .data Another object to be coerced into the specified time.
 #' @param tz Timezone, defaults to "UTC".
 #' @param discrete If `TRUE`, the number of chronons since Unix epoch that

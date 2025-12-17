@@ -22,7 +22,7 @@ yearmonth(.data, tz = NULL, discrete = TRUE)
 of chronons is returned (analagous to time using a continuous time model).}
 }
 \description{
-\lifecycle{experimental}
+Gregorian continuous time representations
 }
 \examples{
 

@@ -66,8 +66,6 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
 #'
 #' Create or coerce using `yearweek()`.
 #'
-#' \lifecycle{experimental}
-#'
 #' @inheritParams yearmonth
 #' @param .data Another object to be coerced into ISO 8601 year-weeks.
 #'

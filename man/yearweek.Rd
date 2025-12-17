@@ -18,9 +18,6 @@ of chronons is returned (analagous to time using a continuous time model).}
 \description{
 Create or coerce using \code{yearweek()}.
 }
-\details{
-\lifecycle{experimental}
-}
 \examples{
 
 yearweek(Sys.Date())
