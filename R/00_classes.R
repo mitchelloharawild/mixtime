@@ -1,7 +1,3 @@
-#' Base S7 classes for time units
-#' 
-#' @rdname mt_unit
-#' @export
 mt_unit_s3 <- S7::new_S3_class(
   "mixtime::mt_unit", 
   constructor = function(.data = 1L) .data,
