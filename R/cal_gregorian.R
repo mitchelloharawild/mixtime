@@ -220,7 +220,7 @@ S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
 
 ### Cyclical labels for Gregorian time units
 S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {
-  month.abb[i]
+  month.abb[i+1L]
 }
 
 

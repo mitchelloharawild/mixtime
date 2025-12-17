@@ -79,7 +79,7 @@ S7::method(chronon_divmod, list(tu_week, tu_isoyear)) <- function(from, to, x) {
 
 S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i) {
   # TODO: Add offset for different week starting days
-  format(as.Date(i-1L), "%a")
+  format(as.Date(i+4L), "%a")
 }
 
 #' ISO 8601 year-week time representation
