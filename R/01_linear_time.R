@@ -111,6 +111,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   }
 
   # Add epoch offset to the largest granule
+  # TODO: Use calendar specific epochs
   parts[[1L]] <- parts[[1L]] - chronon_convert(year(-1970L), units[[1L]])
 
   # Use cyclical labels for all but the largest granule
