@@ -10,6 +10,12 @@
 #' 
 #' @rdname calendar_iso8601
 #' @export
+tu_isoyear <- S7::new_class("tu_isoyear", parent = mt_unit)
+S7::method(time_unit_full, tu_isoyear) <- function(x) "isoyear"
+S7::method(time_unit_abbr, tu_isoyear) <- function(x) "IY"
+
+#' @rdname calendar_iso8601
+#' @export
 tu_week <- S7::new_class("tu_week", parent = mt_unit)
 S7::method(time_unit_full, tu_week) <- function(x) "week"
 S7::method(time_unit_abbr, tu_week) <- function(x) "W"
@@ -21,8 +27,8 @@ S7::method(chronon_cardinality, list(tu_week, tu_day)) <- function(x, y, at = NU
 S7::method(chronon_divmod, list(tu_day, tu_week)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   list(
-    chronon = (x - 4) %/% 7L,
-    remainder = (x - 4) %% 7L
+    chronon = (x + 3) %/% 7L,
+    remainder = (x + 3) %% 7L
   )
 }
 
@@ -34,19 +40,20 @@ S7::method(chronon_divmod, list(tu_week, tu_day)) <- function(from, to, x) {
   )
 }
 
-S7::method(chronon_divmod, list(tu_week, tu_year)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(tu_week, tu_isoyear)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
-  if (chronon_cardinality(to, tu_year(1L)) != 1L) {
+  if (chronon_cardinality(to, tu_isoyear(1L)) != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
   # TODO: should be swapped out to arithmetic on integer days since epoch
 
   # ISO 8601 years for weekly chronons cycle with the first week with a Thursday
   # Unix epoch 1970-01-01 is a Thursday, a convenient reference point
+  
   x <- as.POSIXlt(as.Date(x*7))
   list(
     chronon = x$year-70L,
-    remainder = (x$yday - x$wday + 10) %/% 7
+    remainder = x$yday %/% 7L
   )
 }
 
@@ -70,4 +77,4 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
 #' yearweek(0:52)
 #' 
 #' @export
-yearweek <- linear_time(granules = list(tu_year(1L)), chronon = tu_week(1L))
+yearweek <- linear_time(granules = list(tu_isoyear(1L)), chronon = tu_week(1L))
