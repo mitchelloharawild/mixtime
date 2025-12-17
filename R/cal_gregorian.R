@@ -24,7 +24,7 @@
 #' (e.g., months to days), the conversion requires a time context.
 #' 
 #' @seealso [linear_time()] for creating custom time representations,
-#'   [gregorian-linear] for pre-defined Gregorian time representations
+#'   [linear_gregorian] for pre-defined Gregorian time representations
 #' 
 #' @examples
 #' # Create a custom time representation using Gregorian units
@@ -261,7 +261,7 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 #' year(Sys.Date())
 #' year(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname gregorian-linear
+#' @rdname linear_gregorian
 #' @export
 year <- linear_time(
   chronon = tu_year(1L)
@@ -272,7 +272,7 @@ year <- linear_time(
 #' yearquarter(Sys.Date())
 #' yearquarter(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname gregorian-linear
+#' @rdname linear_gregorian
 #' @export
 yearquarter <- linear_time(
   granules = list(tu_year(1L)),
@@ -284,7 +284,7 @@ yearquarter <- linear_time(
 #' yearmonth(Sys.Date())
 #' yearmonth(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname gregorian-linear
+#' @rdname linear_gregorian
 #' @export
 yearmonth <- linear_time(
   granules = list(tu_year(1L)),

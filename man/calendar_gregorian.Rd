@@ -64,5 +64,5 @@ dayhour <- linear_time(
 }
 \seealso{
 \code{\link[=linear_time]{linear_time()}} for creating custom time representations,
-\link{gregorian-linear} for pre-defined Gregorian time representations
+\link{linear_gregorian} for pre-defined Gregorian time representations
 }
