@@ -31,8 +31,38 @@ tu_millisecond(.data = 1L)
 \item{.data}{The number of time units}
 }
 \value{
-A time unit for the Gregorian calendar system.
+A time unit object for the Gregorian calendar system.
 }
 \description{
-Gregorian time unit classes
+Time unit constructors for the Gregorian calendar system. These units can be
+used with \code{\link[=linear_time]{linear_time()}} to create custom time representations.
+}
+\details{
+The following Gregorian time units are available:
+\itemize{
+\item \code{tu_year()}: Year unit
+\item \code{tu_quarter()}: Quarter (3-month period) unit
+\item \code{tu_month()}: Month unit
+\item \code{tu_day()}: Day unit
+\item \code{tu_hour()}: Hour unit
+\item \code{tu_minute()}: Minute unit
+\item \code{tu_second()}: Second unit
+\item \code{tu_millisecond()}: Millisecond unit
+}
+
+These units form a hierarchy where conversions between adjacent units follow
+the Gregorian calendar rules. For units that don't have a fixed relationship
+(e.g., months to days), the conversion requires a time context.
+}
+\examples{
+# Create a custom time representation using Gregorian units
+dayhour <- linear_time(
+  granules = list(tu_day(1L)),
+  chronon = tu_hour(1L)
+)
+
+}
+\seealso{
+\code{\link[=linear_time]{linear_time()}} for creating custom time representations,
+\link{gregorian-linear} for pre-defined Gregorian time representations
 }

@@ -1,13 +1,37 @@
-# TODO: the parent class should ideally be double.
-# This requires a rework of the S7::methods to not calculate the value as a ratio of non-1L durations...
-# But this could cause problems with identifying the appropriate range of time specified.
-# QUESTION: Should these S7::methods EVER return a non-integer value?
-
 #' Gregorian time unit classes
+#'
+#' Time unit constructors for the Gregorian calendar system. These units can be
+#' used with [linear_time()] to create custom time representations.
 #'
 #' @inheritParams mt_unit
 #' 
-#' @return A time unit for the Gregorian calendar system.
+#' @return A time unit object for the Gregorian calendar system.
+#' 
+#' @details
+#' The following Gregorian time units are available:
+#' 
+#' - `tu_year()`: Year unit
+#' - `tu_quarter()`: Quarter (3-month period) unit
+#' - `tu_month()`: Month unit
+#' - `tu_day()`: Day unit
+#' - `tu_hour()`: Hour unit
+#' - `tu_minute()`: Minute unit
+#' - `tu_second()`: Second unit
+#' - `tu_millisecond()`: Millisecond unit
+#' 
+#' These units form a hierarchy where conversions between adjacent units follow
+#' the Gregorian calendar rules. For units that don't have a fixed relationship
+#' (e.g., months to days), the conversion requires a time context.
+#' 
+#' @seealso [linear_time()] for creating custom time representations,
+#'   [gregorian-linear] for pre-defined Gregorian time representations
+#' 
+#' @examples
+#' # Create a custom time representation using Gregorian units
+#' dayhour <- linear_time(
+#'   granules = list(tu_day(1L)),
+#'   chronon = tu_hour(1L)
+#' )
 #' 
 #' @rdname calendar_gregorian
 #' @export
@@ -200,7 +224,12 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 }
 
 
+
 #' Gregorian continuous time representations
+#' 
+#' Linear time representations for the Gregorian calendar system. These functions
+#' create time objects measured in years, year-quarters, or year-months since the
+#' Unix epoch (1970-01-01).
 #' 
 #' @param .data Another object to be coerced into the specified time.
 #' @param tz Timezone, defaults to "UTC".
@@ -208,11 +237,31 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 #' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
 #'  of chronons is returned (analagous to time using a continuous time model).
 #' 
+#' @details
+#' - `year()`: Represents time in whole years since 1970. The chronon is one year.
+#' - `yearquarter()`: Represents time in quarters, grouped by year. The chronon
+#'   is one quarter, with years as the granule for display and grouping.
+#' - `yearmonth()`: Represents time in months, grouped by year. The chronon is
+#'   one month, with years as the granule for display and grouping.
+#' 
+#' @section Custom Gregorian time representations:
+#' You can create custom time representations using [linear_time()] with any of
+#' the supported Gregorian time units (see [calendar_gregorian]).
+#' 
+#' For example, to create a time representation in hours since epoch with day granules:
+#' ```r
+#' dayhour <- linear_time(
+#'   granules = list(tu_day(1L)),
+#'   chronon = tu_hour(1L)
+#' )
+#' ```
+#' 
 #' @examples
 #' 
 #' year(Sys.Date())
+#' year(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname gregorian-continuous
+#' @rdname gregorian-linear
 #' @export
 year <- linear_time(
   chronon = tu_year(1L)
@@ -220,9 +269,10 @@ year <- linear_time(
 
 #' @examples
 #' 
-#' yearquarter(0:7)
+#' yearquarter(Sys.Date())
+#' yearquarter(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname gregorian-continuous
+#' @rdname gregorian-linear
 #' @export
 yearquarter <- linear_time(
   granules = list(tu_year(1L)),
@@ -232,8 +282,9 @@ yearquarter <- linear_time(
 #' @examples
 #' 
 #' yearmonth(Sys.Date())
+#' yearmonth(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname gregorian-continuous
+#' @rdname gregorian-linear
 #' @export
 yearmonth <- linear_time(
   granules = list(tu_year(1L)),
