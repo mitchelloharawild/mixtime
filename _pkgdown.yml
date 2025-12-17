@@ -14,11 +14,13 @@ reference:
   contents:
   - linear_time
 - subtitle: "Gregorian Calendar"
+  desc: "Common linear time representations in the Gregorian calendar system."
   contents:
   - year
   - yearquarter
   - yearmonth
 - subtitle: "ISO 8601 Calendar"
+  desc: "Common linear time representations in the ISO 8601 week date system."
   contents:
   - yearweek
 
@@ -26,10 +28,23 @@ reference:
   desc: "Functions to create and work with cyclical time representations"
   contents:
   - cyclical_time
+- subtitle: "Cyclical Gregorian Time"
+  desc: "Cyclical time representations in the Gregorian calendar system."
+  contents:
+  - day_of_year
+  - day_of_month
+  - month_of_year
+- subtitle: "Cyclical ISO 8601 Time"
+  desc: "Cyclical time representations in the ISO 8601 week date system."
+  contents:
+  - week_of_year
+  - day_of_week
 
-- title: "Time Units"
-  desc: "Time unit constructors for building custom time representations"
-- subtitle: "Gregorian Time Units"
+
+- title: "Calendar Systems"
+  desc: "Calendar systems are composed of their associated time units. These define how time is divided and measured in different calendar systems."
+- subtitle: "Gregorian Calendar System"
+  desc: "The standard civil calendar system with years, quarters, months, days, and sub-day units."
   contents:
   - calendar_gregorian
   - tu_year
@@ -40,18 +55,36 @@ reference:
   - tu_minute
   - tu_second
   - tu_millisecond
-- subtitle: "ISO 8601 Time Units"
+- subtitle: "ISO 8601 Calendar System"
+  desc: "The ISO 8601 week date calendar system with ISO years and weeks."
   contents:
   - calendar_iso8601
   - tu_isoyear
   - tu_week
 
-- title: "Core Functions"
-  desc: "Core functions for working with linear time"
+- title: "Extensibility methods"
+  desc: "These low-level functions define the relationships and labels between time units. Adding S7 methods for them allow the creation of custom time units and calendars."
   contents:
-  - linear_time
   - chronon_cardinality
   - chronon_convert
   - chronon_divmod
+  - chronon_common
+  - mt_unit
+  - time_chronon
+  - time_unit_abbr
+  - time_unit_full
   - cyclical_labels
 
+- title: "Mixtime Objects"
+  desc: "Functions for creating and working with mixtime objects that can contain multiple time granularities."
+  contents:
+  - new_mixtime
+  - as_mixtime
+  - is_mixtime
+
+- title: "Time Manipulation"
+  desc: "Functions for manipulating and transforming time objects."
+  contents:
+  - round_time
+  - floor_time
+  - ceiling_time
