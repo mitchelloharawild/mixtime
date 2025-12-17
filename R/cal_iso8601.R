@@ -97,3 +97,37 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
 #' @export
 #' @name linear_iso8601
 yearweek <- linear_time(granules = list(tu_isoyear(1L)), chronon = tu_week(1L))
+
+
+#' ISO 8601 day of week
+#'
+#' A cyclical time representation for days within a week using the ISO 8601 
+#' standard where weeks start on Monday.
+#'
+#' @param .data A vector to be coerced into day of week. This can be a date, 
+#'   date-time, or numeric vector.
+#' @inheritParams linear_iso8601
+#' @inheritParams cyclical_gregorian
+#'
+#' @return A cyclical time object representing the day of the week.
+#'
+#' @seealso [yearweek()] for ISO 8601 year-week representation,
+#'   [cyclical_time()] for creating custom cyclical time representations
+#'
+#' @examples
+#' day_of_week(Sys.Date())
+#' day_of_week(as.Date("2025-12-15") + 0:6)
+#'
+#' @name cyclical_iso8601
+#' @export
+day_of_week <- cyclical_time(
+  chronon = tu_day(1L),
+  cycle = tu_week(1L)
+)
+
+#' @export
+#' @rdname cyclical_iso8601
+week_of_year <- cyclical_time(
+  chronon = tu_week(1L),
+  cycle = tu_isoyear(1L)
+)

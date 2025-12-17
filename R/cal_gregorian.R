@@ -275,8 +275,8 @@ year <- linear_time(
 #' @rdname linear_gregorian
 #' @export
 yearquarter <- linear_time(
-  granules = list(tu_year(1L)),
-  chronon = tu_quarter(1L)
+  chronon = tu_quarter(1L),
+  granules = list(tu_year(1L))
 )
 
 #' @examples
@@ -287,6 +287,75 @@ yearquarter <- linear_time(
 #' @rdname linear_gregorian
 #' @export
 yearmonth <- linear_time(
-  granules = list(tu_year(1L)),
-  chronon = tu_month(1L)
+  chronon = tu_month(1L),
+  granules = list(tu_year(1L))
+)
+
+
+#' Gregorian cyclical time representations
+#' 
+#' Cyclical time representations for the Gregorian calendar system. These functions
+#' create time objects that repeat within a larger time cycle, useful for identifying
+#' seasonal patterns or positions within a calendar period.
+#' 
+#' @param .data Another object to be coerced into the specified cyclical time.
+#' @param discrete If `TRUE`, the position within the cycle that `.data` 
+#' falls into is returned as an integer. If `FALSE`, a fractional 
+#' position is returned (analagous to time using a continuous time model).
+#' @inheritParams linear_gregorian
+#' 
+#' @details
+#' - `month_of_year()`: Represents the month position within a year (1-12).
+#'   The chronon is one month, cycling within a year.
+#' - `day_of_year()`: Represents the day position within a year (1-365 or 1-366
+#'   for leap years). The chronon is one day, cycling within a year.
+#' - `day_of_month()`: Represents the day position within a month (1-28, 1-29,
+#'   1-30, or 1-31 depending on the month). The chronon is one day, cycling
+#'   within a month.
+#' 
+#' These cyclical representations are useful for analyzing seasonal patterns or
+#' comparing time points at similar positions across different years.
+#' 
+#' @section Custom Gregorian cyclical time representations:
+#' You can create custom cyclical time representations using [cyclical_time()]
+#' with any of the supported Gregorian time units (see [calendar_gregorian]).
+#' 
+#' For example, to create a representation for day of the month:
+#' ```r
+#' day_of_month <- cyclical_time(
+#'   chronon = tu_day(1L),
+#'   cycle = tu_month(1L)
+#' )
+#' ```
+#' 
+#' @seealso [linear_gregorian] for linear Gregorian time representations,
+#'   [cyclical_time()] for creating custom cyclical time representations
+#' 
+#' @examples
+#' 
+#' month_of_year(Sys.Date())
+#' 
+#' @name cyclical_gregorian
+#' @export
+month_of_year <- cyclical_time(
+  chronon = tu_month(1L),
+  cycle = tu_year(1L)
+)
+
+#' @examples
+#' 
+#' day_of_year(Sys.Date())
+#' 
+#' @rdname cyclical_gregorian
+#' @export
+day_of_year <- cyclical_time(
+  chronon = tu_day(1L),
+  cycle = tu_year(1L)
+)
+
+#' @rdname cyclical_gregorian
+#' @export
+day_of_month <- cyclical_time(
+  chronon = tu_day(1L),
+  cycle = tu_month(1L)
 )
