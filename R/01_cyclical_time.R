@@ -74,7 +74,14 @@ vec_cast.character.mt_cyclical <- function(x, to, ...) {
   cycle <- attr(x, "cycle")
   tz <- attr(x, "tz")
 
-  cyclical_labels(chronon, cycle, vec_data(x))
+  xf <- floor(x <- vec_data(x))
+  out <- cyclical_labels(chronon, cycle, xf)
+
+  is_discrete <- is.integer(x)
+  if(!is_discrete) {
+    out <- paste0(out, sprintf("-%.1f%%", (x-xf)*100))
+  }
+  out
 }
 
 #' @method vec_cast.integer mt_cyclical
