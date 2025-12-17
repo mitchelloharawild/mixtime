@@ -189,7 +189,7 @@ test_that("conversion handles dates before Unix epoch", {
 
 test_that("cyclical_labels for months work correctly", {
   # The method should return abbreviated month names
-  labels <- cyclical_labels(tu_month(1L), tu_year(1L), 1:12)
+  labels <- cyclical_labels(tu_month(1L), tu_year(1L), 0:11)
   expect_equal(labels, month.abb)
 })
 
