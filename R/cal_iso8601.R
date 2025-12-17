@@ -21,7 +21,7 @@
 #' @seealso [linear_time()] for creating custom time representations,
 #'   [yearweek()] for a pre-defined ISO 8601 year-week representation
 #' 
-#' @rdname calendar_iso8601
+#' @name calendar_iso8601
 #' @export
 tu_isoyear <- S7::new_class("tu_isoyear", parent = mt_unit)
 S7::method(time_unit_full, tu_isoyear) <- function(x) "isoyear"
@@ -95,5 +95,5 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
 #' yearweek(0:52)
 #' 
 #' @export
-#' @rdname linear_iso8601
+#' @name linear_iso8601
 yearweek <- linear_time(granules = list(tu_isoyear(1L)), chronon = tu_week(1L))

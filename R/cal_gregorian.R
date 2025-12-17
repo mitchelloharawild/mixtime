@@ -33,7 +33,7 @@
 #'   chronon = tu_hour(1L)
 #' )
 #' 
-#' @rdname calendar_gregorian
+#' @name calendar_gregorian
 #' @export
 tu_year <- S7::new_class("tu_year", parent = mt_unit)
 S7::method(time_unit_full, tu_year) <- function(x) "year"
@@ -261,7 +261,7 @@ S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle,
 #' year(Sys.Date())
 #' year(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname linear_gregorian
+#' @name linear_gregorian
 #' @export
 year <- linear_time(
   chronon = tu_year(1L)
