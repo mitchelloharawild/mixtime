@@ -1,0 +1,57 @@
+url: ~
+template:
+  bootstrap: 5
+
+authors:
+  Rob Hyndman:
+    href: http://robjhyndman.com
+  Mitchell O'Hara-Wild:
+    href: https://mitchelloharawild.com
+
+reference:
+- title: "Linear Time Representations"
+  desc: "Functions to create and work with linear time representations"
+  contents:
+  - linear_time
+- subtitle: "Gregorian Calendar"
+  contents:
+  - year
+  - yearquarter
+  - yearmonth
+- subtitle: "ISO 8601 Calendar"
+  contents:
+  - yearweek
+
+- title: "Cyclical Time Representations"
+  desc: "Functions to create and work with cyclical time representations"
+  contents:
+  - cyclical_time
+
+- title: "Time Units"
+  desc: "Time unit constructors for building custom time representations"
+- subtitle: "Gregorian Time Units"
+  contents:
+  - calendar_gregorian
+  - tu_year
+  - tu_quarter
+  - tu_month
+  - tu_day
+  - tu_hour
+  - tu_minute
+  - tu_second
+  - tu_millisecond
+- subtitle: "ISO 8601 Time Units"
+  contents:
+  - calendar_iso8601
+  - tu_isoyear
+  - tu_week
+
+- title: "Core Functions"
+  desc: "Core functions for working with linear time"
+  contents:
+  - linear_time
+  - chronon_cardinality
+  - chronon_convert
+  - chronon_divmod
+  - cyclical_labels
+

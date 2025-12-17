@@ -4,3 +4,6 @@
 ^README\.qmd$
 ^\.github$
 ^hex$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
