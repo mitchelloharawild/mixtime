@@ -1,12 +1,25 @@
-#' ISO 8601 time classes
-#' 
+#' ISO 8601 time unit classes
+#'
+#' Time unit constructors for the ISO 8601 calendar system. These units can be
+#' used with [linear_time()] to create custom time representations.
+#'
 #' @inheritParams mt_unit
 #' 
-#' @return A time unit for the ISO 8601 "isoweek" calendar
+#' @return A time unit object for the ISO 8601 calendar system.
 #' 
-#' @examples
-#' yw <- linear_time(tu_week(1L), list(tu_year(1L)))
-#' yw(Sys.Date())
+#' @details
+#' The following ISO 8601 time units are available:
+#' 
+#' - `tu_isoyear()`: ISO year unit (years start on the week containing the first Thursday)
+#' - `tu_week()`: Week unit (7-day periods)
+#' 
+#' ISO 8601 weeks always start on Monday and the first week of a year is the week
+#' containing the first Thursday of that year. This means that some days in early
+#' January may belong to the last week of the previous ISO year, and some days in
+#' late December may belong to the first week of the next ISO year.
+#' 
+#' @seealso [linear_time()] for creating custom time representations,
+#'   [yearweek()] for a pre-defined ISO 8601 year-week representation
 #' 
 #' @rdname calendar_iso8601
 #' @export
@@ -82,4 +95,5 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
 #' yearweek(0:52)
 #' 
 #' @export
+#' @rdname linear_iso8601
 yearweek <- linear_time(granules = list(tu_isoyear(1L)), chronon = tu_week(1L))
