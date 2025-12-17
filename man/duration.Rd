@@ -22,3 +22,4 @@ units. This functionality is in active development and is not ready for use.
 \details{
 This is a low-level constructor function that creates duration objects.
 }
+\keyword{internal}

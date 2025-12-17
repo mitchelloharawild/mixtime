@@ -13,6 +13,7 @@
 #' @details
 #' This is a low-level constructor function that creates duration objects.
 #'
+#' @keywords internal
 #' @name duration
 new_duration <- function(...) {
   vctrs::new_vctr(rlang::list2(...), class = "mt_duration")
