@@ -1,13 +1,15 @@
 Package: mixtime
-Title: Mixed time vectors
+Title: Mixed Temporal Vectors and Operations
 Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Mitchell",
              family = "O'Hara-Wild",
              email = "mail@mitchelloharawild.com",
-             role = c("aut", "cre")))
+             comment = c(ORCID = "0000-0001-6729-7695")))
 Description: Flexible time classes for representing mixed temporal granularities
-    and custom calendar structures.
+    and bespoke calendar structures. Supports both linear and circular time
+    representations in discrete and continuous forms across a variety of 
+    calendar systems.
 License: GPL-3
 URL: https://pkg.mitchelloharawild.com/mixtime/, https://github.com/mitchelloharawild/mixtime
 BugReports: https://github.com/mitchelloharawild/mixtime/issues
