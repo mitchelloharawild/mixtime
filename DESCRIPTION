@@ -5,6 +5,7 @@ Authors@R:
     c(person(given = "Mitchell",
              family = "O'Hara-Wild",
              email = "mail@mitchelloharawild.com",
+             role = c("aut", "cre"),
              comment = c(ORCID = "0000-0001-6729-7695")))
 Description: Flexible time classes for representing mixed temporal granularities
     and bespoke calendar structures. Supports both linear and circular time

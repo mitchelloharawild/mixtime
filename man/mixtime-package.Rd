@@ -4,9 +4,9 @@
 \name{mixtime-package}
 \alias{mixtime}
 \alias{mixtime-package}
-\title{mixtime: Mixed time vectors}
+\title{mixtime: Mixed Temporal Vectors and Operations}
 \description{
-Flexible time classes for representing mixed temporal granularities and custom calendar structures.
+Flexible time classes for representing mixed temporal granularities and bespoke calendar structures. Supports both linear and circular time representations in discrete and continuous forms across a variety of calendar systems.
 }
 \seealso{
 Useful links:
@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Mitchell O'Hara-Wild \email{mail@mitchelloharawild.com}
+\strong{Maintainer}: Mitchell O'Hara-Wild \email{mail@mitchelloharawild.com} (\href{https://orcid.org/0000-0001-6729-7695}{ORCID})
 
 }
 \keyword{internal}
