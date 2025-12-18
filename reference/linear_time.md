@@ -64,10 +64,10 @@ yqm(Sys.Date())
 yd <- linear_time(tu_day(1L), list(tu_year(1L)))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025-D351
+#> [1] 2025-D352
 
 ymd_h <- linear_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2025-Dec-D17-h12
+#> [1] 2025-Dec-D18-h8
 ```

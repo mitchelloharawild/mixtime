@@ -44,11 +44,11 @@ chronon_convert(yearmonth(Sys.Date()), tu_year(1L))
 
 # Convert from days since epoch to months since epoch
 chronon_convert(Sys.Date(), tu_month(1L))
-#> [1] 671.5161
+#> [1] 671.5484
 chronon_convert(Sys.Date(), tu_month(1L), discrete = TRUE)
 #> [1] 671
 
 # Convert from seconds since epoch to hours since epoch
 chronon_convert(Sys.time(), tu_hour(1L))
-#> [1] 490548
+#> [1] 490567.5
 ```

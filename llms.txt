@@ -208,6 +208,7 @@ multiple time granularities.
 
 Functions for manipulating and transforming time objects.
 
-- [`round_time()`](round_time.md) : Round date/time objects to specified
-  time units
+- [`round_time()`](round_time.md) [`ceiling_time()`](round_time.md)
+  [`floor_time()`](round_time.md) : Round, floor and ceiling
+  transformations for time objects
 

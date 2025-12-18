@@ -1,4 +1,4 @@
-# Round date/time objects to specified time units
+# Round, floor and ceiling transformations for time objects
 
 A family of helpers to round date/time objects to a specified time
 granule such as second, minute, hour, or day. These functions preserve
@@ -8,6 +8,10 @@ the input time class, as rounded by the attributes of the `unit`.
 
 ``` r
 round_time(x, unit, ...)
+
+ceiling_time(x, unit, ...)
+
+floor_time(x, unit, ...)
 ```
 
 ## Arguments
