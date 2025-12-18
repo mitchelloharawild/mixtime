@@ -1,11 +1,10 @@
-#' Round date/time objects to specified time units
+#' Round, floor and ceiling transformations for time objects
 #'
 #' A family of helpers to round date/time objects to a specified time granule
 #' such as second, minute, hour, or day. These functions preserve the input 
 #' time class, as rounded by the attributes of the `unit`.
 #'
 #' @name round_time
-#' @rdname round_time
 #' @aliases round_time floor_time ceiling_time trunc_time
 #'
 #' @param x A date/time object to be rounded. Accepted types include Date,
@@ -49,6 +48,7 @@ round_time.default <- function(x, unit, ...) {
   res
 }
 
+#' @rdname round_time
 #' @export
 ceiling_time <- function(x, unit, ...) {
   UseMethod("ceiling_time")
@@ -69,6 +69,7 @@ ceiling_time.default <- function(x, unit, ...) {
   res
 }
 
+#' @rdname round_time
 #' @export
 floor_time <- function(x, unit, ...) {
   UseMethod("floor_time")

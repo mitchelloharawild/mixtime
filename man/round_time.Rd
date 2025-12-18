@@ -5,9 +5,13 @@
 \alias{floor_time}
 \alias{ceiling_time}
 \alias{trunc_time}
-\title{Round date/time objects to specified time units}
+\title{Round, floor and ceiling transformations for time objects}
 \usage{
 round_time(x, unit, ...)
+
+ceiling_time(x, unit, ...)
+
+floor_time(x, unit, ...)
 }
 \arguments{
 \item{x}{A date/time object to be rounded. Accepted types include Date,
