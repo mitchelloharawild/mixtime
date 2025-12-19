@@ -70,11 +70,11 @@ custom cyclical time representations
 
 ``` r
 month_of_year(Sys.Date())
-#> <mt_cyclical[1]>
+#> <mixtime[1]>
 #> [1] Dec
 
 
 day_of_year(Sys.Date())
-#> <mt_cyclical[1]>
+#> <mixtime[1]>
 #> [1] D353-0.0%
 ```

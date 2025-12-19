@@ -194,6 +194,8 @@ units and calendars.
 - [`cyclical_labels()`](cyclical_labels.md)
   [`cyclical_labels.S7_methods()`](cyclical_labels.md) : Friendly labels
   for cyclical relationships
+- [`mixtime_valid()`](mixtime_valid.md) : Check if times can be used
+  within mixtime
 
 ## Mixtime Objects
 

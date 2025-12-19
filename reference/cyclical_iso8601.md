@@ -43,9 +43,9 @@ representations
 
 ``` r
 day_of_week(Sys.Date())
-#> <mt_cyclical[1]>
+#> <mixtime[1]>
 #> [1] Fri-0.0%
 day_of_week(as.Date("2025-12-15") + 0:6)
-#> <mt_cyclical[7]>
+#> <mixtime[7]>
 #> [1] Mon-0.0% Tue-0.0% Wed-0.0% Thu-0.0% Fri-0.0% Sat-0.0% Sun-0.0%
 ```

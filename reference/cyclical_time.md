@@ -33,11 +33,11 @@ An function used to create cyclical time points.
 ``` r
 day_of_week <- cyclical_time(tu_day(1L), tu_week(1L))
 day_of_week(Sys.Date())
-#> <mt_cyclical[1]>
+#> <mixtime[1]>
 #> [1] Fri-0.0%
 
 month_of_year <- cyclical_time(tu_month(1L), tu_year(1L))
 month_of_year(Sys.Date())
-#> <mt_cyclical[1]>
+#> <mixtime[1]>
 #> [1] Dec
 ```
