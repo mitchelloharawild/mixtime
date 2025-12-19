@@ -28,7 +28,7 @@
 #' d <- as.Date("2020-01-01")
 #' ceiling_time(d, unit = tu_month(1L))
 #'
-#' @seealso [base::round], [lubridate::floor_date]
+#' @seealso [base::round], [lubridate::round_date]
 #' @export
 round_time <- function(x, unit, ...) {
   UseMethod("round_time")

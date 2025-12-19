@@ -45,5 +45,5 @@ ceiling_time(d, unit = tu_month(1L))
 
 }
 \seealso{
-\link[base:Round]{base::round}, \link[lubridate:round_date]{lubridate::floor_date}
+\link[base:Round]{base::round}, \link[lubridate:round_date]{lubridate::round_date}
 }
