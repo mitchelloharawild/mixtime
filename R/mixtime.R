@@ -90,7 +90,14 @@ vec_ptype2.mixtime <- function(x, y, ...) {
 #' @importFrom vctrs vec_proxy_order
 vec_proxy_order.mixtime <- function(x, ...) {
   if (length(attr(x, "v")) > 1L) {
-    cli::cli_abort("Ordering mixtime objects with multiple granularities is not yet supported.")
+    # Convert all time values to a common chronon
+    chronons <- lapply(attr(x, "v"), time_chronon)
+    chronon_type <- chronon_common(!!!chronons)
+
+    attr(x, "v") <- lapply(attr(x, "v"), function(v) {
+      if (is.integer(v)) v <- v + 0.5
+      mixtime::chronon_convert(v, chronon_type)
+    })
   }
   vec_proxy_order(vctrs::vec_data(vecvec::unvecvec(x)))
 }
