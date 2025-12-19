@@ -40,3 +40,15 @@ S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
   tu_second(1L)
 }
+
+S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {
+  tu_month(1L)
+}
+
+S7::method(time_chronon, S7::new_S3_class("yearquarter")) <- function(x) {
+  tu_quarter(1L)
+}
+
+S7::method(time_chronon, S7::new_S3_class("yearweek")) <- function(x) {
+  tu_week(1L)
+}

@@ -54,3 +54,18 @@ vec_proxy.mixtime_interval <- function(x, ...) {
   # Bypass tsibble:::unknown_interval length 1 checks
   apply(new_data_frame(x), 2, sum, simplify = FALSE)
 }
+
+#' @export
+vec_cast.mixtime.yearweek <- function(x, to, ...) {
+  yearweek(as.Date(x))
+}
+
+#' @export
+vec_cast.mixtime.yearmonth <- function(x, to, ...) {
+  yearmonth(as.Date(x))
+}
+
+#' @export
+vec_cast.mixtime.yearquarter <- function(x, to, ...) {
+  yearquarter(as.Date(x))
+}
