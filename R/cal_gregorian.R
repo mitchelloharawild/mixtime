@@ -119,6 +119,7 @@ S7::method(chronon_cardinality, list(tu_second, tu_millisecond)) <- function(x, 
 monthdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
 
 is_leap_year <- function(year) {
+  year <- floor(year)
   (year %% 4L == 0L & year %% 100L != 0L) | (year %% 400L == 0L)
 }
 
