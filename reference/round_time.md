@@ -38,7 +38,7 @@ the requested unit.
 ## See also
 
 base::round,
-[lubridate::floor_date](https://lubridate.tidyverse.org/reference/round_date.html)
+[lubridate::round_date](https://lubridate.tidyverse.org/reference/round_date.html)
 
 ## Examples
 

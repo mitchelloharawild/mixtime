@@ -76,5 +76,5 @@ month_of_year(Sys.Date())
 
 day_of_year(Sys.Date())
 #> <mt_cyclical[1]>
-#> [1] D352-0.0%
+#> [1] D353-0.0%
 ```

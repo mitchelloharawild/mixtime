@@ -65,7 +65,7 @@ year(Sys.Date())
 #> [1] 2025
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2025-96.2%
+#> [1] 2025-96.4%
 
 
 yearquarter(Sys.Date())
@@ -73,7 +73,7 @@ yearquarter(Sys.Date())
 #> [1] 2025-Q4
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2025-Q4-84.7%
+#> [1] 2025-Q4-85.8%
 
 
 yearmonth(Sys.Date())
@@ -81,5 +81,5 @@ yearmonth(Sys.Date())
 #> [1] 2025-Dec
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2025-Dec-54.8%
+#> [1] 2025-Dec-58.1%
 ```
