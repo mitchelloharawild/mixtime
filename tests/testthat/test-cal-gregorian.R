@@ -15,6 +15,15 @@ test_that("year() converts dates correctly", {
   dates <- as.Date(0:150000, origin = "1970-01-01")
   diff <- format(year(dates)) == format(dates, "%Y")
   expect_true(all(diff))
+  
+  # Fractional years from dates
+  y_start <- as.numeric(year(as.Date("2025-01-01"), discrete = FALSE))
+  y_mid <- as.numeric(year(as.Date("2025-07-01"), discrete = FALSE))
+  y_end <- as.numeric(year(as.Date("2025-12-31"), discrete = FALSE))
+  
+  expect_equal(y_start, 55)
+  expect_equal(y_mid, 55.49589, tolerance = 1e-5)
+  expect_equal(y_end, 55.99726, tolerance = 1e-5)
 })
 
 test_that("year() handles leap years correctly", {
@@ -31,6 +40,14 @@ test_that("year() handles leap years correctly", {
   # Day after leap day
   expect_equal(format(year(as.Date("1972-03-01"))), "1972")
   expect_equal(format(year(as.Date("2000-03-01"))), "2000")
+  
+  # Fractional years for leap year dates
+  y_leap_start <- as.numeric(year(as.Date("2024-01-01"), discrete = FALSE))
+  y_leap_mid <- as.numeric(year(as.Date("2024-07-01"), discrete = FALSE))
+  
+  # Leap year has 366 days, so midpoint fraction should be different
+  expect_equal(y_leap_start, 54)
+  expect_equal(y_leap_mid, 54.49727, tolerance = 1e-5)
 })
 
 test_that("year() handles discrete vs continuous time", {

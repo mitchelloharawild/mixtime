@@ -211,9 +211,21 @@ S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
   # Convert to years since epoch
   x <- chronon_cardinality(from, tu_year(1L))*x
   
-  # TODO: should be swapped out to arithmetic on integer years since epoch
+  floor_int <- function(x) as.integer(floor(x))
+
+  # Days since epoch
+  d <- 365L * x + 
+    # Leap days since epoch
+    floor_int((x+1L) / 4) - 
+    # Subtract century years (not leap years)
+    floor_int((x+69L) / 100) + 
+    # Add back quad-century years (leap years)
+    floor_int((x+369L) / 400L) + 
+    # Add fractional part of leap year
+    is_leap_year(x+1970L) * (x - floor_int(x))
+
   list(
-    chronon = unclass(ISOdate(1970L + x, 1L, 1L, 0L, 0L, 0L))/86400L,
+    chronon = d,
     remainder = 0L
   )
 }
