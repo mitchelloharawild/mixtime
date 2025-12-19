@@ -8,7 +8,7 @@
 #' @importFrom rlang is_empty
 #' @export
 new_mixtime <- function(x = list()) {
-  validate_x <- vapply(x, function(x) isTRUE(tsibble::index_valid(x)), logical(1L))
+  validate_x <- vapply(x, mixtime_valid, logical(1L))
 
   if (!all(validate_x)) {
     stop("A mixtime must contain only valid time points")
@@ -45,6 +45,25 @@ as_mixtime <- function(x, ...) {
 is_mixtime <- function(x) {
   inherits(x, "mixtime")
 }
+
+#' Check if times can be used within mixtime
+#' 
+#' @param x A vector of times.
+#' 
+#' @return A logical vector.
+#' 
+#' @export
+mixtime_valid <- function(x) {
+  UseMethod("mixtime_valid")
+}
+
+#' @export
+mixtime_valid.default <- function(x) {
+  isTRUE(tsibble::index_valid(v))
+}
+
+#' @export
+mixtime_valid.mixtime <- function(x) TRUE
 
 #' @export
 vec_ptype_full.mixtime <- function(x, ...) "mixtime"

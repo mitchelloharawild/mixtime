@@ -82,6 +82,9 @@ linear_time <- function(chronon, granules = list()) {
   }
 }
 
+#' @export
+mixtime_valid.mt_linear <- function(x) TRUE
+
 #' @importFrom rlang inject
 #' @export
 format.mt_linear <- function(x, ...) {

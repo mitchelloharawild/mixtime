@@ -54,13 +54,18 @@ cyclical_time <- function(chronon, cycle) {
     #   cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
     # }
 
-    vctrs::new_vctr(
-      .data, 
-      class = c("mt_cyclical", "mt_time"),
-      tz = tz, chronon = chronon, cycle = cycle
+    mixtime(
+      vctrs::new_vctr(
+        .data, 
+        class = c("mt_cyclical", "mt_time"),
+        tz = tz, chronon = chronon, cycle = cycle
+      )
     )
   }
 }
+
+#' @export
+mixtime_valid.mt_cyclical <- function(x) TRUE
 
 #' @export
 format.mt_cyclical <- function(x, ...) {

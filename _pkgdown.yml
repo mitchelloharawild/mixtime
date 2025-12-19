@@ -74,6 +74,7 @@ reference:
   - time_unit_abbr
   - time_unit_full
   - cyclical_labels
+  - mixtime_valid
 
 - title: "Mixtime Objects"
   desc: "Functions for creating and working with mixtime objects that can contain multiple time granularities."
