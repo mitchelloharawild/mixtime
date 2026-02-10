@@ -29,7 +29,8 @@ S7::method(tz_name, S7::class_any) <- function(x) "UTC"
 #' tz_offset(Sys.time())
 #' tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 tz_offset <- S7::new_generic("tz_offset", "x")
-S7::method(tz_offset, S7::class_POSIXct) <- function(x, tz = tz_name(x), ...) get_tz_offset(x, tz)
+S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(x), ...) get_tz_offset(x, tz)
+S7::method(tz_offset, S7::class_Date) <- function(x, tz = tz_name(x), ...) rep.int(0, length(x))
 method(tz_offset, S7::new_S3_class("mixtime")) <- function(x, ...) {
   vecvec::unvecvec(
     vecvec::vecvec_apply(x, tz_offset, ...)
