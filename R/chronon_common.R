@@ -37,6 +37,8 @@ chronon_common <- function(..., .ptype = NULL) {
   # Identify the finest granularity chronon that can represent all chronons
   chronons <- rlang::list2(...)
 
+  if (vec_size(chronons) == 1L) return(chronons[[1L]])
+
   # Search strategy:
   # The cardinality methods are directional
   # (such that `x` is a finer chronon than `y`)
