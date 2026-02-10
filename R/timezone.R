@@ -19,7 +19,7 @@ S7::method(tz_name, S7::class_any) <- function(x) "UTC"
 #'
 #' Returns the UTC offset for a given datetime in its specified timezone.
 #'
-#' @param time A POSIXct datetime object or something coercible to POSIXct.
+#' @param x A POSIXct datetime object or something coercible to POSIXct.
 #'   The timezone is extracted from this object.
 #'
 #' @return A numeric vector of offsets in seconds from UTC.
@@ -28,10 +28,9 @@ S7::method(tz_name, S7::class_any) <- function(x) "UTC"
 #' @examples
 #' tz_offset(Sys.time())
 #' tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
-tz_offset <- function(time) {
-  time <- as.POSIXct(time)
-  tz <- attr(time, "tzone") %||% Sys.timezone()
-  get_tz_offset(time, tz)
+tz_offset <- function(x) {
+  x <- as.POSIXct(x)
+  get_tz_offset(x, tz_name(x))
 }
 
 #' Get timezone abbreviation
@@ -39,7 +38,7 @@ tz_offset <- function(time) {
 #' Returns the timezone abbreviation (e.g., "EST", "PDT") for a given datetime
 #' in its specified timezone.
 #'
-#' @param time A POSIXct datetime object or something coercible to POSIXct.
+#' @param x A POSIXct datetime object or something coercible to POSIXct.
 #'   The timezone is extracted from this object.
 #'
 #' @return A character vector of timezone abbreviations.
@@ -48,10 +47,10 @@ tz_offset <- function(time) {
 #' @examples
 #' tz_abbreviation(Sys.time())
 #' tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
-tz_abbreviation <- function(time) {
-  time <- as.POSIXct(time)
-  tz <- attr(time, "tzone") %||% Sys.timezone()
-  get_tz_abbreviation(time, tz)
+tz_abbreviation <- function(x) {
+  x <- as.POSIXct(x)
+  tz <- attr(x, "tzone") %||% Sys.timezone()
+  get_tz_abbreviation(x, tz)
 }
 
 #' Get timezone transitions
