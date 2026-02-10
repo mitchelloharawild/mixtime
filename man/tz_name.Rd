@@ -8,6 +8,8 @@ tz_name(x, ...)
 }
 \arguments{
 \item{x}{An object with timezone information.}
+
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 A character string representing the timezone (e.g., "America/New_York", "UTC").

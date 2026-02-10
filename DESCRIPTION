@@ -19,6 +19,8 @@ Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Depends:
+    R (>= 3.0.2)
 Imports: 
     lifecycle,
     vctrs,

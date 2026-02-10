@@ -8,6 +8,8 @@ tz_offset(x, ...)
 }
 \arguments{
 \item{x}{A time class coercible to POSIXt with an associated time zone.}
+
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 A numeric vector of offsets from UTC in the same chronon (e.g. seconds for POSIXt, days for dates, etc.)
