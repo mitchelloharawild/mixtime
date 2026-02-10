@@ -62,24 +62,24 @@ day granules:
 ``` r
 year(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025
+#> [1] 2026
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2025-96.4%
+#> [1] 2026-11.0%
 
 
 yearquarter(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025-Q4
+#> [1] 2026-Q1
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2025-Q4-85.8%
+#> [1] 2026-Q1-43.8%
 
 
 yearmonth(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025-Dec
+#> [1] 2026-Feb
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2025-Dec-58.1%
+#> [1] 2026-Feb-32.1%
 ```

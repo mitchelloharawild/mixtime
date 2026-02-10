@@ -30,7 +30,7 @@ yearweek(.data, tz = NULL, discrete = TRUE)
 ``` r
 yearweek(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025-W51
+#> [1] 2026-W7
 yearweek(0:52)
 #> <mixtime[53]>
 #>  [1] 1970-W1  1970-W2  1970-W3  1970-W4  1970-W5  1970-W6  1970-W7  1970-W8 

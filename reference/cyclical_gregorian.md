@@ -71,10 +71,10 @@ custom cyclical time representations
 ``` r
 month_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] Dec
+#> [1] Feb
 
 
 day_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] D353-0.0%
+#> [1] D41-0.0%
 ```

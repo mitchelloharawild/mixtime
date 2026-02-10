@@ -40,15 +40,15 @@ the target chronon's precision.
 ``` r
 # Convert from months since epoch to years since epoch
 chronon_convert(yearmonth(Sys.Date()), tu_year(1L))
-#> [1] 55.91667
+#> [1] 56.08333
 
 # Convert from days since epoch to months since epoch
 chronon_convert(Sys.Date(), tu_month(1L))
-#> [1] 671.5806
+#> [1] 673.3214
 chronon_convert(Sys.Date(), tu_month(1L), discrete = TRUE)
-#> [1] 671
+#> [1] 673
 
 # Convert from seconds since epoch to hours since epoch
 chronon_convert(Sys.time(), tu_hour(1L))
-#> [1] 490596
+#> [1] 491861.7
 ```

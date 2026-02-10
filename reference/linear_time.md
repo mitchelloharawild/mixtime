@@ -33,7 +33,7 @@ An function used to create continuous time points.
 ym <- linear_time(tu_month(1L), list(tu_year(1L)))
 ym(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025-Dec
+#> [1] 2026-Feb
 
 # A year-quarter-month time representation with months as the chronon
 yqm <- linear_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
@@ -58,16 +58,16 @@ yqm(1:100)
 #>  [97] 1978-Q1-M2 1978-Q1-M3 1978-Q2-M1 1978-Q2-M2
 yqm(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025-Q4-M3
+#> [1] 2026-Q1-M2
 
 # A year-day time representation with days as the chronon
 yd <- linear_time(tu_day(1L), list(tu_year(1L)))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2025-D353
+#> [1] 2026-D41
 
 ymd_h <- linear_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2025-Dec-D19-h12
+#> [1] 2026-Feb-D10-h6
 ```
