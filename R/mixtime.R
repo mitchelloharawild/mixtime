@@ -59,7 +59,7 @@ mixtime_valid <- function(x) {
 
 #' @export
 mixtime_valid.default <- function(x) {
-  isTRUE(tsibble::index_valid(v))
+  isTRUE(tsibble::index_valid(x))
 }
 
 #' @export
