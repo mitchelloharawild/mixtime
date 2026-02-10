@@ -56,9 +56,7 @@ method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, to, discrete = F
 #' tz_abbreviation(Sys.time())
 #' tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
 tz_abbreviation <- function(x) {
-  x <- as.double(as.POSIXct(x))
-  tz <- attr(x, "tzone") %||% Sys.timezone()
-  get_tz_abbreviation(x, tz)
+  get_tz_abbreviation(as.double(as.POSIXct(x)), tz_name(x))
 }
 
 #' Get timezone transitions
