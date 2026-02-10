@@ -4,7 +4,7 @@
 \alias{tz_offset}
 \title{Get timezone offset}
 \usage{
-tz_offset(x)
+tz_offset(x, ...)
 }
 \arguments{
 \item{x}{A POSIXct datetime object or something coercible to POSIXct.
