@@ -232,11 +232,17 @@ S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
 
 
 ### Cyclical labels for Gregorian time units
+S7::method(cyclical_labels, list(tu_quarter, S7::class_any)) <- function(granule, cycle, i) {
+  # Quarters count with 1-indexing
+  paste0("Q", i + 1L)
+}
 S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {
   month.abb[i+1L]
 }
-
-
+S7::method(cyclical_labels, list(tu_day, S7::class_any)) <- function(granule, cycle, i) {
+  # Days count with 1-indexing
+  i + 1L
+}
 
 #' Gregorian continuous time representations
 #' 

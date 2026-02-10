@@ -81,6 +81,10 @@ S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i
   # TODO: Add offset for different week starting days
   format(as.Date(i+4L), "%a")
 }
+S7::method(cyclical_labels, list(tu_week, S7::class_any)) <- function(granule, cycle, i) {
+  # Weeks count with 1-indexing
+  paste0("W", i + 1L)
+}
 
 #' ISO 8601 year-week time representation
 #'
