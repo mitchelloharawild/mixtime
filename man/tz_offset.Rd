@@ -7,11 +7,10 @@
 tz_offset(x, ...)
 }
 \arguments{
-\item{x}{A POSIXct datetime object or something coercible to POSIXct.
-The timezone is extracted from this object.}
+\item{x}{A time class coercible to POSIXt with an associated time zone.}
 }
 \value{
-A numeric vector of offsets in seconds from UTC.
+A numeric vector of offsets from UTC in the same chronon (e.g. seconds for POSIXt, days for dates, etc.)
 }
 \description{
 Returns the UTC offset for a given datetime in its specified timezone.
