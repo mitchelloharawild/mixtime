@@ -45,25 +45,11 @@ linear_time <- function(chronon, granules = list()) {
   
   # TODO: Ensure c(granules, chronon) are in decreasing order of size
 
-  # It is unclear to me how S7 can store granules and chronon in attributes
-  # S7::new_class(
-  #   "mt_linear", parent = mt_time,
-  #   properties = list(
-  #     .data = S7::class_integer,
-  #     tz = S7::class_character
-  #   )
-  # )
-
-  function(.data, tz = NULL, discrete = TRUE) {
-    # Get timezone from .data
-    if (is.null(tz)) {
-      # tzone attribute (from POSIXt) or defualt to UTC
-      tz <- attr(.data, "tzone") %||% "UTC"
-    }
-    
-    # Attach timezone to chronon
+  function(.data, tz = tz_name(.data), discrete = TRUE) {
+    # Attach timezone to chronon and granules
     if (!is.null(tz)) {
       chronon@tz <- tz
+      granules <- lapply(granules, function(g) {g@tz <- tz; g})
     }
 
     # Cast from Date, POSIXct, etc.

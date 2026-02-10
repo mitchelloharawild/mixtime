@@ -1,3 +1,20 @@
+#' Extract timezone from an object
+#'
+#' Generic function to extract the timezone from objects that have timezone information.
+#'
+#' @param x An object with timezone information.
+#'
+#' @return A character string representing the timezone (e.g., "America/New_York", "UTC").
+#' @export
+#'
+#' @examples
+#' tz_name(Sys.time())
+#' tz_name(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
+tz_name <- S7::new_generic("tz", "x")
+S7::method(tz_name, S7::class_POSIXt) <- function(x) attr(x, "tzone") %||% "UTC"
+S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
+S7::method(tz_name, S7::class_any) <- function(x) "UTC"
+
 #' Get timezone offset
 #'
 #' Returns the UTC offset for a given datetime in its specified timezone.
