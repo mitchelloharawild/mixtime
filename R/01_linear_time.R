@@ -249,3 +249,21 @@ vec_cast.POSIXct.mt_linear <- function(x, ...) {
   #   origin = "1970-01-01", tz = attr(x, "tz")
   # )
 }
+
+# #' @export
+# seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NULL, ...) {
+#   browser()
+#   if (!is.null(along.with)) {
+#     length.out <- length(along.with)
+#   }
+#   if (!is.null(length.out)) {
+#     return(vec_restore(
+#       vctrs::vec_seq(from = vec_data(from), to = vec_data(to), length.out = length.out),
+#       from
+#     ))
+#   }
+#   vec_restore(
+#     vctrs::vec_seq(from = vec_data(from), to = vec_data(to), by = by),
+#     from
+#   )
+# }
