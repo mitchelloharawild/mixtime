@@ -99,7 +99,7 @@ chronon_divmod_dispatch <- function(from, to, x) {
 chronon_divmod_regular <- function(from, to, x) {
   divisor <- chronon_cardinality(to, from)
   list(
-    chronon = vec_cast(x %/% divisor, x),
-    remainder = vec_cast(x %% divisor, x)
+    chronon = x %/% divisor,
+    remainder = x %% divisor
   )
 }
