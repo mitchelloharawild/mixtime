@@ -54,7 +54,11 @@ linear_time <- function(chronon, granules = list()) {
 
     # Cast from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
-      .data <- chronon_convert(.data, chronon, discrete = discrete)
+      .data <- chronon_convert(
+        .data + tz_offset(.data, tz), 
+        chronon,
+        discrete = discrete
+      )
     }
 
     # if (!is.character(tz) || length(tz) != 1L) {

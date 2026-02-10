@@ -29,15 +29,15 @@ S7::method(tz_name, S7::class_any) <- function(x) "UTC"
 #' tz_offset(Sys.time())
 #' tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 tz_offset <- S7::new_generic("tz_offset", "x")
-S7::method(tz_offset, S7::class_POSIXct) <- function(x) get_tz_offset(x, tz_name(x))
-method(tz_offset, S7::new_S3_class("mixtime")) <- function(x) {
+S7::method(tz_offset, S7::class_POSIXct) <- function(x, tz = tz_name(x), ...) get_tz_offset(x, tz)
+method(tz_offset, S7::new_S3_class("mixtime")) <- function(x, ...) {
   vecvec::unvecvec(
-    vecvec::vecvec_apply(x, tz_offset)
+    vecvec::vecvec_apply(x, tz_offset, ...)
   )
 }
-method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, to, discrete = FALSE, ...) {
+method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, tz = tz_name(x), ...) {
   time_s <- as.double(as.POSIXct(x))
-  offset_s <- get_tz_offset(time_s, tz_name(x))
+  offset_s <- get_tz_offset(time_s, tz)
   offset_s*chronon_cardinality(tu_second(1L), time_chronon(x), time_s)
 }
 
