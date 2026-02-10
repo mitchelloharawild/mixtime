@@ -97,7 +97,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   if (is_zoned <- tz_name(time_chronon(x)) != "UTC") {
     # Apply timezone offset to produce local time
     tz_ext <- tz_abbreviation(x)
-    x <- vec_data(x) + tz_offset(x)
+    x <- vec_data(x) + floor(tz_offset(x))
   } else {
     x <- vec_data(x)
   }
