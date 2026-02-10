@@ -89,13 +89,14 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
     list(attr(x, "chronon"))
   )
   
-  if (is_zoned <- tz_name(time_chronon(x)) != "UTC") {
-    tz_ext <- tz_abbreviation(x)
-  }
   is_discrete <- is.integer(x)
-  
-  # Apply timezone offset to produce local time
-  x <- vec_data(x) + tz_offset(x)
+  if (is_zoned <- tz_name(time_chronon(x)) != "UTC") {
+    # Apply timezone offset to produce local time
+    tz_ext <- tz_abbreviation(x)
+    x <- vec_data(x) + tz_offset(x)
+  } else {
+    x <- vec_data(x)
+  }
   
   parts <- rep(list(numeric(length(x))), n_units <- length(units))
   parts[[n_units]] <- floor(x)
