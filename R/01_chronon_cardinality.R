@@ -98,7 +98,8 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   for (i in seq(2, length.out = length(path)-1)) {
     ## QUESTION: Why does this not work with `generic` instead of `chronon_cardinality`? S7 bug?
 
-    result <- chronon_cardinality(result, path[[i]])
+    result <- chronon_cardinality(result, path[[i]], at)
+    if (!is.null(at)) at <- at*result
     # Class the result with the next class in the path
     result <- attr(path[[i]], "S7_class")(result)
   }
