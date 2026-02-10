@@ -88,14 +88,21 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
     attr(x, "granules"),
     list(attr(x, "chronon"))
   )
+  
+  tz_ext <- tz_abbreviation(x)
+  is_discrete <- is.integer(x)
+  
+  # Apply timezone offset to produce local time
+  x <- vec_data(x) + tz_offset(x)
+  
   parts <- rep(list(numeric(length(x))), n_units <- length(units))
-  x <- vec_data(x)
-  if(is_discrete <- is.integer(x)) {
-    parts[[n_units]] <- x
-  } else {
-    parts[[n_units]] <- floor(x)
+  parts[[n_units]] <- floor(x)
+  
+  # Compute fractional component of chronon
+  if(is_discrete) {
     frac <- x - parts[[n_units]]
   }
+
   for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
     mod <- chronon_divmod(units[[i]], units[[i-1L]], parts[[i]])
     parts[[i - 1L]] <- mod$chronon
@@ -114,6 +121,8 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   if(!is_discrete) {
     parts[[n_units + 1L]] <- sprintf("%.1f%%", frac*100)
   }
+
+  parts[[length(parts) + 1L]] <- tz_ext
 
   # The largest granule is displayed continuously, smaller units are displayed cyclically
   # For example, year-week-day would show 2023-W15-Wed for the 3rd day of the 15th week of 2023.
