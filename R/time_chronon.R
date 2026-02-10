@@ -38,7 +38,7 @@ S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
-  tu_second(1L)
+  tu_second(1L, tz = tz_name(x))
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {
