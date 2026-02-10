@@ -89,7 +89,9 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
     list(attr(x, "chronon"))
   )
   
-  tz_ext <- tz_abbreviation(x)
+  if (is_zoned <- tz_name(time_chronon(x)) != "UTC") {
+    tz_ext <- tz_abbreviation(x)
+  }
   is_discrete <- is.integer(x)
   
   # Apply timezone offset to produce local time
@@ -122,7 +124,9 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
     parts[[n_units + 1L]] <- sprintf("%.1f%%", frac*100)
   }
 
-  parts[[length(parts) + 1L]] <- tz_ext
+  if (is_zoned) {
+    parts[[length(parts) + 1L]] <- tz_ext
+  }
 
   # The largest granule is displayed continuously, smaller units are displayed cyclically
   # For example, year-week-day would show 2023-W15-Wed for the 3rd day of the 15th week of 2023.
