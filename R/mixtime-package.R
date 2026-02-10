@@ -7,5 +7,6 @@
 #' @importFrom S7 method method<-
 #' @import lifecycle
 #' @import vctrs
+#' @useDynLib mixtime, .registration = TRUE
 ## usethis namespace: end
 NULL

@@ -26,3 +26,16 @@ S7_method_docs <- function() {
     call = NULL
   )
 }
+
+check_tz_name <- function(zone) {
+  if (!zone %in% tzdb::tzdb_names()) {
+    cli::cli_abort(
+      c(
+        "Timezone {.val {zone}} not found in timezone database.",
+        "i" = "Valid timezone names can be found with {.fn tzdb::tzdb_names}."
+      ),
+      call = NULL
+    )
+  }
+  invisible(TRUE)
+}

@@ -1,0 +1,65 @@
+#' Get timezone offset
+#'
+#' Returns the UTC offset for a given datetime in its specified timezone.
+#'
+#' @param time A POSIXct datetime object or something coercible to POSIXct.
+#'   The timezone is extracted from this object.
+#'
+#' @return A numeric vector of offsets in seconds from UTC.
+#' @export
+#'
+#' @examples
+#' tz_offset(Sys.time())
+#' tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
+tz_offset <- function(time) {
+  time <- as.POSIXct(time)
+  tz <- attr(time, "tzone") %||% Sys.timezone()
+  get_tz_offset(time, tz)
+}
+
+#' Get timezone abbreviation
+#'
+#' Returns the timezone abbreviation (e.g., "EST", "PDT") for a given datetime
+#' in its specified timezone.
+#'
+#' @param time A POSIXct datetime object or something coercible to POSIXct.
+#'   The timezone is extracted from this object.
+#'
+#' @return A character vector of timezone abbreviations.
+#' @export
+#'
+#' @examples
+#' tz_abbreviation(Sys.time())
+#' tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
+tz_abbreviation <- function(time) {
+  time <- as.POSIXct(time)
+  tz <- attr(time, "tzone") %||% Sys.timezone()
+  get_tz_abbreviation(time, tz)
+}
+
+#' Get timezone transitions
+#'
+#' Returns all timezone transitions (e.g., daylight saving time changes) that
+#' occur between two datetimes. The timezone is taken from the start datetime.
+#'
+#' @param start A POSIXct datetime object or something coercible to POSIXct,
+#'   representing the start of the time range. The timezone is extracted from this object.
+#' @param end A POSIXct datetime object or something coercible to POSIXct,
+#'   representing the end of the time range.
+#'
+#' @return A data frame containing information about timezone transitions
+#'   in the specified range.
+#' @export
+#'
+#' @examples
+#' # Get all DST transitions in 2024 for New York
+#' tz_transitions(
+#'   as.POSIXct("2024-01-01", tz = "America/New_York"),
+#'   as.POSIXct("2024-12-31", tz = "America/New_York")
+#' )
+tz_transitions <- function(start, end) {
+  start <- as.POSIXct(start)
+  end <- as.POSIXct(end)
+  tz <- attr(start, "tzone") %||% Sys.timezone()
+  get_tz_transitions(start, end, tz)
+}

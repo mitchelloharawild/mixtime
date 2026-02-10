@@ -1,18 +1,57 @@
+########################################
+# R package: build & check artifacts
+########################################
+
+# R CMD build/check output
+inst/doc
 docs
-.Rproj.user
+*.tar.gz
+
+# R session & workspace
 .Rhistory
 .RData
-inst/doc
-.httr-oauth
+.Rproj.user
+man/.Rapp.history
+
+# knitr / R Notebooks / caching
 .*.Rnb.cached
 
-man/.Rapp.history
-.DS_Store
+# OAuth tokens
+.httr-oauth
+
+
+########################################
+# Compiled code (C/C++/Fortran)
+########################################
+
+src/*.o
+src/*.so
+src/*.dll
+src/*.dylib
+
+
+########################################
+# Reverse dependency checks (revdep)
+########################################
+
 revdep/checks
 revdep/library
 revdep/checks.noindex
 revdep/library.noindex
-revdep/data.sqlite
 revdep/cloud.noindex
+revdep/data.sqlite
+
+
+########################################
+# Quarto / documentation tooling
+########################################
 
 /.quarto/
+
+
+########################################
+# OS / editor specific
+########################################
+
+# macOS
+.DS_Store
