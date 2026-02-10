@@ -39,5 +39,5 @@ day_of_week(Sys.Date())
 month_of_year <- cyclical_time(tu_month(1L), tu_year(1L))
 month_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] Feb
+#> [1] Feb-0.0%
 ```
