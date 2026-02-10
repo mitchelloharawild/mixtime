@@ -102,7 +102,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   parts[[n_units]] <- floor(x)
   
   # Compute fractional component of chronon
-  if(is_discrete) {
+  if(!is_discrete) {
     frac <- x - parts[[n_units]]
   }
 
