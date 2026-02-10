@@ -39,6 +39,7 @@ round_time.mixtime <- function(x, unit, ...) {
 }
 #' @export
 round_time.default <- function(x, unit, ...) {
+  if (is.character(unit)) unit <- parse_time_unit(unit)
   res <- chronon_divmod(
     from = unit,
     to = time_chronon(x),
@@ -59,6 +60,7 @@ ceiling_time.mixtime <- function(x, unit, ...) {
 }
 #' @export
 ceiling_time.default <- function(x, unit, ...) {
+  if (is.character(unit)) unit <- parse_time_unit(unit)
   res <- chronon_divmod(
     from = unit,
     to = time_chronon(x),
@@ -80,6 +82,7 @@ floor_time.mixtime <- function(x, unit, ...) {
 }
 #' @export
 floor_time.default <- function(x, unit, ...) {
+  if (is.character(unit)) unit <- parse_time_unit(unit)
   res <- chronon_divmod(
     from = unit,
     to = time_chronon(x),
