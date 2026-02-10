@@ -6,12 +6,14 @@
 \alias{tu_week}
 \title{ISO 8601 time unit classes}
 \usage{
-tu_isoyear(.data = 1L)
+tu_isoyear(.data = 1L, tz = "UTC")
 
-tu_week(.data = 1L)
+tu_week(.data = 1L, tz = "UTC")
 }
 \arguments{
 \item{.data}{The number of time units}
+
+\item{tz}{The timezone name for the unit (valid units can be found with \verb{[tzdb::tzdb_names()]})}
 }
 \value{
 A time unit object for the ISO 8601 calendar system.

@@ -7,11 +7,11 @@
 \alias{yearmonth}
 \title{Gregorian continuous time representations}
 \usage{
-year(.data, tz = NULL, discrete = TRUE)
+year(.data, tz = tz_name(.data), discrete = TRUE)
 
-yearquarter(.data, tz = NULL, discrete = TRUE)
+yearquarter(.data, tz = tz_name(.data), discrete = TRUE)
 
-yearmonth(.data, tz = NULL, discrete = TRUE)
+yearmonth(.data, tz = tz_name(.data), discrete = TRUE)
 }
 \arguments{
 \item{.data}{Another object to be coerced into the specified time.}

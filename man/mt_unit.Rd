@@ -2,12 +2,17 @@
 % Please edit documentation in R/00_classes.R
 \name{mt_unit}
 \alias{mt_unit}
+\alias{mt_tz_unit}
 \title{Base S7 class for creating new time units}
 \usage{
 mt_unit(.data = 1L)
+
+mt_tz_unit(.data = 1L, tz = "UTC")
 }
 \arguments{
 \item{.data}{The number of time units}
+
+\item{tz}{The timezone name for the unit (valid units can be found with \verb{[tzdb::tzdb_names()]})}
 }
 \value{
 A time unit object of class \code{mt_unit}

@@ -12,24 +12,26 @@
 \alias{tu_millisecond}
 \title{Gregorian time unit classes}
 \usage{
-tu_year(.data = 1L)
+tu_year(.data = 1L, tz = "UTC")
 
-tu_quarter(.data = 1L)
+tu_quarter(.data = 1L, tz = "UTC")
 
-tu_month(.data = 1L)
+tu_month(.data = 1L, tz = "UTC")
 
-tu_day(.data = 1L)
+tu_day(.data = 1L, tz = "UTC")
 
-tu_hour(.data = 1L)
+tu_hour(.data = 1L, tz = "UTC")
 
-tu_minute(.data = 1L)
+tu_minute(.data = 1L, tz = "UTC")
 
-tu_second(.data = 1L)
+tu_second(.data = 1L, tz = "UTC")
 
-tu_millisecond(.data = 1L)
+tu_millisecond(.data = 1L, tz = "UTC")
 }
 \arguments{
 \item{.data}{The number of time units}
+
+\item{tz}{The timezone name for the unit (valid units can be found with \verb{[tzdb::tzdb_names()]})}
 }
 \value{
 A time unit object for the Gregorian calendar system.

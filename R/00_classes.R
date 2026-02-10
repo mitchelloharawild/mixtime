@@ -1,9 +1,9 @@
 mt_unit_s3 <- S7::new_S3_class(
   "mixtime::mt_unit", 
   constructor = function(.data = 1L) .data,
-  validator = function(object) {
-    if (!typeof(object) %in% c("integer", "double")) {
-      sprintf("Underlying data must be <integer> or <double>,  not <%s>", typeof(object))
+  validator = function(self) {
+    if (!typeof(self) %in% c("integer", "double")) {
+      sprintf("Underlying data must be <integer> or <double>,  not <%s>", typeof(self))
     }
   }
 )
@@ -22,3 +22,15 @@ mt_unit_s3 <- S7::new_S3_class(
 #' @export
 #' @rdname mt_unit
 mt_unit <- S7::new_class("mt_unit", parent = mt_unit_s3)
+
+#' @param tz The timezone name for the unit (valid units can be found with `[tzdb::tzdb_names()]`)
+#' @rdname mt_unit
+mt_tz_unit <- S7::new_class(
+  "mt_tz_unit", 
+  parent = mt_unit,
+  properties = list(tz = S7::new_property(S7::class_character, default = "UTC")),
+  validator = function(self) {
+    check_tz_name(self@tz)
+    NULL
+  }
+)

@@ -56,15 +56,18 @@ linear_time <- function(chronon, granules = list()) {
 
   function(.data, tz = NULL, discrete = TRUE) {
     # Get timezone from .data
+    if (is.null(tz)) {
+      # tzone attribute (from POSIXt) or defualt to UTC
+      tz <- attr(.data, "tzone") %||% "UTC"
+    }
+    
+    # Attach timezone to chronon
     if (!is.null(tz)) {
-      cli::cli_abort("Specifying `tz` is not yet supported for linear time.")
-      # tz <- suppressWarnings(lubridate::tz(.data))
+      chronon@tz <- tz
     }
 
     # Cast from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
-      # Drop the remainder, we only want the chronon here
-      # TODO: Optionally preserve the remainder as fractional chronons
       .data <- chronon_convert(.data, chronon, discrete = discrete)
     }
 

@@ -23,13 +23,13 @@
 #' 
 #' @name calendar_iso8601
 #' @export
-tu_isoyear <- S7::new_class("tu_isoyear", parent = mt_unit)
+tu_isoyear <- S7::new_class("tu_isoyear", parent = mt_tz_unit)
 S7::method(time_unit_full, tu_isoyear) <- function(x) "isoyear"
 S7::method(time_unit_abbr, tu_isoyear) <- function(x) "IY"
 
 #' @rdname calendar_iso8601
 #' @export
-tu_week <- S7::new_class("tu_week", parent = mt_unit)
+tu_week <- S7::new_class("tu_week", parent = mt_tz_unit)
 S7::method(time_unit_full, tu_week) <- function(x) "week"
 S7::method(time_unit_abbr, tu_week) <- function(x) "W"
 
