@@ -25,7 +25,7 @@ format.mixtime_interval <- function(x, ...) {
     character(1L)
   )
   # tsibble requires length 1 interval formatting
-  paste(fmt, collapse = ", ")
+  paste(unique(fmt), collapse = ", ")
 }
 
 fmt_interval <- function (x, ...) {
