@@ -36,7 +36,7 @@ method(tz_offset, S7::new_S3_class("mixtime")) <- function(x) {
   )
 }
 method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, to, discrete = FALSE, ...) {
-  time_s <- as.POSIXct(x)
+  time_s <- as.double(as.POSIXct(x))
   offset_s <- get_tz_offset(time_s, tz_name(x))
   offset_s*chronon_cardinality(tu_second(1L), time_chronon(x), time_s)
 }
@@ -56,7 +56,7 @@ method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, to, discrete = F
 #' tz_abbreviation(Sys.time())
 #' tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
 tz_abbreviation <- function(x) {
-  x <- as.POSIXct(x)
+  x <- as.double(as.POSIXct(x))
   tz <- attr(x, "tzone") %||% Sys.timezone()
   get_tz_abbreviation(x, tz)
 }
@@ -82,8 +82,8 @@ tz_abbreviation <- function(x) {
 #'   as.POSIXct("2024-12-31", tz = "America/New_York")
 #' )
 tz_transitions <- function(start, end) {
-  start <- as.POSIXct(start)
-  end <- as.POSIXct(end)
+  start <- as.double(as.POSIXct(start))
+  end <- as.double(as.POSIXct(end))
   tz <- attr(start, "tzone") %||% Sys.timezone()
   get_tz_transitions(start, end, tz)
 }
