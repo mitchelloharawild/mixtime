@@ -146,9 +146,9 @@ seq.mt_cyclical <- function(from, to,
   }
 
   # Call the usual numeric seq() method
-  res <- rlang::inject(seq(!!!args))
+  res <- rlang::inject(seq.int(!!!args))
 
   # Restore mt_cyclical attributes
   period <- chronon_cardinality(attr(ptype, "cycle"), attr(ptype, "chronon"))
-  vec_restore((res - 1L) %% period + 1L, ptype)
+  vec_restore(res %% period, ptype)
 }
