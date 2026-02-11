@@ -22,10 +22,6 @@
 #' 
 #' @export
 cyclical_time <- function(chronon, cycle) {
-  # if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
-  #   stop("All elements in granules must be time unit objects", call. = FALSE)
-  # }
-  
   if (!inherits(chronon, "mixtime::mt_unit")) {
     stop("`chronon` must be a time unit object", call. = FALSE)
   }
@@ -36,10 +32,10 @@ cyclical_time <- function(chronon, cycle) {
   # TODO: Ensure c(granules, chronon) are in decreasing order of size
 
   function(.data, tz = NULL, discrete = TRUE) {
-    # Get timezone from .data
+    # Attach timezone to chronon and granules
     if (!is.null(tz)) {
-      cli::cli_abort("Specifying `tz` is not yet supported for cyclical time.")
-      # tz <- suppressWarnings(lubridate::tz(.data))
+      chronon@tz <- tz
+      granules <- lapply(granules, function(g) {g@tz <- tz; g})
     }
     
     # Cast to continuous time from Date, POSIXct, etc.
@@ -134,27 +130,38 @@ seq.mt_cyclical <- function(from, to,
                             # by = ((to - from)/(length.out - 1),
                              ...) {
   # Capture extra arguments
-  args <- rlang::list2(...)
+  arg <- rlang::list2(...)
   
   # Convert mt_cyclical to numeric for seq() method
   if (!missing(from) && inherits(from, "mt_cyclical")) {
     ptype <- from
-    args$from <- vctrs::vec_data(from)
+    arg$from <- vctrs::vec_data(from)
   }
   if (!missing(to) && inherits(to, "mt_cyclical")) {
     # Require compatible cyclical time objects for from:to
-    if (!is.null(args$from)) {
+    if (!is.null(arg$from)) {
       vec_assert(to, from)
     } else {
       ptype <- to
     }
-    args$to <- vctrs::vec_data(to)
+    arg$to <- vctrs::vec_data(to)
   }
 
-  # Call the usual numeric seq() method
-  res <- rlang::inject(seq.int(!!!args))
+  # Convert `by` to match `ptype` units
+  if (!is.null(arg$by) && S7::S7_inherits(arg$by, mt_unit)) {
+    arg$by <- chronon_cardinality(arg$by, time_chronon(ptype))
+  }
 
-  # Restore mt_cyclical attributes
+  # Generate linear sequence
+  res <- rlang::inject(seq.int(!!!arg))
+
+  # Compute cyclical component
   period <- chronon_cardinality(attr(ptype, "cycle"), attr(ptype, "chronon"))
-  vec_restore(res %% period, ptype)
+  res <- res %% period
+  
+  # Restore integer type for discrete time input
+  if (is.integer(ptype)) res <- as.integer(res)
+  
+  # Restore cyclical time attributes
+  vec_restore(res, ptype)
 }
