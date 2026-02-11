@@ -294,10 +294,17 @@ seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NUL
       cli::cli_abort("When {.arg by} is provided, exactly two of {.arg from}, {.arg to}, or {.arg length.out} must be specified.")
     }
 
+    # Sequence chronon
+    chronon <- time_chronon(ptype)
+
     # Parse by argument
     if (is.character(by)) by <- parse_time_unit(by)
+    # Numeric `by` uses chronon
+    if (is.numeric(by) && !S7::S7_inherits(by, mt_unit)) {
+      attributes(by) <- attributes(chronon)
+    }
+    
     # Convert to `from`/`to` time chronons to `by` time chronons
-    chronon <- time_chronon(ptype)
     seq_part <- NULL
     arg <- list(by = by, length.out = length.out)
     if (!missing_from) {
