@@ -30,6 +30,14 @@ chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 chronon_convert.S7_methods <- function(x, to, discrete = FALSE) S7_method_docs()
 
 chronon_convert_impl <- function(x, from, to, discrete) {
+  # Convert between same time unit types
+  if (identical(S7::S7_class(from), S7::S7_class(to))) {
+    x <- vec_data(x) * vec_data(from) / vec_data(to)
+    if (discrete) x <- as.integer(floor(x))
+    return(x)
+  }
+
+  # Find path along convertable time units
   path <- S7_graph_dispatch(
     unique(c(
       # Chronon divmod should be directional
