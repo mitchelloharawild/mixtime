@@ -125,12 +125,21 @@ vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
 #' @export
 vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 
+#' @rdname seq.mixtime
 #' @export
-seq.mt_cyclical <- function(from, to,
-                            # by = ((to - from)/(length.out - 1),
-                             ...) {
+seq.mt_cyclical <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
+  if (!is.null(along.with)) {
+    length.out <- length(along.with)
+  }
+  else if (!is.null(length.out)) {
+    if (length(length.out) != 1L) 
+      stop(sprintf("'%s' must be of length 1", length.out))
+    length.out <- ceiling(length.out)
+  }
+
   # Capture extra arguments
-  arg <- rlang::list2(...)
+  arg <- rlang::list2(length.out = length.out, along.with = along.with, ...)
+  if (!missing(by)) arg$by <- by
   
   # Parse `by` argument
   if (is.character(arg$by)) arg$by <- parse_time_unit(arg$by)

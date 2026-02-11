@@ -255,8 +255,9 @@ vec_cast.POSIXct.mt_linear <- function(x, ...) {
   # )
 }
 
+#' @rdname seq.mixtime
 #' @export
-seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NULL, ...) {
+seq.mt_linear <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
   if (!is.null(along.with)) {
     length.out <- length(along.with)
   }
