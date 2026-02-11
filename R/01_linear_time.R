@@ -266,7 +266,6 @@ seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NUL
     length.out <- ceiling(length.out)
   }
 
-
   missing_from <- missing(from)
   missing_to <- missing(to)
   missing_by <- missing(by)
@@ -306,7 +305,8 @@ seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NUL
     
     # Convert to `from`/`to` time chronons to `by` time chronons
     seq_part <- NULL
-    arg <- list(by = by, length.out = length.out)
+    # Increment by 1 since the time point chronon is rebased with `by`
+    arg <- list(by = 1L)
     if (!missing_from) {
       divmod <- chronon_divmod(chronon, by, as.numeric(from))
       seq_part <- divmod$remainder
@@ -317,6 +317,7 @@ seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NUL
       seq_part <- seq_part %||% divmod$remainder
       arg$to <- divmod$chronon
     }
+    if (!is.null(length.out)) arg$length.out <- length.out
 
     res <- rlang::exec(seq.int, !!!arg)
     # TODO: safely add the seq_part to handle invalid dates without overflow
