@@ -337,13 +337,8 @@ seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NUL
     if (!missing_from) arg$from <- as.numeric(from)
     if (!missing_to) arg$to <- as.numeric(to)
     
-    # TODO: This should call seq.mt_[linear/cyclical]
     res <- rlang::exec(seq.int, !!!arg)
   }
   
-  # TODO: This should be done with vec_restore()
-  # vec_restore(res, ptype)
-  attributes(res) <- attributes(ptype)
-  res
-
+  vec_restore(res, ptype)
 }

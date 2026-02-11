@@ -1,9 +1,3 @@
-# TODO: Conversions between chronons from one time unit to another.
-# This is especially efficient for converting irregular time units.
-# Defaults to chronon_cardinality() which is efficient for regular time conversions
-# (e.g. days in a week).
-
-
 #' Convert between chronons of different time units
 #' 
 #' This function converts between chronons measured in different time units. It
@@ -48,7 +42,7 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
     )
   }
 
-  # TODO: Apply graph dispatch to find shortest path between from and to using
+  # Apply graph dispatch to find shortest path between from and to using
   # divmod conversions between time units (e.g. tu_day -> tu_month)
   path <- S7_graph_dispatch(
     unique(c(

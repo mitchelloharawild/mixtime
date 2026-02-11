@@ -100,11 +100,9 @@ S7::method(chronon_cardinality, list(tu_quarter, tu_month)) <- function(x, y, at
   vec_data(x)*3/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
-  # TODO: Handle timezones if `at` is provided
   vec_data(x)*24/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_hour, tu_minute)) <- function(x, y, at = NULL) {
-  # TODO: Handle timezones if `at` is provided
   vec_data(x)*60/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_minute, tu_second)) <- function(x, y, at = NULL) {
