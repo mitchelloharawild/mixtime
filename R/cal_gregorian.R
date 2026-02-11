@@ -311,6 +311,17 @@ yearmonth <- linear_time(
   granules = list(tu_year(1L))
 )
 
+#' @examples
+#' 
+#' yearmonthday(Sys.Date())
+#' yearmonthday(Sys.Date(), discrete = FALSE)
+#' 
+#' @rdname linear_gregorian
+#' @export
+yearmonthday <- linear_time(
+  chronon = tu_day(1L),
+  granules = list(tu_year(1L), tu_month(1L))
+)
 
 #' Gregorian cyclical time representations
 #' 

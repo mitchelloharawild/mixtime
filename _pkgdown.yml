@@ -19,6 +19,7 @@ reference:
   - year
   - yearquarter
   - yearmonth
+  - yearmonthday
 - subtitle: "ISO 8601 Calendar"
   desc: "Common linear time representations in the ISO 8601 week date system."
   contents:

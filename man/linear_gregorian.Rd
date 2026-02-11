@@ -5,6 +5,7 @@
 \alias{year}
 \alias{yearquarter}
 \alias{yearmonth}
+\alias{yearmonthday}
 \title{Gregorian continuous time representations}
 \usage{
 year(.data, tz = tz_name(.data), discrete = TRUE)
@@ -12,6 +13,8 @@ year(.data, tz = tz_name(.data), discrete = TRUE)
 yearquarter(.data, tz = tz_name(.data), discrete = TRUE)
 
 yearmonth(.data, tz = tz_name(.data), discrete = TRUE)
+
+yearmonthday(.data, tz = tz_name(.data), discrete = TRUE)
 }
 \arguments{
 \item{.data}{Another object to be coerced into the specified time.}
@@ -62,5 +65,9 @@ yearquarter(Sys.Date(), discrete = FALSE)
 
 yearmonth(Sys.Date())
 yearmonth(Sys.Date(), discrete = FALSE)
+
+
+yearmonthday(Sys.Date())
+yearmonthday(Sys.Date(), discrete = FALSE)
 
 }
