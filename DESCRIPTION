@@ -29,7 +29,8 @@ Imports:
     cli,
     S7,
     vecvec,
-    tzdb
+    tzdb,
+    anytime
 Suggests: 
     testthat,
     pillar

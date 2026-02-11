@@ -52,6 +52,11 @@ linear_time <- function(chronon, granules = list()) {
       granules <- lapply(granules, function(g) {g@tz <- tz; g})
     }
 
+    # Parse text data
+    if (is.character(.data)) {
+      .data <- anytime::utctime(.data)
+    }
+
     # Cast from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
       .data <- chronon_convert(
