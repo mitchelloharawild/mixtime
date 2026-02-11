@@ -250,20 +250,87 @@ vec_cast.POSIXct.mt_linear <- function(x, ...) {
   # )
 }
 
-# #' @export
-# seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NULL, ...) {
-#   browser()
-#   if (!is.null(along.with)) {
-#     length.out <- length(along.with)
-#   }
-#   if (!is.null(length.out)) {
-#     return(vec_restore(
-#       vctrs::vec_seq(from = vec_data(from), to = vec_data(to), length.out = length.out),
-#       from
-#     ))
-#   }
-#   vec_restore(
-#     vctrs::vec_seq(from = vec_data(from), to = vec_data(to), by = by),
-#     from
-#   )
-# }
+#' @export
+seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NULL, ...) {
+  if (!is.null(along.with)) {
+    length.out <- length(along.with)
+  }
+  else if (!is.null(length.out)) {
+    if (length(length.out) != 1L) 
+      stop(sprintf("'%s' must be of length 1", length.out))
+    length.out <- ceiling(length.out)
+  }
+
+
+  missing_from <- missing(from)
+  missing_to <- missing(to)
+  missing_by <- missing(by)
+
+  # Check chronon compatibility
+  if (!missing_from && !missing_to) {
+    from_chronon <- time_chronon(from)
+    to_chronon <- time_chronon(to)
+    
+    # Check that from and to have the same time classes
+    if (!identical(from_chronon, to_chronon)) {
+      cli::cli_abort(c(
+        "Incompatible time chronones in {.fn seq}.",
+        "i" = "{.arg from} has {.cls {paste(from_chronon, time_unit_full(from_chronon))}} chronons.",
+        "i" = "{.arg to} has {.cls {paste(to_chronon, time_unit_full(to_chronon))}} chronons."
+      ))
+    }
+  }
+  ptype <- if(missing_from) to else from
+  
+  if (!missing_by) {
+    # If by is provided, exactly two of from/to/length.out must be specified
+    n_provided <- sum(!missing_from, !missing_to, !is.null(length.out))
+    if (n_provided != 2L) {
+      cli::cli_abort("When {.arg by} is provided, exactly two of {.arg from}, {.arg to}, or {.arg length.out} must be specified.")
+    }
+
+    # Parse by argument
+    if (is.character(by)) by <- parse_time_unit(by)
+    # Convert to `from`/`to` time chronons to `by` time chronons
+    chronon <- time_chronon(ptype)
+    seq_part <- NULL
+    arg <- list(by = by, length.out = length.out)
+    if (!missing_from) {
+      divmod <- chronon_divmod(chronon, by, as.numeric(from))
+      seq_part <- divmod$remainder
+      arg$from <- divmod$chronon
+    }
+    if (!missing_to) {
+      divmod <- chronon_divmod(chronon, by, as.numeric(to))
+      seq_part <- seq_part %||% divmod$remainder
+      arg$to <- divmod$chronon
+    }
+
+    res <- rlang::exec(seq.int, !!!arg)
+    # TODO: safely add the seq_part to handle invalid dates without overflow
+    #       (essentially, check the cardinality to see if seq_part overflows it)
+    res <- chronon_convert_impl(res, by, chronon, discrete = is.integer(res)) + seq_part
+
+    # Restore integer type for discrete time input
+    if (is.integer(ptype)) res <- as.integer(res)
+  } else {
+    # If by is missing, at least two of from/to/length.out must be specified
+    n_provided <- sum(!missing_from, !missing_to, !is.null(length.out))
+    if (n_provided < 2L) {
+      cli::cli_abort("When {.arg by} is missing, at least two of {.arg from}, {.arg to}, or {.arg length.out} must be specified.")
+    }
+
+    arg <- list(length.out = length.out)
+    if (!missing_from) arg$from <- as.numeric(from)
+    if (!missing_to) arg$to <- as.numeric(to)
+    
+    # TODO: This should call seq.mt_[linear/cyclical]
+    res <- rlang::exec(seq.int, !!!arg)
+  }
+  
+  # TODO: This should be done with vec_restore()
+  # vec_restore(res, ptype)
+  attributes(res) <- attributes(ptype)
+  res
+
+}
