@@ -141,13 +141,25 @@ seq.mt_cyclical <- function(from, to,
     arg$from <- vctrs::vec_data(from)
   }
   if (!missing(to) && inherits(to, "mt_cyclical")) {
-    # Require compatible cyclical time objects for from:to
+    arg$to <- vctrs::vec_data(to)
     if (!is.null(arg$from)) {
+      # Require compatible cyclical time objects for from:to
       vec_assert(to, from)
     } else {
       ptype <- to
     }
-    arg$to <- vctrs::vec_data(to)
+  }
+
+  # Cyclical period
+  period <- chronon_cardinality(attr(ptype, "cycle"), attr(ptype, "chronon"))
+
+  # Adjust from:to for looping around cycle
+  if (!is.null(arg$to) && !is.null(arg$from)) {
+    if (arg$by%||%1 > 0 && to < from) {
+      arg$to <- arg$to + period
+    } else if (to > from && arg$by%||%1 < 0) {
+      arg$to <- arg$to - period
+    }
   }
 
   # Convert `by` to match `ptype` units
@@ -159,7 +171,6 @@ seq.mt_cyclical <- function(from, to,
   res <- rlang::inject(seq.int(!!!arg))
 
   # Compute cyclical component
-  period <- chronon_cardinality(attr(ptype, "cycle"), attr(ptype, "chronon"))
   res <- res %% period
   
   # Restore integer type for discrete time input

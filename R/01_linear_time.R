@@ -296,7 +296,7 @@ seq.mt_linear <- function(from, to, by = 1L, length.out = NULL, along.with = NUL
     # Sequence chronon
     chronon <- time_chronon(ptype)
 
-    # Parse by argument
+    # Parse `by` argument
     if (is.character(by)) by <- parse_time_unit(by)
     # Numeric `by` uses chronon
     if (is.numeric(by) && !S7::S7_inherits(by, mt_unit)) {
