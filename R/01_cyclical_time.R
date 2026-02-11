@@ -132,6 +132,9 @@ seq.mt_cyclical <- function(from, to,
   # Capture extra arguments
   arg <- rlang::list2(...)
   
+  # Parse `by` argument
+  if (is.character(arg$by)) arg$by <- parse_time_unit(arg$by)
+
   # Convert mt_cyclical to numeric for seq() method
   if (!missing(from) && inherits(from, "mt_cyclical")) {
     ptype <- from
