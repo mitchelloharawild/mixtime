@@ -121,23 +121,13 @@ vec_proxy_order.mixtime <- function(x, ...) {
   vec_proxy_order(vctrs::vec_data(vecvec::unvecvec(x)))
 }
 
-#' @export
-seq.mixtime <- function(from, to, by = 1L, length.out = NULL, along.with = NULL, ...) {
-  if (!missing(along.with)) {
-    length.out <- length(along.with)
-  } 
-  else if (!is.null(length.out)) {
-    if (length(length.out) != 1L) 
-      stop(sprintf("'%s' must be of length 1", length.out))
-    length.out <- ceiling(length.out)
-  }
 
   # Strip mixtime vecvec wrapper
-  arg <- list()
-  if (has_from <- !missing(from)) arg$from <- vecvec::unvecvec(from)
-  if (has_to <- !missing(to)) arg$to <- vecvec::unvecvec(to)
-  arg <- c(arg, rlang::list2(by = by, length.out = length.out, ...))
-
+  arg <- lapply(
+    rlang::list2(...), 
+    function(x) if(is_mixtime(x)) vecvec::unvecvec(x) else x
+  )
+  
   # Call seq method with bare vectors
   mixtime(rlang::exec(seq, !!!arg))
 }
