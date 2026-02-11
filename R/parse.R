@@ -12,7 +12,7 @@ parse_time_unit <- function(x) {
     "second" = ,
     "sec" = tu_second(n),
     "minute" = ,
-    "min" = tu_min(n),
+    "min" = tu_minute(n),
     "hour" = tu_hour(n),
     "day" = tu_day(n),
     "dstday" = tu_day(n), # DSTdays map to regular days
