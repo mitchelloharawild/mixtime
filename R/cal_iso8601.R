@@ -46,16 +46,19 @@ S7::method(chronon_cardinality, list(tu_week, tu_day)) <- function(x, y, at = NU
 
 S7::method(chronon_divmod, list(tu_day, tu_week)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
+  divisor <- chronon_cardinality(to, from)
   list(
-    chronon = (x + 3) %/% 7L,
-    remainder = (x + 3) %% 7L
+    chronon = (x + 3L) %/% divisor,
+    remainder = (x + 3L) %% divisor
   )
 }
 
 S7::method(chronon_divmod, list(tu_week, tu_day)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
+  mult <- chronon_cardinality(from, to)
+
   list(
-    chronon = x*7L + 4L,
+    chronon = x*mult - 3L,
     remainder = 0L
   )
 }
