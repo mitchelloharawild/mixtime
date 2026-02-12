@@ -138,8 +138,11 @@ seq.mt_cyclical <- function(from, to, by, length.out = NULL, along.with = NULL, 
   }
 
   # Capture extra arguments
-  arg <- rlang::list2(length.out = length.out, along.with = along.with, ...)
+  arg <- rlang::list2(...)
   if (!missing(by)) arg$by <- by
+  if (!is.null(length.out)) arg$length.out <- length.out
+  # NB: Passing along.with = NULL to seq.int causes an overflow in R
+  if (!is.null(along.with)) arg$along.with <- along.with
   
   # Parse `by` argument
   if (is.character(arg$by)) arg$by <- parse_time_unit(arg$by)
