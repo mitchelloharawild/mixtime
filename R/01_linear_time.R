@@ -309,14 +309,23 @@ seq.mt_linear <- function(from, to, by, length.out = NULL, along.with = NULL, ..
     # Increment by 1 since the time point chronon is rebased with `by`
     arg <- list(by = 1L)
     if (!missing_from) {
+      # Convert `from` into `by` chronons
       divmod <- chronon_divmod(chronon, by, as.numeric(from))
-      seq_part <- divmod$remainder
       arg$from <- divmod$chronon
+
+      # Left aligned sequencing
+      seq_part <- divmod$remainder
     }
     if (!missing_to) {
+      # Shift `to` left to account for `from` alignment
+      if (!is.null(seq_part)) to <- to - seq_part
+
+      # Convert `to` into `by` chronons
       divmod <- chronon_divmod(chronon, by, as.numeric(to))
-      seq_part <- seq_part %||% divmod$remainder
       arg$to <- divmod$chronon
+      
+      # Right aligned sequencing if from isn't provided
+      seq_part <- seq_part %||% divmod$remainder
     }
     if (!is.null(length.out)) arg$length.out <- length.out
 
