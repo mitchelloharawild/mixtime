@@ -1,0 +1,173 @@
+test_that("seq.mixtime works with linear time using integer by", {
+  # yearmonth sequences
+  result <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 12)
+  expect_equal(format(result[[1]]), "2020-Jan")
+  expect_equal(format(result[[12]]), "2020-Dec")
+  
+  # yearquarter with length.out and integer by
+  result <- seq(yearquarter("2020-01-01"), length.out = 5, by = 1L)
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 5)
+  expect_equal(format(result[[1]]), "2020-Q1")
+  expect_equal(format(result[[5]]), "2021-Q1")
+  
+  # yearmonthday sequences
+  result <- seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-10"))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 10)
+  expect_equal(format(result[[1]]), "2020-Jan-1")
+  expect_equal(format(result[[10]]), "2020-Jan-10")
+})
+
+test_that("seq.mixtime works with linear time using string intervals", {
+  # Month intervals
+  result <- seq(yearmonthday("2020-01-01"), yearmonthday("2020-12-31"), by = "1 month")
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 12)
+  expect_equal(format(result[[1]]), "2020-Jan-1")
+  expect_equal(format(result[[12]]), "2020-Dec-1")
+  
+  # Year intervals
+  result <- seq(yearmonth("2020 Jan"), yearmonth("2025 Jan"), by = "1 year")
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 6)
+  expect_equal(format(result[[1]]), "2020-Jan")
+  expect_equal(format(result[[6]]), "2025-Jan")
+  
+  # Week intervals with length.out
+  result <- seq(yearmonthday("2020-01-01"), length.out = 10, by = "2 weeks")
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 10)
+  expect_equal(format(result[[1]]), "2020-Jan-1")
+  expect_equal(format(result[[10]]), "2020-May-6")
+})
+
+test_that("seq.mixtime works with linear time using time unit objects", {
+  # Month time units
+  result <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = tu_month(2L))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 6)
+  expect_equal(format(result[[1]]), "2020-Jan")
+  expect_equal(format(result[[6]]), "2020-Nov")
+  
+  # Year time units with length.out
+  result <- seq(yearmonthday("2020-01-01"), length.out = 5, by = tu_year(1L))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 5)
+  expect_equal(format(result[[1]]), "2020-Jan-1")
+  expect_equal(format(result[[5]]), "2024-Jan-1")
+  
+  # Day time units
+  result <- seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-31"), by = tu_day(7L))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 5)
+  expect_equal(format(result[[1]]), "2020-Jan-1")
+  expect_equal(format(result[[5]]), "2020-Jan-29")
+})
+
+test_that("seq.mixtime works with cyclical time", {
+  # month_of_year sequence (full cycle)
+  result <- seq(month_of_year(0L), month_of_year(11L))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 12)
+  expect_equal(format(result[[1]]), "Jan")
+  expect_equal(format(result[[12]]), "Dec")
+  
+  # month_of_year with wrap-around and time unit by
+  result <- seq(month_of_year(5L), month_of_year(3L), by = tu_month(2L))
+  expect_s3_class(result, "mixtime")
+  # Should wrap around: Jun -> Aug -> Oct -> Dec -> Feb -> Apr
+  expect_length(result, 6)
+  expect_equal(format(result[[1]]), "Jun")
+  expect_equal(format(result[[6]]), "Apr")
+  
+  # day_of_week sequence with integer by
+  result <- seq(day_of_week(0L), day_of_week(6L), by = 1L)
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 7)
+  expect_equal(format(result[[1]]), "Thu")
+  expect_equal(format(result[[7]]), "Wed")
+})
+
+test_that("seq.mixtime handles length.out correctly", {
+  # With linear time
+  result <- seq(yearmonth("2020 Jan"), length.out = 24)
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 24)
+  expect_equal(format(result[[1]]), "2020-Jan")
+  expect_equal(format(result[[24]]), "2021-Dec")
+  
+  # With cyclical time
+  result <- seq(month_of_year(0L), length.out = 15)
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 15)
+  expect_equal(format(result[[1]]), "Jan")
+})
+
+test_that("seq.mixtime handles along.with correctly", {
+  reference_vec <- 1:10
+  
+  result <- seq(yearmonth("2020 Jan"), along.with = reference_vec)
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 10)
+  expect_equal(format(result[[1]]), "2020-Jan")
+  expect_equal(format(result[[10]]), "2020-Oct")
+})
+
+test_that("seq.mixtime handles backward sequences", {
+  # Linear time going backward
+  result <- seq(yearmonth("2020 Dec"), yearmonth("2020 Jan"), by = -1L)
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 12)
+  expect_equal(format(result[[1]]), "2020-Dec")
+  expect_equal(format(result[[12]]), "2020-Jan")
+  
+  # With negative time units
+  result <- seq(yearmonthday("2020-12-31"), yearmonthday("2020-12-01"), by = tu_day(-5L))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 7)
+  expect_equal(format(result[[1]]), "2020-Dec-31")
+  expect_equal(format(result[[7]]), "2020-Dec-1")
+})
+
+test_that("seq.mixtime handles edge cases", {
+  # Single element sequence
+  result <- seq(yearmonth("2020 Jan"), yearmonth("2020 Jan"))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 1)
+  expect_equal(format(result[[1]]), "2020-Jan")
+  
+  # Length.out = 1
+  result <- seq(yearmonth("2020 Jan"), length.out = 1)
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 1)
+  
+  # Empty along.with (though unusual)
+  result <- seq(yearmonth("2020 Jan"), along.with = integer(0))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 0)
+})
+
+test_that("seq.mixtime works with Date objects in mixtime", {
+  # Dates should work through mixtime
+  result <- seq(mixtime(as.Date("2020-01-01")), mixtime(as.Date("2020-01-10")))
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 10)
+})
+
+test_that("seq.mixtime works with different by specifications", {
+  # Integer by
+  result1 <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = 2L)
+  expect_length(result1, 6)
+  
+  # String by
+  result2 <- seq(yearmonthday("2020-01-01"), yearmonthday("2020-02-01"), by = "1 week")
+  expect_s3_class(result2, "mixtime")
+  
+  # Time unit by
+  result3 <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = tu_quarter(1L))
+  expect_s3_class(result3, "mixtime")
+  expect_length(result3, 4)
+})
