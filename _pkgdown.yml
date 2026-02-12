@@ -94,6 +94,7 @@ reference:
 - title: "Time Manipulation"
   desc: "Functions for manipulating and transforming time objects."
   contents:
+  - seq.mixtime
   - round_time
   - floor_time
   - ceiling_time
