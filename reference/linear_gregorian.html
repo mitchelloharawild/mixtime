@@ -43,11 +43,13 @@ Unix epoch (1970-01-01).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">year</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="cn">NULL</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">year</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="fu"><a href="tz_name.html">tz_name</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">yearquarter</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="cn">NULL</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">yearquarter</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="fu"><a href="tz_name.html">tz_name</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">yearmonth</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="cn">NULL</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">yearmonth</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="fu"><a href="tz_name.html">tz_name</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">yearmonthday</span><span class="op">(</span><span class="va">.data</span>, tz <span class="op">=</span> <span class="fu"><a href="tz_name.html">tz_name</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -98,7 +100,7 @@ the supported Gregorian time units (see <a href="calendar_gregorian.html">calend
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026</span>
 <span class="r-in"><span><span class="fu">year</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-11.0%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-11.5%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -106,7 +108,7 @@ the supported Gregorian time units (see <a href="calendar_gregorian.html">calend
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Q1</span>
 <span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Q1-43.8%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Q1-46.0%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -114,7 +116,15 @@ the supported Gregorian time units (see <a href="calendar_gregorian.html">calend
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb</span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-32.1%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-39.3%</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">yearmonthday</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-12</span>
+<span class="r-in"><span><span class="fu">yearmonthday</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-12-0.0%</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -110,7 +110,8 @@ Functions to create and work with linear time representations
 Common linear time representations in the Gregorian calendar system.
 
 - [`year()`](linear_gregorian.md) [`yearquarter()`](linear_gregorian.md)
-  [`yearmonth()`](linear_gregorian.md) : Gregorian continuous time
+  [`yearmonth()`](linear_gregorian.md)
+  [`yearmonthday()`](linear_gregorian.md) : Gregorian continuous time
   representations
 
 ### ISO 8601 Calendar
@@ -141,6 +142,15 @@ Cyclical time representations in the ISO 8601 week date system.
 
 - [`day_of_week()`](cyclical_iso8601.md)
   [`week_of_year()`](cyclical_iso8601.md) : ISO 8601 day of week
+
+## Timezones
+
+Functions for working with timezones and timezone information
+
+- [`tz_name()`](tz_name.md) : Extract timezone from an object
+- [`tz_offset()`](tz_offset.md) : Get timezone offset
+- [`tz_abbreviation()`](tz_abbreviation.md) : Get timezone abbreviation
+- [`tz_transitions()`](tz_transitions.md) : Get timezone transitions
 
 ## Calendar Systems
 
@@ -186,7 +196,8 @@ units and calendars.
   chronons of different time units
 - [`chronon_common()`](chronon_common.md) : Find a common chronon from a
   set of chronons
-- [`mt_unit()`](mt_unit.md) : Base S7 class for creating new time units
+- [`mt_unit()`](mt_unit.md) [`mt_tz_unit()`](mt_unit.md) : Base S7 class
+  for creating new time units
 - [`time_chronon()`](time_chronon.md) : Obtain the chronon of a time
   object
 - [`time_unit_full()`](time_unit_labels.md)
@@ -210,6 +221,10 @@ multiple time granularities.
 
 Functions for manipulating and transforming time objects.
 
+- [`seq(`*`<mt_cyclical>`*`)`](seq.mixtime.md)
+  [`seq(`*`<mt_linear>`*`)`](seq.mixtime.md)
+  [`seq(`*`<mixtime>`*`)`](seq.mixtime.md) : Generate sequences of
+  mixtime values
 - [`round_time()`](round_time.md) [`ceiling_time()`](round_time.md)
   [`floor_time()`](round_time.md) : Round, floor and ceiling
   transformations for time objects

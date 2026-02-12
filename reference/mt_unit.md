@@ -8,6 +8,8 @@ S7 using: `tu_day <- S7::new_class("tu_day", parent = mt_unit)`
 
 ``` r
 mt_unit(.data = 1L)
+
+mt_tz_unit(.data = 1L, tz = "UTC")
 ```
 
 ## Arguments
@@ -15,6 +17,11 @@ mt_unit(.data = 1L)
 - .data:
 
   The number of time units
+
+- tz:
+
+  The timezone name for the unit (valid units can be found with
+  `[tzdb::tzdb_names()]`)
 
 ## Value
 

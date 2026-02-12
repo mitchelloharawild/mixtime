@@ -7,9 +7,9 @@ representations.
 ## Usage
 
 ``` r
-tu_isoyear(.data = 1L)
+tu_isoyear(.data = 1L, tz = "UTC")
 
-tu_week(.data = 1L)
+tu_week(.data = 1L, tz = "UTC")
 ```
 
 ## Arguments
@@ -17,6 +17,11 @@ tu_week(.data = 1L)
 - .data:
 
   The number of time units
+
+- tz:
+
+  The timezone name for the unit (valid units can be found with
+  `[tzdb::tzdb_names()]`)
 
 ## Value
 

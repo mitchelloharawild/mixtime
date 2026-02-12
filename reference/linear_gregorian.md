@@ -7,11 +7,13 @@ year-months since the Unix epoch (1970-01-01).
 ## Usage
 
 ``` r
-year(.data, tz = NULL, discrete = TRUE)
+year(.data, tz = tz_name(.data), discrete = TRUE)
 
-yearquarter(.data, tz = NULL, discrete = TRUE)
+yearquarter(.data, tz = tz_name(.data), discrete = TRUE)
 
-yearmonth(.data, tz = NULL, discrete = TRUE)
+yearmonth(.data, tz = tz_name(.data), discrete = TRUE)
+
+yearmonthday(.data, tz = tz_name(.data), discrete = TRUE)
 ```
 
 ## Arguments
@@ -65,7 +67,7 @@ year(Sys.Date())
 #> [1] 2026
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-11.0%
+#> [1] 2026-11.5%
 
 
 yearquarter(Sys.Date())
@@ -73,7 +75,7 @@ yearquarter(Sys.Date())
 #> [1] 2026-Q1
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Q1-43.8%
+#> [1] 2026-Q1-46.0%
 
 
 yearmonth(Sys.Date())
@@ -81,5 +83,13 @@ yearmonth(Sys.Date())
 #> [1] 2026-Feb
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-32.1%
+#> [1] 2026-Feb-39.3%
+
+
+yearmonthday(Sys.Date())
+#> <mixtime[1]>
+#> [1] 2026-Feb-12
+yearmonthday(Sys.Date(), discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 2026-Feb-12-0.0%
 ```

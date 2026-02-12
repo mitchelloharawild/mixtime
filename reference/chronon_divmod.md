@@ -57,7 +57,7 @@ chronon_divmod(tu_day(1L), tu_week(1L), 16L)
 # Convert week 4 since epoch into days since epoch
 chronon_divmod(tu_week(1L), tu_day(1L), 4L)
 #> $chronon
-#> [1] 32
+#> [1] 25
 #> 
 #> $remainder
 #> [1] 0

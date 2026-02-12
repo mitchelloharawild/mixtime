@@ -5,7 +5,7 @@ Create or coerce using `yearweek()`.
 ## Usage
 
 ``` r
-yearweek(.data, tz = NULL, discrete = TRUE)
+yearweek(.data, tz = tz_name(.data), discrete = TRUE)
 ```
 
 ## Arguments

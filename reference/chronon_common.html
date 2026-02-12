@@ -79,18 +79,22 @@ an error is raised.</p></dd>
 <span class="r-in"><span><span class="co"># The common chronon between days and weeks is a day</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_day</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_iso8601.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_day&gt; int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr "UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The common chronon between days and months is a day</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_iso8601.html">tu_week</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_day&gt; int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr "UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The common chronon between hours, months, and years is an hour</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_hour</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_hour&gt; int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr "UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The common chronon between months, quarters, and years is a month</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_quarter</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="calendar_gregorian.html">tu_year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_month&gt; int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr "UTC"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
