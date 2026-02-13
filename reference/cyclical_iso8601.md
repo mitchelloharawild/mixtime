@@ -44,7 +44,7 @@ representations
 ``` r
 day_of_week(Sys.Date())
 #> <mixtime[1]>
-#> [1] Thu
+#> [1] Fri
 day_of_week(as.Date("2025-12-15") + 0:6)
 #> <mixtime[7]>
 #> [1] Mon Tue Wed Thu Fri Sat Sun

@@ -67,7 +67,7 @@ year(Sys.Date())
 #> [1] 2026
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-11.5%
+#> [1] 2026-11.8%
 
 
 yearquarter(Sys.Date())
@@ -75,7 +75,7 @@ yearquarter(Sys.Date())
 #> [1] 2026-Q1
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Q1-46.0%
+#> [1] 2026-Q1-47.1%
 
 
 yearmonth(Sys.Date())
@@ -83,13 +83,13 @@ yearmonth(Sys.Date())
 #> [1] 2026-Feb
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-39.3%
+#> [1] 2026-Feb-42.9%
 
 
 yearmonthday(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-Feb-12
+#> [1] 2026-Feb-13
 yearmonthday(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-12-0.0%
+#> [1] 2026-Feb-13-0.0%
 ```

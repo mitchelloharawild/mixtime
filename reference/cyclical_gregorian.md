@@ -76,5 +76,5 @@ month_of_year(Sys.Date())
 
 day_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] 43
+#> [1] 44
 ```
