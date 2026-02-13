@@ -221,6 +221,10 @@ S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
   }
 
+  # Scale `x` to be 1 day increments
+  x_scale <- chronon_cardinality(from, tu_day(1L))
+  x <- x_scale * x
+
   # Shift to days since 0000-03-01 (algorithm anchor)
   z     <- x + 719468L
 
@@ -237,7 +241,7 @@ S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
   
   list(
     chronon = year-1970L,
-    remainder = yday
+    remainder = yday/x_scale
   )
 }
 S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
@@ -256,6 +260,10 @@ S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
     floor_int((x+369L) / 400L) + 
     # Add fractional part of leap year
     is_leap_year(x+1970L) * (x - floor_int(x))
+  
+  
+  # Scale by `to` day chronons
+  d <- d / chronon_cardinality(to, tu_day(1L))
 
   list(
     chronon = d,
