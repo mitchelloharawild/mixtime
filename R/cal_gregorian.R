@@ -125,23 +125,43 @@ S7::method(chronon_cardinality, list(tu_month, tu_day)) <- function(x, y, at = N
   if (is.null(at)) {
     stop("The number of days in a month requires the time context `at`.", call. = FALSE)
   }
+
+  n_months <- vec_data(x)
+
+  if(n_months >= 12) {
+    cli::cli_abort("Month chronons >= 12 are not yet supported for conversion to days.")
+  }
+
+  period_len <- circsum(monthdays, n_months)
+
   at <- as.integer(at)
-  year <- 1970L + at %/% 12
-  month <- (at %% 12) + 1L
-  md <- monthdays[month] + (month == 2L & is_leap_year(year))
-  vec_data(x)*md/vec_data(y)
+  period_idx <- (at %% length(period_len)) + 1L
+  start_month <- ((at * n_months) %% 12L) + 1L
+  year <- 1970L + (at * n_months) %/% 12L
+
+  feb_offset <- (2L - start_month + 12L) %% 12L
+  contains_feb <- feb_offset < n_months
+  feb_year <- year + (start_month - 1L + feb_offset) %/% 12L
+  md <- period_len[period_idx] + (contains_feb & is_leap_year(feb_year))
+
+  md/vec_data(y)
 }
 
 ### Chronon casting between Gregorian time units
 S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
-  if (chronon_cardinality(to, tu_month(1L)) != 1L) {
-    stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
-  }
+  # if (chronon_cardinality(to, tu_month(1L)) != 1L) {
+  #   stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
+  # }
+
+  # Scale `x` to be 1 day increments
+  x_scale <- chronon_cardinality(from, tu_day(1L))
+  x <- x_scale * x
 
   # Shift to days since 0000-03-01 (algorithm anchor)
   z <- x + 719468L
   
+  # (day) -> (year, month, day) arithmetic
   era   <- (z >= 0L) * (z %/% 146097L) + (z < 0L) * ((z - 146096L) %/% 146097L)
   doe   <- z - era * 146097L                      # day-of-era [0, 146096]
   yoe   <- (doe - doe %/% 1460L + doe %/% 36524L - doe %/% 146096L) %/% 365L
@@ -151,9 +171,17 @@ S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
   month <- mp + 3L - 12L * (mp >= 10L)            # month [1, 12]
   year  <- yoe + era * 400L + (month <= 2L)       # year (proleptic Gregorian)
 
+  # Scale 1 month result (res) to `to` months increments
+  res <- (year-1970L)*12L + month - 1L
+  res_scale <- chronon_cardinality(to, tu_month(1L))
+  # Importantly, updating the remainder days that now span multiple months
+  if (res_scale != 1L) {
+    chronon_cardinality(to, from, res %/% res_scale)
+  }
+
   list(
-    chronon = (year-1970L)*12L + month - 1L,
-    remainder = day
+    chronon = res %/% res_scale,
+    remainder = day / x_scale # This is in tu_day(1L), should be tu_day(***?)
   )
 }
 S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
@@ -173,6 +201,9 @@ S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
     # Days this year before this month
     (367 * month - 362)%/%12 +
     (month > 2) * (-2 + ly) - ly
+
+  # Scale by `to` day chronons
+  result <- result / chronon_cardinality(to, tu_day(1L))
 
   list(
     chronon = result,
