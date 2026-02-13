@@ -14,7 +14,21 @@
 #'     `tu_month(1L)`, `tu_day(1L)`)
 #' @param length.out Desired length of the sequence (alternative to `to`).
 #' @param along.with Take the length from this argument (alternative to `length.out`).
-#' @param on_invalid
+#' @param on_invalid How to handle time points that overflow the cycle when
+#'   using a `by` argument with different time units than the sequence type.
+#'   Options are:
+#'   * `"nearest"` (default): Adjust overflowing time points to the nearest 
+#'     valid time point within the cycle
+#'   * `"overflow"`: Allow time points to overflow into the next cycle
+#'   
+#'   This is relevant when the starting time point has an offset that doesn't
+#'   exist in all cycles. For example, starting on day 31 with `by = "1 month"`
+#'   will overflow in months with fewer than 31 days (e.g., February). With
+#'   `"nearest"`, these will be adjusted to the last day of the month (e.g.,
+#'   Feb 28/29). With `"overflow"`, the extra days carry into the next month.
+#'   
+#'   If not explicitly specified and overflow occurs, a warning is issued with
+#'   the default `"nearest"` behavior applied.
 #' @param ... Additional arguments passed to the underlying sequence method.
 #' 
 #' @return A mixtime vector containing the sequence.
@@ -38,6 +52,11 @@
 #' seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = tu_month(2L))
 #' seq(yearmonthday("2020-01-01"), length.out = 5, by = tu_year(1L))
 #' seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-31"), by = tu_day(7L))
+#' 
+#' # Handling invalid dates with on_invalid
+#' seq(yearmonthday("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses nearest
+#' seq(yearmonthday("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "nearest")
+#' seq(yearmonthday("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 #' 
 #' # Cyclical time sequences
 #' seq(month_of_year(0L), month_of_year(11L))
