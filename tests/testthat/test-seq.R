@@ -171,3 +171,47 @@ test_that("seq.mixtime works with different by specifications", {
   expect_s3_class(result3, "mixtime")
   expect_length(result3, 4)
 })
+
+
+test_that("seq.mixtime with fractional linear time", {
+  # Fractional yearmonth with day-based by
+  result <- seq(yearmonth("2020 Jan", discrete = FALSE), yearmonth("2025 Jan"), by = "30 days")
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 61)
+  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan", discrete = FALSE)))
+  # Last element should be close to but not exceed the end
+  expect_match(format(result[[61]]), "2024-Dec-")
+  
+  # Fractional yearmonthday with week-based by
+  result <- seq(yearmonthday("2020-01-01", discrete = FALSE), yearmonthday("2020-02-01"), by = "1 week")
+  expect_s3_class(result, "mixtime")
+  expect_gt(length(result), 4)  # More than 4 weeks
+  expect_equal(format(result[[1]]), format(yearmonthday("2020-01-01", discrete = FALSE)))
+  
+  # Fractional yearmonth with month-based by (should work cleanly)
+  result <- seq(yearmonth("2020 Jan", discrete = FALSE), yearmonth("2020 Jun"), by = "1 month")
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 6)
+  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan", discrete = FALSE)))
+  expect_equal(format(result[[6]]), format(yearmonth("2020 Jun", discrete = FALSE)))
+  
+  # Fractional yearquarter with day-based by
+  result <- seq(yearquarter("2020-01-01", discrete = FALSE), length.out = 10, by = "15 days")
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 10)
+  # Should show fractional percentages within quarters
+  expect_equal(format(result[[1]]), format(yearquarter("2020-01-01", discrete = FALSE)))
+  
+  # Fractional with length.out
+  result <- seq(yearmonth("2020 Jan", discrete = FALSE), length.out = 13, by = "25 days")
+  expect_s3_class(result, "mixtime")
+  expect_length(result, 13)
+  expect_equal(format(result[[13]]), format(yearmonth(as.Date("2020-01-01") + 25*12, discrete = FALSE)))
+  
+  # Backward fractional sequence
+  result <- seq(yearmonth("2020 Dec", discrete = FALSE), yearmonth("2020 Jan"), by = "-30 days")
+  expect_s3_class(result, "mixtime")
+  expect_gt(length(result), 10)
+  expect_equal(format(result[[1]]), format(yearmonth("2020 Dec", discrete = FALSE)))
+  expect_equal(format(result[[12]]), format(yearmonth("2020-01-06", discrete = FALSE)))
+})
