@@ -30,13 +30,16 @@ cyclical_time <- function(chronon, cycle) {
   }
   
   # TODO: Ensure c(granules, chronon) are in decreasing order of size
-
+  
   function(.data, tz = NULL, discrete = TRUE) {
     # Attach timezone to chronon and granules
     if (!is.null(tz)) {
       chronon@tz <- tz
       granules <- lapply(granules, function(g) {g@tz <- tz; g})
     }
+
+    # Make numeric .data input 1-indexed
+    if (is.numeric(.data)) .data <- .data - 1L
     
     # Cast to continuous time from Date, POSIXct, etc.
     if (!is.numeric(.data) || !is.null(attributes(.data))) {
