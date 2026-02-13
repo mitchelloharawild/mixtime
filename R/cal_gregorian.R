@@ -94,7 +94,10 @@ S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NU
   if (is.null(at)) {
     stop("The number of days in a year requires the time context `at`.", call. = FALSE)
   }
-  vec_data(x)*(is_leap_year(1970L + as.integer(at)) + 365L)/vec_data(y)
+  if(vec_data(x) != 1L) {
+    cli::cli_abort("Multi-year chronons are not yet supported for conversion to days.")
+  }
+  (is_leap_year(1970L + as.integer(at)) + 365L)/vec_data(y)
 }
 S7::method(chronon_cardinality, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
   vec_data(x)*3/vec_data(y)
