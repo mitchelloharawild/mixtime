@@ -50,5 +50,5 @@ chronon_convert(Sys.Date(), tu_month(1L), discrete = TRUE)
 
 # Convert from seconds since epoch to hours since epoch
 chronon_convert(Sys.time(), tu_hour(1L))
-#> [1] 491935.4
+#> [1] 491935.7
 ```
