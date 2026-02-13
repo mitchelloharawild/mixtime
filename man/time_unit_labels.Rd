@@ -19,8 +19,8 @@ A string representing the time unit
 }
 \description{
 These S7 generic functions provide the full and abbreviated names for time
-units. This is used internally for the display of continuous time, cyclical
-time, and durations.
+units. \code{time_unit_full()} is used in messages and durations (e.g., "2 months").
+\code{time_unit_abbr()} is used for tsibble index interval displays (e.g., "1M").
 }
 \examples{
 time_unit_full(tu_year(1L))
