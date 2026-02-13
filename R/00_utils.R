@@ -68,6 +68,15 @@ circsum <- function(x, size, step = size) {
     return(numeric(0))
   }
   
+  if (size == 1L) {
+    if (step == 1L) {
+      return(x)
+    }
+    num_windows <- n / gcd(n, step)
+    indices <- ((seq_len(num_windows) - 1L) * step) %% n + 1L
+    return(x[indices])
+  }
+  
   # Number of unique windows before pattern repeats
   num_windows <- n / gcd(n, step)
   
