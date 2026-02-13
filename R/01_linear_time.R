@@ -257,7 +257,10 @@ vec_cast.POSIXct.mt_linear <- function(x, ...) {
 
 #' @rdname seq.mixtime
 #' @export
-seq.mt_linear <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
+seq.mt_linear <- function(
+  from, to, by, length.out = NULL, along.with = NULL, 
+  on_invalid = c("nearest", "overflow"), ...
+) {
   if (!is.null(along.with)) {
     length.out <- length(along.with)
   }
@@ -330,10 +333,26 @@ seq.mt_linear <- function(from, to, by, length.out = NULL, along.with = NULL, ..
     if (!is.null(length.out)) arg$length.out <- length.out
 
     res <- rlang::exec(seq.int, !!!arg)
-    # TODO: safely add the seq_part to handle invalid dates without overflow
-    #       (essentially, check the cardinality to see if seq_part overflows it)
+    
+    missing_on_invalid <- is.character(on_invalid) && length(on_invalid) > 1L
+    on_invalid <- match.arg(on_invalid)
+    cycle_size <- chronon_cardinality(by, chronon, res)
+    # Check if the sequence offset will overflow the cycle
+    if (any(cycle_size <= seq_part)) {
+      if (missing_on_invalid) {
+        cli::cli_warn(c(
+          "The cycle offset ({seq_part + 1L} {time_unit_full(chronon)}{cli::qty(seq_part)}{?s}) has produced time points that overflow the {time_unit_full(by)} cycle.",
+          "!" = "Using the nearest valid time points in the cycle, {.code on_invalid = \"nearest\"} (the default).",
+          "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
+        ))
+      }
+      if (on_invalid == "nearest") {
+        seq_part <- pmin(cycle_size - 1L, seq_part)
+      }
+    }
+    
     res <- chronon_convert_impl(res, by, chronon, discrete = is.integer(res)) + seq_part
-
+    
     # Restore integer type for discrete time input
     if (is.integer(ptype)) res <- as.integer(res)
   } else {
