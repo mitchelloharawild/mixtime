@@ -1,8 +1,8 @@
 #' Time units as a string
 #' 
 #' These S7 generic functions provide the full and abbreviated names for time
-#' units. This is used internally for the display of continuous time, cyclical
-#' time, and durations.
+#' units. `time_unit_full()` is used in messages and durations (e.g., "2 months").
+#' `time_unit_abbr()` is used for tsibble index interval displays (e.g., "1M").
 #' 
 #' @param x A time unit object (e.g., `tu_month(1L)`)
 #' @param ... Additional arguments for methods.
