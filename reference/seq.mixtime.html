@@ -135,13 +135,13 @@ day_of_week, etc.), sequences wrap around cyclically.</p>
 <span class="r-in"><span><span class="co"># Cyclical time sequences</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="cyclical_gregorian.html">month_of_year</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>, <span class="fu"><a href="cyclical_gregorian.html">month_of_year</a></span><span class="op">(</span><span class="fl">11L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[12]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Dec Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="cyclical_gregorian.html">month_of_year</a></span><span class="op">(</span><span class="fl">5L</span><span class="op">)</span>, <span class="fu"><a href="cyclical_gregorian.html">month_of_year</a></span><span class="op">(</span><span class="fl">3L</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="calendar_gregorian.html">tu_month</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[6]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Jun Aug Oct Dec Feb Apr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] May Jul Sep Nov Jan Mar</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="cyclical_iso8601.html">day_of_week</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>, <span class="fu"><a href="cyclical_iso8601.html">day_of_week</a></span><span class="op">(</span><span class="fl">6L</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[7]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Thu Fri Sat Sun Mon Tue Wed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Wed Thu Fri Sat Sun Mon Tue</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

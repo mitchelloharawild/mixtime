@@ -100,11 +100,11 @@ seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-31"), by = tu_day(7L))
 # Cyclical time sequences
 seq(month_of_year(0L), month_of_year(11L))
 #> <mixtime[12]>
-#>  [1] Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+#>  [1] Dec Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov
 seq(month_of_year(5L), month_of_year(3L), by = tu_month(2L))
 #> <mixtime[6]>
-#> [1] Jun Aug Oct Dec Feb Apr
+#> [1] May Jul Sep Nov Jan Mar
 seq(day_of_week(0L), day_of_week(6L), by = 1)
 #> <mixtime[7]>
-#> [1] Thu Fri Sat Sun Mon Tue Wed
+#> [1] Wed Thu Fri Sat Sun Mon Tue
 ```
