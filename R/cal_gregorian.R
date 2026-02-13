@@ -67,7 +67,7 @@ S7::method(time_unit_abbr, tu_hour) <- function(x) "h"
 #' @export
 tu_minute <- S7::new_class("tu_minute", parent = mt_tz_unit)
 S7::method(time_unit_full, tu_minute) <- function(x) "minute"
-S7::method(time_unit_abbr, tu_minute) <- function(x) "min"
+S7::method(time_unit_abbr, tu_minute) <- function(x) "m"
 
 #' @rdname calendar_gregorian
 #' @export
