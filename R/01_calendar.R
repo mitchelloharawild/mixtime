@@ -83,12 +83,12 @@ print.mt_calendar <- function(x, ...) {
 }
 
 #' @export
-calendar <- S7::new_generic("calendar", c("x"))
+time_calendar <- S7::new_generic("calendar", c("x"))
 
-method(calendar, S7::class_Date) <- function(x) cal_gregorian
-method(calendar, S7::class_POSIXt) <- function(x) cal_gregorian
-method(calendar, mt_unit) <- function(x) {
+method(time_calendar, S7::class_Date) <- function(x) cal_gregorian
+method(time_calendar, S7::class_POSIXt) <- function(x) cal_gregorian
+method(time_calendar, mt_unit) <- function(x) {
   attr(x, "cal")$calendar
 }
-method(calendar, S7::new_S3_class("mt_linear")) <- function(x) calendar(time_chronon(x))
-method(calendar, S7::new_S3_class("mt_cyclical")) <- function(x) calendar(time_chronon(x))
+method(time_calendar, S7::new_S3_class("mt_linear")) <- function(x) time_calendar(time_chronon(x))
+method(time_calendar, S7::new_S3_class("mt_cyclical")) <- function(x) time_calendar(time_chronon(x))
