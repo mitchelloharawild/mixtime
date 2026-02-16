@@ -10,8 +10,8 @@
 #' @return A string representing the time unit
 #' 
 #' @examples
-#' time_unit_full(tu_year(1L))
-#' time_unit_abbr(tu_year(1L))
+#' time_unit_full(cal_gregorian$year(1L))
+#' time_unit_abbr(cal_gregorian$year(1L))
 #' 
 #' @rdname time_unit_labels
 #' @export

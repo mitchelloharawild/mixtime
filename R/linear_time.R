@@ -10,31 +10,36 @@
 #' of time (e.g., years, months), while the chronon is the smallest indivisible
 #' time unit (e.g., days, hours).
 #' 
-#' @param granules A list of time unit objects representing the granules (e.g., `list(tu_year(1), tu_month(1))`)
-#' @param chronon A time unit object representing the chronon (e.g., `tu_day(1)`)
+#' @param chronon A time unit object representing the chronon (e.g., `day(1)`)
+#' @param granules A list of time unit objects representing the granules (e.g., `list(year(1), month(1))`)
+#' @param calendar A calendar used to find the time units (e.g., `cal_isoweek`)
 #' 
 #' @return An function used to create continuous time points.
 #' 
 #' @examples
 #' 
 #' # A year-month time representation with months as the chronon
-#' ym <- linear_time(tu_month(1L), list(tu_year(1L)))
+#' ym <- linear_time(month(1L), list(year(1L)))
 #' ym(Sys.Date())
 #' 
 #' # A year-quarter-month time representation with months as the chronon
-#' yqm <- linear_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
+#' yqm <- linear_time(month(1L), list(year(1L), quarter(1L)))
 #' yqm(1:100)
 #' yqm(Sys.Date())
 #' 
 #' # A year-day time representation with days as the chronon
-#' yd <- linear_time(tu_day(1L), list(tu_year(1L)))
+#' yd <- linear_time(day(1L), list(year(1L)))
 #' yd(Sys.Date())
 #' 
-#' ymd_h <- linear_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
+#' ymd_h <- linear_time(hour(1L), list(year(1L), month(1L), day(1L)))
 #' ymd_h(Sys.time())
 #' 
 #' @export
-linear_time <- function(chronon, granules = list()) {
+linear_time <- function(chronon, granules = list(), calendar = cal_gregorian) {
+  # Add calendar data mask for evaluating chronon and cycle
+  chronon <- eval_tidy(enquo(chronon), data = calendar)
+  granules <- eval_tidy(enquo(granules), data = calendar)
+
   if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
     stop("All elements in granules must be time unit objects", call. = FALSE)
   }
@@ -156,32 +161,98 @@ vec_cast.double.mt_linear <- function(x, to, ...) {
 }
 
 
-#' @importFrom tsibble index_valid
+#' Gregorian continuous time representations
+#' 
+#' Linear time representations for the Gregorian calendar system. These functions
+#' create time objects measured in years, year-quarters, or year-months since the
+#' Unix epoch (1970-01-01).
+#' 
+#' @param .data Another object to be coerced into the specified time.
+#' @param tz Timezone, defaults to "UTC".
+#' @param discrete If `TRUE`, the number of chronons since Unix epoch that
+#' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
+#'  of chronons is returned (analagous to time using a continuous time model).
+#' 
+#' @details
+#' - `year()`: Represents time in whole years since 1970. The chronon is one year.
+#' - `yearquarter()`: Represents time in quarters, grouped by year. The chronon
+#'   is one quarter, with years as the granule for display and grouping.
+#' - `yearmonth()`: Represents time in months, grouped by year. The chronon is
+#'   one month, with years as the granule for display and grouping.
+#' 
+#' @section Custom Gregorian time representations:
+#' You can create custom time representations using [linear_time()] with any of
+#' the supported Gregorian time units (see [calendar_gregorian]).
+#' 
+#' For example, to create a time representation in hours since epoch with day granules:
+#' ```r
+#' dayhour <- linear_time(
+#'   granules = list(cal_gregorian$day(1L)),
+#'   chronon = cal_gregorian$hour(1L)
+#' )
+#' ```
+#' 
+#' @examples
+#' 
+#' year(Sys.Date())
+#' year(Sys.Date(), discrete = FALSE)
+#' 
+#' @name linear_gregorian
 #' @export
-index_valid.mt_linear <- function(x) TRUE
+year <- linear_time(
+  chronon = cal_gregorian$year(1L)
+)
 
-#' @importFrom tsibble interval_pull
+#' @examples
+#' 
+#' yearquarter(Sys.Date())
+#' yearquarter(Sys.Date(), discrete = FALSE)
+#' 
+#' @rdname linear_gregorian
 #' @export
-interval_pull.mt_linear <- function(x) {
-  chronon <- time_chronon(x)
-  tsbl_unit <- vec_match(S7_class_id(chronon), tsbl_interval_units)
+yearquarter <- linear_time(
+  chronon = cal_gregorian$quarter(1L),
+  granules = list(cal_gregorian$year(1L))
+)
 
-  interval <- list(vec_data(chronon))
-  names(interval) <- names(tsbl_interval_units)[tsbl_unit]
+#' @examples
+#' 
+#' yearmonth(Sys.Date())
+#' yearmonth(Sys.Date(), discrete = FALSE)
+#' 
+#' @rdname linear_gregorian
+#' @export
+yearmonth <- linear_time(
+  chronon = cal_gregorian$month(1L),
+  granules = list(cal_gregorian$year(1L))
+)
 
-  inject(tsibble::new_interval(!!!interval))
-}
+#' ISO 8601 year-week time representation
+#'
+#' Create or coerce using `yearweek()`.
+#'
+#' @inheritParams yearmonth
+#' @param .data Another object to be coerced into ISO 8601 year-weeks.
+#'
+#' @examples
+#' 
+#' yearweek(Sys.Date())
+#' yearweek(0:52)
+#' 
+#' @export
+#' @name linear_iso8601
+yearweek <- linear_time(granules = list(cal_isoweek$year(1L)), chronon = cal_isoweek$week(1L))
 
-tsbl_interval_units <- c(
-  "year" = "mixtime::tu_year",
-  "quarter" = "mixtime::tu_quarter",
-  "month" = "mixtime::tu_month",
-  "week" = "mixtime::tu_week",
-  "day" = "mixtime::tu_day",
-  "hour" = "mixtime::tu_hour",
-  "minute" = "mixtime::tu_minute",
-  "second" = "mixtime::tu_second",
-  "millisecond" = "mixtime::tu_millisecond"
+#' @examples
+#' 
+#' yearmonthday(Sys.Date())
+#' yearmonthday(Sys.Date(), discrete = FALSE)
+#' 
+#' @rdname linear_gregorian
+#' @export
+yearmonthday <- linear_time(
+  chronon = cal_gregorian$day(1L),
+  granules = list(cal_gregorian$year(1L), cal_gregorian$month(1L))
 )
 
 #' @importFrom vctrs vec_math
@@ -239,7 +310,7 @@ vec_arith.mt_linear.mt_linear <- function(op, x, y, ...) {
 #' @export
 vec_cast.Date.mt_linear <- function(x, ...) {
   chronon <- time_chronon(x)
-  as.Date(chronon_divmod(chronon, tu_day(1L), vec_data(x))$chronon)
+  as.Date(chronon_divmod(chronon, cal_gregorian$day(1L), vec_data(x))$chronon)
 }
 
 #' @method vec_cast.POSIXct mt_linear
@@ -247,10 +318,10 @@ vec_cast.Date.mt_linear <- function(x, ...) {
 vec_cast.POSIXct.mt_linear <- function(x, ...) {
   chronon <- time_chronon(x)
   .POSIXct(
-    chronon_convert(x, tu_second(1L), discrete = FALSE)
+    chronon_convert(x, cal_gregorian$second(1L), discrete = FALSE)
   )
   # as.POSIXct(
-  #   chronon_divmod(chronon, tu_second(1L), vec_data(x))$chronon,
+  #   chronon_divmod(chronon, second(1L), vec_data(x))$chronon,
   #   origin = "1970-01-01", tz = attr(x, "tz")
   # )
 }

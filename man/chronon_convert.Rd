@@ -31,13 +31,13 @@ Convert between chronons
 \examples{
 
 # Convert from months since epoch to years since epoch
-chronon_convert(yearmonth(Sys.Date()), tu_year(1L))
+chronon_convert(yearmonth(Sys.Date()), cal_gregorian$year(1L))
 
 # Convert from days since epoch to months since epoch
-chronon_convert(Sys.Date(), tu_month(1L))
-chronon_convert(Sys.Date(), tu_month(1L), discrete = TRUE)
+chronon_convert(Sys.Date(), cal_gregorian$month(1L))
+chronon_convert(Sys.Date(), cal_gregorian$month(1L), discrete = TRUE)
 
 # Convert from seconds since epoch to hours since epoch
-chronon_convert(Sys.time(), tu_hour(1L))
+chronon_convert(Sys.time(), cal_gregorian$hour(1L))
 
 }

@@ -104,20 +104,20 @@ test_that("yearweek handles year boundary transitions", {
   }
 })
 
-test_that("tu_week chronon_cardinality works correctly", {
-  week_unit <- tu_week(1L)
-  day_unit <- tu_day(1L)
+test_that("cal_isoweek$week chronon_cardinality works correctly", {
+  week_unit <- cal_isoweek$week(1L)
+  day_unit <- cal_isoweek$day(1L)
   
   # 1 week = 7 days
   expect_equal(chronon_cardinality(week_unit, day_unit), 7)
   
   # 2 weeks = 14 days
-  expect_equal(chronon_cardinality(tu_week(2L), day_unit), 14)
+  expect_equal(chronon_cardinality(cal_isoweek$week(2L), day_unit), 14)
 })
 
 test_that("chronon_divmod from days to weeks works", {
-  day_unit <- tu_day(1L)
-  week_unit <- tu_week(1L)
+  day_unit <- cal_isoweek$day(1L)
+  week_unit <- cal_isoweek$week(1L)
   
   # Test with multiples of 7 (should have remainder 3 for Thursday epoch)
   result <- chronon_divmod(day_unit, week_unit, 7L)
@@ -130,8 +130,8 @@ test_that("chronon_divmod from days to weeks works", {
 })
 
 test_that("chronon_divmod from weeks to days works", {
-  week_unit <- tu_week(1L)
-  day_unit <- tu_day(1L)
+  week_unit <- cal_isoweek$week(1L)
+  day_unit <- cal_isoweek$day(1L)
   
   # 1 week should convert to 7 days (plus epoch offset)
   result <- chronon_divmod(week_unit, day_unit, 1L)

@@ -55,20 +55,10 @@ reference:
   desc: "The standard civil calendar system with years, quarters, months, days, and sub-day units."
   contents:
   - calendar_gregorian
-  - tu_year
-  - tu_quarter
-  - tu_month
-  - tu_day
-  - tu_hour
-  - tu_minute
-  - tu_second
-  - tu_millisecond
 - subtitle: "ISO 8601 Calendar System"
   desc: "The ISO 8601 week date calendar system with ISO years and weeks."
   contents:
   - calendar_iso8601
-  - tu_isoyear
-  - tu_week
 
 - title: "Extensibility methods"
   desc: "These low-level functions define the relationships and labels between time units. Adding S7 methods for them allow the creation of custom time units and calendars."

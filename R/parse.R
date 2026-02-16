@@ -1,6 +1,6 @@
 # Parse time sequence strings into time units
 # TODO - Generalise to be calendar-aware 
-#        e.g. "year" being tu_year() or tu_isoyear()
+#        e.g. "year" being cal_gregorian$year() or cal_gregorian$isoyear()
 parse_time_unit <- function(x) {
   by2 <- strsplit(x, " ", fixed = TRUE)[[1L]]
   if (length(by2) > 2L || length(by2) < 1L) 
@@ -10,16 +10,16 @@ parse_time_unit <- function(x) {
   
   switch(sub("s$", "", x),
     "second" = ,
-    "sec" = tu_second(n),
+    "sec" = cal_gregorian$second(n),
     "minute" = ,
-    "min" = tu_minute(n),
-    "hour" = tu_hour(n),
-    "day" = tu_day(n),
-    "dstday" = tu_day(n), # DSTdays map to regular days
-    "week" = tu_week(n),
-    "month" = tu_month(n),
-    "year" = tu_year(n),
-    "quarter" = tu_quarter(n),
+    "min" = cal_gregorian$minute(n),
+    "hour" = cal_gregorian$hour(n),
+    "day" = cal_gregorian$day(n),
+    "dstday" = cal_gregorian$day(n), # DSTdays map to regular days
+    "week" = cal_isoweek$week(n),
+    "month" = cal_gregorian$month(n),
+    "year" = cal_gregorian$year(n),
+    "quarter" = cal_gregorian$quarter(n),
     stop("Unknown time unit: '", x, "'. Valid units are: secs, mins, hours, days, weeks, months, years, DSTdays, quarters")
   )
 }

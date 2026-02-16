@@ -3,15 +3,18 @@
 #' Time unit constructors for the ISO 8601 calendar system. These units can be
 #' used with [linear_time()] to create custom time representations.
 #'
-#' @inheritParams mt_unit
-#' 
 #' @return A time unit object for the ISO 8601 calendar system.
 #' 
 #' @details
-#' The following ISO 8601 time units are available:
+#' The following time units are available in the ISO week date calendar:
 #' 
-#' - `tu_isoyear()`: ISO year unit (years start on the week containing the first Thursday)
-#' - `tu_week()`: Week unit (7-day periods)
+#' - `year()`: ISO year unit (years start on the week containing the first Thursday)
+#' - `week()`: Week unit (7-day periods)
+#' - `day()`: Day unit
+#' - `hour()`: Hour unit
+#' - `minute()`: Minute unit
+#' - `second()`: Second unit
+#' - `millisecond()`: Millisecond unit
 #' 
 #' ISO 8601 weeks always start on Monday and the first week of a year is the week
 #' containing the first Thursday of that year. This means that some days in early
@@ -23,28 +26,35 @@
 #' 
 #' @name calendar_iso8601
 #' @export
-tu_isoyear <- S7::new_class("tu_isoyear", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_isoyear) <- function(x) "isoyear"
-S7::method(time_unit_abbr, tu_isoyear) <- function(x) "IY"
+cal_isoweek <- new_calendar(
+  year = S7::new_class("tu_isoyear", parent = mt_tz_unit),
+  week = S7::new_class("tu_week", parent = mt_tz_unit),
+  day = cal_gregorian$day,
+  hour = cal_gregorian$hour,
+  minute = cal_gregorian$minute,
+  second = cal_gregorian$second,
+  millisecond = cal_gregorian$millisecond,
+  class = "cal_isoweek"
+)
 
-#' @rdname calendar_iso8601
-#' @export
-tu_week <- S7::new_class("tu_week", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_week) <- function(x) "week"
-S7::method(time_unit_abbr, tu_week) <- function(x) "W"
+# Time unit labels
+S7::method(time_unit_full, cal_isoweek$year) <- function(x) "isoyear"
+S7::method(time_unit_abbr, cal_isoweek$year) <- function(x) "IY"
+S7::method(time_unit_full, cal_isoweek$week) <- function(x) "week"
+S7::method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
 
 # 1:1 mapping for isoyears to years 
 # TODO - this is not entirely accurate, but is currently necessary
 # for converting the 1970 epoch in the print method
-S7::method(chronon_cardinality, list(tu_year, tu_isoyear)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_isoweek$year, cal_isoweek$year)) <- function(x, y, at = NULL) {
   vec_data(x)*1L/vec_data(y)
 }
 
-S7::method(chronon_cardinality, list(tu_week, tu_day)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$day)) <- function(x, y, at = NULL) {
   vec_data(x)*7L/vec_data(y)
 }
 
-S7::method(chronon_divmod, list(tu_day, tu_week)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(cal_isoweek$day, cal_isoweek$week)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   divisor <- chronon_cardinality(to, from)
   list(
@@ -53,7 +63,7 @@ S7::method(chronon_divmod, list(tu_day, tu_week)) <- function(from, to, x) {
   )
 }
 
-S7::method(chronon_divmod, list(tu_week, tu_day)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   mult <- chronon_cardinality(from, to)
 
@@ -63,9 +73,9 @@ S7::method(chronon_divmod, list(tu_week, tu_day)) <- function(from, to, x) {
   )
 }
 
-S7::method(chronon_divmod, list(tu_week, tu_isoyear)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
-  if (chronon_cardinality(to, tu_isoyear(1L)) != 1L) {
+  if (chronon_cardinality(to, cal_isoweek$year(1L)) != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
   # TODO: should be swapped out to arithmetic on integer days since epoch
@@ -80,61 +90,11 @@ S7::method(chronon_divmod, list(tu_week, tu_isoyear)) <- function(from, to, x) {
   )
 }
 
-S7::method(cyclical_labels, list(tu_day, tu_week)) <- function(granule, cycle, i) {
+S7::method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i) {
   # TODO: Add offset for different week starting days
   format(as.Date(i+4L), "%a")
 }
-S7::method(cyclical_labels, list(tu_week, S7::class_any)) <- function(granule, cycle, i) {
+S7::method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- function(granule, cycle, i) {
   # Weeks count with 1-indexing
   paste0("W", i + 1L)
 }
-
-#' ISO 8601 year-week time representation
-#'
-#' Create or coerce using `yearweek()`.
-#'
-#' @inheritParams yearmonth
-#' @param .data Another object to be coerced into ISO 8601 year-weeks.
-#'
-#' @examples
-#' 
-#' yearweek(Sys.Date())
-#' yearweek(0:52)
-#' 
-#' @export
-#' @name linear_iso8601
-yearweek <- linear_time(granules = list(tu_isoyear(1L)), chronon = tu_week(1L))
-
-
-#' ISO 8601 day of week
-#'
-#' A cyclical time representation for days within a week using the ISO 8601 
-#' standard where weeks start on Monday.
-#'
-#' @param .data A vector to be coerced into day of week. This can be a date, 
-#'   date-time, or numeric vector.
-#' @inheritParams linear_iso8601
-#' @inheritParams cyclical_gregorian
-#'
-#' @return A cyclical time object representing the day of the week.
-#'
-#' @seealso [yearweek()] for ISO 8601 year-week representation,
-#'   [cyclical_time()] for creating custom cyclical time representations
-#'
-#' @examples
-#' day_of_week(Sys.Date())
-#' day_of_week(as.Date("2025-12-15") + 0:6)
-#'
-#' @name cyclical_iso8601
-#' @export
-day_of_week <- cyclical_time(
-  chronon = tu_day(1L),
-  cycle = tu_week(1L)
-)
-
-#' @export
-#' @rdname cyclical_iso8601
-week_of_year <- cyclical_time(
-  chronon = tu_week(1L),
-  cycle = tu_isoyear(1L)
-)

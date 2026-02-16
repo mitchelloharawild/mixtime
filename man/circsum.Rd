@@ -31,4 +31,5 @@ circsum(c(1, 2, 3, 4), 2)
 # Window of 3 elements
 circsum(c(1, 2, 3, 4, 5), 3)
 # Returns: 6 10 9 8 12 (1+2+3, 4+5+1, 2+3+4, 5+1+2, 3+4+5)
+
 }

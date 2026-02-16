@@ -62,6 +62,8 @@ check_tz_name <- function(zone) {
 #' # Window of 3 elements
 #' circsum(c(1, 2, 3, 4, 5), 3)
 #' # Returns: 6 10 9 8 12 (1+2+3, 4+5+1, 2+3+4, 5+1+2, 3+4+5)
+#' 
+#' @export
 circsum <- function(x, size, step = size) {
   n <- length(x)
   if (n == 0L || size <= 0L || step <= 0L) {

@@ -16,6 +16,34 @@ interval_pull.mixtime <- function(x) {
   )
 }
 
+#' @importFrom tsibble index_valid
+#' @export
+index_valid.mt_linear <- function(x) TRUE
+
+#' @importFrom tsibble interval_pull
+#' @export
+interval_pull.mt_linear <- function(x) {
+  chronon <- time_chronon(x)
+  tsbl_unit <- vec_match(S7_class_id(chronon), tsbl_interval_units)
+
+  interval <- list(vec_data(chronon))
+  names(interval) <- names(tsbl_interval_units)[tsbl_unit]
+
+  inject(tsibble::new_interval(!!!interval))
+}
+
+tsbl_interval_units <- c(
+  "year" = "mixtime::tu_year",
+  "quarter" = "mixtime::tu_quarter",
+  "month" = "mixtime::tu_month",
+  "week" = "mixtime::tu_week",
+  "day" = "mixtime::tu_day",
+  "hour" = "mixtime::tu_hour",
+  "minute" = "mixtime::tu_minute",
+  "second" = "mixtime::tu_second",
+  "millisecond" = "mixtime::tu_millisecond"
+)
+
 #' @export
 format.mixtime_interval <- function(x, ...) {
   fmt <- vapply(

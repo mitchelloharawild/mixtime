@@ -12,7 +12,7 @@ time_chronon(x, ...)
 \item{...}{Additional arguments for methods.}
 }
 \value{
-A time unit object representing the chronon (e.g., \code{tu_day(1L)})
+A time unit object representing the chronon (e.g., \code{cal_gregorian$day(1L)})
 }
 \description{
 This S7 generic function extracts the chronon (the smallest time unit) from a

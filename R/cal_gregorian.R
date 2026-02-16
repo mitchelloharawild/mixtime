@@ -3,21 +3,19 @@
 #' Time unit constructors for the Gregorian calendar system. These units can be
 #' used with [linear_time()] to create custom time representations.
 #'
-#' @inheritParams mt_tz_unit
-#' 
 #' @return A time unit object for the Gregorian calendar system.
 #' 
 #' @details
-#' The following Gregorian time units are available:
+#' The following time units are available in the Gregorian calendar (`cal_gregorian$`).
 #' 
-#' - `tu_year()`: Year unit
-#' - `tu_quarter()`: Quarter (3-month period) unit
-#' - `tu_month()`: Month unit
-#' - `tu_day()`: Day unit
-#' - `tu_hour()`: Hour unit
-#' - `tu_minute()`: Minute unit
-#' - `tu_second()`: Second unit
-#' - `tu_millisecond()`: Millisecond unit
+#' - `year()`: Year unit
+#' - `quarter()`: Quarter (3-month period) unit
+#' - `month()`: Month unit
+#' - `day()`: Day unit
+#' - `hour()`: Hour unit
+#' - `minute()`: Minute unit
+#' - `second()`: Second unit
+#' - `millisecond()`: Millisecond unit
 #' 
 #' These units form a hierarchy where conversions between adjacent units follow
 #' the Gregorian calendar rules. For units that don't have a fixed relationship
@@ -29,68 +27,50 @@
 #' @examples
 #' # Create a custom time representation using Gregorian units
 #' dayhour <- linear_time(
-#'   granules = list(tu_day(1L)),
-#'   chronon = tu_hour(1L)
+#'   granules = list(cal_gregorian$day(1L)),
+#'   chronon = cal_gregorian$hour(1L)
 #' )
 #' 
 #' @name calendar_gregorian
 #' @export
-tu_year <- S7::new_class("tu_year", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_year) <- function(x) "year"
-S7::method(time_unit_abbr, tu_year) <- function(x) "Y"
+cal_gregorian <- new_calendar(
+  year = S7::new_class("tu_year", parent = mt_tz_unit),
+  quarter = S7::new_class("tu_quarter", parent = mt_tz_unit),
+  month = S7::new_class("tu_month", parent = mt_tz_unit),
+  day = S7::new_class("tu_day", parent = mt_tz_unit),
+  hour = S7::new_class("tu_hour", parent = mt_tz_unit),
+  minute = S7::new_class("tu_minute", parent = mt_tz_unit),
+  second = S7::new_class("tu_second", parent = mt_tz_unit),
+  millisecond = S7::new_class("tu_millisecond", parent = mt_tz_unit),
+  class = "cal_gregorian"
+)
 
-#' @rdname calendar_gregorian
-#' @export
-tu_quarter <- S7::new_class("tu_quarter", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_quarter) <- function(x) "quarter"
-S7::method(time_unit_abbr, tu_quarter) <- function(x) "Q"
-
-#' @rdname calendar_gregorian
-#' @export
-tu_month <- S7::new_class("tu_month", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_month) <- function(x) "month"
-S7::method(time_unit_abbr, tu_month) <- function(x) "M"
-
-#' @rdname calendar_gregorian
-#' @export
-tu_day <- S7::new_class("tu_day", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_day) <- function(x) "day"
-S7::method(time_unit_abbr, tu_day) <- function(x) "D"
-
-#' @rdname calendar_gregorian
-#' @export
-tu_hour <- S7::new_class("tu_hour", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_hour) <- function(x) "hour"
-S7::method(time_unit_abbr, tu_hour) <- function(x) "h"
-
-#' @rdname calendar_gregorian
-#' @export
-tu_minute <- S7::new_class("tu_minute", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_minute) <- function(x) "minute"
-S7::method(time_unit_abbr, tu_minute) <- function(x) "m"
-
-#' @rdname calendar_gregorian
-#' @export
-tu_second <- S7::new_class("tu_second", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_second) <- function(x) "second"
-S7::method(time_unit_abbr, tu_second) <- function(x) "s"
-
-
-#' @rdname calendar_gregorian
-#' @export
-tu_millisecond <- S7::new_class("tu_millisecond", parent = mt_tz_unit)
-S7::method(time_unit_full, tu_millisecond) <- function(x) "millisecond"
-S7::method(time_unit_abbr, tu_millisecond) <- function(x) "ms"
-
+# Time unit labels
+S7::method(time_unit_full, cal_gregorian$year) <- function(x) "year"
+S7::method(time_unit_abbr, cal_gregorian$year) <- function(x) "Y"
+S7::method(time_unit_full, cal_gregorian$quarter) <- function(x) "quarter"
+S7::method(time_unit_abbr, cal_gregorian$quarter) <- function(x) "Q"
+S7::method(time_unit_full, cal_gregorian$month) <- function(x) "month"
+S7::method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
+S7::method(time_unit_full, cal_gregorian$day) <- function(x) "day"
+S7::method(time_unit_abbr, cal_gregorian$day) <- function(x) "D"
+S7::method(time_unit_full, cal_gregorian$hour) <- function(x) "hour"
+S7::method(time_unit_abbr, cal_gregorian$hour) <- function(x) "h"
+S7::method(time_unit_full, cal_gregorian$minute) <- function(x) "minute"
+S7::method(time_unit_abbr, cal_gregorian$minute) <- function(x) "m"
+S7::method(time_unit_full, cal_gregorian$second) <- function(x) "second"
+S7::method(time_unit_abbr, cal_gregorian$second) <- function(x) "s"
+S7::method(time_unit_full, cal_gregorian$millisecond) <- function(x) "millisecond"
+S7::method(time_unit_abbr, cal_gregorian$millisecond) <- function(x) "ms"
 
 ### Calendar algebra S7::methods for Gregorian time units
-S7::method(chronon_cardinality, list(tu_year, tu_quarter)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$quarter)) <- function(x, y, at = NULL) {
   vec_data(x)*4/vec_data(y)
 }
-S7::method(chronon_cardinality, list(tu_year, tu_month)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$month)) <- function(x, y, at = NULL) {
   vec_data(x)*12/vec_data(y)
 }
-S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$day)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
     stop("The number of days in a year requires the time context `at`.", call. = FALSE)
   }
@@ -99,21 +79,21 @@ S7::method(chronon_cardinality, list(tu_year, tu_day)) <- function(x, y, at = NU
   }
   (is_leap_year(1970L + as.integer(at)) + 365L)/vec_data(y)
 }
-S7::method(chronon_cardinality, list(tu_quarter, tu_month)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$month)) <- function(x, y, at = NULL) {
   vec_data(x)*3/vec_data(y)
 }
-S7::method(chronon_cardinality, list(tu_day, tu_hour)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$hour)) <- function(x, y, at = NULL) {
   vec_data(x)*24/vec_data(y)
 }
-S7::method(chronon_cardinality, list(tu_hour, tu_minute)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$hour, cal_gregorian$minute)) <- function(x, y, at = NULL) {
   vec_data(x)*60/vec_data(y)
 }
-S7::method(chronon_cardinality, list(tu_minute, tu_second)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$minute, cal_gregorian$second)) <- function(x, y, at = NULL) {
   # if(at %in% .leap.seconds) 61 else 60
 
   vec_data(x)*60/vec_data(y)
 }
-S7::method(chronon_cardinality, list(tu_second, tu_millisecond)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$second, cal_gregorian$millisecond)) <- function(x, y, at = NULL) {
   vec_data(x)*1000/vec_data(y)
 }
 
@@ -124,7 +104,7 @@ is_leap_year <- function(year) {
   (year %% 4L == 0L & year %% 100L != 0L) | (year %% 400L == 0L)
 }
 
-S7::method(chronon_cardinality, list(tu_month, tu_day)) <- function(x, y, at = NULL) {
+S7::method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$day)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
     stop("The number of days in a month requires the time context `at`.", call. = FALSE)
   }
@@ -151,14 +131,14 @@ S7::method(chronon_cardinality, list(tu_month, tu_day)) <- function(x, y, at = N
 }
 
 ### Chronon casting between Gregorian time units
-S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
-  # if (chronon_cardinality(to, tu_month(1L)) != 1L) {
+  # if (chronon_cardinality(to, cal_gregorian$month(1L)) != 1L) {
   #   stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
   # }
 
   # Scale `x` to be 1 day increments
-  x_scale <- chronon_cardinality(from, tu_day(1L))
+  x_scale <- chronon_cardinality(from, cal_gregorian$day(1L))
   x <- x_scale * x
 
   # Shift to days since 0000-03-01 (algorithm anchor)
@@ -176,7 +156,7 @@ S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
 
   # Scale 1 month result (res) to `to` months increments
   res <- (year-1970L)*12L + month - 1L
-  res_scale <- chronon_cardinality(to, tu_month(1L))
+  res_scale <- chronon_cardinality(to, cal_gregorian$month(1L))
   # Importantly, updating the remainder days that now span multiple months
   if (res_scale != 1L) {
     chronon_cardinality(to, from, res %/% res_scale)
@@ -184,12 +164,12 @@ S7::method(chronon_divmod, list(tu_day, tu_month)) <- function(from, to, x) {
 
   list(
     chronon = res %/% res_scale,
-    remainder = day / x_scale # This is in tu_day(1L), should be tu_day(***?)
+    remainder = day / x_scale # This is in cal_gregorian$day(1L), should be cal_gregorian$day(***?)
   )
 }
-S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function(from, to, x) {
   # Convert to months since epoch
-  x <- chronon_cardinality(from, tu_month(1L))*x
+  x <- chronon_cardinality(from, cal_gregorian$month(1L))*x
   
   year <- x%/%12L + 1970L
   ly <- as.integer(is_leap_year(year))
@@ -206,7 +186,7 @@ S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
     (month > 2) * (-2 + ly) - ly
 
   # Scale by `to` day chronons
-  result <- result / chronon_cardinality(to, tu_day(1L))
+  result <- result / chronon_cardinality(to, cal_gregorian$day(1L))
 
   list(
     chronon = result,
@@ -215,14 +195,14 @@ S7::method(chronon_divmod, list(tu_month, tu_day)) <- function(from, to, x) {
 }
 
 
-S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to years
-  if (chronon_cardinality(to, tu_year(1L)) != 1L) {
+  if (chronon_cardinality(to, cal_gregorian$year(1L)) != 1L) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
   }
 
   # Scale `x` to be 1 day increments
-  x_scale <- chronon_cardinality(from, tu_day(1L))
+  x_scale <- chronon_cardinality(from, cal_gregorian$day(1L))
   x <- x_scale * x
 
   # Shift to days since 0000-03-01 (algorithm anchor)
@@ -244,9 +224,9 @@ S7::method(chronon_divmod, list(tu_day, tu_year)) <- function(from, to, x) {
     remainder = yday/x_scale
   )
 }
-S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
+S7::method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(from, to, x) {
   # Convert to years since epoch
-  x <- chronon_cardinality(from, tu_year(1L))*x
+  x <- chronon_cardinality(from, cal_gregorian$year(1L))*x
   
   floor_int <- function(x) as.integer(floor(x))
 
@@ -263,7 +243,7 @@ S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
   
   
   # Scale by `to` day chronons
-  d <- d / chronon_cardinality(to, tu_day(1L))
+  d <- d / chronon_cardinality(to, cal_gregorian$day(1L))
 
   list(
     chronon = d,
@@ -273,160 +253,14 @@ S7::method(chronon_divmod, list(tu_year, tu_day)) <- function(from, to, x) {
 
 
 ### Cyclical labels for Gregorian time units
-S7::method(cyclical_labels, list(tu_quarter, S7::class_any)) <- function(granule, cycle, i) {
+S7::method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(granule, cycle, i) {
   # Quarters count with 1-indexing
   paste0("Q", i + 1L)
 }
-S7::method(cyclical_labels, list(tu_month, tu_year)) <- function(granule, cycle, i) {
+S7::method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i) {
   month.abb[i+1L]
 }
-S7::method(cyclical_labels, list(tu_day, S7::class_any)) <- function(granule, cycle, i) {
+S7::method(cyclical_labels, list(cal_gregorian$day, S7::class_any)) <- function(granule, cycle, i) {
   # Days count with 1-indexing
   i + 1L
 }
-
-#' Gregorian continuous time representations
-#' 
-#' Linear time representations for the Gregorian calendar system. These functions
-#' create time objects measured in years, year-quarters, or year-months since the
-#' Unix epoch (1970-01-01).
-#' 
-#' @param .data Another object to be coerced into the specified time.
-#' @param tz Timezone, defaults to "UTC".
-#' @param discrete If `TRUE`, the number of chronons since Unix epoch that
-#' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
-#'  of chronons is returned (analagous to time using a continuous time model).
-#' 
-#' @details
-#' - `year()`: Represents time in whole years since 1970. The chronon is one year.
-#' - `yearquarter()`: Represents time in quarters, grouped by year. The chronon
-#'   is one quarter, with years as the granule for display and grouping.
-#' - `yearmonth()`: Represents time in months, grouped by year. The chronon is
-#'   one month, with years as the granule for display and grouping.
-#' 
-#' @section Custom Gregorian time representations:
-#' You can create custom time representations using [linear_time()] with any of
-#' the supported Gregorian time units (see [calendar_gregorian]).
-#' 
-#' For example, to create a time representation in hours since epoch with day granules:
-#' ```r
-#' dayhour <- linear_time(
-#'   granules = list(tu_day(1L)),
-#'   chronon = tu_hour(1L)
-#' )
-#' ```
-#' 
-#' @examples
-#' 
-#' year(Sys.Date())
-#' year(Sys.Date(), discrete = FALSE)
-#' 
-#' @name linear_gregorian
-#' @export
-year <- linear_time(
-  chronon = tu_year(1L)
-)
-
-#' @examples
-#' 
-#' yearquarter(Sys.Date())
-#' yearquarter(Sys.Date(), discrete = FALSE)
-#' 
-#' @rdname linear_gregorian
-#' @export
-yearquarter <- linear_time(
-  chronon = tu_quarter(1L),
-  granules = list(tu_year(1L))
-)
-
-#' @examples
-#' 
-#' yearmonth(Sys.Date())
-#' yearmonth(Sys.Date(), discrete = FALSE)
-#' 
-#' @rdname linear_gregorian
-#' @export
-yearmonth <- linear_time(
-  chronon = tu_month(1L),
-  granules = list(tu_year(1L))
-)
-
-#' @examples
-#' 
-#' yearmonthday(Sys.Date())
-#' yearmonthday(Sys.Date(), discrete = FALSE)
-#' 
-#' @rdname linear_gregorian
-#' @export
-yearmonthday <- linear_time(
-  chronon = tu_day(1L),
-  granules = list(tu_year(1L), tu_month(1L))
-)
-
-#' Gregorian cyclical time representations
-#' 
-#' Cyclical time representations for the Gregorian calendar system. These functions
-#' create time objects that repeat within a larger time cycle, useful for identifying
-#' seasonal patterns or positions within a calendar period.
-#' 
-#' @param .data Another object to be coerced into the specified cyclical time.
-#' @param discrete If `TRUE`, the position within the cycle that `.data` 
-#' falls into is returned as an integer. If `FALSE`, a fractional 
-#' position is returned (analagous to time using a continuous time model).
-#' @inheritParams linear_gregorian
-#' 
-#' @details
-#' - `month_of_year()`: Represents the month position within a year (1-12).
-#'   The chronon is one month, cycling within a year.
-#' - `day_of_year()`: Represents the day position within a year (1-365 or 1-366
-#'   for leap years). The chronon is one day, cycling within a year.
-#' - `day_of_month()`: Represents the day position within a month (1-28, 1-29,
-#'   1-30, or 1-31 depending on the month). The chronon is one day, cycling
-#'   within a month.
-#' 
-#' These cyclical representations are useful for analyzing seasonal patterns or
-#' comparing time points at similar positions across different years.
-#' 
-#' @section Custom Gregorian cyclical time representations:
-#' You can create custom cyclical time representations using [cyclical_time()]
-#' with any of the supported Gregorian time units (see [calendar_gregorian]).
-#' 
-#' For example, to create a representation for day of the month:
-#' ```r
-#' day_of_month <- cyclical_time(
-#'   chronon = tu_day(1L),
-#'   cycle = tu_month(1L)
-#' )
-#' ```
-#' 
-#' @seealso [linear_gregorian] for linear Gregorian time representations,
-#'   [cyclical_time()] for creating custom cyclical time representations
-#' 
-#' @examples
-#' 
-#' month_of_year(Sys.Date())
-#' 
-#' @name cyclical_gregorian
-#' @export
-month_of_year <- cyclical_time(
-  chronon = tu_month(1L),
-  cycle = tu_year(1L)
-)
-
-#' @examples
-#' 
-#' day_of_year(Sys.Date())
-#' 
-#' @rdname cyclical_gregorian
-#' @export
-day_of_year <- cyclical_time(
-  chronon = tu_day(1L),
-  cycle = tu_year(1L)
-)
-
-#' @rdname cyclical_gregorian
-#' @export
-day_of_month <- cyclical_time(
-  chronon = tu_day(1L),
-  cycle = tu_month(1L)
-)

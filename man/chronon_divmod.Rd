@@ -10,9 +10,9 @@ chronon_divmod(from, to, ...)
 chronon_divmod.S7_methods(from, to, x)
 }
 \arguments{
-\item{from}{The time unit that \code{x} is measured in (e.g., \code{tu_day(1L)}).}
+\item{from}{The time unit that \code{x} is measured in (e.g., \code{day(1L)}).}
 
-\item{to}{The time unit to convert \code{x} into (e.g., \code{tu_week(1L)}).}
+\item{to}{The time unit to convert \code{x} into (e.g., \code{week(1L)}).}
 
 \item{...}{Additional arguments for methods.}
 
@@ -35,9 +35,9 @@ units, which is efficient for regular time units.
 }
 \examples{
 # Convert day 16 since epoch into weeks since epoch (and remainder days)
-chronon_divmod(tu_day(1L), tu_week(1L), 16L)
+with(cal_isoweek, chronon_divmod(day(1L), week(1L), 16L))
 
 # Convert week 4 since epoch into days since epoch
-chronon_divmod(tu_week(1L), tu_day(1L), 4L)
+with(cal_isoweek, chronon_divmod(week(1L), day(1L), 4L))
 
 }

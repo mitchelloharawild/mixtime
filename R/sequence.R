@@ -10,8 +10,8 @@
 #'   * An integer for the number of time units
 #'   * A character string specifying the interval (e.g., "1 day", "2 weeks", 
 #'     "1 month", "1 year")
-#'   * A time unit object created with time unit functions (e.g., `tu_year(1L)`,
-#'     `tu_month(1L)`, `tu_day(1L)`)
+#'   * A time unit object created with time unit functions (e.g., `cal_gregorian$year(1L)`,
+#'     `cal_gregorian$month(1L)`, `cal_gregorian$day(1L)`)
 #' @param length.out Desired length of the sequence (alternative to `to`).
 #' @param along.with Take the length from this argument (alternative to `length.out`).
 #' @param on_invalid How to handle time points that overflow the cycle when
@@ -49,9 +49,9 @@
 #' seq(yearmonthday("2020-01-01"), length.out = 10, by = "2 weeks")
 #' 
 #' # Linear time sequences with time units
-#' seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = tu_month(2L))
-#' seq(yearmonthday("2020-01-01"), length.out = 5, by = tu_year(1L))
-#' seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-31"), by = tu_day(7L))
+#' seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = cal_gregorian$month(2L))
+#' seq(yearmonthday("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))
+#' seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-31"), by = cal_gregorian$day(7L))
 #' 
 #' # Handling invalid dates with on_invalid
 #' seq(yearmonthday("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses nearest
@@ -60,7 +60,7 @@
 #' 
 #' # Cyclical time sequences
 #' seq(month_of_year(0L), month_of_year(11L))
-#' seq(month_of_year(5L), month_of_year(3L), by = tu_month(2L))
+#' seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
 #' seq(day_of_week(0L), day_of_week(6L), by = 1)
 #' 
 #' @rdname seq.mixtime

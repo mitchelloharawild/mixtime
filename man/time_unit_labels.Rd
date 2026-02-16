@@ -23,7 +23,7 @@ units. \code{time_unit_full()} is used in messages and durations (e.g., "2 month
 \code{time_unit_abbr()} is used for tsibble index interval displays (e.g., "1M").
 }
 \examples{
-time_unit_full(tu_year(1L))
-time_unit_abbr(tu_year(1L))
+time_unit_full(cal_gregorian$year(1L))
+time_unit_abbr(cal_gregorian$year(1L))
 
 }

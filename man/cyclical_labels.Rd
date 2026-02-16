@@ -10,9 +10,9 @@ cyclical_labels(granule, cycle, ...)
 cyclical_labels.S7_methods(granule, cycle, i)
 }
 \arguments{
-\item{granule}{A time unit object representing the granule (e.g., \code{tu_month(1L)})}
+\item{granule}{A time unit object representing the granule (e.g., \code{month(1L)})}
 
-\item{cycle}{A time unit object representing the cycle (e.g., \code{tu_year(1L)})}
+\item{cycle}{A time unit object representing the cycle (e.g., \code{year(1L)})}
 
 \item{...}{Additional arguments for methods.}
 
@@ -27,12 +27,12 @@ between time units. These functions should return locale specific labels.
 }
 \examples{
 # Labels for months in a year
-cyclical_labels(tu_month(1L), tu_year(1L), 1:12)
+with(cal_gregorian, cyclical_labels(month(1L), year(1L), 1:12))
 
 # Labels for days in a week
-cyclical_labels(tu_day(1L), tu_week(1L), 1:7)
+with(cal_isoweek, cyclical_labels(day(1L), week(1L), 1:7))
 
 # Labels for weeks in a year, defaulted from time_unit_abbr()
-cyclical_labels(tu_week(1L), tu_year(1L), 1:52)
+with(cal_isoweek, cyclical_labels(week(1L), year(1L), 1:52))
 
 }

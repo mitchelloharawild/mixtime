@@ -165,13 +165,13 @@ test_that("chronon_cardinality handles months with variable days", {
   # This requires the `at` context parameter
   # Test that error is thrown when at is NULL
   expect_error(
-    chronon_cardinality(tu_month(1L), tu_day(1L), at = NULL),
+    chronon_cardinality(cal_gregorian$month(1L), cal_gregorian$day(1L), at = NULL),
     "time context"
   )
   
   # Test that error is thrown for years without at
   expect_error(
-    chronon_cardinality(tu_year(1L), tu_day(1L), at = NULL),
+    chronon_cardinality(cal_gregorian$year(1L), cal_gregorian$day(1L), at = NULL),
     "time context"
   )
 })
@@ -206,20 +206,20 @@ test_that("conversion handles dates before Unix epoch", {
 
 test_that("cyclical_labels for months work correctly", {
   # The method should return abbreviated month names
-  labels <- cyclical_labels(tu_month(1L), tu_year(1L), 0:11)
+  labels <- cyclical_labels(cal_gregorian$month(1L), cal_gregorian$year(1L), 0:11)
   expect_equal(labels, month.abb)
 })
 
 test_that("time_unit methods return correct strings", {
-  expect_equal(time_unit_full(tu_year(1L)), "year")
-  expect_equal(time_unit_abbr(tu_year(1L)), "Y")
+  expect_equal(time_unit_full(cal_gregorian$year(1L)), "year")
+  expect_equal(time_unit_abbr(cal_gregorian$year(1L)), "Y")
   
-  expect_equal(time_unit_full(tu_month(1L)), "month")
-  expect_equal(time_unit_abbr(tu_month(1L)), "M")
+  expect_equal(time_unit_full(cal_gregorian$month(1L)), "month")
+  expect_equal(time_unit_abbr(cal_gregorian$month(1L)), "M")
   
-  expect_equal(time_unit_full(tu_day(1L)), "day")
-  expect_equal(time_unit_abbr(tu_day(1L)), "D")
+  expect_equal(time_unit_full(cal_gregorian$day(1L)), "day")
+  expect_equal(time_unit_abbr(cal_gregorian$day(1L)), "D")
   
-  expect_equal(time_unit_full(tu_hour(1L)), "hour")
-  expect_equal(time_unit_abbr(tu_hour(1L)), "h")
+  expect_equal(time_unit_full(cal_gregorian$hour(1L)), "hour")
+  expect_equal(time_unit_abbr(cal_gregorian$hour(1L)), "h")
 })

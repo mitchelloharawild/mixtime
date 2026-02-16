@@ -14,7 +14,7 @@
 #' @param y The time unit to convert `x` into
 #' @param ... Additional arguments for methods.
 #' @param at Optional time point for context-dependent cardinality, defined in
-#' terms of `y` (e.g., if `y` is `tu_month()`, then `at` could be a 
+#' terms of `y` (e.g., if `y` is `month()`, then `at` could be a 
 #' `yearmonth()`)
 #'
 #' @return Numeric describing how many `x` time units fit into `y` at time `at`.
@@ -35,25 +35,25 @@
 #' 
 #' @examples
 #' # There are 12 months in a year
-#' chronon_cardinality(tu_year(1L), tu_month(1L))
+#' with(cal_gregorian, chronon_cardinality(year(1L), month(1L)))
 #' 
 #' # There are 7 days in a week
-#' chronon_cardinality(tu_week(1L), tu_day(1L))
+#' with(cal_isoweek, chronon_cardinality(week(1L), day(1L)))
 #' 
 #' # There are 3600 seconds in an hour
-#' chronon_cardinality(tu_hour(1L), tu_second(1L))
+#' with(cal_gregorian, chronon_cardinality(hour(1L), second(1L)))
 #' 
 #' # There are 18 "2 months" in 3 years
-#' chronon_cardinality(tu_year(3L), tu_month(2L))
+#' with(cal_gregorian, chronon_cardinality(year(3L), month(2L)))
 #' 
 #' # There are 365 days in 2025 (a common year)
-#' chronon_cardinality(tu_year(1L), tu_day(1L), at = year(as.Date("2025-01-01")))
+#' with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2025-01-01"))))
 #' 
 #' # There are 366 days in 2024 (a leap year)
-#' chronon_cardinality(tu_year(1L), tu_day(1L), at = year(as.Date("2024-01-01")))
+#' with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2024-01-01"))))
 #' 
 #' # There are 29 days in February 2024 (a leap year)
-#' chronon_cardinality(tu_month(1L), tu_day(1L), at = yearmonth(as.Date("2024-02-01")))
+#' with(cal_gregorian, chronon_cardinality(month(1L), day(1L), at = yearmonth(as.Date("2024-02-01"))))
 #'
 #' @export
 chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
@@ -72,6 +72,7 @@ chronon_cardinality.S7_methods <- function(x, y, at = NULL) S7_method_docs()
 method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {
+    # TODO - preserve integer type if possible
     return(vec_data(x)/vec_data(y))
   }
 

@@ -6,7 +6,7 @@
 #' @param x A time object (e.g., [base::Date], [base::POSIXct], [linear_time()], etc.)
 #' @param ... Additional arguments for methods.
 #' 
-#' @return A time unit object representing the chronon (e.g., `tu_day(1L)`)
+#' @return A time unit object representing the chronon (e.g., `cal_gregorian$day(1L)`)
 #' 
 #' @examples
 #' 
@@ -34,21 +34,21 @@ S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
-  tu_day(1L)
+  cal_gregorian$day(1L)
 }
 
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
-  tu_second(1L, tz = tz_name(x))
+  cal_gregorian$second(1L, tz = tz_name(x))
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {
-  tu_month(1L)
+  cal_gregorian$month(1L)
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearquarter")) <- function(x) {
-  tu_quarter(1L)
+  cal_gregorian$quarter(1L)
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearweek")) <- function(x) {
-  tu_week(1L)
+  cal_isoweek$week(1L)
 }

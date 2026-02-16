@@ -17,7 +17,7 @@ chronon_cardinality.S7_methods(x, y, at = NULL)
 \item{...}{Additional arguments for methods.}
 
 \item{at}{Optional time point for context-dependent cardinality, defined in
-terms of \code{y} (e.g., if \code{y} is \code{tu_month()}, then \code{at} could be a
+terms of \code{y} (e.g., if \code{y} is \code{month()}, then \code{at} could be a
 \code{yearmonth()})}
 }
 \value{
@@ -46,24 +46,24 @@ two systems.
 }
 \examples{
 # There are 12 months in a year
-chronon_cardinality(tu_year(1L), tu_month(1L))
+with(cal_gregorian, chronon_cardinality(year(1L), month(1L)))
 
 # There are 7 days in a week
-chronon_cardinality(tu_week(1L), tu_day(1L))
+with(cal_isoweek, chronon_cardinality(week(1L), day(1L)))
 
 # There are 3600 seconds in an hour
-chronon_cardinality(tu_hour(1L), tu_second(1L))
+with(cal_gregorian, chronon_cardinality(hour(1L), second(1L)))
 
 # There are 18 "2 months" in 3 years
-chronon_cardinality(tu_year(3L), tu_month(2L))
+with(cal_gregorian, chronon_cardinality(year(3L), month(2L)))
 
 # There are 365 days in 2025 (a common year)
-chronon_cardinality(tu_year(1L), tu_day(1L), at = year(as.Date("2025-01-01")))
+with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2025-01-01"))))
 
 # There are 366 days in 2024 (a leap year)
-chronon_cardinality(tu_year(1L), tu_day(1L), at = year(as.Date("2024-01-01")))
+with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2024-01-01"))))
 
 # There are 29 days in February 2024 (a leap year)
-chronon_cardinality(tu_month(1L), tu_day(1L), at = yearmonth(as.Date("2024-02-01")))
+with(cal_gregorian, chronon_cardinality(month(1L), day(1L), at = yearmonth(as.Date("2024-02-01"))))
 
 }
