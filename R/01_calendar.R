@@ -58,6 +58,31 @@ new_calendar <- function(..., class = character()) {
 }
 
 #' @export
+print.mt_calendar <- function(x, ...) {
+  # Get calendar class (excluding mt_calendar base class)
+  cal_classes <- setdiff(class(x), "mt_calendar")
+  
+  # Header
+  if (length(cal_classes) > 0) {
+    cat("<", paste(cal_classes, collapse = ", "), ">\n", sep = "")
+  } else {
+    cat("<mt_calendar>\n")
+  }
+  
+  # List time units
+  if (length(x) > 0) {
+    cat("Time units:\n")
+    for (name in names(x)) {
+      cat("  - ", name, "\n", sep = "")
+    }
+  } else {
+    cat("No time units defined\n")
+  }
+  
+  invisible(x)
+}
+
+#' @export
 calendar <- S7::new_generic("calendar", c("x"))
 
 method(calendar, S7::class_Date) <- function(x) cal_gregorian
