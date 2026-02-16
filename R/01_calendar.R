@@ -38,8 +38,32 @@
 #' @export
 new_calendar <- function(..., class = character()) {
   vctrs::vec_assert(class, character())
-  structure(
-    list2(...),
+  time_units <- list2(...)
+  
+  cal <- structure(
+    time_units,
     class = c(class, "mt_calendar")
   )
+  
+  # Create a reference environment that wraps the calendar
+  cal_env <- new.env(parent = emptyenv())
+  cal_env$calendar <- cal
+  
+  # Add the environment reference to each time unit
+  for (i in seq_along(cal)) {
+    attr(cal[[i]], "cal") <- cal_env
+  }
+  
+  cal
 }
+
+#' @export
+calendar <- S7::new_generic("calendar", c("x"))
+
+method(calendar, S7::class_Date) <- function(x) cal_gregorian
+method(calendar, S7::class_POSIXt) <- function(x) cal_gregorian
+method(calendar, mt_unit) <- function(x) {
+  attr(x, "cal")$calendar
+}
+method(calendar, S7::new_S3_class("mt_linear")) <- function(x) calendar(time_chronon(x))
+method(calendar, S7::new_S3_class("mt_cyclical")) <- function(x) calendar(time_chronon(x))
