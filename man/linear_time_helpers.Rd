@@ -89,7 +89,7 @@ You can also explicitly specify a calendar using the \code{calendar} argument:
 
 \section{Custom time representations}{
 
-For more complex time structures, use \code{\link[=linear_time]{linear_time()}} or \code{\link[=new_linear_time]{new_linear_time()}}
+For more complex time structures, use \code{\link[=linear_time]{linear_time()}} or \code{\link[=new_linear_time_fn]{new_linear_time_fn()}}
 to create custom representations with any combination of chronons and granules.
 }
 
@@ -118,7 +118,7 @@ yearweek(0:52)
 \seealso{
 \itemize{
 \item \code{\link[=linear_time]{linear_time()}} for creating custom linear time representations
-\item \code{\link[=new_linear_time]{new_linear_time()}} for creating reusable linear time functions
+\item \code{\link[=new_linear_time_fn]{new_linear_time_fn()}} for creating reusable linear time functions
 \item \link{cal_gregorian}, \link{cal_isoweek} for calendar systems
 }
 }

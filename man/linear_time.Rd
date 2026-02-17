@@ -84,7 +84,7 @@ linear_time(
 }
 \seealso{
 \itemize{
-\item \code{\link[=new_linear_time]{new_linear_time()}} for creating reusable linear time functions
+\item \code{\link[=new_linear_time_fn]{new_linear_time_fn()}} for creating reusable linear time functions
 \item \code{\link[=yearmonth]{yearmonth()}}, \code{\link[=yearquarter]{yearquarter()}}, \code{\link[=year]{year()}} for Gregorian time representations
 \item \code{\link[=yearweek]{yearweek()}} for ISO 8601 week-based time
 \item \link{cal_gregorian}, \link{cal_isoweek} for calendar systems
