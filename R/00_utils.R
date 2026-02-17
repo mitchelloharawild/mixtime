@@ -98,3 +98,13 @@ gcd <- function(a, b) {
   }
   a
 }
+
+# Fallback calendar for evaluating time units
+cal_fallback <- function(time_unit, calendar) {
+  tryCatch(
+    time_unit, 
+    error = function(e) {
+      eval_tidy(enquo(time_unit), data = calendar, env = rlang::caller_env())
+    }
+  )
+}

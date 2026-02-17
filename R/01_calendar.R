@@ -92,3 +92,4 @@ method(time_calendar, mt_unit) <- function(x) {
 }
 method(time_calendar, S7::new_S3_class("mt_linear")) <- function(x) time_calendar(time_chronon(x))
 method(time_calendar, S7::new_S3_class("mt_cyclical")) <- function(x) time_calendar(time_chronon(x))
+method(time_calendar, S7::class_any) <- function(x) cal_gregorian
