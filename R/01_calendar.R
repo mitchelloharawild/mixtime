@@ -82,6 +82,31 @@ print.mt_calendar <- function(x, ...) {
   invisible(x)
 }
 
+#' Obtain the calendar of a time object
+#' 
+#' This S7 generic function extracts the calendar system from a time object.
+#' The calendar defines the collection of time units (years, months, days, etc.)
+#' used to interpret the time representation.
+#' 
+#' @param x A time object (e.g., [base::Date], [base::POSIXct], [linear_time()], etc.)
+#' @param ... Additional arguments for methods.
+#' 
+#' @return A calendar object (e.g., `cal_gregorian`, `cal_isoweek`)
+#' 
+#' @examples
+#' 
+#' # The calendar of a Date object is the Gregorian calendar
+#' time_calendar(Sys.Date())
+#' 
+#' # The calendar of a POSIXct object is also Gregorian
+#' time_calendar(Sys.time())
+#' 
+#' # The calendar of a yearweek object is the ISO week calendar
+#' time_calendar(yearweek(Sys.Date()))
+#' 
+#' # A mixed time object returns a list of calendars
+#' time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
+#' 
 #' @export
 time_calendar <- S7::new_generic("calendar", c("x"))
 
@@ -90,6 +115,17 @@ method(time_calendar, S7::class_POSIXt) <- function(x) cal_gregorian
 method(time_calendar, mt_unit) <- function(x) {
   attr(x, "cal")$calendar
 }
+method(time_calendar, S7::new_S3_class("mixtime")) <- function(x) {
+  lapply(attr(x, "v"), time_calendar)
+}
 method(time_calendar, S7::new_S3_class("mt_linear")) <- function(x) time_calendar(time_chronon(x))
 method(time_calendar, S7::new_S3_class("mt_cyclical")) <- function(x) time_calendar(time_chronon(x))
 method(time_calendar, S7::class_any) <- function(x) cal_gregorian
+
+
+# Fallback calendar for evaluating time units
+cal_fallback <- function(calendar, fallback_calendar) {
+  attr(calendar, "fallback") <- fallback_calendar
+  class(calendar) <- c("mt_calendar_fb", class(calendar))
+  calendar
+}
