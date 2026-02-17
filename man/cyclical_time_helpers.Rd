@@ -86,7 +86,7 @@ using the ISO 8601 week numbering system.
 \section{Custom cyclical time representations}{
 
 You can create custom cyclical time representations using \code{\link[=cyclical_time]{cyclical_time()}}
-with any of the supported time units (see \link{calendar_gregorian} and \link{calendar_iso8601}).
+with any of the supported time units (see \link{calendar_gregorian} and \link{calendar_isoweek}).
 
 For example, to create a representation for day of the month:
 

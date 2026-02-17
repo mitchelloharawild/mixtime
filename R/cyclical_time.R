@@ -254,7 +254,7 @@ vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 #' 
 #' @section Custom cyclical time representations:
 #' You can create custom cyclical time representations using [cyclical_time()]
-#' with any of the supported time units (see [calendar_gregorian] and [calendar_iso8601]).
+#' with any of the supported time units (see [calendar_gregorian] and [calendar_isoweek]).
 #' 
 #' For example, to create a representation for day of the month:
 #' ```r

@@ -24,7 +24,7 @@
 #' @seealso [linear_time()] for creating custom time representations,
 #'   [yearweek()] for a pre-defined ISO 8601 year-week representation
 #' 
-#' @name calendar_iso8601
+#' @name calendar_isoweek
 #' @export
 cal_isoweek <- new_calendar(
   year = S7::new_class("tu_isoyear", parent = mt_tz_unit),
