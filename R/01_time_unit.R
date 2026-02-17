@@ -4,7 +4,7 @@
 #' units. `time_unit_full()` is used in messages and durations (e.g., "2 months").
 #' `time_unit_abbr()` is used for tsibble index interval displays (e.g., "1M").
 #' 
-#' @param x A time unit object (e.g., `tu_month(1L)`)
+#' @param x A time unit object (e.g., `cal_gregorian$month(1L)`)
 #' @param ... Additional arguments for methods.
 #' 
 #' @return A string representing the time unit

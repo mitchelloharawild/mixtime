@@ -21,14 +21,13 @@
 #' the Gregorian calendar rules. For units that don't have a fixed relationship
 #' (e.g., months to days), the conversion requires a time context.
 #' 
-#' @seealso [linear_time()] for creating custom time representations,
-#'   [linear_gregorian] for pre-defined Gregorian time representations
+#' @seealso [linear_time()] for creating linear time points.
 #' 
 #' @examples
 #' # Create a custom time representation using Gregorian units
-#' dayhour <- linear_time(
-#'   granules = list(cal_gregorian$day(1L)),
-#'   chronon = cal_gregorian$hour(1L)
+#' linear_time(
+#'   Sys.time(),
+#'   chronon = hour(1L)
 #' )
 #' 
 #' @name calendar_gregorian

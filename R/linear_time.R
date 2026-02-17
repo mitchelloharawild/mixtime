@@ -1,45 +1,151 @@
-# #' Base S7 class for time
-# #'
-# #' @export
-# mt_time <- S7::new_class("mt_time", parent = S7::class_integer)
-
-#' Linear time representation
+#' Linear time function factory
 #' 
-#' `linear_time()` creates a linear time representation using specified
-#' granules and a chronon. Granules are larger time units that define the structure
+#' `new_linear_time()` creates a linear time function for a specified
+#' chronon and granules. Granules are larger time units that define the structure
 #' of time (e.g., years, months), while the chronon is the smallest indivisible
 #' time unit (e.g., days, hours).
 #' 
 #' @param chronon A time unit object representing the chronon (e.g., `day(1)`)
-#' @param granules A list of time unit objects representing the granules (e.g., `list(year(1), month(1))`)
-#' @param calendar A calendar used to find the time units (e.g., `cal_isoweek`)
+#' @param granules A list of time unit objects representing the granules 
+#'   (e.g., `list(year(1), month(1))`)
+#' @param fallback_calendar A fallback calendar used to find the time units for 
+#'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
-#' @return An function used to create continuous time points.
+#' @return A function used to create linear time points.
 #' 
 #' @examples
 #' 
 #' # A year-month time representation with months as the chronon
-#' ym <- linear_time(month(1L), list(year(1L)))
+#' ym <- new_linear_time(month(1L), list(year(1L)))
 #' ym(Sys.Date())
 #' 
 #' # A year-quarter-month time representation with months as the chronon
-#' yqm <- linear_time(month(1L), list(year(1L), quarter(1L)))
+#' yqm <- new_linear_time(month(1L), list(year(1L), quarter(1L)))
 #' yqm(1:100)
 #' yqm(Sys.Date())
 #' 
 #' # A year-day time representation with days as the chronon
-#' yd <- linear_time(day(1L), list(year(1L)))
+#' yd <- new_linear_time(day(1L), list(year(1L)))
 #' yd(Sys.Date())
 #' 
-#' ymd_h <- linear_time(hour(1L), list(year(1L), month(1L), day(1L)))
+#' # Gregorian date time with hourly precision
+#' ymd_h <- new_linear_time(hour(1L), list(year(1L), month(1L), day(1L)))
 #' ymd_h(Sys.time())
 #' 
+#' # ISO-week-date calendar
+#' ywd <- new_linear_time(day(1L), list(year(1L), week(1L)), fallback_calendar = cal_isoweek)
+#' ywd(Sys.Date())
+#' 
 #' @export
-linear_time <- function(chronon, granules = list(), calendar = cal_gregorian) {
-  # Add calendar data mask for evaluating chronon and cycle
-  chronon <- eval_tidy(enquo(chronon), data = calendar)
-  granules <- eval_tidy(enquo(granules), data = calendar)
+new_linear_time <- function(chronon, granules = list(), fallback_calendar = cal_gregorian) {
+  # Capture chronon and granularity for later evaluation within
+  # the user-specified calendar
+  chronon <- enquo(chronon)
+  granules <- enquo(granules)
+  force(fallback_calendar)
 
+  function(
+    data, tz = tz_name(data), discrete = TRUE, 
+    calendar = time_calendar(data)
+  ) {
+    linear_time(
+      data, chronon = !!chronon, granules = !!granules, 
+      tz = tz, discrete = discrete, 
+      calendar = cal_fallback(calendar, fallback_calendar)
+    )
+  }
+}
+
+#' Linear time points
+#' 
+#' `linear_time()` creates a vector of linear time points with a specified
+#' chronon (smallest time unit). This function is useful for creating custom
+#' time representations that aren't covered by the convenience functions like
+#' [yearmonth()] or [yearweek()].
+#' 
+#' @param data Input data to convert to linear time. Can be:
+#'   - Numeric values (interpreted as chronons since Unix epoch)
+#'   - Character strings (parsed as dates/times)
+#'   - Date or POSIXct objects
+#'   - Other time objects
+#' @param chronon A time unit expression representing the chronon (smallest 
+#'   indivisible time unit), evaluated in the context of `calendar`. Use 
+#'   unquoted expressions like `month(1L)` or `hour(1L)`. Chronons from a
+#'   specific calendar can also be used (e.g. `cal_isoweek$week(1L)`).
+#'   Defaults to the time chronon of the input `data` (`time_chronon(data)`).
+#' @param tz Time zone for the time representation. Defaults to the time zone
+#'   of the input `data` (`tz_name(data)`). Time zones need to be valid 
+#'   identifiers for the IANA time zone database ([`tzdb::tzdb_names()`])
+#' @param discrete Logical. If `TRUE` (default), returns integer chronons since
+#'   Unix epoch (discrete time model). If `FALSE`, returns fractional chronons 
+#'   allowing representation of partial time units (continuous time model).
+#' @param calendar Calendar system used to evaluate `chronon` and `granules`.
+#'   Defaults to `time_calendar(data)` for existing time objects. Common options
+#'   include [cal_gregorian] and [cal_isoweek].
+#' @param granules A list of time unit expressions representing structural units
+#'   larger than the chronon (e.g., years, quarters, months). These define how
+#'   time is displayed and grouped. Use unquoted expressions like 
+#'   `list(year(1L), quarter(1L))`. Defaults to an empty list.
+#' 
+#' @return A `mt_linear` time vector, which is a subclass of `mt_time`.
+#' 
+#' @seealso 
+#' - [new_linear_time()] for creating reusable linear time functions
+#' - [yearmonth()], [yearquarter()], [year()] for Gregorian time representations
+#' - [yearweek()] for ISO 8601 week-based time
+#' - [cal_gregorian], [cal_isoweek] for calendar systems
+#' 
+#' @examples
+#' # Hourly time with year-month-day granules
+#' linear_time(
+#'   Sys.time(),
+#'   chronon = hour(1L),
+#'   granules = list(year(1L), month(1L), day(1L))
+#' )
+#' 
+#' # Monthly chronons with year-quarter granules
+#' linear_time(
+#'   Sys.Date(),
+#'   chronon = month(1L),
+#'   granules = list(year(1L), quarter(1L))
+#' )
+#' 
+#' # Discrete vs continuous time
+#' linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
+#' linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
+#' 
+#' # ISO week calendar with week-day structure
+#' linear_time(
+#'   Sys.Date(),
+#'   chronon = day(1L),
+#'   granules = list(year(1L), week(1L)),
+#'   calendar = cal_isoweek
+#' )
+#' 
+#' @export
+linear_time <- function(
+  data, chronon = time_chronon(data), tz = tz_name(data),
+  discrete = TRUE, calendar = time_calendar(data), granules = list()) {
+  # Parse text data
+  if (is.character(data)) {
+    data <- anytime::utctime(data)
+  }
+
+  # Evaluate chronon and granules in calendar environment
+  quo_chronon <- enquo(chronon)
+  quo_granules <- enquo(granules)
+  tryCatch({
+    chronon <- eval_tidy(quo_chronon, data = calendar)
+    granules <- eval_tidy(quo_granules, data = calendar)
+  }, error = function(e) {
+    if (inherits(calendar, "mt_calendar_fb")) {
+      chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
+      granules <<- eval_tidy(quo_granules, data = attr(calendar, "fallback"))
+    } else {
+      cli::cli_abort(e$message, call = NULL)
+    }
+  })
+  
   if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
     stop("All elements in granules must be time unit objects", call. = FALSE)
   }
@@ -48,41 +154,28 @@ linear_time <- function(chronon, granules = list(), calendar = cal_gregorian) {
     stop("chronon must be a time unit object", call. = FALSE)
   }
   
-  # TODO: Ensure c(granules, chronon) are in decreasing order of size
+  # Attach timezone to chronon and granules
+  if (!is.null(tz)) {
+    chronon@tz <- tz
+    granules <- lapply(granules, function(g) {g@tz <- tz; g})
+  }
 
-  function(.data, tz = tz_name(.data), discrete = TRUE) {
-    # Attach timezone to chronon and granules
-    if (!is.null(tz)) {
-      chronon@tz <- tz
-      granules <- lapply(granules, function(g) {g@tz <- tz; g})
-    }
-
-    # Parse text data
-    if (is.character(.data)) {
-      .data <- anytime::utctime(.data)
-    }
-
-    # Cast from Date, POSIXct, etc.
-    if (!is.numeric(.data) || !is.null(attributes(.data))) {
-      .data <- chronon_convert(
-        .data + tz_offset(.data, tz), 
-        chronon,
-        discrete = discrete
-      )
-    }
-
-    # if (!is.character(tz) || length(tz) != 1L) {
-    #   cli::cli_abort("{tz} must be a length 1 string describing the timezone. Mixed timezones currently need to be combined separately.")
-    # }
-
-    mixtime(
-      vctrs::new_vctr(
-        .data, 
-        class = c("mt_linear", "mt_time"),
-        tz = tz, granules = granules, chronon = chronon
-      )
+  # Cast from Date, POSIXct, etc.
+  if (!is.numeric(data) || !is.null(attributes(data))) {
+    data <- chronon_convert(
+      data + tz_offset(data, tz), 
+      chronon,
+      discrete = discrete
     )
   }
+
+  mixtime(
+    vctrs::new_vctr(
+      data, 
+      class = c("mt_linear", "mt_time"),
+      tz = tz, granules = granules, chronon = chronon
+    )
+  )
 }
 
 #' @export
@@ -161,98 +254,109 @@ vec_cast.double.mt_linear <- function(x, to, ...) {
 }
 
 
-#' Gregorian continuous time representations
+#' Linear time helper functions
 #' 
-#' Linear time representations for the Gregorian calendar system. These functions
-#' create time objects measured in years, year-quarters, or year-months since the
-#' Unix epoch (1970-01-01).
+#' Convenience functions for creating common linear time representations. These
+#' functions work with different calendar systems and adapt based on the input
+#' data's calendar.
 #' 
-#' @param .data Another object to be coerced into the specified time.
+#' @param data A vector of time points (e.g. [base::Date], [base::POSIXt])
 #' @param tz Timezone, defaults to "UTC".
 #' @param discrete If `TRUE`, the number of chronons since Unix epoch that
 #' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
 #'  of chronons is returned (analagous to time using a continuous time model).
+#' @param calendar A calendar used to evaluate the time units. Defaults to the
+#'   calendar of the input data. Common options include [cal_gregorian] and
+#'   [cal_isoweek].
 #' 
 #' @details
-#' - `year()`: Represents time in whole years since 1970. The chronon is one year.
+#' These functions create linear time representations with different chronons
+#' and granules:
+#' 
+#' - `year()`: Represents time in whole years. The chronon is one year.
 #' - `yearquarter()`: Represents time in quarters, grouped by year. The chronon
-#'   is one quarter, with years as the granule for display and grouping.
+#'   is one quarter, with years as the granule.
 #' - `yearmonth()`: Represents time in months, grouped by year. The chronon is
-#'   one month, with years as the granule for display and grouping.
+#'   one month, with years as the granule.
+#' - `yearweek()`: Represents time in weeks, grouped by year. The chronon is
+#'   one week, with years as the granule. Defaults to ISO 8601 week calendar.
 #' 
-#' @section Custom Gregorian time representations:
-#' You can create custom time representations using [linear_time()] with any of
-#' the supported Gregorian time units (see [calendar_gregorian]).
+#' @section Calendar flexibility:
+#' These functions adapt to the calendar system of the input data. For example:
 #' 
-#' For example, to create a time representation in hours since epoch with day granules:
+#' - `year("2025-12-29")` returns a Gregorian year
+#' - `year(yearweek("2025-12-29"))` returns an ISO week-based year
+#' 
+#' You can also explicitly specify a calendar using the `calendar` argument:
+#' 
 #' ```r
-#' dayhour <- linear_time(
-#'   granules = list(cal_gregorian$day(1L)),
-#'   chronon = cal_gregorian$hour(1L)
-#' )
+#' year(yearweek("2025-12-29"), calendar = cal_isoweek)
 #' ```
+#' 
+#' @section Custom time representations:
+#' For more complex time structures, use [linear_time()] or [new_linear_time()]
+#' to create custom representations with any combination of chronons and granules.
+#' 
+#' @return A `mt_linear` time vector.
+#' 
+#' @seealso 
+#' - [linear_time()] for creating custom linear time representations
+#' - [new_linear_time()] for creating reusable linear time functions
+#' - [cal_gregorian], [cal_isoweek] for calendar systems
 #' 
 #' @examples
 #' 
+#' # Gregorian year
 #' year(Sys.Date())
 #' year(Sys.Date(), discrete = FALSE)
 #' 
-#' @name linear_gregorian
-#' @export
-year <- linear_time(
-  chronon = cal_gregorian$year(1L)
-)
-
-#' @examples
+#' # ISO week-based year
+#' year(yearweek(Sys.Date()))
 #' 
+#' # Year-quarter
 #' yearquarter(Sys.Date())
 #' yearquarter(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname linear_gregorian
-#' @export
-yearquarter <- linear_time(
-  chronon = cal_gregorian$quarter(1L),
-  granules = list(cal_gregorian$year(1L))
-)
-
-#' @examples
-#' 
+#' # Year-month
 #' yearmonth(Sys.Date())
 #' yearmonth(Sys.Date(), discrete = FALSE)
 #' 
-#' @rdname linear_gregorian
-#' @export
-yearmonth <- linear_time(
-  chronon = cal_gregorian$month(1L),
-  granules = list(cal_gregorian$year(1L))
-)
-
-#' ISO 8601 year-week time representation
-#'
-#' Create or coerce using `yearweek()`.
-#'
-#' @inheritParams yearmonth
-#' @param .data Another object to be coerced into ISO 8601 year-weeks.
-#'
-#' @examples
-#' 
+#' # Year-week (ISO 8601)
 #' yearweek(Sys.Date())
 #' yearweek(0:52)
 #' 
+#' @name linear_time_helpers
 #' @export
-#' @name linear_iso8601
-yearweek <- linear_time(granules = list(cal_isoweek$year(1L)), chronon = cal_isoweek$week(1L))
+year <- new_linear_time(
+  chronon = year(1L)
+)
 
-#' @examples
-#' 
-#' yearmonthday(Sys.Date())
-#' yearmonthday(Sys.Date(), discrete = FALSE)
-#' 
-#' @rdname linear_gregorian
+#' @rdname linear_time_helpers
 #' @export
-yearmonthday <- linear_time(
-  chronon = cal_gregorian$day(1L),
-  granules = list(cal_gregorian$year(1L), cal_gregorian$month(1L))
+yearquarter <- new_linear_time(
+  chronon = quarter(1L),
+  granules = list(year(1L))
+)
+
+#' @rdname linear_time_helpers
+#' @export
+yearmonth <- new_linear_time(
+  chronon = month(1L),
+  granules = list(year(1L))
+)
+
+#' @rdname linear_time_helpers
+#' @export
+yearmonthday <- new_linear_time(
+  chronon = day(1L),
+  granules = list(year(1L), month(1L))
+)
+
+#' @rdname linear_time_helpers
+#' @export
+yearweek <- new_linear_time(
+  granules = list(year(1L)), chronon = week(1L),
+  fallback_calendar = cal_isoweek
 )
 
 #' @importFrom vctrs vec_math

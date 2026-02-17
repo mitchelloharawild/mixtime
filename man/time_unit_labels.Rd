@@ -10,7 +10,7 @@ time_unit_full(x, ...)
 time_unit_abbr(x, ...)
 }
 \arguments{
-\item{x}{A time unit object (e.g., \code{tu_month(1L)})}
+\item{x}{A time unit object (e.g., \code{cal_gregorian$month(1L)})}
 
 \item{...}{Additional arguments for methods.}
 }

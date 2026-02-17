@@ -2,42 +2,91 @@
 % Please edit documentation in R/linear_time.R
 \name{linear_time}
 \alias{linear_time}
-\title{Linear time representation}
+\title{Linear time points}
 \usage{
-linear_time(chronon, granules = list(), calendar = cal_gregorian)
+linear_time(
+  data,
+  chronon = time_chronon(data),
+  tz = tz_name(data),
+  discrete = TRUE,
+  calendar = time_calendar(data),
+  granules = list()
+)
 }
 \arguments{
-\item{chronon}{A time unit object representing the chronon (e.g., \code{day(1)})}
+\item{data}{Input data to convert to linear time. Can be:
+\itemize{
+\item Numeric values (interpreted as chronons since Unix epoch)
+\item Character strings (parsed as dates/times)
+\item Date or POSIXct objects
+\item Other time objects
+}}
 
-\item{granules}{A list of time unit objects representing the granules (e.g., \code{list(year(1), month(1))})}
+\item{chronon}{A time unit expression representing the chronon (smallest
+indivisible time unit), evaluated in the context of \code{calendar}. Use
+unquoted expressions like \code{month(1L)} or \code{hour(1L)}. Chronons from a
+specific calendar can also be used (e.g. \code{cal_isoweek$week(1L)}).
+Defaults to the time chronon of the input \code{data} (\code{time_chronon(data)}).}
 
-\item{calendar}{A calendar used to find the time units (e.g., \code{cal_isoweek})}
+\item{tz}{Time zone for the time representation. Defaults to the time zone
+of the input \code{data} (\code{tz_name(data)}). Time zones need to be valid
+identifiers for the IANA time zone database (\code{\link[tzdb:tzdb_names]{tzdb::tzdb_names()}})}
+
+\item{discrete}{Logical. If \code{TRUE} (default), returns integer chronons since
+Unix epoch (discrete time model). If \code{FALSE}, returns fractional chronons
+allowing representation of partial time units (continuous time model).}
+
+\item{calendar}{Calendar system used to evaluate \code{chronon} and \code{granules}.
+Defaults to \code{time_calendar(data)} for existing time objects. Common options
+include \link{cal_gregorian} and \link{cal_isoweek}.}
+
+\item{granules}{A list of time unit expressions representing structural units
+larger than the chronon (e.g., years, quarters, months). These define how
+time is displayed and grouped. Use unquoted expressions like
+\code{list(year(1L), quarter(1L))}. Defaults to an empty list.}
 }
 \value{
-An function used to create continuous time points.
+A \code{mt_linear} time vector, which is a subclass of \code{mt_time}.
 }
 \description{
-\code{linear_time()} creates a linear time representation using specified
-granules and a chronon. Granules are larger time units that define the structure
-of time (e.g., years, months), while the chronon is the smallest indivisible
-time unit (e.g., days, hours).
+\code{linear_time()} creates a vector of linear time points with a specified
+chronon (smallest time unit). This function is useful for creating custom
+time representations that aren't covered by the convenience functions like
+\code{\link[=yearmonth]{yearmonth()}} or \code{\link[=yearweek]{yearweek()}}.
 }
 \examples{
+# Hourly time with year-month-day granules
+linear_time(
+  Sys.time(),
+  chronon = hour(1L),
+  granules = list(year(1L), month(1L), day(1L))
+)
 
-# A year-month time representation with months as the chronon
-ym <- linear_time(month(1L), list(year(1L)))
-ym(Sys.Date())
+# Monthly chronons with year-quarter granules
+linear_time(
+  Sys.Date(),
+  chronon = month(1L),
+  granules = list(year(1L), quarter(1L))
+)
 
-# A year-quarter-month time representation with months as the chronon
-yqm <- linear_time(month(1L), list(year(1L), quarter(1L)))
-yqm(1:100)
-yqm(Sys.Date())
+# Discrete vs continuous time
+linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
+linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 
-# A year-day time representation with days as the chronon
-yd <- linear_time(day(1L), list(year(1L)))
-yd(Sys.Date())
+# ISO week calendar with week-day structure
+linear_time(
+  Sys.Date(),
+  chronon = day(1L),
+  granules = list(year(1L), week(1L)),
+  calendar = cal_isoweek
+)
 
-ymd_h <- linear_time(hour(1L), list(year(1L), month(1L), day(1L)))
-ymd_h(Sys.time())
-
+}
+\seealso{
+\itemize{
+\item \code{\link[=new_linear_time]{new_linear_time()}} for creating reusable linear time functions
+\item \code{\link[=yearmonth]{yearmonth()}}, \code{\link[=yearquarter]{yearquarter()}}, \code{\link[=year]{year()}} for Gregorian time representations
+\item \code{\link[=yearweek]{yearweek()}} for ISO 8601 week-based time
+\item \link{cal_gregorian}, \link{cal_isoweek} for calendar systems
+}
 }

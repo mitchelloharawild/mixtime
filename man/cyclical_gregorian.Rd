@@ -16,7 +16,9 @@ day_of_month(.data, tz = NULL, discrete = TRUE)
 \arguments{
 \item{.data}{Another object to be coerced into the specified cyclical time.}
 
-\item{tz}{Timezone, defaults to "UTC".}
+\item{tz}{Time zone for the time representation. Defaults to the time zone
+of the input \code{data} (\code{tz_name(data)}). Time zones need to be valid
+identifiers for the IANA time zone database (\code{\link[tzdb:tzdb_names]{tzdb::tzdb_names()}})}
 
 \item{discrete}{If \code{TRUE}, the position within the cycle that \code{.data}
 falls into is returned as an integer. If \code{FALSE}, a fractional
@@ -64,6 +66,5 @@ day_of_year(Sys.Date())
 
 }
 \seealso{
-\link{linear_gregorian} for linear Gregorian time representations,
-\code{\link[=cyclical_time]{cyclical_time()}} for creating custom cyclical time representations
+\link{linear_time} for creating linear time vectors.
 }

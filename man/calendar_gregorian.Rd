@@ -37,14 +37,13 @@ the Gregorian calendar rules. For units that don't have a fixed relationship
 }
 \examples{
 # Create a custom time representation using Gregorian units
-dayhour <- linear_time(
-  granules = list(cal_gregorian$day(1L)),
-  chronon = cal_gregorian$hour(1L)
+linear_time(
+  Sys.time(),
+  chronon = hour(1L)
 )
 
 }
 \seealso{
-\code{\link[=linear_time]{linear_time()}} for creating custom time representations,
-\link{linear_gregorian} for pre-defined Gregorian time representations
+\code{\link[=linear_time]{linear_time()}} for creating linear time points.
 }
 \keyword{datasets}

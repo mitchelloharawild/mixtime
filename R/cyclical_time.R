@@ -144,7 +144,7 @@ vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 #' @param discrete If `TRUE`, the position within the cycle that `.data` 
 #' falls into is returned as an integer. If `FALSE`, a fractional 
 #' position is returned (analagous to time using a continuous time model).
-#' @inheritParams linear_gregorian
+#' @inheritParams linear_time
 #' 
 #' @details
 #' - `month_of_year()`: Represents the month position within a year (1-12).
@@ -170,8 +170,7 @@ vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 #' )
 #' ```
 #' 
-#' @seealso [linear_gregorian] for linear Gregorian time representations,
-#'   [cyclical_time()] for creating custom cyclical time representations
+#' @seealso [linear_time] for creating linear time vectors.
 #' 
 #' @examples
 #' 
@@ -209,7 +208,7 @@ day_of_month <- cyclical_time(
 #'
 #' @param .data A vector to be coerced into day of week. This can be a date, 
 #'   date-time, or numeric vector.
-#' @inheritParams linear_iso8601
+#' @inheritParams linear_time_helpers
 #' @inheritParams cyclical_gregorian
 #'
 #' @return A cyclical time object representing the day of the week.
