@@ -2,34 +2,90 @@
 % Please edit documentation in R/cyclical_time.R
 \name{cyclical_time}
 \alias{cyclical_time}
-\title{Cyclical time representation}
+\title{Cyclical time points}
 \usage{
-cyclical_time(chronon, cycle, calendar = cal_gregorian)
+cyclical_time(
+  data,
+  chronon,
+  cycle,
+  tz = tz_name(data),
+  discrete = TRUE,
+  calendar = time_calendar(data)
+)
 }
 \arguments{
-\item{chronon}{A time unit object representing the chronon (e.g., \code{month(1L)})}
+\item{data}{Input data to convert to cyclical time. Can be:
+\itemize{
+\item Numeric values (interpreted as chronons, 1-indexed)
+\item Character strings (parsed as dates/times)
+\item Date or POSIXct objects
+\item Other time objects
+}}
 
-\item{cycle}{A time unit object representing the cycle (e.g., \code{year(1L)})}
+\item{chronon}{A time unit expression representing the chronon (smallest
+indivisible time unit), evaluated in the context of \code{calendar}. Use
+unquoted expressions like \code{day(1L)} or \code{month(1L)}. Chronons from a
+specific calendar can also be used (e.g. \code{cal_isoweek$day(1L)}).}
 
-\item{calendar}{A calendar used to find the time units (e.g., \code{cal_isoweek})}
+\item{cycle}{A time unit expression representing the cycle (larger time unit
+that defines the period), evaluated in the context of \code{calendar}. Use
+unquoted expressions like \code{week(1L)} or \code{year(1L)}.}
+
+\item{tz}{Time zone for the time representation. Defaults to the time zone
+of the input \code{data} (\code{tz_name(data)}). Time zones need to be valid
+identifiers for the IANA time zone database (\code{\link[tzdb:tzdb_names]{tzdb::tzdb_names()}})}
+
+\item{discrete}{Logical. If \code{TRUE} (default), returns integer positions within
+the cycle (discrete time model). If \code{FALSE}, returns fractional positions
+allowing representation of partial time units (continuous time model).}
+
+\item{calendar}{Calendar system used to evaluate \code{chronon} and \code{cycle}.
+Defaults to \code{time_calendar(data)} for existing time objects. Common options
+include \link{cal_gregorian} and \link{cal_isoweek}.}
 }
 \value{
-An function used to create cyclical time points.
+A \code{mt_cyclical} time vector, which is a subclass of \code{mt_time}.
 }
 \description{
-\code{cyclical_time()} creates a cyclical time representation using specified
-cycle and chronon (and optionally display granules). The cycles is the
-larger time unit that defines the time period over which the chronon loops
-over (e.g. a week, \code{week(1L)}). The chronon is the smaller time unit that
-iterates within each cycle (e.g. a day, \code{day(1L)}). Combined, these two
-granules form a cyclical time point (e.g. day of the week).
+\code{cyclical_time()} creates a vector of cyclical time points representing
+positions within repeating cycles. This function is useful for creating custom
+cyclical time representations that aren't covered by the convenience functions
+like \code{\link[=day_of_week]{day_of_week()}} or \code{\link[=month_of_year]{month_of_year()}}.
 }
 \examples{
+# Day of week (1-7, Monday = 1)
+cyclical_time(
+  Sys.Date(),
+  chronon = day(1L),
+  cycle = week(1L),
+  calendar = cal_isoweek
+)
 
-day_of_week <- cyclical_time(day(1L), week(1L), calendar = cal_isoweek)
-day_of_week(Sys.Date())
+# Month of year (1-12)
+cyclical_time(
+  Sys.Date(),
+  chronon = month(1L),
+  cycle = year(1L)
+)
 
-month_of_year <- cyclical_time(month(1L), year(1L))
-month_of_year(Sys.Date())
+# Discrete vs continuous time
+cyclical_time(Sys.Date(), chronon = day(1L), cycle = week(1L), discrete = TRUE)
+cyclical_time(Sys.Date(), chronon = day(1L), cycle = week(1L), discrete = FALSE)
 
+# Day of month with Gregorian calendar
+cyclical_time(
+  Sys.Date(),
+  chronon = day(1L),
+  cycle = month(1L),
+  calendar = cal_gregorian
+)
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=new_cyclical_time_fn]{new_cyclical_time_fn()}} for creating reusable cyclical time functions
+\item \code{\link[=day_of_week]{day_of_week()}}, \code{\link[=day_of_month]{day_of_month()}}, \code{\link[=day_of_year]{day_of_year()}} for common cyclical representations
+\item \code{\link[=month_of_year]{month_of_year()}}, \code{\link[=week_of_year]{week_of_year()}} for other cyclical time helpers
+\item \link{cal_gregorian}, \link{cal_isoweek} for calendar systems
+}
 }

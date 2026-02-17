@@ -131,7 +131,7 @@ linear_time <- function(
     data <- anytime::utctime(data)
   }
 
-  # Evaluate chronon and granules in calendar environment
+  # Evaluate chronon and granules with a calendar mask
   quo_chronon <- enquo(chronon)
   quo_granules <- enquo(granules)
   tryCatch({
