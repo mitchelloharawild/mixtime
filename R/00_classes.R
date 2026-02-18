@@ -69,15 +69,3 @@ mt_unit_s3 <- S7::new_S3_class(
 #' @export
 #' @rdname mt_unit
 mt_unit <- S7::new_class("mt_unit", parent = mt_unit_s3)
-
-#' @rdname mt_unit
-#' @export
-mt_tz_unit <- S7::new_class(
-  "mt_tz_unit", 
-  parent = mt_unit,
-  properties = list(tz = S7::new_property(S7::class_character, default = "UTC")),
-  validator = function(self) {
-    check_tz_name(self@tz)
-    NULL
-  }
-)

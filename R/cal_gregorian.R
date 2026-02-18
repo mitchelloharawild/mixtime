@@ -36,11 +36,11 @@ cal_gregorian <- new_calendar(
   year = S7::new_class("tu_year", parent = mt_tz_unit),
   quarter = S7::new_class("tu_quarter", parent = mt_tz_unit),
   month = S7::new_class("tu_month", parent = mt_tz_unit),
-  day = S7::new_class("tu_day", parent = mt_tz_unit),
-  hour = S7::new_class("tu_hour", parent = mt_tz_unit),
-  minute = S7::new_class("tu_minute", parent = mt_tz_unit),
-  second = S7::new_class("tu_second", parent = mt_tz_unit),
-  millisecond = S7::new_class("tu_millisecond", parent = mt_tz_unit),
+  day = cal_time_civil_midnight$day,
+  hour = cal_time_civil_midnight$hour,
+  minute = cal_time_civil_midnight$minute,
+  second = cal_time_civil_midnight$second,
+  millisecond = cal_time_civil_midnight$millisecond,
   class = "cal_gregorian"
 )
 
@@ -51,16 +51,6 @@ S7::method(time_unit_full, cal_gregorian$quarter) <- function(x) "quarter"
 S7::method(time_unit_abbr, cal_gregorian$quarter) <- function(x) "Q"
 S7::method(time_unit_full, cal_gregorian$month) <- function(x) "month"
 S7::method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
-S7::method(time_unit_full, cal_gregorian$day) <- function(x) "day"
-S7::method(time_unit_abbr, cal_gregorian$day) <- function(x) "D"
-S7::method(time_unit_full, cal_gregorian$hour) <- function(x) "hour"
-S7::method(time_unit_abbr, cal_gregorian$hour) <- function(x) "h"
-S7::method(time_unit_full, cal_gregorian$minute) <- function(x) "minute"
-S7::method(time_unit_abbr, cal_gregorian$minute) <- function(x) "m"
-S7::method(time_unit_full, cal_gregorian$second) <- function(x) "second"
-S7::method(time_unit_abbr, cal_gregorian$second) <- function(x) "s"
-S7::method(time_unit_full, cal_gregorian$millisecond) <- function(x) "millisecond"
-S7::method(time_unit_abbr, cal_gregorian$millisecond) <- function(x) "ms"
 
 ### Calendar algebra S7::methods for Gregorian time units
 S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$quarter)) <- function(x, y, at = NULL) {
@@ -80,20 +70,6 @@ S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$day)) <- 
 }
 S7::method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$month)) <- function(x, y, at = NULL) {
   vec_data(x)*3/vec_data(y)
-}
-S7::method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$hour)) <- function(x, y, at = NULL) {
-  vec_data(x)*24/vec_data(y)
-}
-S7::method(chronon_cardinality, list(cal_gregorian$hour, cal_gregorian$minute)) <- function(x, y, at = NULL) {
-  vec_data(x)*60/vec_data(y)
-}
-S7::method(chronon_cardinality, list(cal_gregorian$minute, cal_gregorian$second)) <- function(x, y, at = NULL) {
-  # if(at %in% .leap.seconds) 61 else 60
-
-  vec_data(x)*60/vec_data(y)
-}
-S7::method(chronon_cardinality, list(cal_gregorian$second, cal_gregorian$millisecond)) <- function(x, y, at = NULL) {
-  vec_data(x)*1000/vec_data(y)
 }
 
 monthdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
@@ -258,8 +234,4 @@ S7::method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- funct
 }
 S7::method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i) {
   month.abb[i+1L]
-}
-S7::method(cyclical_labels, list(cal_gregorian$day, S7::class_any)) <- function(granule, cycle, i) {
-  # Days count with 1-indexing
-  i + 1L
 }
