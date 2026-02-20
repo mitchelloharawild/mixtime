@@ -57,8 +57,11 @@ chronon_convert_impl <- function(x, from, to, discrete) {
   # Convert chronons along the path
   for (i in seq(2, length.out = length(path)-1)) {
     res <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], x)
-    part <- chronon_cardinality(path[[i]], path[[i-1L]], floor(res$chronon))
-    x <- res$chronon + res$remainder/part
+    x <- res$chronon
+    if (res$remainder != 0) {
+      part <- chronon_cardinality(path[[i]], path[[i-1L]], floor(res$chronon))
+      x <- x + res$remainder/part
+    }
   }
 
   if (discrete) x <- as.integer(floor(x))
