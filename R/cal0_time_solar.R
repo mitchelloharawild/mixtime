@@ -49,6 +49,24 @@ cal_time_solar_noon <- new_calendar(
   day = S7::new_class("tu_day_noon", parent = mt_loc_unit),
 )
 
+# The number of UTC seconds in a sunrise-based day
+S7::method(chronon_cardinality, list(cal_time_solar_sunrise$day, cal_time_civil_midnight$second)) <- function(x, y, at = NULL) {
+  at <- approx_sunrises_from_utc(at, x@lat, x@lon, -0.833)
+  (approx_utc_from_sunrises(at + vec_data(x), x@lat, x@lon, -0.833) - approx_utc_from_sunrises(at, x@lat, x@lon, -0.833)) / vec_data(y)
+}
+
+# The number of UTC seconds in a noon-based day
+S7::method(chronon_cardinality, list(cal_time_solar_noon$day, cal_time_civil_midnight$second)) <- function(x, y, at = NULL) {
+  at <- approx_noons_from_utc(at, x@lat, x@lon)
+  (approx_utc_from_noons(at + vec_data(x), x@lat, x@lon) - approx_utc_from_noons(at, x@lat, x@lon)) / vec_data(y)
+}
+
+# The number of UTC seconds in a sunset-based day
+S7::method(chronon_cardinality, list(cal_time_solar_sunset$day, cal_time_civil_midnight$second)) <- function(x, y, at = NULL) {
+  at <- approx_sunsets_from_utc(at, x@lat, x@lon, -0.833)
+  (approx_utc_from_sunsets(at + vec_data(x), x@lat, x@lon, -0.833) - approx_utc_from_sunsets(at, x@lat, x@lon, -0.833)) / vec_data(y)
+}
+
 S7::method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_sunrise$day)) <- function(from, to, x) {
   list(
     chronon = approx_sunrises_from_utc(x, to@lat, to@lon, -0.833),
