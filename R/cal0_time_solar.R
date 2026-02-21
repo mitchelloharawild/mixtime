@@ -49,6 +49,14 @@ cal_time_solar_noon <- new_calendar(
   day = S7::new_class("tu_day_noon", parent = mt_loc_unit),
 )
 
+# Time unit labels
+S7::method(time_unit_full, cal_time_solar_sunrise$day) <- function(x) "sunrise"
+S7::method(time_unit_abbr, cal_time_solar_sunrise$day) <- function(x) "D"
+S7::method(time_unit_full, cal_time_solar_noon$day) <- function(x) "noon"
+S7::method(time_unit_abbr, cal_time_solar_noon$day) <- function(x) "D"
+S7::method(time_unit_full, cal_time_solar_sunset$day) <- function(x) "sunset"
+S7::method(time_unit_abbr, cal_time_solar_sunset$day) <- function(x) "D"
+
 # The number of UTC seconds in a sunrise-based day
 S7::method(chronon_cardinality, list(cal_time_solar_sunrise$day, cal_time_civil_midnight$second)) <- function(x, y, at = NULL) {
   at <- approx_sunrises_from_utc(at, x@lat, x@lon, -0.833)
