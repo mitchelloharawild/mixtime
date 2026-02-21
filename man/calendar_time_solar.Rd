@@ -26,7 +26,7 @@ A time unit object for the Gregorian calendar system.
 }
 \description{
 Time unit constructors for the solar time system where the boundary of each
-day is at \link{sunrise, sunset, noon}. This calendar is intended to be
+day is at sunrise, sunset, or noon. This calendar is intended to be
 built on by other calendars to add common time components.
 }
 \details{
