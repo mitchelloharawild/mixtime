@@ -163,7 +163,7 @@ linear_time <- function(
   # Cast from Date, POSIXct, etc.
   if (!is.numeric(data) || !is.null(attributes(data))) {
     data <- chronon_convert(
-      data + tz_offset(data, tz), 
+      data + tz_offset(data, tz_name(data)), 
       chronon,
       discrete = discrete
     )
