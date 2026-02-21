@@ -75,44 +75,45 @@ S7::method(chronon_cardinality, list(cal_time_solar_sunset$day, cal_time_civil_m
   (approx_utc_from_sunsets(at + vec_data(x), x@lat, x@lon, -0.833) - approx_utc_from_sunsets(at, x@lat, x@lon, -0.833)) / vec_data(y)
 }
 
+
 S7::method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_sunrise$day)) <- function(from, to, x) {
   list(
-    chronon = approx_sunrises_from_utc(x, to@lat, to@lon, -0.833),
+    chronon = approx_sunrises_from_utc(as.double(x), to@lat, to@lon, -0.833),
     remainder = 0
   )
 }
 
 S7::method(chronon_divmod, list(cal_time_solar_sunrise$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
   list(
-    chronon = approx_utc_from_sunrises(x, from@lat, from@lon, -0.833),
+    chronon = approx_utc_from_sunrises(as.double(x), from@lat, from@lon, -0.833),
     remainder = 0
   )
 }
 
 S7::method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_noon$day)) <- function(from, to, x) {
   list(
-    chronon = approx_noons_from_utc(x, to@lat, to@lon, -0.833),
+    chronon = approx_noons_from_utc(as.double(x), to@lat, to@lon),
     remainder = 0
   )
 }
 
 S7::method(chronon_divmod, list(cal_time_solar_noon$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
   list(
-    chronon = approx_utc_from_noons(x, from@lat, from@lon, -0.833),
+    chronon = approx_utc_from_noons(as.double(x), from@lat, from@lon),
     remainder = 0
   )
 }
 
 S7::method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_sunset$day)) <- function(from, to, x) {
   list(
-    chronon = approx_sunsets_from_utc(x, to@lat, to@lon, -0.833),
+    chronon = approx_sunsets_from_utc(as.double(x), to@lat, to@lon, -0.833),
     remainder = 0
   )
 }
 
 S7::method(chronon_divmod, list(cal_time_solar_sunset$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
   list(
-    chronon = approx_utc_from_sunsets(x, from@lat, from@lon, -0.833),
+    chronon = approx_utc_from_sunsets(as.double(x), from@lat, from@lon, -0.833),
     remainder = 0
   )
 }
