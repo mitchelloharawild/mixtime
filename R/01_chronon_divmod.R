@@ -72,7 +72,9 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
 
   # Backward convert remainder
   for (i in seq(length(remainder), by = -1L, length.out = length(remainder) - 1L)) {
-    remainder[[i-1L]] <- remainder[[i-1L]] + chronon_cardinality(path[[i]], path[[i-1L]], chronon[[i]])*remainder[[i]]
+    if (remainder[[i]] != 0) {
+      remainder[[i-1L]] <- remainder[[i-1L]] + chronon_cardinality(path[[i]], path[[i-1L]], chronon[[i]])*remainder[[i]]
+    }
   }
 
   list(
