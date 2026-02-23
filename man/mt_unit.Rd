@@ -17,6 +17,15 @@ mt_loc_unit(.data = 1L, lat = 0, lon = 0, alt = 0)
 \item{.data}{The number of time units}
 
 \item{tz}{The timezone name for the unit (valid units can be found with \verb{[tzdb::tzdb_names()]})}
+
+\item{lat}{Numeric. Latitude in decimal degrees. Range: -90 to 90.
+Default: 0 (equator).}
+
+\item{lon}{Numeric. Longitude in decimal degrees. Range: -180 to 180.
+Default: 0 (Prime Meridian).}
+
+\item{alt}{Numeric. Altitude in meters above sea level.
+Default: 0 (sea level).}
 }
 \value{
 A time unit object of class \code{mt_unit}
