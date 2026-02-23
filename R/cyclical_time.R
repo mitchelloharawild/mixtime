@@ -111,6 +111,11 @@ cyclical_time <- function(
   data, chronon, cycle, tz = tz_name(data),
   discrete = TRUE, calendar = time_calendar(data)
 ) {
+  # Parse text data
+  if (is.character(data)) {
+    data <- as.POSIXct(data, tz = tz)
+  }
+
   # Evaluate chronon and cycle with a calendar mask
   quo_chronon <- enquo(chronon)
   quo_cycle <- enquo(cycle)

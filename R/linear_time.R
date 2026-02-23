@@ -128,7 +128,7 @@ linear_time <- function(
   discrete = TRUE, calendar = time_calendar(data), granules = list()) {
   # Parse text data
   if (is.character(data)) {
-    data <- anytime::utctime(data)
+    data <- as.POSIXct(data, tz = tz)
   }
 
   # Evaluate chronon and granules with a calendar mask
