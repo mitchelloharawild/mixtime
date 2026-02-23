@@ -1,10 +1,10 @@
 test_that("seq.mixtime works with linear time using integer by", {
   # yearmonth sequences
-  result <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"))
+  result <- seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"))
   expect_s3_class(result, "mixtime")
   expect_length(result, 12)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan")))
-  expect_equal(format(result[[12]]), format(yearmonth("2020 Dec")))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01")))
+  expect_equal(format(result[[12]]), format(yearmonth("2020-12-01")))
   
   # yearquarter with length.out and integer by
   result <- seq(yearquarter("2020-01-01"), length.out = 5, by = 1L)
@@ -30,11 +30,11 @@ test_that("seq.mixtime works with linear time using string intervals", {
   expect_equal(format(result[[12]]), format(yearmonthday("2020-12-01")))
   
   # Year intervals
-  result <- seq(yearmonth("2020 Jan"), yearmonth("2025 Jan"), by = "1 year")
+  result <- seq(yearmonth("2020-01-01"), yearmonth("2025-01-01"), by = "1 year")
   expect_s3_class(result, "mixtime")
   expect_length(result, 6)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan")))
-  expect_equal(format(result[[6]]), format(yearmonth("2025 Jan")))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01")))
+  expect_equal(format(result[[6]]), format(yearmonth("2025-01-01")))
   
   # Week intervals with length.out
   result <- seq(yearmonthday("2020-01-01"), length.out = 10, by = "2 weeks")
@@ -46,11 +46,11 @@ test_that("seq.mixtime works with linear time using string intervals", {
 
 test_that("seq.mixtime works with linear time using time unit objects", {
   # Month time units
-  result <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = cal_gregorian$month(2L))
+  result <- seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$month(2L))
   expect_s3_class(result, "mixtime")
   expect_length(result, 6)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan")))
-  expect_equal(format(result[[6]]), format(yearmonth("2020 Nov")))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01")))
+  expect_equal(format(result[[6]]), format(yearmonth("2020-11-01")))
   
   # Year time units with length.out
   result <- seq(yearmonthday("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))
@@ -93,11 +93,11 @@ test_that("seq.mixtime works with cyclical time", {
 
 test_that("seq.mixtime handles length.out correctly", {
   # With linear time
-  result <- seq(yearmonth("2020 Jan"), length.out = 24)
+  result <- seq(yearmonth("2020-01-01"), length.out = 24)
   expect_s3_class(result, "mixtime")
   expect_length(result, 24)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan")))
-  expect_equal(format(result[[24]]), format(yearmonth("2021 Dec")))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01")))
+  expect_equal(format(result[[24]]), format(yearmonth("2021-12-01")))
   
   # With cyclical time
   result <- seq(month_of_year(0L), length.out = 15)
@@ -109,20 +109,20 @@ test_that("seq.mixtime handles length.out correctly", {
 test_that("seq.mixtime handles along.with correctly", {
   reference_vec <- 1:10
   
-  result <- seq(yearmonth("2020 Jan"), along.with = reference_vec)
+  result <- seq(yearmonth("2020-01-01"), along.with = reference_vec)
   expect_s3_class(result, "mixtime")
   expect_length(result, 10)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan")))
-  expect_equal(format(result[[10]]), format(yearmonth("2020 Oct")))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01")))
+  expect_equal(format(result[[10]]), format(yearmonth("2020-10-01")))
 })
 
 test_that("seq.mixtime handles backward sequences", {
   # Linear time going backward
-  result <- seq(yearmonth("2020 Dec"), yearmonth("2020 Jan"), by = -1L)
+  result <- seq(yearmonth("2020-12-01"), yearmonth("2020-01-01"), by = -1L)
   expect_s3_class(result, "mixtime")
   expect_length(result, 12)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Dec")))
-  expect_equal(format(result[[12]]), format(yearmonth("2020 Jan")))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-12-01")))
+  expect_equal(format(result[[12]]), format(yearmonth("2020-01-01")))
   
   # With negative time units
   result <- seq(yearmonthday("2020-12-31"), yearmonthday("2020-12-01"), by = cal_gregorian$day(-5L))
@@ -134,18 +134,18 @@ test_that("seq.mixtime handles backward sequences", {
 
 test_that("seq.mixtime handles edge cases", {
   # Single element sequence
-  result <- seq(yearmonth("2020 Jan"), yearmonth("2020 Jan"))
+  result <- seq(yearmonth("2020-01-01"), yearmonth("2020-01-01"))
   expect_s3_class(result, "mixtime")
   expect_length(result, 1)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan")))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01")))
   
   # Length.out = 1
-  result <- seq(yearmonth("2020 Jan"), length.out = 1)
+  result <- seq(yearmonth("2020-01-01"), length.out = 1)
   expect_s3_class(result, "mixtime")
   expect_length(result, 1)
   
   # Empty along.with (though unusual)
-  result <- seq(yearmonth("2020 Jan"), along.with = integer(0))
+  result <- seq(yearmonth("2020-01-01"), along.with = integer(0))
   expect_s3_class(result, "mixtime")
   expect_length(result, 0)
 })
@@ -159,7 +159,7 @@ test_that("seq.mixtime works with Date objects in mixtime", {
 
 test_that("seq.mixtime works with different by specifications", {
   # Integer by
-  result1 <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = 2L)
+  result1 <- seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = 2L)
   expect_length(result1, 6)
   
   # String by
@@ -167,7 +167,7 @@ test_that("seq.mixtime works with different by specifications", {
   expect_s3_class(result2, "mixtime")
   
   # Time unit by
-  result3 <- seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = cal_gregorian$quarter(1L))
+  result3 <- seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$quarter(1L))
   expect_s3_class(result3, "mixtime")
   expect_length(result3, 4)
 })
@@ -175,10 +175,10 @@ test_that("seq.mixtime works with different by specifications", {
 
 test_that("seq.mixtime with fractional linear time", {
   # Fractional yearmonth with day-based by
-  result <- seq(yearmonth("2020 Jan", discrete = FALSE), yearmonth("2025 Jan"), by = "30 days")
+  result <- seq(yearmonth("2020-01-01", discrete = FALSE), yearmonth("2025-01-01"), by = "30 days")
   expect_s3_class(result, "mixtime")
   expect_length(result, 61)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan", discrete = FALSE)))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01", discrete = FALSE)))
   # Last element should be close to but not exceed the end
   expect_match(format(result[[61]]), "2024-Dec-")
   
@@ -189,11 +189,11 @@ test_that("seq.mixtime with fractional linear time", {
   expect_equal(format(result[[1]]), format(yearmonthday("2020-01-01", discrete = FALSE)))
   
   # Fractional yearmonth with month-based by (should work cleanly)
-  result <- seq(yearmonth("2020 Jan", discrete = FALSE), yearmonth("2020 Jun"), by = "1 month")
+  result <- seq(yearmonth("2020-01-01", discrete = FALSE), yearmonth("2020-06-01"), by = "1 month")
   expect_s3_class(result, "mixtime")
   expect_length(result, 6)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Jan", discrete = FALSE)))
-  expect_equal(format(result[[6]]), format(yearmonth("2020 Jun", discrete = FALSE)))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-01-01", discrete = FALSE)))
+  expect_equal(format(result[[6]]), format(yearmonth("2020-06-01", discrete = FALSE)))
   
   # Fractional yearquarter with day-based by
   result <- seq(yearquarter("2020-01-01", discrete = FALSE), length.out = 10, by = "15 days")
@@ -203,15 +203,15 @@ test_that("seq.mixtime with fractional linear time", {
   expect_equal(format(result[[1]]), format(yearquarter("2020-01-01", discrete = FALSE)))
   
   # Fractional with length.out
-  result <- seq(yearmonth("2020 Jan", discrete = FALSE), length.out = 13, by = "25 days")
+  result <- seq(yearmonth("2020-01-01", discrete = FALSE), length.out = 13, by = "25 days")
   expect_s3_class(result, "mixtime")
   expect_length(result, 13)
   expect_equal(format(result[[13]]), format(yearmonth(as.Date("2020-01-01") + 25*12, discrete = FALSE)))
   
   # Backward fractional sequence
-  result <- seq(yearmonth("2020 Dec", discrete = FALSE), yearmonth("2020 Jan"), by = "-30 days")
+  result <- seq(yearmonth("2020-12-01", discrete = FALSE), yearmonth("2020-01-01"), by = "-30 days")
   expect_s3_class(result, "mixtime")
   expect_gt(length(result), 10)
-  expect_equal(format(result[[1]]), format(yearmonth("2020 Dec", discrete = FALSE)))
+  expect_equal(format(result[[1]]), format(yearmonth("2020-12-01", discrete = FALSE)))
   expect_equal(format(result[[12]]), format(yearmonth("2020-01-06", discrete = FALSE)))
 })
