@@ -29,7 +29,7 @@ chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 #' @rdname chronon_convert
 chronon_convert.S7_methods <- function(x, to, discrete = FALSE) S7_method_docs()
 
-chronon_convert_impl <- function(x, from, to, discrete) {
+chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
   # Convert between same time unit types
   if (identical(S7::S7_class(from), S7::S7_class(to))) {
     x <- vec_data(x) * vec_data(from) / vec_data(to)
@@ -49,6 +49,14 @@ chronon_convert_impl <- function(x, from, to, discrete) {
     to
   )
 
+  # Find timezone offsets for chronon boundaries
+  if (tz != "UTC") {
+    `1s` <- cal_time_civil_midnight$second(1L)
+    xs <- chronon_convert_impl(x, from, `1s`, discrete = FALSE, tz = "UTC")
+    xso <- get_tz_offset(as.double(xs), tz)
+    x <- chronon_convert_impl(xs + xso, `1s`, from, discrete = FALSE, tz = "UTC")
+  }
+
   path[[1]] <- from
   path[[length(path)]] <- to
   # Initialise intermediate classes with 1L
@@ -61,6 +69,12 @@ chronon_convert_impl <- function(x, from, to, discrete) {
     nz_mod <- res$remainder != 0
     part <- chronon_cardinality(path[[i]], path[[i-1L]], floor(res$chronon[nz_mod]))
     x[nz_mod] <- x[nz_mod] + res$remainder[nz_mod]/part
+  }
+
+  # Convert back to UTC time internally
+  if (tz != "UTC") {
+    f <- if (discrete) as.integer else identity
+    x <- x + f(chronon_convert_impl(xso, `1s`, to, discrete = FALSE, tz = "UTC"))
   }
 
   if (discrete) x <- as.integer(floor(x))

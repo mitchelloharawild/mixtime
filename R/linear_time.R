@@ -45,13 +45,12 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
   force(fallback_calendar)
 
   function(
-    data, tz = tz_name(data), discrete = TRUE, 
-    calendar = time_calendar(data)
+    data, discrete = TRUE, calendar = time_calendar(data), ...
   ) {
     linear_time(
-      data, chronon = !!chronon, granules = !!granules, 
-      tz = tz, discrete = discrete, 
-      calendar = cal_fallback(calendar, fallback_calendar)
+      data, chronon = !!chronon, granules = !!granules, discrete = discrete, 
+      calendar = cal_fallback(calendar, fallback_calendar),
+      ...
     )
   }
 }
@@ -163,7 +162,7 @@ linear_time <- function(
   # Cast from Date, POSIXct, etc.
   if (!is.numeric(data) || !is.null(attributes(data))) {
     data <- chronon_convert(
-      data + tz_offset(data, tz_name(data)), 
+      data,
       chronon,
       discrete = discrete
     )
@@ -200,7 +199,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
   if (is_zoned <- tz_name(time_chronon(x)) != "UTC") {
     # Apply timezone offset to produce local time
     tz_ext <- tz_abbreviation(x)
-    x <- vec_data(x) + floor(tz_offset(x))
+    x <- vec_data(x) + trunc(tz_offset(x))
   } else {
     x <- vec_data(x)
   }
@@ -221,7 +220,7 @@ vec_cast.character.mt_linear <- function(x, to, ...) {
 
   # Add epoch offset to the largest granule
   # TODO: Use calendar specific epochs
-  parts[[1L]] <- parts[[1L]] - chronon_convert(year(-1970L), units[[1L]])
+  parts[[1L]] <- parts[[1L]] - chronon_convert_impl(-1970L, cal_gregorian$year(1L), units[[1L]], discrete = TRUE, tz = "UTC")
 
   # Use cyclical labels for all but the largest granule
   for (i in seq(length(units), by = -1L, length.out = n_units - 1L)) {
