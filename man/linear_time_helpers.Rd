@@ -9,40 +9,18 @@
 \alias{yearweek}
 \title{Linear time helper functions}
 \usage{
-year(data, tz = tz_name(data), discrete = TRUE, calendar = time_calendar(data))
+year(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-yearquarter(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+yearquarter(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-yearmonth(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+yearmonth(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-yearmonthday(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+yearmonthday(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-yearweek(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+yearweek(data, discrete = TRUE, calendar = time_calendar(data), ...)
 }
 \arguments{
 \item{data}{A vector of time points (e.g. \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXt})}
-
-\item{tz}{Timezone, defaults to "UTC".}
 
 \item{discrete}{If \code{TRUE}, the number of chronons since Unix epoch that
 \code{.data} falls into is returned as an integer. If \code{FALSE}, a fractional number
@@ -51,6 +29,8 @@ of chronons is returned (analagous to time using a continuous time model).}
 \item{calendar}{A calendar used to evaluate the time units. Defaults to the
 calendar of the input data. Common options include \link{cal_gregorian} and
 \link{cal_isoweek}.}
+
+\item{...}{Additional arguments for \code{\link[=linear_time]{linear_time()}}, such as \code{tz} for timezones.}
 }
 \value{
 A \code{mt_linear} time vector.

@@ -260,13 +260,13 @@ vec_cast.double.mt_linear <- function(x, to, ...) {
 #' data's calendar.
 #' 
 #' @param data A vector of time points (e.g. [base::Date], [base::POSIXt])
-#' @param tz Timezone, defaults to "UTC".
 #' @param discrete If `TRUE`, the number of chronons since Unix epoch that
 #' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
 #'  of chronons is returned (analagous to time using a continuous time model).
 #' @param calendar A calendar used to evaluate the time units. Defaults to the
 #'   calendar of the input data. Common options include [cal_gregorian] and
 #'   [cal_isoweek].
+#' @param ... Additional arguments for [linear_time()], such as `tz` for timezones.
 #' 
 #' @details
 #' These functions create linear time representations with different chronons
