@@ -94,8 +94,9 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
 #' )
 #' 
 #' # Discrete vs continuous time
-#' cyclical_time(Sys.Date(), chronon = day(1L), cycle = week(1L), discrete = TRUE)
-#' cyclical_time(Sys.Date(), chronon = day(1L), cycle = week(1L), discrete = FALSE)
+#' # yearweek(x) is linear_time(x, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
+#' yearweek(Sys.time(), discrete = TRUE)
+#' yearweek(Sys.time(), discrete = FALSE)
 #' 
 #' # Day of month with Gregorian calendar
 #' cyclical_time(

@@ -73,16 +73,16 @@ day_of_week, etc.), sequences wrap around cyclically.
 }
 \examples{
 # Linear time sequences with integer by
-seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"))
+seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"))
 seq(yearquarter("2020-01-01"), length.out = 5, by = 3)
 
 # Linear time sequences with string intervals
 seq(yearmonthday("2020-01-01"), yearmonthday("2020-12-31"), by = "1 month")
-seq(yearmonth("2020 Jan"), yearmonth("2025 Jan"), by = "1 year")
+seq(yearmonth("2020-01-01"), yearmonth("2025-01-01"), by = "1 year")
 seq(yearmonthday("2020-01-01"), length.out = 10, by = "2 weeks")
 
 # Linear time sequences with time units
-seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"), by = cal_gregorian$month(2L))
+seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$month(2L))
 seq(yearmonthday("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))
 seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-31"), by = cal_gregorian$day(7L))
 

@@ -35,7 +35,7 @@ mt_tz_unit <- S7::new_class(
 #' # Create a custom time representation using Gregorian units
 #' hms <- new_cyclical_time_fn(
 #'   chronon = second(1L),
-#'   chronon = hour(1L)
+#'   cycle = hour(1L)
 #' )
 #' 
 #' @name calendar_time_civil
