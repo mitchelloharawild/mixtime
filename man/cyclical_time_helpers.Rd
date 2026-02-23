@@ -9,51 +9,26 @@
 \alias{week_of_year}
 \title{Cyclical time helpers}
 \usage{
-month_of_year(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+month_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-day_of_year(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+day_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-day_of_month(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+day_of_month(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-day_of_week(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+day_of_week(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-week_of_year(
-  data,
-  tz = tz_name(data),
-  discrete = TRUE,
-  calendar = time_calendar(data)
-)
+week_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
 }
 \arguments{
 \item{data}{Another object to be coerced into the specified cyclical time.}
-
-\item{tz}{The timezone to use for the cyclical time representation.}
 
 \item{discrete}{If \code{TRUE}, the position within the cycle that \code{data}
 falls into is returned as an integer. If \code{FALSE}, a fractional
 position is returned (analagous to time using a continuous time model).}
 
 \item{calendar}{A calendar object specifying the calendar system to use.}
+
+\item{...}{Additional arguments for \code{\link[=cyclical_time]{cyclical_time()}}, such as \code{tz} for timezones.}
 }
 \description{
 Helper functions for creating cyclical time representations. These functions

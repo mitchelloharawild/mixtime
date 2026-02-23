@@ -30,13 +30,12 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
   force(fallback_calendar)
 
   function(
-    data, tz = tz_name(data), discrete = TRUE, 
-    calendar = time_calendar(data)
+    data, discrete = TRUE, calendar = time_calendar(data), ...
   ) {
     cyclical_time(
-      data, chronon = !!chronon, cycle = !!cycle, 
-      tz = tz, discrete = discrete, 
-      calendar = cal_fallback(calendar, fallback_calendar)
+      data, chronon = !!chronon, cycle = !!cycle, discrete = discrete, 
+      calendar = cal_fallback(calendar, fallback_calendar),
+      ...
     )
   }
 }
@@ -243,8 +242,8 @@ vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 #' @param discrete If `TRUE`, the position within the cycle that `data` 
 #' falls into is returned as an integer. If `FALSE`, a fractional 
 #' position is returned (analagous to time using a continuous time model).
-#' @param tz The timezone to use for the cyclical time representation.
 #' @param calendar A calendar object specifying the calendar system to use.
+#' @param ... Additional arguments for [cyclical_time()], such as `tz` for timezones.
 #' 
 #' @section Gregorian cyclical time representations:
 #' - `month_of_year()`: Represents the month position within a year (1-12).
