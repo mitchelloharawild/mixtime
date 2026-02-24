@@ -1,0 +1,181 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# mixtime <a href="https://pkg.mitchelloharawild.com/mixtime/"><img src="man/figures/logo.svg" align="right" height="139" alt="mixtime website" /></a>
+
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R-CMD-check](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+mixtime provides flexible time classes for time series analysis and forecasting with mixed temporal granularities. It is designed for handling temporal data at different frequencies, making it ideal for:
+
+* Changing observation frequencies (e.g., historical quarterly records now reported monthly)
+* Analysis involving data at different temporal resolutions (e.g., quarterly tourism and monthly turnover)
+* Forecasting with temporal reconciliation across multiple time scales
+
+## Key Features
+
+**📈 Linear Time** - Create linear time vectors with `linear_time()` or with helpers:
+  * `yearquarter()`, `yearmonth()`, `yearweek()`, `yearmonthday()`
+
+**🔄 Cyclical Time** - Create cyclical time vectors with `cyclical_time()` or with helpers:
+  * `month_of_year()`, `day_of_year()`, `day_of_month()`, `day_of_week()`, `week_of_year()`
+
+**🕰️ Time types**
+  * Discrete and continuous time models
+  * Timezone support for all chronons
+  * Custom granule sizes (e.g. `week(2L)` for fortnights)
+  * Mixed granularity vectors for different temporal resolution over time (or series)
+
+**📅 Calendar Systems** - Support for several calendars:
+  * `cal_gregorian` - Gregorian dates (e.g. 2026-02-17)
+  * `cal_isoweek` - ISO week dates (e.g. 2026-W8-Tue)
+  * More calendars coming, including custom censored calendars
+
+**🧮 Temporal Operations**
+  * Rounding: `floor_time()`, `round_time()`, `ceiling_time()`
+  * Sequencing: `seq()` for linear and cyclical time points
+
+## Installation
+
+The development version can be installed from [GitHub](https://github.com/mitchelloharawild/mixtime) with:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("mitchelloharawild/mixtime")
+```
+
+## Usage
+
+```{r}
+library(mixtime)
+demo_time <- as.POSIXct("2026-02-22 18:30:42", tz = "UTC")
+demo_date <- as.Date("2026-02-22")
+```
+
+The mixtime package is designed around the time units of calendars. These time units are used to create and manipulate time vectors.
+
+### Calendars and time units
+
+Calendars have a `cal_*` prefix, which contain a set of time units that can be accessed with `<cal>$<unit>`.
+
+```{r}
+# The Gregorian calendar
+cal_gregorian
+
+# A 1-month time unit
+cal_gregorian$month(1L) # (1L is integer 1)
+
+# A 2-week time unit (fortnights)
+cal_isoweek$week(2L)
+```
+
+### Linear Time
+
+A linear time vector uses time units to define the resolution of time points, known as a `chronon` (the smallest unit of time). When the input time has a different resolution than the `chronon`, it will be automatically converted.
+
+```{r}
+linear_time(demo_date, chronon = cal_gregorian$month(1L))
+```
+
+Discrete time models (integer-based values) are used by default, however continuous time models (double-based values) can be used with `discrete = FALSE` to allow fractional chronons.
+
+```{r}
+# February 22nd is 75% through the month (in non-leap years)
+linear_time(demo_date, chronon = cal_gregorian$month(1L), discrete = FALSE)
+```
+
+Linear time helper functions are available to quickly create common time points.
+
+```{r linear-time}
+# Create time vectors at different granularities
+yearquarter(demo_date) + 0:7
+yearmonth(demo_date) + 0:11
+yearweek(demo_date) + 0:10
+yearmonthday(demo_date) + 0:6
+```
+
+The mixtime package allows time of different granulities to be combined in a single vector.
+
+```{r}
+c(
+  year(demo_date), yearquarter(demo_date), 
+  yearmonth(demo_date), yearweek(demo_date)
+)
+```
+
+### Cyclical Time
+
+A cyclical time vector is defined by two calendar time units: a `chronon` (the smaller unit of time) and a `cycle` (the larger unit that the `chronon` loops over).
+
+```{r}
+# The `calendar` argument provides a masking scope to `chronon` and `cycle`
+cyclical_time(demo_date, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
+```
+
+There are several cyclical time helper functions for convenience.
+
+```{r cyclical-time}
+# Extract cyclical components
+month_of_year(demo_date)
+week_of_year(demo_date)
+day_of_week(demo_date)
+
+# Continuous cyclical time shows progress through chronons
+day_of_week(demo_time, discrete = FALSE)
+```
+
+### Timezones
+
+All linear and cyclical time vectors support timezones via the `tz` argument.
+
+```{r timezone}
+demo_time
+# Same day (Sunday) in LA
+yearmonthday(demo_time, tz = "America/Los_Angeles")
+yearmonthday(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
+day_of_week(demo_time, tz = "America/Los_Angeles")
+
+# Next day (Monday) in Melbourne (23% through the 23rd)
+yearmonthday(demo_time, tz = "Australia/Melbourne")
+yearmonthday(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
+day_of_week(demo_time, tz = "Australia/Melbourne")
+```
+
+### Temporal Manipulation
+
+Linear time points can be adjusted to the floor, ceiling, or rounded to a specified time unit.
+
+```{r manipulation}
+# Round dates to different granularities
+floor_time(demo_date, cal_gregorian$month(1L))
+round_time(demo_date, cal_isoweek$week(1L))
+ceiling_time(demo_date, cal_gregorian$month(1L))
+```
+
+### Time Sequences
+
+The `seq()` function creates sequences of time points iterating by a given time unit.
+
+```{r sequences}
+# Integer increments (advances by chronon's natural unit)
+seq(yearmonth(demo_date), by = 1L, length.out = 10)
+
+# Calendar time units allow sequencing by other units
+seq(yearmonthday(demo_date), by = cal_gregorian$month(1L), length.out = 8)
+```
+
+
