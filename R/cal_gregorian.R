@@ -33,9 +33,9 @@
 #' @name calendar_gregorian
 #' @export
 cal_gregorian <- new_calendar(
-  year = S7::new_class("tu_year", parent = mt_tz_unit),
-  quarter = S7::new_class("tu_quarter", parent = mt_tz_unit),
-  month = S7::new_class("tu_month", parent = mt_tz_unit),
+  year = new_class("tu_year", parent = mt_tz_unit),
+  quarter = new_class("tu_quarter", parent = mt_tz_unit),
+  month = new_class("tu_month", parent = mt_tz_unit),
   day = cal_time_civil_midnight$day,
   hour = cal_time_civil_midnight$hour,
   minute = cal_time_civil_midnight$minute,
@@ -45,21 +45,25 @@ cal_gregorian <- new_calendar(
 )
 
 # Time unit labels
-S7::method(time_unit_full, cal_gregorian$year) <- function(x) "year"
-S7::method(time_unit_abbr, cal_gregorian$year) <- function(x) "Y"
-S7::method(time_unit_full, cal_gregorian$quarter) <- function(x) "quarter"
-S7::method(time_unit_abbr, cal_gregorian$quarter) <- function(x) "Q"
-S7::method(time_unit_full, cal_gregorian$month) <- function(x) "month"
-S7::method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
+method(time_unit_full, cal_gregorian$year) <- function(x) "year"
+method(time_unit_abbr, cal_gregorian$year) <- function(x) "Y"
+method(time_unit_full, cal_gregorian$quarter) <- function(x) "quarter"
+method(time_unit_abbr, cal_gregorian$quarter) <- function(x) "Q"
+method(time_unit_full, cal_gregorian$month) <- function(x) "month"
+method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
 
-### Calendar algebra S7::methods for Gregorian time units
-S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$quarter)) <- function(x, y, at = NULL) {
+# Default granules
+method(chronon_granules, cal_gregorian$quarter) <- function(x) list(cal_gregorian$year(1L))
+method(chronon_granules, cal_gregorian$month) <- function(x) list(cal_gregorian$year(1L))
+
+### Calendar algebra methods for Gregorian time units
+method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$quarter)) <- function(x, y, at = NULL) {
   vec_data(x)*4/vec_data(y)
 }
-S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$month)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$month)) <- function(x, y, at = NULL) {
   vec_data(x)*12/vec_data(y)
 }
-S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$day)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
     stop("The number of days in a year requires the time context `at`.", call. = FALSE)
   }
@@ -68,7 +72,7 @@ S7::method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$day)) <- 
   }
   (is_leap_year(1970L + as.integer(at)) + 365L)/vec_data(y)
 }
-S7::method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$month)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$month)) <- function(x, y, at = NULL) {
   vec_data(x)*3/vec_data(y)
 }
 
@@ -79,7 +83,7 @@ is_leap_year <- function(year) {
   (year %% 4L == 0L & year %% 100L != 0L) | (year %% 400L == 0L)
 }
 
-S7::method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$day)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
     stop("The number of days in a month requires the time context `at`.", call. = FALSE)
   }
@@ -106,7 +110,7 @@ S7::method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$day)) <-
 }
 
 ### Chronon casting between Gregorian time units
-S7::method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
   # if (chronon_cardinality(to, cal_gregorian$month(1L)) != 1L) {
   #   stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
@@ -142,7 +146,7 @@ S7::method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- func
     remainder = day / x_scale # This is in cal_gregorian$day(1L), should be cal_gregorian$day(***?)
   )
 }
-S7::method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function(from, to, x) {
   # Convert to months since epoch
   x <- chronon_cardinality(from, cal_gregorian$month(1L))*x
   
@@ -170,7 +174,7 @@ S7::method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- func
 }
 
 
-S7::method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to years
   if (chronon_cardinality(to, cal_gregorian$year(1L)) != 1L) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
@@ -199,7 +203,7 @@ S7::method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- funct
     remainder = yday/x_scale
   )
 }
-S7::method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(from, to, x) {
   # Convert to years since epoch
   x <- chronon_cardinality(from, cal_gregorian$year(1L))*x
   
@@ -228,10 +232,10 @@ S7::method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- funct
 
 
 ### Cyclical labels for Gregorian time units
-S7::method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(granule, cycle, i) {
   # Quarters count with 1-indexing
   paste0("Q", i + 1L)
 }
-S7::method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i) {
   month.abb[i+1L]
 }

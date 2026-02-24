@@ -1,9 +1,9 @@
 #' @rdname mt_unit
 #' @export
-mt_tz_unit <- S7::new_class(
+mt_tz_unit <- new_class(
   "mt_tz_unit", 
   parent = mt_unit,
-  properties = list(tz = S7::new_property(S7::class_character, default = "UTC")),
+  properties = list(tz = new_property(S7::class_character, default = "UTC")),
   validator = function(self) {
     check_tz_name(self@tz)
     NULL
@@ -41,29 +41,36 @@ mt_tz_unit <- S7::new_class(
 #' @name calendar_time_civil
 #' @export
 cal_time_civil_midnight <- new_calendar(
-  day = S7::new_class("tu_day", parent = mt_tz_unit),
-  hour = S7::new_class("tu_hour", parent = mt_tz_unit),
-  minute = S7::new_class("tu_minute", parent = mt_tz_unit),
-  second = S7::new_class("tu_second", parent = mt_tz_unit),
-  millisecond = S7::new_class("tu_millisecond", parent = mt_tz_unit),
+  day = new_class("tu_day", parent = mt_tz_unit),
+  hour = new_class("tu_hour", parent = mt_tz_unit),
+  minute = new_class("tu_minute", parent = mt_tz_unit),
+  second = new_class("tu_second", parent = mt_tz_unit),
+  millisecond = new_class("tu_millisecond", parent = mt_tz_unit),
   class = "cal_time_civil_midnight"
 )
 
 
 # Time unit labels
-S7::method(time_unit_full, cal_time_civil_midnight$day) <- function(x) "day"
-S7::method(time_unit_abbr, cal_time_civil_midnight$day) <- function(x) "D"
-S7::method(time_unit_full, cal_time_civil_midnight$hour) <- function(x) "hour"
-S7::method(time_unit_abbr, cal_time_civil_midnight$hour) <- function(x) "h"
-S7::method(time_unit_full, cal_time_civil_midnight$minute) <- function(x) "minute"
-S7::method(time_unit_abbr, cal_time_civil_midnight$minute) <- function(x) "m"
-S7::method(time_unit_full, cal_time_civil_midnight$second) <- function(x) "second"
-S7::method(time_unit_abbr, cal_time_civil_midnight$second) <- function(x) "s"
-S7::method(time_unit_full, cal_time_civil_midnight$millisecond) <- function(x) "millisecond"
-S7::method(time_unit_abbr, cal_time_civil_midnight$millisecond) <- function(x) "ms"
+method(time_unit_full, cal_time_civil_midnight$day) <- function(x) "day"
+method(time_unit_abbr, cal_time_civil_midnight$day) <- function(x) "D"
+method(time_unit_full, cal_time_civil_midnight$hour) <- function(x) "hour"
+method(time_unit_abbr, cal_time_civil_midnight$hour) <- function(x) "h"
+method(time_unit_full, cal_time_civil_midnight$minute) <- function(x) "minute"
+method(time_unit_abbr, cal_time_civil_midnight$minute) <- function(x) "m"
+method(time_unit_full, cal_time_civil_midnight$second) <- function(x) "second"
+method(time_unit_abbr, cal_time_civil_midnight$second) <- function(x) "s"
+method(time_unit_full, cal_time_civil_midnight$millisecond) <- function(x) "millisecond"
+method(time_unit_abbr, cal_time_civil_midnight$millisecond) <- function(x) "ms"
+
+# Default granules
+method(chronon_granules, cal_time_civil_midnight$day) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L))
+method(chronon_granules, cal_time_civil_midnight$hour) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L))
+method(chronon_granules, cal_time_civil_midnight$minute) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L))
+method(chronon_granules, cal_time_civil_midnight$second) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L), cal_gregorian$minute(1L))
+method(chronon_granules, cal_time_civil_midnight$millisecond) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L), cal_gregorian$minute(1L), cal_gregorian$second(1L))
 
 ## DAY <-> HOUR
-S7::method(
+method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$day, cal_time_civil_midnight$hour)
 ) <- function(x, y, at = NULL) {
@@ -71,7 +78,7 @@ S7::method(
 }
 
 ## HOUR <-> MINUTE
-S7::method(
+method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$hour, cal_time_civil_midnight$minute)
 ) <- function(x, y, at = NULL) {
@@ -79,7 +86,7 @@ S7::method(
 }
 
 ## MINUTE <-> SECOND
-S7::method(
+method(
   chronon_cardinality,
   list(cal_time_civil_midnight$minute, cal_time_civil_midnight$second)
 ) <- function(x, y, at = NULL) {
@@ -87,7 +94,7 @@ S7::method(
 }
 
 ## SECOND <-> MILLISECOND
-S7::method(
+method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$second, cal_time_civil_midnight$millisecond)
 ) <- function(x, y, at = NULL) {
@@ -96,7 +103,7 @@ S7::method(
 
 
 # Cyclical labels
-S7::method(cyclical_labels, list(cal_time_civil_midnight$day, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_civil_midnight$day, S7::class_any)) <- function(granule, cycle, i) {
   # Days count with 1-indexing
   i + 1L
 }

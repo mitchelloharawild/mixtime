@@ -43,6 +43,8 @@ S7::method(time_unit_abbr, cal_isoweek$year) <- function(x) "IY"
 S7::method(time_unit_full, cal_isoweek$week) <- function(x) "week"
 S7::method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
 
+# Default granules
+method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_gregorian$year(1L))
 # 1:1 mapping for isoyears to years 
 # TODO - this is not entirely accurate, but is currently necessary
 # for converting the 1970 epoch in the print method

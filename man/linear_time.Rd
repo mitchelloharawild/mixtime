@@ -7,10 +7,10 @@
 linear_time(
   data,
   chronon = time_chronon(data),
-  tz = tz_name(data),
   discrete = TRUE,
   calendar = time_calendar(data),
-  granules = list()
+  granules = chronon_granules(chronon),
+  tz = tz_name(data)
 )
 }
 \arguments{
@@ -28,10 +28,6 @@ unquoted expressions like \code{month(1L)} or \code{hour(1L)}. Chronons from a
 specific calendar can also be used (e.g. \code{cal_isoweek$week(1L)}).
 Defaults to the time chronon of the input \code{data} (\code{time_chronon(data)}).}
 
-\item{tz}{Time zone for the time representation. Defaults to the time zone
-of the input \code{data} (\code{tz_name(data)}). Time zones need to be valid
-identifiers for the IANA time zone database (\code{\link[tzdb:tzdb_names]{tzdb::tzdb_names()}})}
-
 \item{discrete}{Logical. If \code{TRUE} (default), returns integer chronons since
 Unix epoch (discrete time model). If \code{FALSE}, returns fractional chronons
 allowing representation of partial time units (continuous time model).}
@@ -44,6 +40,10 @@ include \link{cal_gregorian} and \link{cal_isoweek}.}
 larger than the chronon (e.g., years, quarters, months). These define how
 time is displayed and grouped. Use unquoted expressions like
 \code{list(year(1L), quarter(1L))}. Defaults to an empty list.}
+
+\item{tz}{Time zone for the time representation. Defaults to the time zone
+of the input \code{data} (\code{tz_name(data)}). Time zones need to be valid
+identifiers for the IANA time zone database (\code{\link[tzdb:tzdb_names]{tzdb::tzdb_names()}})}
 }
 \value{
 A \code{mt_linear} time vector, which is a subclass of \code{mt_time}.

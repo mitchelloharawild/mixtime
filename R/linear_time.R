@@ -123,8 +123,10 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
 #' 
 #' @export
 linear_time <- function(
-  data, chronon = time_chronon(data), tz = tz_name(data),
-  discrete = TRUE, calendar = time_calendar(data), granules = list()) {
+  data, chronon = time_chronon(data), discrete = TRUE, 
+  calendar = time_calendar(data), granules = chronon_granules(chronon),
+  tz = tz_name(data)
+) {
   # Parse text data
   if (is.character(data)) {
     data <- as.POSIXct(data, tz = tz)
