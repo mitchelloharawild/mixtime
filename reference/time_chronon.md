@@ -16,7 +16,8 @@ time_chronon(x, ...)
 
   A time object (e.g., [base::Date](https://rdrr.io/r/base/Dates.html),
   [base::POSIXct](https://rdrr.io/r/base/DateTimeClasses.html),
-  [`linear_time()`](linear_time.md), etc.)
+  [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md),
+  etc.)
 
 - ...:
 
@@ -24,7 +25,8 @@ time_chronon(x, ...)
 
 ## Value
 
-A time unit object representing the chronon (e.g., `tu_day(1L)`)
+A time unit object representing the chronon (e.g.,
+`cal_gregorian$day(1L)`)
 
 ## Examples
 

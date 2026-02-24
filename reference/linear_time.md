@@ -1,73 +1,134 @@
-# Linear time representation
+# Linear time points
 
-`linear_time()` creates a linear time representation using specified
-granules and a chronon. Granules are larger time units that define the
-structure of time (e.g., years, months), while the chronon is the
-smallest indivisible time unit (e.g., days, hours).
+`linear_time()` creates a vector of linear time points with a specified
+chronon (smallest time unit). This function is useful for creating
+custom time representations that aren't covered by the convenience
+functions like
+[`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+or
+[`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md).
 
 ## Usage
 
 ``` r
-linear_time(chronon, granules = list())
+linear_time(
+  data,
+  chronon = time_chronon(data),
+  discrete = TRUE,
+  calendar = time_calendar(data),
+  granules = chronon_granules(chronon),
+  tz = tz_name(data)
+)
 ```
 
 ## Arguments
 
+- data:
+
+  Input data to convert to linear time. Can be:
+
+  - Numeric values (interpreted as chronons since Unix epoch)
+
+  - Character strings (parsed as dates/times)
+
+  - Date or POSIXct objects
+
+  - Other time objects
+
 - chronon:
 
-  A time unit object representing the chronon (e.g., `tu_day(1)`)
+  A time unit expression representing the chronon (smallest indivisible
+  time unit), evaluated in the context of `calendar`. Use unquoted
+  expressions like `month(1L)` or `hour(1L)`. Chronons from a specific
+  calendar can also be used (e.g. `cal_isoweek$week(1L)`). Defaults to
+  the time chronon of the input `data` (`time_chronon(data)`).
+
+- discrete:
+
+  Logical. If `TRUE` (default), returns integer chronons since Unix
+  epoch (discrete time model). If `FALSE`, returns fractional chronons
+  allowing representation of partial time units (continuous time model).
+
+- calendar:
+
+  Calendar system used to evaluate `chronon` and `granules`. Defaults to
+  `time_calendar(data)` for existing time objects. Common options
+  include
+  [cal_gregorian](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_gregorian.md)
+  and
+  [cal_isoweek](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_isoweek.md).
 
 - granules:
 
-  A list of time unit objects representing the granules (e.g.,
-  `list(tu_year(1), tu_month(1))`)
+  A list of time unit expressions representing structural units larger
+  than the chronon (e.g., years, quarters, months). These define how
+  time is displayed and grouped. Use unquoted expressions like
+  `list(year(1L), quarter(1L))`. Defaults to an empty list.
+
+- tz:
+
+  Time zone for the time representation. Defaults to the time zone of
+  the input `data` (`tz_name(data)`). Time zones need to be valid
+  identifiers for the IANA time zone database
+  ([`tzdb::tzdb_names()`](https://tzdb.r-lib.org/reference/tzdb_names.html))
 
 ## Value
 
-An function used to create continuous time points.
+A `mt_linear` time vector, which is a subclass of `mt_time`.
+
+## See also
+
+- [`new_linear_time_fn()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_linear_time_fn.md)
+  for creating reusable linear time functions
+
+- [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`year()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  for Gregorian time representations
+
+- [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  for ISO 8601 week-based time
+
+- [cal_gregorian](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_gregorian.md),
+  [cal_isoweek](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_isoweek.md)
+  for calendar systems
 
 ## Examples
 
 ``` r
-# A year-month time representation with months as the chronon
-ym <- linear_time(tu_month(1L), list(tu_year(1L)))
-ym(Sys.Date())
+# Hourly time with year-month-day granules
+linear_time(
+  Sys.time(),
+  chronon = hour(1L),
+  granules = list(year(1L), month(1L), day(1L))
+)
 #> <mixtime[1]>
-#> [1] 2026-Feb
+#> [1] 2026-Feb-24-h2
 
-# A year-quarter-month time representation with months as the chronon
-yqm <- linear_time(tu_month(1L), list(tu_year(1L), tu_quarter(1L)))
-yqm(1:100)
-#> <mixtime[100]>
-#>   [1] 1970-Q1-M1 1970-Q1-M2 1970-Q2-M0 1970-Q2-M1 1970-Q2-M2 1970-Q3-M0
-#>   [7] 1970-Q3-M1 1970-Q3-M2 1970-Q4-M0 1970-Q4-M1 1970-Q4-M2 1971-Q1-M0
-#>  [13] 1971-Q1-M1 1971-Q1-M2 1971-Q2-M0 1971-Q2-M1 1971-Q2-M2 1971-Q3-M0
-#>  [19] 1971-Q3-M1 1971-Q3-M2 1971-Q4-M0 1971-Q4-M1 1971-Q4-M2 1972-Q1-M0
-#>  [25] 1972-Q1-M1 1972-Q1-M2 1972-Q2-M0 1972-Q2-M1 1972-Q2-M2 1972-Q3-M0
-#>  [31] 1972-Q3-M1 1972-Q3-M2 1972-Q4-M0 1972-Q4-M1 1972-Q4-M2 1973-Q1-M0
-#>  [37] 1973-Q1-M1 1973-Q1-M2 1973-Q2-M0 1973-Q2-M1 1973-Q2-M2 1973-Q3-M0
-#>  [43] 1973-Q3-M1 1973-Q3-M2 1973-Q4-M0 1973-Q4-M1 1973-Q4-M2 1974-Q1-M0
-#>  [49] 1974-Q1-M1 1974-Q1-M2 1974-Q2-M0 1974-Q2-M1 1974-Q2-M2 1974-Q3-M0
-#>  [55] 1974-Q3-M1 1974-Q3-M2 1974-Q4-M0 1974-Q4-M1 1974-Q4-M2 1975-Q1-M0
-#>  [61] 1975-Q1-M1 1975-Q1-M2 1975-Q2-M0 1975-Q2-M1 1975-Q2-M2 1975-Q3-M0
-#>  [67] 1975-Q3-M1 1975-Q3-M2 1975-Q4-M0 1975-Q4-M1 1975-Q4-M2 1976-Q1-M0
-#>  [73] 1976-Q1-M1 1976-Q1-M2 1976-Q2-M0 1976-Q2-M1 1976-Q2-M2 1976-Q3-M0
-#>  [79] 1976-Q3-M1 1976-Q3-M2 1976-Q4-M0 1976-Q4-M1 1976-Q4-M2 1977-Q1-M0
-#>  [85] 1977-Q1-M1 1977-Q1-M2 1977-Q2-M0 1977-Q2-M1 1977-Q2-M2 1977-Q3-M0
-#>  [91] 1977-Q3-M1 1977-Q3-M2 1977-Q4-M0 1977-Q4-M1 1977-Q4-M2 1978-Q1-M0
-#>  [97] 1978-Q1-M1 1978-Q1-M2 1978-Q2-M0 1978-Q2-M1
-yqm(Sys.Date())
+# Monthly chronons with year-quarter granules
+linear_time(
+  Sys.Date(),
+  chronon = month(1L),
+  granules = list(year(1L), quarter(1L))
+)
 #> <mixtime[1]>
 #> [1] 2026-Q1-M1
 
-# A year-day time representation with days as the chronon
-yd <- linear_time(tu_day(1L), list(tu_year(1L)))
-yd(Sys.Date())
+# Discrete vs continuous time
+linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 #> <mixtime[1]>
-#> [1] 2026-44
+#> [1] 2026-Feb-24
+linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 2026-Feb-24-9.3%
 
-ymd_h <- linear_time(tu_hour(1L), list(tu_year(1L), tu_month(1L), tu_day(1L)))
-ymd_h(Sys.time())
+# ISO week calendar with week-day structure
+linear_time(
+  Sys.Date(),
+  chronon = day(1L),
+  granules = list(year(1L), week(1L)),
+  calendar = cal_isoweek
+)
 #> <mixtime[1]>
-#> [1] 2026-Feb-13-h8
+#> [1] 2026-W9-Tue
 ```

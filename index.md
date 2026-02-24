@@ -1,98 +1,254 @@
 # mixtime
 
-mixtime provides flexible time classes for representing mixed temporal
-granularities and custom calendar structures.
+mixtime provides flexible time classes for time series analysis and
+forecasting with mixed temporal granularities. It is designed for
+handling temporal data at different frequencies, making it ideal for:
 
-The feature wishlist for this package includes:
+- Changing observation frequencies (e.g., historical quarterly records
+  now reported monthly)
+- Analysis involving data at different temporal resolutions (e.g.,
+  quarterly tourism and monthly turnover)
+- Forecasting with temporal reconciliation across multiple time scales
 
-- Multiple temporal granularities (sub-daily, daily, weekly, monthly,
-  quarterly, etc.)
-- Optional and custom temporal origins
-- Custom calendar structures (working days/hours, holiday effects,
-  trading days)
-- Mixed temporal classes (daily and weekly granularities in same vector)
+## Key Features
 
-Stretch goals for the package include:
+**📈 Linear Time** - Create linear time vectors with
+[`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)
+or with helpers: \*
+[`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+[`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+[`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+[`yearmonthday()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
 
-- Representing temporal nesting (2020-01-05 is nested by 2020-01 is
-  nested by 2020)
-- `time_join()` operation which respects temporal nesting
+**🔄 Cyclical Time** - Create cyclical time vectors with
+[`cyclical_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time.md)
+or with helpers: \*
+[`month_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+[`day_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+[`day_of_month()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+[`day_of_week()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+[`week_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
+
+**🕰️ Time types** \* Discrete and continuous time models \* Timezone
+support for all chronons \* Custom granule sizes (e.g. `week(2L)` for
+fortnights) \* Mixed granularity vectors for different temporal
+resolution over time (or series)
+
+**📅 Calendar Systems** - Support for several calendars: \*
+`cal_gregorian` - Gregorian dates (e.g. 2026-02-17) \* `cal_isoweek` -
+ISO week dates (e.g. 2026-W8-Tue) \* More calendars coming, including
+custom censored calendars
+
+**🧮 Temporal Operations** \* Rounding:
+[`floor_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
+[`round_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
+[`ceiling_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
+\* Sequencing: [`seq()`](https://rdrr.io/r/base/seq.html) for linear and
+cyclical time points
 
 ## Installation
 
 The development version can be installed from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/mitchelloharawild/mixtime) with:
 
 ``` r
 # install.packages("remotes")
 remotes::install_github("mitchelloharawild/mixtime")
 ```
 
-## Example
-
-Creating mixtimes.
+## Usage
 
 ``` r
 library(mixtime)
-#> Registered S3 method overwritten by 'tsibble':
-#>   method               from 
-#>   as_tibble.grouped_df dplyr
-yearmonth(0:11) # By default, time classes have an origin
-#> <mixtime[12]>
-#>  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug
-#>  [9] 1970 Sep 1970 Oct 1970 Nov 1970 Dec
-yearmonth(0:11) - yearmonth(0) # However some operations can produce mixtimes without origins
-#> <vecvec[12]>
-#>  [1]  0  1  2  3  4  5  6  7  8  9 10 11
-
-yearquarter(0:3)
-#> <mixtime[4]>
-#> [1] 1970 Q1 1970 Q2 1970 Q3 1970 Q4
-yearquarter(0:3) - yearquarter(0)
-#> <vecvec[4]>
-#> [1] 0 1 2 3
-
-# Different temporal granularities can be combined:
-c(yearquarter(0:3), yearmonth(0:11))
-#> <mixtime[16]>
-#>  [1] 1970 Q1  1970 Q2  1970 Q3  1970 Q4  1970 Jan 1970 Feb 1970 Mar 1970 Apr
-#>  [9] 1970 May 1970 Jun 1970 Jul 1970 Aug 1970 Sep 1970 Oct 1970 Nov 1970 Dec
+demo_time <- as.POSIXct("2026-02-22 18:30:42", tz = "UTC")
+demo_date <- as.Date("2026-02-22")
 ```
 
-Integration with tsibble.
+The mixtime package is designed around the time units of calendars.
+These time units are used to create and manipulate time vectors.
+
+### Calendars and time units
+
+Calendars have a `cal_*` prefix, which contain a set of time units that
+can be accessed with `<cal>$<unit>`.
 
 ``` r
-tsibble::tsibble(time = yearmonth(0:5), index = time)
-#> # A tsibble: 6 x 1 [1M]
-#>        time
-#>   <mixtime>
-#> 1  1970 Jan
-#> 2  1970 Feb
-#> 3  1970 Mar
-#> 4  1970 Apr
-#> 5  1970 May
-#> 6  1970 Jun
-tsibble::tsibble(time = c(year(2010:2013), yearquarter(0:3), yearmonth(0:5), as.Date("2010-03-05") + 0:4), index = time)
-#> # A tsibble: 19 x 1 [1Y, 1Q, 1M, 1D]
-#>          time
-#>     <mixtime>
-#>  1       2010
-#>  2    1970 Q1
-#>  3   1970 Jan
-#>  4 2010-03-05
-#>  5       2011
-#>  6    1970 Q2
-#>  7   1970 Feb
-#>  8 2010-03-06
-#>  9       2012
-#> 10    1970 Q3
-#> 11   1970 Mar
-#> 12 2010-03-07
-#> 13       2013
-#> 14    1970 Q4
-#> 15   1970 Apr
-#> 16 2010-03-08
-#> 17   1970 May
-#> 18 2010-03-09
-#> 19   1970 Jun
+# The Gregorian calendar
+cal_gregorian
+#> <cal_gregorian>
+#> Time units:
+#>   - year
+#>   - quarter
+#>   - month
+#>   - day
+#>   - hour
+#>   - minute
+#>   - second
+#>   - millisecond
+
+# A 1-month time unit
+cal_gregorian$month(1L) # (1L is integer 1)
+#> <mixtime::tu_month> int 1
+#>  @ tz: chr "UTC"
+
+# A 2-week time unit (fortnights)
+cal_isoweek$week(2L)
+#> <mixtime::tu_week> int 2
+#>  @ tz: chr "UTC"
+```
+
+### Linear Time
+
+A linear time vector uses time units to define the resolution of time
+points, known as a `chronon` (the smallest unit of time). When the input
+time has a different resolution than the `chronon`, it will be
+automatically converted.
+
+``` r
+linear_time(demo_date, chronon = cal_gregorian$month(1L))
+#> <mixtime[1]>
+#> [1] 24313
+```
+
+Discrete time models (integer-based values) are used by default, however
+continuous time models (double-based values) can be used with
+`discrete = FALSE` to allow fractional chronons.
+
+``` r
+# February 22nd is 75% through the month (in non-leap years)
+linear_time(demo_date, chronon = cal_gregorian$month(1L), discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 24313-75.0%
+```
+
+Linear time helper functions are available to quickly create common time
+points.
+
+``` r
+# Create time vectors at different granularities
+yearquarter(demo_date) + 0:7
+#> <mixtime[8]>
+#> [1] 2026-Q1 2026-Q2 2026-Q3 2026-Q4 2027-Q1 2027-Q2 2027-Q3 2027-Q4
+yearmonth(demo_date) + 0:11
+#> <mixtime[12]>
+#>  [1] 2026-Feb 2026-Mar 2026-Apr 2026-May 2026-Jun 2026-Jul 2026-Aug 2026-Sep
+#>  [9] 2026-Oct 2026-Nov 2026-Dec 2027-Jan
+yearweek(demo_date) + 0:10
+#> <mixtime[11]>
+#>  [1] 2026-W8  2026-W9  2026-W10 2026-W11 2026-W12 2026-W13 2026-W14 2026-W15
+#>  [9] 2026-W16 2026-W17 2026-W18
+yearmonthday(demo_date) + 0:6
+#> <mixtime[7]>
+#> [1] 2026-Feb-22 2026-Feb-23 2026-Feb-24 2026-Feb-25 2026-Feb-26 2026-Feb-27
+#> [7] 2026-Feb-28
+```
+
+The mixtime package allows time of different granulities to be combined
+in a single vector.
+
+``` r
+c(
+  year(demo_date), yearquarter(demo_date), 
+  yearmonth(demo_date), yearweek(demo_date)
+)
+#> <mixtime[4]>
+#> [1] 2026     2026-Q1  2026-Feb 2026-W8
+```
+
+### Cyclical Time
+
+A cyclical time vector is defined by two calendar time units: a
+`chronon` (the smaller unit of time) and a `cycle` (the larger unit that
+the `chronon` loops over).
+
+``` r
+# The `calendar` argument provides a masking scope to `chronon` and `cycle`
+cyclical_time(demo_date, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
+#> <mixtime[1]>
+#> [1] Sun
+```
+
+There are several cyclical time helper functions for convenience.
+
+``` r
+# Extract cyclical components
+month_of_year(demo_date)
+#> <mixtime[1]>
+#> [1] Feb
+week_of_year(demo_date)
+#> <mixtime[1]>
+#> [1] W8
+day_of_week(demo_date)
+#> <mixtime[1]>
+#> [1] Sun
+
+# Continuous cyclical time shows progress through chronons
+day_of_week(demo_time, discrete = FALSE)
+#> <mixtime[1]>
+#> [1] Sun-77.1%
+```
+
+### Timezones
+
+All linear and cyclical time vectors support timezones via the `tz`
+argument.
+
+``` r
+demo_time
+#> [1] "2026-02-22 18:30:42 UTC"
+# Same day (Sunday) in LA
+yearmonthday(demo_time, tz = "America/Los_Angeles")
+#> <mixtime[1]>
+#> [1] 2026-Feb-22-PST
+yearmonthday(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 2026-Feb-22-10.5%-PST
+day_of_week(demo_time, tz = "America/Los_Angeles")
+#> <mixtime[1]>
+#> [1] Sun
+
+# Next day (Monday) in Melbourne (23% through the 23rd)
+yearmonthday(demo_time, tz = "Australia/Melbourne")
+#> <mixtime[1]>
+#> [1] 2026-Feb-23-AEDT
+yearmonthday(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 2026-Feb-23-68.8%-AEDT
+day_of_week(demo_time, tz = "Australia/Melbourne")
+#> <mixtime[1]>
+#> [1] Mon
+```
+
+### Temporal Manipulation
+
+Linear time points can be adjusted to the floor, ceiling, or rounded to
+a specified time unit.
+
+``` r
+# Round dates to different granularities
+floor_time(demo_date, cal_gregorian$month(1L))
+#> [1] "2026-02-01"
+round_time(demo_date, cal_isoweek$week(1L))
+#> [1] "2026-02-23"
+ceiling_time(demo_date, cal_gregorian$month(1L))
+#> [1] "2026-03-01"
+```
+
+### Time Sequences
+
+The [`seq()`](https://rdrr.io/r/base/seq.html) function creates
+sequences of time points iterating by a given time unit.
+
+``` r
+# Integer increments (advances by chronon's natural unit)
+seq(yearmonth(demo_date), by = 1L, length.out = 10)
+#> <mixtime[10]>
+#>  [1] 2026-Feb 2026-Mar 2026-Apr 2026-May 2026-Jun 2026-Jul 2026-Aug 2026-Sep
+#>  [9] 2026-Oct 2026-Nov
+
+# Calendar time units allow sequencing by other units
+seq(yearmonthday(demo_date), by = cal_gregorian$month(1L), length.out = 8)
+#> <mixtime[8]>
+#> [1] 2026-Feb-22 2026-Mar-22 2026-Apr-22 2026-May-22 2026-Jun-22 2026-Jul-22
+#> [7] 2026-Aug-22 2026-Sep-22
 ```

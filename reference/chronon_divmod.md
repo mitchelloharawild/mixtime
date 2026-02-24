@@ -4,8 +4,8 @@ This function converts between chronons measured in different time
 units. It is used internally for converting between different continuous
 time types, and is particularly useful for efficiently converting
 between irregular time units. The default method uses
-[`chronon_cardinality()`](chronon_cardinality.md) to cast between time
-units, which is efficient for regular time units.
+[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+to cast between time units, which is efficient for regular time units.
 
 ## Usage
 
@@ -19,11 +19,11 @@ chronon_divmod.S7_methods(from, to, x)
 
 - from:
 
-  The time unit that `x` is measured in (e.g., `tu_day(1L)`).
+  The time unit that `x` is measured in (e.g., `day(1L)`).
 
 - to:
 
-  The time unit to convert `x` into (e.g., `tu_week(1L)`).
+  The time unit to convert `x` into (e.g., `week(1L)`).
 
 - ...:
 
@@ -46,7 +46,7 @@ An list of two elements:
 
 ``` r
 # Convert day 16 since epoch into weeks since epoch (and remainder days)
-chronon_divmod(tu_day(1L), tu_week(1L), 16L)
+with(cal_isoweek, chronon_divmod(day(1L), week(1L), 16L))
 #> $chronon
 #> [1] 2
 #> 
@@ -55,7 +55,7 @@ chronon_divmod(tu_day(1L), tu_week(1L), 16L)
 #> 
 
 # Convert week 4 since epoch into days since epoch
-chronon_divmod(tu_week(1L), tu_day(1L), 4L)
+with(cal_isoweek, chronon_divmod(week(1L), day(1L), 4L))
 #> $chronon
 #> [1] 25
 #> 

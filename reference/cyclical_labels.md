@@ -16,11 +16,11 @@ cyclical_labels.S7_methods(granule, cycle, i)
 
 - granule:
 
-  A time unit object representing the granule (e.g., `tu_month(1L)`)
+  A time unit object representing the granule (e.g., `month(1L)`)
 
 - cycle:
 
-  A time unit object representing the cycle (e.g., `tu_year(1L)`)
+  A time unit object representing the cycle (e.g., `year(1L)`)
 
 - ...:
 
@@ -38,15 +38,15 @@ Character vector of labels for the time point within the cycle.
 
 ``` r
 # Labels for months in a year
-cyclical_labels(tu_month(1L), tu_year(1L), 1:12)
+with(cal_gregorian, cyclical_labels(month(1L), year(1L), 1:12))
 #>  [1] "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec" NA   
 
 # Labels for days in a week
-cyclical_labels(tu_day(1L), tu_week(1L), 1:7)
+with(cal_isoweek, cyclical_labels(day(1L), week(1L), 1:7))
 #> [1] "Tue" "Wed" "Thu" "Fri" "Sat" "Sun" "Mon"
 
 # Labels for weeks in a year, defaulted from time_unit_abbr()
-cyclical_labels(tu_week(1L), tu_year(1L), 1:52)
+with(cal_isoweek, cyclical_labels(week(1L), year(1L), 1:52))
 #>  [1] "W2"  "W3"  "W4"  "W5"  "W6"  "W7"  "W8"  "W9"  "W10" "W11" "W12" "W13"
 #> [13] "W14" "W15" "W16" "W17" "W18" "W19" "W20" "W21" "W22" "W23" "W24" "W25"
 #> [25] "W26" "W27" "W28" "W29" "W30" "W31" "W32" "W33" "W34" "W35" "W36" "W37"

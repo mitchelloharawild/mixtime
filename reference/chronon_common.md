@@ -34,22 +34,22 @@ A time unit object representing the common chronon.
 
 ``` r
 # The common chronon between days and weeks is a day
-chronon_common(tu_day(1L), tu_week(1L))
+with(cal_isoweek, chronon_common(day(1L), week(1L)))
 #> <mixtime::tu_day> int 1
 #>  @ tz: chr "UTC"
 
 # The common chronon between days and months is a day
-chronon_common(tu_week(1L), tu_month(1L))
+chronon_common(cal_isoweek$week(1L), cal_gregorian$month(1L))
 #> <mixtime::tu_day> int 1
 #>  @ tz: chr "UTC"
 
 # The common chronon between hours, months, and years is an hour
-chronon_common(tu_hour(1L), tu_month(1L), tu_year(1L))
+with(cal_gregorian, chronon_common(hour(1L), month(1L), year(1L)))
 #> <mixtime::tu_hour> int 1
 #>  @ tz: chr "UTC"
 
 # The common chronon between months, quarters, and years is a month
-chronon_common(tu_month(1L), tu_quarter(1L), tu_year(1L))
+with(cal_gregorian, chronon_common(month(1L), quarter(1L), year(1L)))
 #> <mixtime::tu_month> int 1
 #>  @ tz: chr "UTC"
 ```

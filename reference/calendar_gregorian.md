@@ -1,39 +1,20 @@
 # Gregorian time unit classes
 
 Time unit constructors for the Gregorian calendar system. These units
-can be used with [`linear_time()`](linear_time.md) to create custom time
-representations.
+can be used with
+[`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)
+to create custom time representations.
 
 ## Usage
 
 ``` r
-tu_year(.data = 1L, tz = "UTC")
-
-tu_quarter(.data = 1L, tz = "UTC")
-
-tu_month(.data = 1L, tz = "UTC")
-
-tu_day(.data = 1L, tz = "UTC")
-
-tu_hour(.data = 1L, tz = "UTC")
-
-tu_minute(.data = 1L, tz = "UTC")
-
-tu_second(.data = 1L, tz = "UTC")
-
-tu_millisecond(.data = 1L, tz = "UTC")
+cal_gregorian
 ```
 
-## Arguments
+## Format
 
-- .data:
-
-  The number of time units
-
-- tz:
-
-  The timezone name for the unit (valid units can be found with
-  `[tzdb::tzdb_names()]`)
+An object of class `cal_gregorian` (inherits from `mt_calendar`) of
+length 8.
 
 ## Value
 
@@ -41,23 +22,25 @@ A time unit object for the Gregorian calendar system.
 
 ## Details
 
-The following Gregorian time units are available:
+The following time units are available in the Gregorian calendar
+(`cal_gregorian$`).
 
-- `tu_year()`: Year unit
+- [`year()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md):
+  Year unit
 
-- `tu_quarter()`: Quarter (3-month period) unit
+- `quarter()`: Quarter (3-month period) unit
 
-- `tu_month()`: Month unit
+- `month()`: Month unit
 
-- `tu_day()`: Day unit
+- `day()`: Day unit
 
-- `tu_hour()`: Hour unit
+- `hour()`: Hour unit
 
-- `tu_minute()`: Minute unit
+- `minute()`: Minute unit
 
-- `tu_second()`: Second unit
+- `second()`: Second unit
 
-- `tu_millisecond()`: Millisecond unit
+- `millisecond()`: Millisecond unit
 
 These units form a hierarchy where conversions between adjacent units
 follow the Gregorian calendar rules. For units that don't have a fixed
@@ -66,16 +49,17 @@ context.
 
 ## See also
 
-[`linear_time()`](linear_time.md) for creating custom time
-representations, [linear_gregorian](linear_gregorian.md) for pre-defined
-Gregorian time representations
+[`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)
+for creating linear time points.
 
 ## Examples
 
 ``` r
 # Create a custom time representation using Gregorian units
-dayhour <- linear_time(
-  granules = list(tu_day(1L)),
-  chronon = tu_hour(1L)
+linear_time(
+  Sys.time(),
+  chronon = hour(1L)
 )
+#> <mixtime[1]>
+#> [1] 2026-Feb-24-h2
 ```

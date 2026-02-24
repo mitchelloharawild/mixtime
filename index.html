@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Mixed Temporal Vectors and Operations • mixtime</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -13,7 +18,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Mixed Temporal Vectors and Operations">
 <meta name="description" content="Flexible time classes for representing mixed temporal granularities and bespoke calendar structures. Supports both linear and circular time representations in discrete and continuous forms across a variety of calendar systems.">
 <meta property="og:description" content="Flexible time classes for representing mixed temporal granularities and bespoke calendar structures. Supports both linear and circular time representations in discrete and continuous forms across a variety of calendar systems.">
-<meta property="og:image" content="/logo.svg">
+<meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,106 +59,192 @@
 </div>
 <!-- badges: start -->
 
-<p>mixtime provides flexible time classes for representing mixed temporal granularities and custom calendar structures.</p>
-<p>The feature wishlist for this package includes:</p>
+<p>mixtime provides flexible time classes for time series analysis and forecasting with mixed temporal granularities. It is designed for handling temporal data at different frequencies, making it ideal for:</p>
 <ul>
-<li>Multiple temporal granularities (sub-daily, daily, weekly, monthly, quarterly, etc.)</li>
-<li>Optional and custom temporal origins</li>
-<li>Custom calendar structures (working days/hours, holiday effects, trading days)</li>
-<li>Mixed temporal classes (daily and weekly granularities in same vector)</li>
+<li>Changing observation frequencies (e.g., historical quarterly records now reported monthly)</li>
+<li>Analysis involving data at different temporal resolutions (e.g., quarterly tourism and monthly turnover)</li>
+<li>Forecasting with temporal reconciliation across multiple time scales</li>
 </ul>
-<p>Stretch goals for the package include:</p>
-<ul>
-<li>Representing temporal nesting (2020-01-05 is nested by 2020-01 is nested by 2020)</li>
-<li>
-<code>time_join()</code> operation which respects temporal nesting</li>
-</ul>
+<div class="section level2">
+<h2 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+</h2>
+<p><strong>📈 Linear Time</strong> - Create linear time vectors with <code><a href="reference/linear_time.html">linear_time()</a></code> or with helpers: * <code><a href="reference/linear_time_helpers.html">yearquarter()</a></code>, <code><a href="reference/linear_time_helpers.html">yearmonth()</a></code>, <code><a href="reference/linear_time_helpers.html">yearweek()</a></code>, <code><a href="reference/linear_time_helpers.html">yearmonthday()</a></code></p>
+<p><strong>🔄 Cyclical Time</strong> - Create cyclical time vectors with <code><a href="reference/cyclical_time.html">cyclical_time()</a></code> or with helpers: * <code><a href="reference/cyclical_time_helpers.html">month_of_year()</a></code>, <code><a href="reference/cyclical_time_helpers.html">day_of_year()</a></code>, <code><a href="reference/cyclical_time_helpers.html">day_of_month()</a></code>, <code><a href="reference/cyclical_time_helpers.html">day_of_week()</a></code>, <code><a href="reference/cyclical_time_helpers.html">week_of_year()</a></code></p>
+<p><strong>🕰️ Time types</strong> * Discrete and continuous time models * Timezone support for all chronons * Custom granule sizes (e.g. <code>week(2L)</code> for fortnights) * Mixed granularity vectors for different temporal resolution over time (or series)</p>
+<p><strong>📅 Calendar Systems</strong> - Support for several calendars: * <code>cal_gregorian</code> - Gregorian dates (e.g. 2026-02-17) * <code>cal_isoweek</code> - ISO week dates (e.g. 2026-W8-Tue) * More calendars coming, including custom censored calendars</p>
+<p><strong>🧮 Temporal Operations</strong> * Rounding: <code><a href="reference/round_time.html">floor_time()</a></code>, <code><a href="reference/round_time.html">round_time()</a></code>, <code><a href="reference/round_time.html">ceiling_time()</a></code> * Sequencing: <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code> for linear and cyclical time points</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<!-- You can install the released version of mixtime from [CRAN](https://CRAN.R-project.org) with: -->
-<!-- ``` r -->
-<!-- install.packages("mixtime") -->
-<!-- ``` -->
-<p>The development version can be installed from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>The development version can be installed from <a href="https://github.com/mitchelloharawild/mixtime" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mitchelloharawild/mixtime"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>Creating mixtimes.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/mixtime/" class="external-link">mixtime</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Registered S3 method overwritten by 'tsibble':</span></span>
-<span><span class="co">#&gt;   method               from </span></span>
-<span><span class="co">#&gt;   as_tibble.grouped_df dplyr</span></span>
-<span><span class="fu"><a href="reference/linear_gregorian.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span> <span class="co"># By default, time classes have an origin</span></span>
-<span><span class="co">#&gt; &lt;mixtime[12]&gt;</span></span>
-<span><span class="co">#&gt;  [1] 1970 Jan 1970 Feb 1970 Mar 1970 Apr 1970 May 1970 Jun 1970 Jul 1970 Aug</span></span>
-<span><span class="co">#&gt;  [9] 1970 Sep 1970 Oct 1970 Nov 1970 Dec</span></span>
-<span><span class="fu"><a href="reference/linear_gregorian.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="reference/linear_gregorian.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span> <span class="co"># However some operations can produce mixtimes without origins</span></span>
-<span><span class="co">#&gt; &lt;vecvec[12]&gt;</span></span>
-<span><span class="co">#&gt;  [1]  0  1  2  3  4  5  6  7  8  9 10 11</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/linear_gregorian.html">yearquarter</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;mixtime[4]&gt;</span></span>
-<span><span class="co">#&gt; [1] 1970 Q1 1970 Q2 1970 Q3 1970 Q4</span></span>
-<span><span class="fu"><a href="reference/linear_gregorian.html">yearquarter</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="reference/linear_gregorian.html">yearquarter</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;vecvec[4]&gt;</span></span>
-<span><span class="co">#&gt; [1] 0 1 2 3</span></span>
-<span></span>
-<span><span class="co"># Different temporal granularities can be combined:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_gregorian.html">yearquarter</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="reference/linear_gregorian.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;mixtime[16]&gt;</span></span>
-<span><span class="co">#&gt;  [1] 1970 Q1  1970 Q2  1970 Q3  1970 Q4  1970 Jan 1970 Feb 1970 Mar 1970 Apr</span></span>
-<span><span class="co">#&gt;  [9] 1970 May 1970 Jun 1970 Jul 1970 Aug 1970 Sep 1970 Oct 1970 Nov 1970 Dec</span></span></code></pre></div>
-<p>Integration with tsibble.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/mixtime/">mixtime</a></span><span class="op">)</span></span>
+<span><span class="va">demo_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2026-02-22 18:30:42"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span>
+<span><span class="va">demo_date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2026-02-22"</span><span class="op">)</span></span></code></pre></div>
+<p>The mixtime package is designed around the time units of calendars. These time units are used to create and manipulate time vectors.</p>
+<div class="section level3">
+<h3 id="calendars-and-time-units">Calendars and time units<a class="anchor" aria-label="anchor" href="#calendars-and-time-units"></a>
+</h3>
+<p>Calendars have a <code>cal_*</code> prefix, which contain a set of time units that can be accessed with <code>&lt;cal&gt;$&lt;unit&gt;</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/tsibble.html" class="external-link">tsibble</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="reference/linear_gregorian.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, index <span class="op">=</span> <span class="va">time</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tsibble: 6 x 1 [1M]</span></span>
-<span><span class="co">#&gt;        time</span></span>
-<span><span class="co">#&gt;   &lt;mixtime&gt;</span></span>
-<span><span class="co">#&gt; 1  1970 Jan</span></span>
-<span><span class="co">#&gt; 2  1970 Feb</span></span>
-<span><span class="co">#&gt; 3  1970 Mar</span></span>
-<span><span class="co">#&gt; 4  1970 Apr</span></span>
-<span><span class="co">#&gt; 5  1970 May</span></span>
-<span><span class="co">#&gt; 6  1970 Jun</span></span>
-<span><span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/tsibble.html" class="external-link">tsibble</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_gregorian.html">year</a></span><span class="op">(</span><span class="fl">2010</span><span class="op">:</span><span class="fl">2013</span><span class="op">)</span>, <span class="fu"><a href="reference/linear_gregorian.html">yearquarter</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="reference/linear_gregorian.html">yearmonth</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-03-05"</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>, index <span class="op">=</span> <span class="va">time</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tsibble: 19 x 1 [1Y, 1Q, 1M, 1D]</span></span>
-<span><span class="co">#&gt;          time</span></span>
-<span><span class="co">#&gt;     &lt;mixtime&gt;</span></span>
-<span><span class="co">#&gt;  1       2010</span></span>
-<span><span class="co">#&gt;  2    1970 Q1</span></span>
-<span><span class="co">#&gt;  3   1970 Jan</span></span>
-<span><span class="co">#&gt;  4 2010-03-05</span></span>
-<span><span class="co">#&gt;  5       2011</span></span>
-<span><span class="co">#&gt;  6    1970 Q2</span></span>
-<span><span class="co">#&gt;  7   1970 Feb</span></span>
-<span><span class="co">#&gt;  8 2010-03-06</span></span>
-<span><span class="co">#&gt;  9       2012</span></span>
-<span><span class="co">#&gt; 10    1970 Q3</span></span>
-<span><span class="co">#&gt; 11   1970 Mar</span></span>
-<span><span class="co">#&gt; 12 2010-03-07</span></span>
-<span><span class="co">#&gt; 13       2013</span></span>
-<span><span class="co">#&gt; 14    1970 Q4</span></span>
-<span><span class="co">#&gt; 15   1970 Apr</span></span>
-<span><span class="co">#&gt; 16 2010-03-08</span></span>
-<span><span class="co">#&gt; 17   1970 May</span></span>
-<span><span class="co">#&gt; 18 2010-03-09</span></span>
-<span><span class="co">#&gt; 19   1970 Jun</span></span></code></pre></div>
-<!-- Change granularities by updating the calendar. -->
-<!-- ```{r granularity} -->
-<!-- x <- yearmonth(0:11) -->
-<!-- tsibble::tsibble( -->
-<!--   yearmonth = x, -->
-<!--   yearquarter = set_time_units(x, tu_quarter(1)), -->
-<!--   year = set_time_units(x, tu_year(1)), -->
-<!--   index = yearmonth -->
-<!-- ) -->
-<!-- ``` -->
+<code class="sourceCode R"><span><span class="co"># The Gregorian calendar</span></span>
+<span><span class="va">cal_gregorian</span></span>
+<span><span class="co">#&gt; &lt;cal_gregorian&gt;</span></span>
+<span><span class="co">#&gt; Time units:</span></span>
+<span><span class="co">#&gt;   - year</span></span>
+<span><span class="co">#&gt;   - quarter</span></span>
+<span><span class="co">#&gt;   - month</span></span>
+<span><span class="co">#&gt;   - day</span></span>
+<span><span class="co">#&gt;   - hour</span></span>
+<span><span class="co">#&gt;   - minute</span></span>
+<span><span class="co">#&gt;   - second</span></span>
+<span><span class="co">#&gt;   - millisecond</span></span>
+<span></span>
+<span><span class="co"># A 1-month time unit</span></span>
+<span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span> <span class="co"># (1L is integer 1)</span></span>
+<span><span class="co">#&gt; &lt;mixtime::tu_month&gt; int 1</span></span>
+<span><span class="co">#&gt;  @ tz: chr "UTC"</span></span>
+<span></span>
+<span><span class="co"># A 2-week time unit (fortnights)</span></span>
+<span><span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime::tu_week&gt; int 2</span></span>
+<span><span class="co">#&gt;  @ tz: chr "UTC"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="linear-time">Linear Time<a class="anchor" aria-label="anchor" href="#linear-time"></a>
+</h3>
+<p>A linear time vector uses time units to define the resolution of time points, known as a <code>chronon</code> (the smallest unit of time). When the input time has a different resolution than the <code>chronon</code>, it will be automatically converted.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/linear_time.html">linear_time</a></span><span class="op">(</span><span class="va">demo_date</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 24313</span></span></code></pre></div>
+<p>Discrete time models (integer-based values) are used by default, however continuous time models (double-based values) can be used with <code>discrete = FALSE</code> to allow fractional chronons.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># February 22nd is 75% through the month (in non-leap years)</span></span>
+<span><span class="fu"><a href="reference/linear_time.html">linear_time</a></span><span class="op">(</span><span class="va">demo_date</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 24313-75.0%</span></span></code></pre></div>
+<p>Linear time helper functions are available to quickly create common time points.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create time vectors at different granularities</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearquarter</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">7</span></span>
+<span><span class="co">#&gt; &lt;mixtime[8]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026-Q1 2026-Q2 2026-Q3 2026-Q4 2027-Q1 2027-Q2 2027-Q3 2027-Q4</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">11</span></span>
+<span><span class="co">#&gt; &lt;mixtime[12]&gt;</span></span>
+<span><span class="co">#&gt;  [1] 2026-Feb 2026-Mar 2026-Apr 2026-May 2026-Jun 2026-Jul 2026-Aug 2026-Sep</span></span>
+<span><span class="co">#&gt;  [9] 2026-Oct 2026-Nov 2026-Dec 2027-Jan</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span></span>
+<span><span class="co">#&gt; &lt;mixtime[11]&gt;</span></span>
+<span><span class="co">#&gt;  [1] 2026-W8  2026-W9  2026-W10 2026-W11 2026-W12 2026-W13 2026-W14 2026-W15</span></span>
+<span><span class="co">#&gt;  [9] 2026-W16 2026-W17 2026-W18</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">6</span></span>
+<span><span class="co">#&gt; &lt;mixtime[7]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026-Feb-22 2026-Feb-23 2026-Feb-24 2026-Feb-25 2026-Feb-26 2026-Feb-27</span></span>
+<span><span class="co">#&gt; [7] 2026-Feb-28</span></span></code></pre></div>
+<p>The mixtime package allows time of different granulities to be combined in a single vector.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="reference/linear_time_helpers.html">year</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, <span class="fu"><a href="reference/linear_time_helpers.html">yearquarter</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="reference/linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, <span class="fu"><a href="reference/linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[4]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026     2026-Q1  2026-Feb 2026-W8</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="cyclical-time">Cyclical Time<a class="anchor" aria-label="anchor" href="#cyclical-time"></a>
+</h3>
+<p>A cyclical time vector is defined by two calendar time units: a <code>chronon</code> (the smaller unit of time) and a <code>cycle</code> (the larger unit that the <code>chronon</code> loops over).</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The `calendar` argument provides a masking scope to `chronon` and `cycle`</span></span>
+<span><span class="fu"><a href="reference/cyclical_time.html">cyclical_time</a></span><span class="op">(</span><span class="va">demo_date</span>, chronon <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, cycle <span class="op">=</span> <span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] Sun</span></span></code></pre></div>
+<p>There are several cyclical time helper functions for convenience.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Extract cyclical components</span></span>
+<span><span class="fu"><a href="reference/cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] Feb</span></span>
+<span><span class="fu"><a href="reference/cyclical_time_helpers.html">week_of_year</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] W8</span></span>
+<span><span class="fu"><a href="reference/cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] Sun</span></span>
+<span></span>
+<span><span class="co"># Continuous cyclical time shows progress through chronons</span></span>
+<span><span class="fu"><a href="reference/cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="va">demo_time</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] Sun-77.1%</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="timezones">Timezones<a class="anchor" aria-label="anchor" href="#timezones"></a>
+</h3>
+<p>All linear and cyclical time vectors support timezones via the <code>tz</code> argument.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">demo_time</span></span>
+<span><span class="co">#&gt; [1] "2026-02-22 18:30:42 UTC"</span></span>
+<span><span class="co"># Same day (Sunday) in LA</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="va">demo_time</span>, tz <span class="op">=</span> <span class="st">"America/Los_Angeles"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026-Feb-22-PST</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="va">demo_time</span>, tz <span class="op">=</span> <span class="st">"America/Los_Angeles"</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026-Feb-22-10.5%-PST</span></span>
+<span><span class="fu"><a href="reference/cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="va">demo_time</span>, tz <span class="op">=</span> <span class="st">"America/Los_Angeles"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] Sun</span></span>
+<span></span>
+<span><span class="co"># Next day (Monday) in Melbourne (23% through the 23rd)</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="va">demo_time</span>, tz <span class="op">=</span> <span class="st">"Australia/Melbourne"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026-Feb-23-AEDT</span></span>
+<span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="va">demo_time</span>, tz <span class="op">=</span> <span class="st">"Australia/Melbourne"</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026-Feb-23-68.8%-AEDT</span></span>
+<span><span class="fu"><a href="reference/cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="va">demo_time</span>, tz <span class="op">=</span> <span class="st">"Australia/Melbourne"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] Mon</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="temporal-manipulation">Temporal Manipulation<a class="anchor" aria-label="anchor" href="#temporal-manipulation"></a>
+</h3>
+<p>Linear time points can be adjusted to the floor, ceiling, or rounded to a specified time unit.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Round dates to different granularities</span></span>
+<span><span class="fu"><a href="reference/round_time.html">floor_time</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2026-02-01"</span></span>
+<span><span class="fu"><a href="reference/round_time.html">round_time</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2026-02-23"</span></span>
+<span><span class="fu"><a href="reference/round_time.html">ceiling_time</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2026-03-01"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="time-sequences">Time Sequences<a class="anchor" aria-label="anchor" href="#time-sequences"></a>
+</h3>
+<p>The <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code> function creates sequences of time points iterating by a given time unit.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Integer increments (advances by chronon's natural unit)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1L</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[10]&gt;</span></span>
+<span><span class="co">#&gt;  [1] 2026-Feb 2026-Mar 2026-Apr 2026-May 2026-Jun 2026-Jul 2026-Aug 2026-Sep</span></span>
+<span><span class="co">#&gt;  [9] 2026-Oct 2026-Nov</span></span>
+<span></span>
+<span><span class="co"># Calendar time units allow sequencing by other units</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[8]&gt;</span></span>
+<span><span class="co">#&gt; [1] 2026-Feb-22 2026-Mar-22 2026-Apr-22 2026-May-22 2026-Jun-22 2026-Jul-22</span></span>
+<span><span class="co">#&gt; [7] 2026-Aug-22 2026-Sep-22</span></span></code></pre></div>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
