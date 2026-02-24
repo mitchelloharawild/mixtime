@@ -60,6 +60,10 @@ reference:
   desc: "The ISO 8601 week date calendar system with ISO years and weeks."
   contents:
   - calendar_isoweek
+- subtitle: "Custom Calendars"
+  desc: "Functions for creating custom calendar systems"
+  contents:
+  - new_calendar
 
 - title: "Time Systems"
   desc: "Time systems define when the boundary of a day occurs and how a day is divided into time units. These can be combined with calendar systems to create custom time representations."
@@ -94,9 +98,14 @@ reference:
   - chronon_convert
   - chronon_divmod
   - chronon_common
+  - chronon_granules
   - mt_unit
   - time_chronon
+  - time_calendar
   - time_unit_abbr
   - time_unit_full
   - cyclical_labels
   - mixtime_valid
+  - new_cyclical_time_fn
+  - new_linear_time_fn
+  - circsum
