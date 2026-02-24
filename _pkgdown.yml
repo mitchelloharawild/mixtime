@@ -59,7 +59,7 @@ reference:
 - subtitle: "ISO 8601 Calendar System"
   desc: "The ISO 8601 week date calendar system with ISO years and weeks."
   contents:
-  - calendar_iso8601
+  - calendar_isoweek
 
 - title: "Time Systems"
   desc: "Time systems define when the boundary of a day occurs and how a day is divided into time units. These can be combined with calendar systems to create custom time representations."
