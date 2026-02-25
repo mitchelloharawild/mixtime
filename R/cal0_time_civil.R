@@ -11,9 +11,9 @@ mt_tz_unit <- new_class(
 )
 
 # Default formats
-method(chronon_format, mt_tz_unit) <- function(x) {
-  paste0(chronon_format(super(x, mt_unit)), " {tz}")
-}
+# method(chronon_format, mt_tz_unit) <- function(x) {
+#   paste0(chronon_format(super(x, mt_unit)), " {tz}")
+# }
 
 #' Civil time unit classes
 #'
