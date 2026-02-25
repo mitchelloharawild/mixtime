@@ -13,45 +13,87 @@ extern "C" SEXP _mixtime_mt_glue_fmt(SEXP input, SEXP env, SEXP units, SEXP part
   END_CPP11
 }
 // timeastro.cpp
-doubles approx_sunrises_from_utc(doubles unix_times, double lon_deg, double lat_deg, double alt_deg);
-extern "C" SEXP _mixtime_approx_sunrises_from_utc(SEXP unix_times, SEXP lon_deg, SEXP lat_deg, SEXP alt_deg) {
+doubles approx_sunrises_from_utc(doubles unix_times, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_sunrises_from_utc(SEXP unix_times, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
   BEGIN_CPP11
-    return cpp11::as_sexp(approx_sunrises_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+    return cpp11::as_sexp(approx_sunrises_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
   END_CPP11
 }
 // timeastro.cpp
-doubles approx_utc_from_sunrises(doubles sunrise_counts, double lon_deg, double lat_deg, double alt_deg);
-extern "C" SEXP _mixtime_approx_utc_from_sunrises(SEXP sunrise_counts, SEXP lon_deg, SEXP lat_deg, SEXP alt_deg) {
+doubles approx_utc_from_sunrises(doubles sunrise_counts, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_utc_from_sunrises(SEXP sunrise_counts, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
   BEGIN_CPP11
-    return cpp11::as_sexp(approx_utc_from_sunrises(cpp11::as_cpp<cpp11::decay_t<doubles>>(sunrise_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+    return cpp11::as_sexp(approx_utc_from_sunrises(cpp11::as_cpp<cpp11::decay_t<doubles>>(sunrise_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
   END_CPP11
 }
 // timeastro.cpp
-doubles approx_sunsets_from_utc(doubles unix_times, double lon_deg, double lat_deg, double alt_deg);
-extern "C" SEXP _mixtime_approx_sunsets_from_utc(SEXP unix_times, SEXP lon_deg, SEXP lat_deg, SEXP alt_deg) {
+doubles approx_sunsets_from_utc(doubles unix_times, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_sunsets_from_utc(SEXP unix_times, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
   BEGIN_CPP11
-    return cpp11::as_sexp(approx_sunsets_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+    return cpp11::as_sexp(approx_sunsets_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
   END_CPP11
 }
 // timeastro.cpp
-doubles approx_utc_from_sunsets(doubles sunset_counts, double lon_deg, double lat_deg, double alt_deg);
-extern "C" SEXP _mixtime_approx_utc_from_sunsets(SEXP sunset_counts, SEXP lon_deg, SEXP lat_deg, SEXP alt_deg) {
+doubles approx_utc_from_sunsets(doubles sunset_counts, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_utc_from_sunsets(SEXP sunset_counts, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
   BEGIN_CPP11
-    return cpp11::as_sexp(approx_utc_from_sunsets(cpp11::as_cpp<cpp11::decay_t<doubles>>(sunset_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+    return cpp11::as_sexp(approx_utc_from_sunsets(cpp11::as_cpp<cpp11::decay_t<doubles>>(sunset_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
   END_CPP11
 }
 // timeastro.cpp
-doubles approx_noons_from_utc(doubles unix_times, double lon_deg, double lat_deg);
-extern "C" SEXP _mixtime_approx_noons_from_utc(SEXP unix_times, SEXP lon_deg, SEXP lat_deg) {
+doubles approx_noons_from_utc(doubles unix_times, double lat_deg, double lon_deg);
+extern "C" SEXP _mixtime_approx_noons_from_utc(SEXP unix_times, SEXP lat_deg, SEXP lon_deg) {
   BEGIN_CPP11
-    return cpp11::as_sexp(approx_noons_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg)));
+    return cpp11::as_sexp(approx_noons_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg)));
   END_CPP11
 }
 // timeastro.cpp
-doubles approx_utc_from_noons(doubles noon_counts, double lon_deg, double lat_deg);
-extern "C" SEXP _mixtime_approx_utc_from_noons(SEXP noon_counts, SEXP lon_deg, SEXP lat_deg) {
+doubles approx_utc_from_noons(doubles noon_counts, double lat_deg, double lon_deg);
+extern "C" SEXP _mixtime_approx_utc_from_noons(SEXP noon_counts, SEXP lat_deg, SEXP lon_deg) {
   BEGIN_CPP11
-    return cpp11::as_sexp(approx_utc_from_noons(cpp11::as_cpp<cpp11::decay_t<doubles>>(noon_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg)));
+    return cpp11::as_sexp(approx_utc_from_noons(cpp11::as_cpp<cpp11::decay_t<doubles>>(noon_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_midnights_from_utc(doubles unix_times, double lat_deg, double lon_deg);
+extern "C" SEXP _mixtime_approx_midnights_from_utc(SEXP unix_times, SEXP lat_deg, SEXP lon_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_midnights_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_utc_from_midnights(doubles midnight_counts, double lat_deg, double lon_deg);
+extern "C" SEXP _mixtime_approx_utc_from_midnights(SEXP midnight_counts, SEXP lat_deg, SEXP lon_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_utc_from_midnights(cpp11::as_cpp<cpp11::decay_t<doubles>>(midnight_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_dawns_from_utc(doubles unix_times, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_dawns_from_utc(SEXP unix_times, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_dawns_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_utc_from_dawns(doubles dawn_counts, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_utc_from_dawns(SEXP dawn_counts, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_utc_from_dawns(cpp11::as_cpp<cpp11::decay_t<doubles>>(dawn_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_dusks_from_utc(doubles unix_times, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_dusks_from_utc(SEXP unix_times, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_dusks_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_utc_from_dusks(doubles dusk_counts, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_utc_from_dusks(SEXP dusk_counts, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_utc_from_dusks(cpp11::as_cpp<cpp11::decay_t<doubles>>(dusk_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
   END_CPP11
 }
 // timezone-info.cpp
@@ -78,16 +120,22 @@ extern "C" SEXP _mixtime_get_tz_transitions(SEXP start_posixct, SEXP end_posixct
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixtime_approx_noons_from_utc",    (DL_FUNC) &_mixtime_approx_noons_from_utc,    3},
-    {"_mixtime_approx_sunrises_from_utc", (DL_FUNC) &_mixtime_approx_sunrises_from_utc, 4},
-    {"_mixtime_approx_sunsets_from_utc",  (DL_FUNC) &_mixtime_approx_sunsets_from_utc,  4},
-    {"_mixtime_approx_utc_from_noons",    (DL_FUNC) &_mixtime_approx_utc_from_noons,    3},
-    {"_mixtime_approx_utc_from_sunrises", (DL_FUNC) &_mixtime_approx_utc_from_sunrises, 4},
-    {"_mixtime_approx_utc_from_sunsets",  (DL_FUNC) &_mixtime_approx_utc_from_sunsets,  4},
-    {"_mixtime_get_tz_abbreviation",      (DL_FUNC) &_mixtime_get_tz_abbreviation,      2},
-    {"_mixtime_get_tz_offset",            (DL_FUNC) &_mixtime_get_tz_offset,            2},
-    {"_mixtime_get_tz_transitions",       (DL_FUNC) &_mixtime_get_tz_transitions,       3},
-    {"_mixtime_mt_glue_fmt",              (DL_FUNC) &_mixtime_mt_glue_fmt,              4},
+    {"_mixtime_approx_dawns_from_utc",     (DL_FUNC) &_mixtime_approx_dawns_from_utc,     4},
+    {"_mixtime_approx_dusks_from_utc",     (DL_FUNC) &_mixtime_approx_dusks_from_utc,     4},
+    {"_mixtime_approx_midnights_from_utc", (DL_FUNC) &_mixtime_approx_midnights_from_utc, 3},
+    {"_mixtime_approx_noons_from_utc",     (DL_FUNC) &_mixtime_approx_noons_from_utc,     3},
+    {"_mixtime_approx_sunrises_from_utc",  (DL_FUNC) &_mixtime_approx_sunrises_from_utc,  4},
+    {"_mixtime_approx_sunsets_from_utc",   (DL_FUNC) &_mixtime_approx_sunsets_from_utc,   4},
+    {"_mixtime_approx_utc_from_dawns",     (DL_FUNC) &_mixtime_approx_utc_from_dawns,     4},
+    {"_mixtime_approx_utc_from_dusks",     (DL_FUNC) &_mixtime_approx_utc_from_dusks,     4},
+    {"_mixtime_approx_utc_from_midnights", (DL_FUNC) &_mixtime_approx_utc_from_midnights, 3},
+    {"_mixtime_approx_utc_from_noons",     (DL_FUNC) &_mixtime_approx_utc_from_noons,     3},
+    {"_mixtime_approx_utc_from_sunrises",  (DL_FUNC) &_mixtime_approx_utc_from_sunrises,  4},
+    {"_mixtime_approx_utc_from_sunsets",   (DL_FUNC) &_mixtime_approx_utc_from_sunsets,   4},
+    {"_mixtime_get_tz_abbreviation",       (DL_FUNC) &_mixtime_get_tz_abbreviation,       2},
+    {"_mixtime_get_tz_offset",             (DL_FUNC) &_mixtime_get_tz_offset,             2},
+    {"_mixtime_get_tz_transitions",        (DL_FUNC) &_mixtime_get_tz_transitions,        3},
+    {"_mixtime_mt_glue_fmt",               (DL_FUNC) &_mixtime_mt_glue_fmt,               4},
     {NULL, NULL, 0}
 };
 }

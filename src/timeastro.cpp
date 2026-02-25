@@ -140,6 +140,14 @@ struct SolarDay {
   double noon_unix() const {
     return day_utc * 86400.0 + noon_hour * 3600.0;
   }
+  
+  double midnight_unix() const {
+    double midnight_hour = noon_hour - 12.0;
+    if (midnight_hour < 0) {
+      midnight_hour += 24.0;
+    }
+    return day_utc * 86400.0 + midnight_hour * 3600.0;
+  }
 };
 
 // Generic function to convert UTC to event counts
@@ -298,5 +306,61 @@ doubles approx_utc_from_noons(doubles noon_counts,
   return utc_from_event_counts(noon_counts, lat_deg, lon_deg, 0.0,
                                [](const SolarDay& day) { return day.noon_unix(); });
 }
+
+// Exported functions for solar midnight
+[[cpp11::register]]
+doubles approx_midnights_from_utc(doubles unix_times,
+                                   double lat_deg,
+                                   double lon_deg) {
+  return event_counts_from_utc(unix_times, lat_deg, lon_deg, 0.0,
+                               [](const SolarDay& day) { return day.midnight_unix(); });
+}
+
+[[cpp11::register]]
+doubles approx_utc_from_midnights(doubles midnight_counts,
+                                   double lat_deg,
+                                   double lon_deg) {
+  return utc_from_event_counts(midnight_counts, lat_deg, lon_deg, 0.0,
+                               [](const SolarDay& day) { return day.midnight_unix(); });
+}
+
+// Exported functions for dawn (civil twilight)
+[[cpp11::register]]
+doubles approx_dawns_from_utc(doubles unix_times,
+                               double lat_deg,
+                               double lon_deg,
+                               double alt_deg = -6.0) {
+  return event_counts_from_utc(unix_times, lat_deg, lon_deg, alt_deg,
+                               [](const SolarDay& day) { return day.sunrise_unix(); });
+}
+
+[[cpp11::register]]
+doubles approx_utc_from_dawns(doubles dawn_counts,
+                               double lat_deg,
+                               double lon_deg,
+                               double alt_deg = -6.0) {
+  return utc_from_event_counts(dawn_counts, lat_deg, lon_deg, alt_deg,
+                               [](const SolarDay& day) { return day.sunrise_unix(); });
+}
+
+// Exported functions for dusk (civil twilight)
+[[cpp11::register]]
+doubles approx_dusks_from_utc(doubles unix_times,
+                               double lat_deg,
+                               double lon_deg,
+                               double alt_deg = -6.0) {
+  return event_counts_from_utc(unix_times, lat_deg, lon_deg, alt_deg,
+                               [](const SolarDay& day) { return day.sunset_unix(); });
+}
+
+[[cpp11::register]]
+doubles approx_utc_from_dusks(doubles dusk_counts,
+                               double lat_deg,
+                               double lon_deg,
+                               double alt_deg = -6.0) {
+  return utc_from_event_counts(dusk_counts, lat_deg, lon_deg, alt_deg,
+                               [](const SolarDay& day) { return day.sunset_unix(); });
+}
+
 
 
