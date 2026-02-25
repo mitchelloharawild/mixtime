@@ -29,23 +29,28 @@ mixtime provides flexible time classes for time series analysis and forecasting 
 ## Key Features
 
 **📈 Linear Time** - Create linear time vectors with `linear_time()` or with helpers:
+
   * `yearquarter()`, `yearmonth()`, `yearweek()`, `yearmonthday()`
 
 **🔄 Cyclical Time** - Create cyclical time vectors with `cyclical_time()` or with helpers:
+
   * `month_of_year()`, `day_of_year()`, `day_of_month()`, `day_of_week()`, `week_of_year()`
 
 **🕰️ Time types**
+
   * Discrete and continuous time models
   * Timezone support for all chronons
   * Custom granule sizes (e.g. `week(2L)` for fortnights)
   * Mixed granularity vectors for different temporal resolution over time (or series)
 
 **📅 Calendar Systems** - Support for several calendars:
+
   * `cal_gregorian` - Gregorian dates (e.g. 2026-02-17)
   * `cal_isoweek` - ISO week dates (e.g. 2026-W8-Tue)
   * More calendars coming, including custom censored calendars
 
 **🧮 Temporal Operations**
+
   * Rounding: `floor_time()`, `round_time()`, `ceiling_time()`
   * Sequencing: `seq()` for linear and cyclical time points
 
