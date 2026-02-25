@@ -184,62 +184,14 @@ mixtime_valid.mt_linear <- function(x) TRUE
 
 #' @importFrom rlang inject
 #' @export
-format.mt_linear <- function(x, ...) {
-  as.character(x)
+format.mt_linear <- function(x, format = chronon_format(time_chronon(x)), ...) {
+  time_format_linear_impl(x, format = format, ...)
 }
 
 #' @method vec_cast.character mt_linear
 #' @export
 vec_cast.character.mt_linear <- function(x, to, ...) {
-  # Cascading formatting based on granules and chronon
-  units <- c(
-    attr(x, "granules"),
-    list(attr(x, "chronon"))
-  )
-  
-  is_discrete <- is.integer(x)
-  if (is_zoned <- tz_name(time_chronon(x)) != "UTC") {
-    # Apply timezone offset to produce local time
-    tz_ext <- tz_abbreviation(x)
-    x <- vec_data(x) + trunc(tz_offset(x))
-  } else {
-    x <- vec_data(x)
-  }
-  
-  parts <- rep(list(numeric(length(x))), n_units <- length(units))
-  parts[[n_units]] <- floor(x)
-  
-  # Compute fractional component of chronon
-  if(!is_discrete) {
-    frac <- x - parts[[n_units]]
-  }
-
-  for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
-    mod <- chronon_divmod(units[[i]], units[[i-1L]], parts[[i]])
-    parts[[i - 1L]] <- mod$chronon
-    parts[[i]] <- mod$remainder
-  }
-
-  # Add epoch offset to the largest granule
-  # TODO: Use calendar specific epochs
-  parts[[1L]] <- parts[[1L]] - chronon_convert_impl(-1970L, cal_gregorian$year(1L), units[[1L]], discrete = TRUE, tz = "UTC")
-
-  # Use cyclical labels for all but the largest granule
-  for (i in seq(length(units), by = -1L, length.out = n_units - 1L)) {
-    parts[[i]] <- cyclical_labels(units[[i]], units[[i-1L]], parts[[i]])
-  }
-
-  if(!is_discrete) {
-    parts[[n_units + 1L]] <- sprintf("%.1f%%", frac*100)
-  }
-
-  if (is_zoned) {
-    parts[[length(parts) + 1L]] <- tz_ext
-  }
-
-  # The largest granule is displayed continuously, smaller units are displayed cyclically
-  # For example, year-week-day would show 2023-W15-Wed for the 3rd day of the 15th week of 2023.
-  inject(paste(!!!parts, sep = "-"))
+  time_format_linear_impl(x)
 }
 
 #' @method vec_cast.integer mt_linear

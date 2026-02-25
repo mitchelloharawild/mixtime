@@ -5,6 +5,13 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// format.cpp
+strings mt_glue_fmt(std::string input, environment env, list units, list parts);
+extern "C" SEXP _mixtime_mt_glue_fmt(SEXP input, SEXP env, SEXP units, SEXP parts) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mt_glue_fmt(cpp11::as_cpp<cpp11::decay_t<std::string>>(input), cpp11::as_cpp<cpp11::decay_t<environment>>(env), cpp11::as_cpp<cpp11::decay_t<list>>(units), cpp11::as_cpp<cpp11::decay_t<list>>(parts)));
+  END_CPP11
+}
 // timeastro.cpp
 doubles approx_sunrises_from_utc(doubles unix_times, double lon_deg, double lat_deg, double alt_deg);
 extern "C" SEXP _mixtime_approx_sunrises_from_utc(SEXP unix_times, SEXP lon_deg, SEXP lat_deg, SEXP alt_deg) {
@@ -80,6 +87,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mixtime_get_tz_abbreviation",      (DL_FUNC) &_mixtime_get_tz_abbreviation,      2},
     {"_mixtime_get_tz_offset",            (DL_FUNC) &_mixtime_get_tz_offset,            2},
     {"_mixtime_get_tz_transitions",       (DL_FUNC) &_mixtime_get_tz_transitions,       3},
+    {"_mixtime_mt_glue_fmt",              (DL_FUNC) &_mixtime_mt_glue_fmt,              4},
     {NULL, NULL, 0}
 };
 }

@@ -17,37 +17,37 @@ test_that("yearweek creation from dates works", {
 
 test_that("yearweek handles edge cases around year boundaries", {
   # December 31, 2024 is a Tuesday, belongs to 2025-W1
-  expect_equal(format(yearweek(as.Date("2024-12-31"))), "2025-W1")
+  expect_equal(format(yearweek(as.Date("2024-12-31"))), "2025 W01")
   
   # January 1, 2024 is a Monday, starts 2024-W1
-  expect_equal(format(yearweek(as.Date("2024-01-01"))), "2024-W1")
+  expect_equal(format(yearweek(as.Date("2024-01-01"))), "2024 W01")
   
   # January 1, 2023 is a Sunday, belongs to 2022-W52
-  expect_equal(format(yearweek(as.Date("2023-01-01"))), "2022-W52")
+  expect_equal(format(yearweek(as.Date("2023-01-01"))), "2022 W52")
   
   # January 2, 2023 is a Monday, starts 2023-W1
-  expect_equal(format(yearweek(as.Date("2023-01-02"))), "2023-W1")
+  expect_equal(format(yearweek(as.Date("2023-01-02"))), "2023 W01")
 })
 
 test_that("yearweek handles years with 53 weeks", {
   # 2020 had 53 weeks (leap year starting on Wednesday)
-  expect_equal(format(yearweek(as.Date("2020-12-31"))), "2020-W53")
+  expect_equal(format(yearweek(as.Date("2020-12-31"))), "2020 W53")
   
   # 2015 had 53 weeks (started on Thursday)
-  expect_equal(format(yearweek(as.Date("2015-12-31"))), "2015-W53")
+  expect_equal(format(yearweek(as.Date("2015-12-31"))), "2015 W53")
 })
 
 test_that("yearweek Thursday rule is correct", {
   # ISO 8601 rule: Week 1 is the first week with a Thursday
   
   # 2019-01-01 is Tuesday, so it's in 2019-W01 (Thu is Jan 3)
-  expect_equal(format(yearweek(as.Date("2019-01-01"))), "2019-W1")
+  expect_equal(format(yearweek(as.Date("2019-01-01"))), "2019 W01")
   
   # 2021-01-01 is Friday, so it's in 2020-W53 (no Thu in that week of 2021)
-  expect_equal(format(yearweek(as.Date("2021-01-01"))), "2020-W53")
+  expect_equal(format(yearweek(as.Date("2021-01-01"))), "2020 W53")
   
   # 2022-01-01 is Saturday, so it's in 2021-W52
-  expect_equal(format(yearweek(as.Date("2022-01-01"))), "2021-W52")
+  expect_equal(format(yearweek(as.Date("2022-01-01"))), "2021 W52")
 })
 
 test_that("yearweek handles various date ranges without errors", {
@@ -72,7 +72,7 @@ test_that("yearweek handles various date ranges without errors", {
 
 test_that("yearweek handles Unix epoch correctly", {
   # Unix epoch: 1970-01-01 is a Thursday, should be 1970-W01
-  expect_equal(format(yearweek(as.Date("1970-01-01"))), "1970-W1")
+  expect_equal(format(yearweek(as.Date("1970-01-01"))), "1970 W01")
 })
 
 

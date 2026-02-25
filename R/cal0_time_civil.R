@@ -10,6 +10,11 @@ mt_tz_unit <- new_class(
   }
 )
 
+# Default formats
+method(chronon_format, mt_tz_unit) <- function(x) {
+  paste0(chronon_format(super(x, mt_unit)), " {tz}")
+}
+
 #' Civil time unit classes
 #'
 #' Time unit constructors for the civil time system where the boundary of each
@@ -69,6 +74,13 @@ method(chronon_granules, cal_time_civil_midnight$minute) <- function(x) list(cal
 method(chronon_granules, cal_time_civil_midnight$second) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L), cal_gregorian$minute(1L))
 method(chronon_granules, cal_time_civil_midnight$millisecond) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L), cal_gregorian$minute(1L), cal_gregorian$second(1L))
 
+# Default formats
+method(chronon_format, cal_time_civil_midnight$day) <- function(x) "{year}-{lbl(month, label = FALSE)}-{day}"
+method(chronon_format, cal_time_civil_midnight$hour) <- function(x) "{year}-{lbl(month, label = FALSE)}-{day} {hour}h"
+method(chronon_format, cal_time_civil_midnight$minute) <- function(x) "{year}-{lbl(month, label = FALSE)}-{day} {hour}:{minute}"
+method(chronon_format, cal_time_civil_midnight$second) <- function(x) "{year}-{lbl(month, label = FALSE)}-{day} {hour}:{minute}:{second}"
+method(chronon_format, cal_time_civil_midnight$millisecond) <- function(x) "{year}-{lbl(month, label = FALSE)}-{day} {hour}:{minute}:{second}.{millisecond}"
+
 ## DAY <-> HOUR
 method(
   chronon_cardinality, 
@@ -105,5 +117,21 @@ method(
 # Cyclical labels
 method(cyclical_labels, list(cal_time_civil_midnight$day, S7::class_any)) <- function(granule, cycle, i) {
   # Days count with 1-indexing
-  i + 1L
+  sprintf("%02d", i + 1L)
+}
+method(cyclical_labels, list(cal_time_civil_midnight$hour, S7::class_any)) <- function(granule, cycle, i) {
+  # Hours count with 0-indexing
+  sprintf("%02d", i)
+}
+method(cyclical_labels, list(cal_time_civil_midnight$minute, S7::class_any)) <- function(granule, cycle, i) {
+  # Minutes count with 0-indexing
+  sprintf("%02d", i)
+}
+method(cyclical_labels, list(cal_time_civil_midnight$second, S7::class_any)) <- function(granule, cycle, i) {
+  # Seconds count with 0-indexing
+  sprintf("%02d", i)
+}
+method(cyclical_labels, list(cal_time_civil_midnight$millisecond, S7::class_any)) <- function(granule, cycle, i) {
+  # Milliseconds are shown without decimals
+  sprintf("%03d", i)
 }

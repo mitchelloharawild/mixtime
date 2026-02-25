@@ -180,7 +180,7 @@ test_that("seq.mixtime with fractional linear time", {
   expect_length(result, 61)
   expect_equal(format(result[[1]]), format(yearmonth("2020-01-01", discrete = FALSE)))
   # Last element should be close to but not exceed the end
-  expect_match(format(result[[61]]), "2024-Dec-")
+  expect_match(format(result[[61]]), "2024 Dec ")
   
   # Fractional yearmonthday with week-based by
   result <- seq(yearmonthday("2020-01-01", discrete = FALSE), yearmonthday("2020-02-01"), by = "1 week")

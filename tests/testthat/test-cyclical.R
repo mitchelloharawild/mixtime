@@ -58,7 +58,7 @@ test_that("cyclical_time() day_of_month handles date boundaries across timezones
   
   # In Australia/Sydney (UTC+11), this is February 1st (day 1)
   sydney_dom <- day_of_month(utc_time, tz = "Australia/Sydney")
-  expect_equal(as.character(format(sydney_dom)), "1")
+  expect_equal(as.character(format(sydney_dom)), "01")
 })
 
 test_that("cyclical_time() day_of_year handles year boundary transitions", {
@@ -71,7 +71,7 @@ test_that("cyclical_time() day_of_year handles year boundary transitions", {
   
   # In UTC, this is 2021-01-01, so day 1 of 2021
   utc_doy <- day_of_year(pacific_time, tz = "UTC")
-  expect_equal(as.character(format(utc_doy)), "1")
+  expect_equal(as.character(format(utc_doy)), "01")
 })
 
 test_that("cyclical_time() week_of_year handles timezone shifts across week boundaries", {
@@ -80,11 +80,11 @@ test_that("cyclical_time() week_of_year handles timezone shifts across week boun
   
   # In Pacific time, 2020-01-01 is in week 1
   pacific_week <- week_of_year(pacific_time, tz = "America/Los_Angeles")
-  expect_equal(format(pacific_week), "W1")
+  expect_equal(format(pacific_week), "01")
   
   # Convert to Australia/Melbourne - becomes 2020-01-02, still in week 1
   melbourne_week <- week_of_year(pacific_time, tz = "Australia/Melbourne")
-  expect_equal(format(melbourne_week), "W1")
+  expect_equal(format(melbourne_week), "01")
 })
 
 test_that("cyclical_time() preserves cycle position for same calendar day across timezones", {

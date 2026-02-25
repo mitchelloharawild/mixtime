@@ -2,16 +2,16 @@ test_that("Linear time handles text parsing with set timezones", {
   # Test that yearmonthday preserves the date in the specified timezone
   result <- yearmonthday("2020-01-01", tz = "America/Los_Angeles")
   
-  # Should display as 2020-Jan-01 in PST timezone
-  expect_equal(format(result), "2020-Jan-1-PST")
+  # Should display as 2020 Jan 1 in PST timezone
+  expect_equal(format(result), "2020-01-01 PST")
   
   # Test with another timezone
   result_utc <- yearmonthday("2020-01-01", tz = "UTC")
-  expect_equal(format(result_utc), "2020-Jan-1")
+  expect_equal(format(result_utc), "2020-01-01")
   
   # Test with Europe/Berlin
   result_berlin <- yearmonthday("2020-01-01", tz = "Europe/Berlin")
-  expect_equal(format(result_berlin), "2020-Jan-1-CET")
+  expect_equal(format(result_berlin), "2020-01-01 CET")
 })
 
 test_that("linear_time() creates hour and minute times with timezone", {
@@ -45,15 +45,15 @@ test_that("linear_time() converts between timezones showing date differences", {
   
   # Convert to America/Los_Angeles - should be previous day (2019-12-31)
   pacific_ymd <- yearmonthday(melbourne_time, tz = "America/Los_Angeles")
-  expect_equal(format(pacific_ymd), "2019-Dec-31-PST")
+  expect_equal(format(pacific_ymd), "2019-12-31 PST")
   
   # Convert to Europe/Berlin - should also be previous day (2019-12-31)
   berlin_ymd <- yearmonthday(melbourne_time, tz = "Europe/Berlin")
-  expect_equal(format(berlin_ymd), "2019-Dec-31-CET")
+  expect_equal(format(berlin_ymd), "2019-12-31 CET")
   
   # The Melbourne date should still be 2020-01-01
   melbourne_ymd <- yearmonthday(melbourne_time)
-  expect_equal(format(melbourne_ymd), "2020-Jan-1-AEDT")
+  expect_equal(format(melbourne_ymd), "2020-01-01 AEDT")
 })
 
 test_that("linear_time() preserves instant across timezone conversions", {
@@ -72,10 +72,10 @@ test_that("linear_time() preserves instant across timezone conversions", {
   # But the calendar dates differ
   expect_equal(
     format(yearmonthday(melbourne_converted)),
-    "2020-Jun-16-AEST"  # Next day in Melbourne
+    "2020-06-16 AEST"  # Next day in Melbourne
   )
   expect_equal(
     format(yearmonthday(pacific_time)),
-    "2020-Jun-15-PDT"  # Original day in Pacific
+    "2020-06-15 PDT"  # Original day in Pacific
   )
 })

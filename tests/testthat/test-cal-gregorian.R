@@ -70,42 +70,42 @@ test_that("year() handles discrete vs continuous time", {
 
 test_that("yearmonth() converts dates correctly", {
   # Basic conversions
-  expect_equal(format(yearmonth(as.Date("1970-01-01"))), "1970-Jan")
-  expect_equal(format(yearmonth(as.Date("1970-02-01"))), "1970-Feb")
+  expect_equal(format(yearmonth(as.Date("1970-01-01"))), "1970 Jan")
+  expect_equal(format(yearmonth(as.Date("1970-02-01"))), "1970 Feb")
   
   # Edge case: end of month
-  expect_equal(format(yearmonth(as.Date("1970-01-31"))), "1970-Jan")
-  expect_equal(format(yearmonth(as.Date("1970-02-28"))), "1970-Feb")
+  expect_equal(format(yearmonth(as.Date("1970-01-31"))), "1970 Jan")
+  expect_equal(format(yearmonth(as.Date("1970-02-28"))), "1970 Feb")
   
   # Edge case: start of next month
-  expect_equal(format(yearmonth(as.Date("1970-02-01"))), "1970-Feb")
+  expect_equal(format(yearmonth(as.Date("1970-02-01"))), "1970 Feb")
   
   # Vector consistency check
   dates <- as.Date(0:150000, origin = "1970-01-01")
-  diff <- format(yearmonth(dates)) == format(dates, "%Y-%b")
+  diff <- format(yearmonth(dates)) == format(dates, "%Y %b")
   expect_true(all(diff))
 })
 
 test_that("yearmonth() handles leap year months correctly", {
   # February in leap years
-  expect_equal(format(yearmonth(as.Date("1972-02-29"))), "1972-Feb")
-  expect_equal(format(yearmonth(as.Date("2000-02-29"))), "2000-Feb")
-  expect_equal(format(yearmonth(as.Date("2024-02-29"))), "2024-Feb")
+  expect_equal(format(yearmonth(as.Date("1972-02-29"))), "1972 Feb")
+  expect_equal(format(yearmonth(as.Date("2000-02-29"))), "2000 Feb")
+  expect_equal(format(yearmonth(as.Date("2024-02-29"))), "2024 Feb")
   
   # March after leap day
-  expect_equal(format(yearmonth(as.Date("1972-03-01"))), "1972-Mar")
-  expect_equal(format(yearmonth(as.Date("2000-03-01"))), "2000-Mar")
+  expect_equal(format(yearmonth(as.Date("1972-03-01"))), "1972 Mar")
+  expect_equal(format(yearmonth(as.Date("2000-03-01"))), "2000 Mar")
 })
 
 test_that("yearquarter() converts correctly", {
   # All quarters
-  expect_equal(format(yearquarter(0L)), "1970-Q1")
-  expect_equal(format(yearquarter(1L)), "1970-Q2")
-  expect_equal(format(yearquarter(2L)), "1970-Q3")
-  expect_equal(format(yearquarter(3L)), "1970-Q4")
+  expect_equal(format(yearquarter(0L)), "1970 Q1")
+  expect_equal(format(yearquarter(1L)), "1970 Q2")
+  expect_equal(format(yearquarter(2L)), "1970 Q3")
+  expect_equal(format(yearquarter(3L)), "1970 Q4")
   
   # Next year
-  expect_equal(format(yearquarter(as.Date("1971-02-04"))), "1971-Q1")
+  expect_equal(format(yearquarter(as.Date("1971-02-04"))), "1971 Q1")
   
   # Vector
   expect_length(yearquarter(0:7), 8)
@@ -116,18 +116,18 @@ test_that("chronon_divmod between days and months handles edge cases", {
   # Days since epoch for key dates
   
   # Start of months
-  expect_equal(format(yearmonth(as.Date("1970-01-01"))), "1970-Jan")
-  expect_equal(format(yearmonth(as.Date("1970-12-01"))), "1970-Dec")
-  expect_equal(format(yearmonth(as.Date("1971-01-01"))), "1971-Jan")
+  expect_equal(format(yearmonth(as.Date("1970-01-01"))), "1970 Jan")
+  expect_equal(format(yearmonth(as.Date("1970-12-01"))), "1970 Dec")
+  expect_equal(format(yearmonth(as.Date("1971-01-01"))), "1971 Jan")
   
   # End of months (should still be in that month)
-  expect_equal(format(yearmonth(as.Date("1970-01-31"))), "1970-Jan")
-  expect_equal(format(yearmonth(as.Date("1970-04-30"))), "1970-Apr")
-  expect_equal(format(yearmonth(as.Date("1970-12-31"))), "1970-Dec")
+  expect_equal(format(yearmonth(as.Date("1970-01-31"))), "1970 Jan")
+  expect_equal(format(yearmonth(as.Date("1970-04-30"))), "1970 Apr")
+  expect_equal(format(yearmonth(as.Date("1970-12-31"))), "1970 Dec")
   
   # Leap year February
-  expect_equal(format(yearmonth(as.Date("1972-02-29"))), "1972-Feb")
-  expect_equal(format(yearmonth(as.Date("1972-03-01"))), "1972-Mar")
+  expect_equal(format(yearmonth(as.Date("1972-02-29"))), "1972 Feb")
+  expect_equal(format(yearmonth(as.Date("1972-03-01"))), "1972 Mar")
 })
 
 test_that("chronon_divmod between days and years handles edge cases", {
@@ -200,8 +200,8 @@ test_that("conversion handles dates before Unix epoch", {
   expect_equal(format(year(as.Date("1969-01-01"))), "1969")
   expect_equal(format(year(as.Date("1900-01-01"))), "1900")
   
-  expect_equal(format(yearmonth(as.Date("1969-12-31"))), "1969-Dec")
-  expect_equal(format(yearmonth(as.Date("1969-06-15"))), "1969-Jun")
+  expect_equal(format(yearmonth(as.Date("1969-12-31"))), "1969 Dec")
+  expect_equal(format(yearmonth(as.Date("1969-06-15"))), "1969 Jun")
 })
 
 test_that("cyclical_labels for months work correctly", {

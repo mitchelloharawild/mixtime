@@ -44,7 +44,12 @@ S7::method(time_unit_full, cal_isoweek$week) <- function(x) "week"
 S7::method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
 
 # Default granules
-method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_gregorian$year(1L))
+method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_isoweek$year(1L))
+
+# Default formats
+method(chronon_format, cal_isoweek$year) <- function(x) "{year}"
+method(chronon_format, cal_isoweek$week) <- function(x) "{year} W{week}"
+
 # 1:1 mapping for isoyears to years 
 # TODO - this is not entirely accurate, but is currently necessary
 # for converting the 1970 epoch in the print method
@@ -92,11 +97,20 @@ S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function
   )
 }
 
-S7::method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i) {
+week.abb <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+week.name <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+
+S7::method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, label = TRUE, abbr = TRUE) {
   # TODO: Add offset for different week starting days
-  format(as.Date(i+4L), "%a")
+  if (!label) {
+    i + 1L
+  } else if (abbr) {
+    week.abb[i + 1L]
+  } else {
+    week.name[i + 1L]
+  }
 }
 S7::method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- function(granule, cycle, i) {
   # Weeks count with 1-indexing
-  paste0("W", i + 1L)
+  sprintf("%02d", i + 1L)
 }
