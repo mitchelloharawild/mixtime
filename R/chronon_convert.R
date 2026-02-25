@@ -74,7 +74,7 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
   # Convert back to UTC time internally
   if (tz != "UTC") {
     f <- if (discrete) as.integer else identity
-    x <- x + f(chronon_convert_impl(xso, `1s`, to, discrete = FALSE, tz = "UTC"))
+    x <- x - f(chronon_convert_impl(xso, `1s`, to, discrete = FALSE, tz = "UTC"))
   }
 
   if (discrete) x <- as.integer(floor(x))

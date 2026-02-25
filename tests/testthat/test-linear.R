@@ -14,6 +14,31 @@ test_that("Linear time handles text parsing with set timezones", {
   expect_equal(format(result_berlin), "2020-Jan-1-CET")
 })
 
+test_that("linear_time() creates hour and minute times with timezone", {
+  # Create a POSIXct in America/Los_Angeles
+  base_time <- as.POSIXct("2020-01-15 14:30:00", tz = "America/Los_Angeles")
+  result <- linear_time(base_time, minute(1L), tz = "America/Los_Angeles")
+  
+  # Should include date and time in Pacific timezone
+  expect_s3_class(result, "mixtime")
+  expect_match(format(result), "2020-01-15 14:30 PST")
+  
+  # Test with UTC
+  base_utc <- as.POSIXct("2020-01-15 09:15:00", tz = "UTC")
+  result_utc <- linear_time(base_utc, minute(1L), tz = "UTC")
+  expect_match(format(result_utc), "2020-01-15 09:15")
+  
+  # Test with Australia/Melbourne
+  base_melb <- as.POSIXct("2020-01-15 23:45:00", tz = "Australia/Melbourne")
+  result_melb <- linear_time(base_melb, minute(1L), tz = "Australia/Melbourne")
+  expect_match(format(result_melb), "2020-01-15 23:45 AEDT")
+  
+  # Test with hour precision
+  base_berlin <- as.POSIXct("2020-01-15 16:00:00", tz = "Europe/Berlin")
+  result_hour <- linear_time(base_berlin, hour(1L), tz = "Europe/Berlin")
+  expect_match(format(result_hour), "2020-01-15 16h CET")
+})
+
 test_that("linear_time() converts between timezones showing date differences", {
   # Create a POSIXct representing 2020-01-01 09:00 in Australia/Melbourne
   melbourne_time <- as.POSIXct("2020-01-01 09:00:00", tz = "Australia/Melbourne")
