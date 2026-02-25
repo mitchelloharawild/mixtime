@@ -111,7 +111,7 @@ struct SolarDay {
   double ha;
   bool valid;
   
-  SolarDay(double day, double lon_deg, double lat_deg, double alt_deg) {
+  SolarDay(double day, double lat_deg, double lon_deg, double alt_deg) {
     day_utc = day;
     valid = false;
     
@@ -145,8 +145,8 @@ struct SolarDay {
 // Generic function to convert UTC to event counts
 template<typename EventFunc>
 doubles event_counts_from_utc(doubles unix_times,
-                               double lon_deg,
                                double lat_deg,
+                               double lon_deg,
                                double alt_deg,
                                EventFunc get_event_time) {
   int n = unix_times.size();
@@ -161,7 +161,7 @@ doubles event_counts_from_utc(doubles unix_times,
     
     double day_utc = std::floor(ut / 86400.0);
     
-    SolarDay today(day_utc, lon_deg, lat_deg, alt_deg);
+    SolarDay today(day_utc, lat_deg, lon_deg, alt_deg);
     if (!today.valid) {
       result[i] = NA_REAL;
       continue;
@@ -173,7 +173,7 @@ doubles event_counts_from_utc(doubles unix_times,
     
     double fraction;
     if (ut < event_unix) {
-      SolarDay prev(day_utc - 1.0, lon_deg, lat_deg, alt_deg);
+      SolarDay prev(day_utc - 1.0, lat_deg, lon_deg, alt_deg);
       if (!prev.valid) {
         result[i] = NA_REAL;
         continue;
@@ -181,7 +181,7 @@ doubles event_counts_from_utc(doubles unix_times,
       double prev_event_unix = get_event_time(prev);
       fraction = (ut - prev_event_unix) / (event_unix - prev_event_unix);
     } else {
-      SolarDay next(day_utc + 1.0, lon_deg, lat_deg, alt_deg);
+      SolarDay next(day_utc + 1.0, lat_deg, lon_deg, alt_deg);
       if (!next.valid) {
         result[i] = NA_REAL;
         continue;
@@ -200,8 +200,8 @@ doubles event_counts_from_utc(doubles unix_times,
 // Generic function to convert event counts to UTC
 template<typename EventFunc>
 doubles utc_from_event_counts(doubles event_counts,
-                               double lon_deg,
                                double lat_deg,
+                               double lon_deg,
                                double alt_deg,
                                EventFunc get_event_time) {
   int n = event_counts.size();
@@ -218,13 +218,13 @@ doubles utc_from_event_counts(doubles event_counts,
     double fraction = count - complete;
     double day_utc = std::floor(J2000_UNIX / 86400.0 + complete);
     
-    SolarDay today(day_utc, lon_deg, lat_deg, alt_deg);
+    SolarDay today(day_utc, lat_deg, lon_deg, alt_deg);
     if (!today.valid) {
       result[i] = NA_REAL;
       continue;
     }
     
-    SolarDay next(day_utc + 1.0, lon_deg, lat_deg, alt_deg);
+    SolarDay next(day_utc + 1.0, lat_deg, lon_deg, alt_deg);
     if (!next.valid) {
       result[i] = NA_REAL;
       continue;
@@ -247,55 +247,56 @@ doubles utc_from_event_counts(doubles event_counts,
 // Exported functions for sunrise
 [[cpp11::register]]
 doubles approx_sunrises_from_utc(doubles unix_times,
-                                  double lon_deg,
                                   double lat_deg,
+                                  double lon_deg,
                                   double alt_deg = -0.833) {
-  return event_counts_from_utc(unix_times, lon_deg, lat_deg, alt_deg,
+  return event_counts_from_utc(unix_times, lat_deg, lon_deg, alt_deg,
                                [](const SolarDay& day) { return day.sunrise_unix(); });
 }
 
 [[cpp11::register]]
 doubles approx_utc_from_sunrises(doubles sunrise_counts,
-                                  double lon_deg,
                                   double lat_deg,
+                                  double lon_deg,
                                   double alt_deg = -0.833) {
-  return utc_from_event_counts(sunrise_counts, lon_deg, lat_deg, alt_deg,
+  return utc_from_event_counts(sunrise_counts, lat_deg, lon_deg, alt_deg,
                                [](const SolarDay& day) { return day.sunrise_unix(); });
 }
 
 // Exported functions for sunset
 [[cpp11::register]]
 doubles approx_sunsets_from_utc(doubles unix_times,
-                                 double lon_deg,
                                  double lat_deg,
+                                 double lon_deg,
                                  double alt_deg = -0.833) {
-  return event_counts_from_utc(unix_times, lon_deg, lat_deg, alt_deg,
+  return event_counts_from_utc(unix_times, lat_deg, lon_deg, alt_deg,
                                [](const SolarDay& day) { return day.sunset_unix(); });
 }
 
 [[cpp11::register]]
 doubles approx_utc_from_sunsets(doubles sunset_counts,
-                                 double lon_deg,
                                  double lat_deg,
+                                 double lon_deg,
                                  double alt_deg = -0.833) {
-  return utc_from_event_counts(sunset_counts, lon_deg, lat_deg, alt_deg,
+  return utc_from_event_counts(sunset_counts, lat_deg, lon_deg, alt_deg,
                                [](const SolarDay& day) { return day.sunset_unix(); });
 }
 
 // Exported functions for solar noon
 [[cpp11::register]]
 doubles approx_noons_from_utc(doubles unix_times,
-                               double lon_deg,
-                               double lat_deg) {
-  return event_counts_from_utc(unix_times, lon_deg, lat_deg, 0.0,
+                               double lat_deg,
+                               double lon_deg) {
+  return event_counts_from_utc(unix_times, lat_deg, lon_deg, 0.0,
                                [](const SolarDay& day) { return day.noon_unix(); });
 }
 
 [[cpp11::register]]
 doubles approx_utc_from_noons(doubles noon_counts,
-                               double lon_deg,
-                               double lat_deg) {
-  return utc_from_event_counts(noon_counts, lon_deg, lat_deg, 0.0,
+                               double lat_deg,
+                               double lon_deg) {
+  return utc_from_event_counts(noon_counts, lat_deg, lon_deg, 0.0,
                                [](const SolarDay& day) { return day.noon_unix(); });
 }
+
 
