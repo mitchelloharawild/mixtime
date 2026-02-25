@@ -42,8 +42,11 @@ method(tz_offset, S7::new_S3_class("mixtime")) <- function(x, ...) {
 method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, tz = tz_name(x), ...) {
   time_s <- as.double(as.POSIXct(x))
   offset_s <- get_tz_offset(time_s, tz)
-  if (offset_s == 0) return(offset_s)
-  offset_s*chronon_cardinality(cal_time_civil_midnight$second(1L), time_chronon(x), time_s)
+  nz_offset <- offset_s != 0
+  offset_s[nz_offset] <- offset_s[nz_offset]*chronon_cardinality(
+    cal_time_civil_midnight$second(1L), time_chronon(x), time_s[nz_offset]
+  )
+  offset_s
 }
 
 #' Get timezone abbreviation
