@@ -47,12 +47,14 @@ new_calendar <- function(..., class = character()) {
   
   # Create a reference environment that wraps the calendar
   cal_env <- new.env(parent = emptyenv())
-  cal_env$calendar <- cal
   
   # Add the environment reference to each time unit
   for (i in seq_along(cal)) {
     attr(cal[[i]], "cal") <- cal_env
   }
+  
+  # Add reference to self in environment
+  cal_env$calendar <- cal
   
   cal
 }
