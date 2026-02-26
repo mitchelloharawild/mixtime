@@ -74,12 +74,12 @@ linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 
 # ISO week calendar with week-day structure
-linear_time(
-  Sys.Date(),
-  chronon = day(1L),
-  granules = list(year(1L), week(1L)),
-  calendar = cal_isoweek
-)
+#linear_time(
+#  Sys.Date(),
+#  chronon = day(1L),
+#  granules = list(year(1L), week(1L)),
+#  calendar = cal_isoweek
+#)
 
 }
 \seealso{
