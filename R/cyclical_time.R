@@ -157,10 +157,10 @@ cyclical_time <- function(
   }
 
   # Reduce to cyclical time with divmod methods
-  data <- chronon_divmod(from = chronon, to = cycle, x = data)$remainder
+  data <- chronon_divmod(from = chronon, to = cycle, x = data)$mod
   
   # Ensure data is integer for discrete data
-  # (since chronon_divmod()$remainder may not respect discrete)
+  # (since chronon_divmod()$mod may not respect discrete)
   if (discrete) {
     data <- as.integer(data)
   }

@@ -147,8 +147,8 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function
   }
 
   list(
-    chronon = res %/% res_scale,
-    remainder = day / x_scale # This is in cal_gregorian$day(1L), should be cal_gregorian$day(***?)
+    div = res %/% res_scale,
+    mod = day / x_scale # This is in cal_gregorian$day(1L), should be cal_gregorian$day(***?)
   )
 }
 method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function(from, to, x) {
@@ -173,8 +173,8 @@ method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function
   result <- result / chronon_cardinality(to, cal_gregorian$day(1L))
 
   list(
-    chronon = result,
-    remainder = 0L
+    div = result,
+    mod = 0L
   )
 }
 
@@ -204,8 +204,8 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(
   yday <- (doy + 59 + ly) %% (365L + ly)
   
   list(
-    chronon = year-1970L,
-    remainder = yday/x_scale
+    div = year-1970L,
+    mod = yday/x_scale
   )
 }
 method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(from, to, x) {
@@ -230,8 +230,8 @@ method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(
   d <- d / chronon_cardinality(to, cal_gregorian$day(1L))
 
   list(
-    chronon = d,
-    remainder = 0L
+    div = d,
+    mod = 0L
   )
 }
 

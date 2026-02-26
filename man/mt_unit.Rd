@@ -57,8 +57,8 @@ that should be implemented for custom time units:
 that fit within one \code{from} unit. This can be a fixed value (e.g.,
 7 days per week) or variable based on \code{at} (e.g., 28-31 days per month).
 \item \code{chronon_divmod(x, from, to)} - Converts time unit \code{x} from units of
-\code{from} to units of \code{to}, returning a list with \code{chronon} (the quotient)
-and \code{remainder}. This enables conversions between units that have
+\code{from} to units of \code{to}, returning a list with \code{div} (the quotient)
+and \code{mod}. This enables conversions between units that have
 variable cardinality (e.g., the date 2020-03-23 to the month 2020-03).
 All conversions should be based on chronons since epoch (1970-01-01),
 in the UTC time zone.

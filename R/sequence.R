@@ -135,10 +135,10 @@ seq.mt_linear <- function(
     if (!missing_from) {
       # Convert `from` into `by` chronons
       divmod <- chronon_divmod(chronon, by, as.numeric(from))
-      arg$from <- divmod$chronon
+      arg$from <- divmod$div
 
       # Left aligned sequencing
-      seq_part <- divmod$remainder
+      seq_part <- divmod$mod
     }
     if (!missing_to) {
       # Shift `to` left to account for `from` alignment
@@ -146,10 +146,10 @@ seq.mt_linear <- function(
 
       # Convert `to` into `by` chronons
       divmod <- chronon_divmod(chronon, by, as.numeric(to))
-      arg$to <- divmod$chronon
+      arg$to <- divmod$div
       
       # Right aligned sequencing if from isn't provided
-      seq_part <- seq_part %||% divmod$remainder
+      seq_part <- seq_part %||% divmod$mod
     }
     if (!is.null(length.out)) arg$length.out <- length.out
 

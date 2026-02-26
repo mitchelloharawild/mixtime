@@ -121,12 +121,12 @@ test_that("chronon_divmod from days to weeks works", {
   
   # Test with multiples of 7 (should have remainder 3 for Thursday epoch)
   result <- chronon_divmod(day_unit, week_unit, 7L)
-  expect_equal(result$remainder, 3L)
+  expect_equal(result$mod, 3L)
   
   # Test with non-multiples
   result2 <- chronon_divmod(day_unit, week_unit, 10L)
-  expect_equal(result2$chronon, 1L)
-  expect_equal(result2$remainder, 6L)
+  expect_equal(result2$div, 1L)
+  expect_equal(result2$mod, 6L)
 })
 
 test_that("chronon_divmod from weeks to days works", {
@@ -135,6 +135,6 @@ test_that("chronon_divmod from weeks to days works", {
   
   # 1 week should convert to 7 days (plus epoch offset)
   result <- chronon_divmod(week_unit, day_unit, 1L)
-  expect_equal(result$remainder, 0L)
-  expect_equal(result$chronon %% 7, 4L)  # Check epoch alignment
+  expect_equal(result$div %% 7, 4L)  # Check epoch alignment
+  expect_equal(result$mod, 0L)
 })

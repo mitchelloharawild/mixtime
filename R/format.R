@@ -73,8 +73,8 @@ time_format_linear_impl <- function(x, format = chronon_format(time_chronon(x)),
   # Compute display granules
   for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
     mod <- chronon_divmod(units[[i]], units[[i-1L]], parts[[i]])
-    parts[[i - 1L]] <- mod$chronon
-    parts[[i]] <- mod$remainder
+    parts[[i - 1L]] <- mod$div
+    parts[[i]] <- mod$mod
   }
 
   # Add epoch offset to the largest granule

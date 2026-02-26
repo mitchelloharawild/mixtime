@@ -65,10 +65,10 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
   # Convert chronons along the path
   for (i in seq(2, length.out = length(path)-1)) {
     res <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], x)
-    x <- res$chronon
-    nz_mod <- res$remainder != 0
-    part <- chronon_cardinality(path[[i]], path[[i-1L]], floor(res$chronon[nz_mod]))
-    x[nz_mod] <- x[nz_mod] + res$remainder[nz_mod]/part
+    x <- res$div
+    nz_mod <- res$mod != 0
+    part <- chronon_cardinality(path[[i]], path[[i-1L]], floor(res$div[nz_mod]))
+    x[nz_mod] <- x[nz_mod] + res$mod[nz_mod]/part
   }
 
   # Convert back to UTC time internally

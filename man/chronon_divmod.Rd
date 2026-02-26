@@ -34,10 +34,10 @@ units. The default method uses \code{chronon_cardinality()} to cast between time
 units, which is efficient for regular time units.
 }
 \examples{
-# Convert day 16 since epoch into weeks since epoch (and remainder days)
+# Convert day 16 after epoch (1970-01-01) into weeks since epoch (and remainder days)
 with(cal_isoweek, chronon_divmod(day(1L), week(1L), 16L))
 
-# Convert week 4 since epoch into days since epoch
+# Convert week 4 after epoch (1970-W1) into days since epoch
 with(cal_isoweek, chronon_divmod(week(1L), day(1L), 4L))
 
 }

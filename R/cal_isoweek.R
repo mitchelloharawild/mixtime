@@ -65,8 +65,8 @@ S7::method(chronon_divmod, list(cal_isoweek$day, cal_isoweek$week)) <- function(
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
   divisor <- chronon_cardinality(to, from)
   list(
-    chronon = (x + 3L) %/% divisor,
-    remainder = (x + 3L) %% divisor
+    div = (x + 3L) %/% divisor,
+    mod = (x + 3L) %% divisor
   )
 }
 
@@ -75,8 +75,8 @@ S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(
   mult <- chronon_cardinality(from, to)
 
   list(
-    chronon = x*mult - 3L,
-    remainder = 0L
+    div = x*mult - 3L,
+    mod = 0L
   )
 }
 
@@ -92,8 +92,8 @@ S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function
   
   x <- as.POSIXlt(as.Date(x*7))
   list(
-    chronon = x$year-70L,
-    remainder = x$yday %/% 7L
+    div = x$year-70L,
+    mod = x$yday %/% 7L
   )
 }
 

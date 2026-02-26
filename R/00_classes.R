@@ -35,8 +35,8 @@ mt_unit_s3 <- S7::new_S3_class(
 #'   7 days per week) or variable based on `at` (e.g., 28-31 days per month).
 #'   
 #' * `chronon_divmod(x, from, to)` - Converts time unit `x` from units of
-#'   `from` to units of `to`, returning a list with `chronon` (the quotient)
-#'   and `remainder`. This enables conversions between units that have
+#'   `from` to units of `to`, returning a list with `div` (the quotient)
+#'   and `mod`. This enables conversions between units that have
 #'   variable cardinality (e.g., the date 2020-03-23 to the month 2020-03).
 #'   All conversions should be based on chronons since epoch (1970-01-01),
 #'   in the UTC time zone.

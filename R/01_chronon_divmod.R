@@ -17,10 +17,10 @@
 #'  converting to the `to` time unit.
 #' 
 #' @examples
-#' # Convert day 16 since epoch into weeks since epoch (and remainder days)
+#' # Convert day 16 after epoch (1970-01-01) into weeks since epoch (and remainder days)
 #' with(cal_isoweek, chronon_divmod(day(1L), week(1L), 16L))
 #' 
-#' # Convert week 4 since epoch into days since epoch
+#' # Convert week 4 after epoch (1970-W1) into days since epoch
 #' with(cal_isoweek, chronon_divmod(week(1L), day(1L), 4L))
 #'
 #' @export
@@ -36,8 +36,8 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
     divisor <- vec_data(to) / vec_data(from)
     return(
       list(
-        chronon = vec_data(x) %/% divisor,
-        remainder = vec_data(x) %% divisor
+        div = vec_data(x) %/% divisor,
+        mod = vec_data(x) %% divisor
       )
     )
   }
@@ -66,8 +66,8 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # Forward convert chronons
   for (i in seq(2, length.out = length(path)-1)) {
     result <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], chronon[[i-1L]])
-    chronon[[i]] <- result$chronon
-    remainder[[i-1L]] <- result$remainder
+    chronon[[i]] <- result$div
+    remainder[[i-1L]] <- result$mod
   }
 
   # Backward convert remainder
@@ -78,8 +78,8 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   }
 
   list(
-    chronon = chronon[[length(chronon)]],
-    remainder = remainder[[1L]]
+    div = chronon[[length(chronon)]],
+    mod = remainder[[1L]]
   )
 
 }
@@ -96,7 +96,7 @@ chronon_divmod_dispatch <- function(from, to, x) {
 chronon_divmod_regular <- function(from, to, x) {
   divisor <- chronon_cardinality(to, from)
   list(
-    chronon = x %/% divisor,
-    remainder = x %% divisor
+    div = x %/% divisor,
+    mod = x %% divisor
   )
 }
