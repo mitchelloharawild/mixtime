@@ -8,6 +8,8 @@ chronon_format(x, ...)
 }
 \arguments{
 \item{x}{A chronon (time unit) object.}
+
+\item{...}{Additional arguments for methods.}
 }
 \value{
 A character string containing the default format template for the chronon.
@@ -18,7 +20,7 @@ The format strings use placeholders like \code{{year}}, \code{{month}}, \code{{d
 that can be interpolated with actual values.
 }
 \examples{
-chronon_format(cal_gregorian$year)
-chronon_format(cal_gregorian$month)
-chronon_format(cal_gregorian$day)
+chronon_format(cal_gregorian$year(1L))
+chronon_format(cal_gregorian$month(1L))
+chronon_format(cal_gregorian$day(1L))
 }

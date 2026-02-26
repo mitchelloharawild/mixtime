@@ -6,14 +6,15 @@
 #' that can be interpolated with actual values.
 #'
 #' @param x A chronon (time unit) object.
+#' @param ... Additional arguments for methods.
 #'
 #' @return A character string containing the default format template for the chronon.
 #'
 #' @export
 #' @examples
-#' chronon_format(cal_gregorian$year)
-#' chronon_format(cal_gregorian$month)
-#' chronon_format(cal_gregorian$day)
+#' chronon_format(cal_gregorian$year(1L))
+#' chronon_format(cal_gregorian$month(1L))
+#' chronon_format(cal_gregorian$day(1L))
 chronon_format <- new_generic("chronon_format", "x")
 method(chronon_format, mt_unit) <- function(x) {
   cal <- time_calendar(x)

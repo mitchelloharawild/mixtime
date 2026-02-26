@@ -6,8 +6,17 @@
 \alias{cal_time_solar_sunset}
 \alias{cal_time_solar_sunrise}
 \alias{cal_time_solar_noon}
+\alias{cal_time_solar_midnight}
+\alias{cal_time_solar_dawn}
+\alias{cal_time_solar_dusk}
 \title{Solar time unit classes}
 \format{
+An object of class \code{mt_calendar} of length 1.
+
+An object of class \code{mt_calendar} of length 1.
+
+An object of class \code{mt_calendar} of length 1.
+
 An object of class \code{mt_calendar} of length 1.
 
 An object of class \code{mt_calendar} of length 1.
@@ -20,6 +29,12 @@ cal_time_solar_sunset
 cal_time_solar_sunrise
 
 cal_time_solar_noon
+
+cal_time_solar_midnight
+
+cal_time_solar_dawn
+
+cal_time_solar_dusk
 }
 \value{
 A time unit object for the Gregorian calendar system.
