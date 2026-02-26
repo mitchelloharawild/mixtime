@@ -8,6 +8,7 @@ mt_unit_display <- function(x, units, parts, ...) {
       is_mt <- FALSE
     } else if (length(xi) > 1L) {
       # This matches multiple expected units, more precision is needed.
+      cal <- time_calendar(units[[length(units)]])
       bad_tu <- names(cal)[match(S7_class_id(x), vapply(cal, S7_class_id, character(1L)))]
       cli::cli_abort(
         c(
@@ -17,7 +18,7 @@ mt_unit_display <- function(x, units, parts, ...) {
         call = NULL
       )
     }
-  } else if (is_mt <- S7::S7_inherits(x, mixtime:::mt_unit)) {
+  } else if (is_mt <- S7::S7_inherits(x, mt_unit)) {
     xi <- vec_match(
       data.frame(x = vec_data(x), tu = S7_class_id(x)),
       data.frame(x = vapply(units, vec_data, numeric(1L)), tu = vapply(units, S7_class_id, character(1L)))
