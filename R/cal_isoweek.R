@@ -81,19 +81,62 @@ S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(
 }
 
 S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(from, to, x) {
-  # Modulo arithmetic to convert from days to months
+  # Modulo arithmetic to convert from weeks to ISO years
   if (chronon_cardinality(to, cal_isoweek$year(1L)) != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
-  # TODO: should be swapped out to arithmetic on integer days since epoch
 
-  # ISO 8601 years for weekly chronons cycle with the first week with a Thursday
-  # Unix epoch 1970-01-01 is a Thursday, a convenient reference point
-  
-  x <- as.POSIXlt(as.Date(x*7))
+  td   <- x * 7L
+  y    <- as.integer(td %/% 365.2425 + 1970L)
+  j    <- 365L * (y - 1970L) + (y - 1969L) %/% 4L - (y - 1901L) %/% 100L + (y - 1601L) %/% 400L
+  leap <- ((y %% 4L == 0L) & (y %% 100L != 0L)) | (y %% 400L == 0L)
+  jn   <- j + 365L + leap
+
+  up   <- jn <= td
+  dn   <- j > td
+  y    <- y + up - dn
+  j[up]  <- jn[up]
+  j[dn]  <- 365L * (y[dn] - 1970L) + (y[dn] - 1969L) %/% 4L - (y[dn] - 1901L) %/% 100L + (y[dn] - 1601L) %/% 400L
+
+  dow  <- (j + 3L) %% 7L + 1L
+  w1   <- j + (4L - dow) %% 7L - 3L
+
   list(
-    div = x$year-70L,
-    mod = x$yday %/% 7L
+    # year offset from epoch
+    div = y - 1970L,  
+    # 0-indexed week within ISO year [0, 51] or [0, 52]
+    mod = (td - 3L - w1) %/% 7L
+  )
+}
+
+S7::method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(from, to, x) {
+  if (chronon_cardinality(from, cal_isoweek$year(1L)) != 1L) {
+    stop("Converting from multi-year chronons to weeks is not yet supported", call. = FALSE)
+  }
+
+  # Split integer year offset and fractional (0-indexed week within year)
+  y_off <- floor(x)
+  frac  <- x - y_off
+  y     <- as.integer(y_off) + 1970L
+
+  j    <- 365L * (y - 1970L) + (y - 1969L) %/% 4L - (y - 1901L) %/% 100L + (y - 1601L) %/% 400L
+  dow  <- (j + 3L) %% 7L + 1L
+  w1   <- j + (4L - dow) %% 7L - 3L  # days since epoch of Monday of ISO week 1
+
+  # weeks since epoch of week 1, plus fractional weeks within the year
+  w1_week <- (w1 + 3L) %/% 7L        # since w1 = w*7 - 3, so w = (w1 + 3) / 7
+
+  # frac is 0-indexed weeks within year (the mod from the forward direction)
+  # total weeks count within year = 52 or 53
+  leap  <- ((y %% 4L == 0L) & (y %% 100L != 0L)) | (y %% 400L == 0L)
+  jn    <- j + 365L + leap
+  dowN  <- (jn + 3L) %% 7L + 1L
+  w1n   <- jn + (4L - dowN) %% 7L - 3L
+  n_weeks <- (w1n - w1) %/% 7L       # 52 or 53
+
+  list(
+    div = w1_week + as.integer(floor(frac * n_weeks)),
+    mod = 0L
   )
 }
 
