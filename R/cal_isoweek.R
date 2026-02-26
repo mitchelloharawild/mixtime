@@ -29,11 +29,7 @@
 cal_isoweek <- new_calendar(
   year = S7::new_class("tu_isoyear", parent = mt_tz_unit),
   week = S7::new_class("tu_week", parent = mt_tz_unit),
-  day = cal_time_civil_midnight$day,
-  hour = cal_time_civil_midnight$hour,
-  minute = cal_time_civil_midnight$minute,
-  second = cal_time_civil_midnight$second,
-  millisecond = cal_time_civil_midnight$millisecond,
+  inherit = cal_time_civil_midnight,
   class = "cal_isoweek"
 )
 

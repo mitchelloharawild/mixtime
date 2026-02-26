@@ -4,13 +4,16 @@
 \alias{new_calendar}
 \title{Create a new calendar}
 \usage{
-new_calendar(..., class = character())
+new_calendar(..., inherit = NULL, class = character())
 }
 \arguments{
 \item{...}{Named time unit class definitions. Each argument should be a
 time unit class (typically created with \code{S7::new_class()}) that inherits
 from \code{mt_unit} or \code{mt_tz_unit}. The names define the calendar's fields
 and are used to access unit constructors (e.g., \code{calendar$year()}).}
+
+\item{inherit}{Optional calendar to inherit time units from. Units
+defined in \code{...} will override inherited units with the same name.}
 
 \item{class}{Character vector of additional classes for the calendar object.}
 }

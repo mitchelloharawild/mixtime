@@ -15,6 +15,8 @@
 #'   time unit class (typically created with `S7::new_class()`) that inherits
 #'   from `mt_unit` or `mt_tz_unit`. The names define the calendar's fields
 #'   and are used to access unit constructors (e.g., `calendar$year()`).
+#' @param inherit Optional calendar to inherit time units from. Units
+#'   defined in `...` will override inherited units with the same name.
 #' @param class Character vector of additional classes for the calendar object.
 #'
 #' @return A calendar object of class `c(class, "mt_calendar")`, consisting of a
@@ -36,9 +38,14 @@
 #' 
 #' @importFrom rlang list2
 #' @export
-new_calendar <- function(..., class = character()) {
+new_calendar <- function(..., inherit = NULL, class = character()) {
   vctrs::vec_assert(class, character())
   time_units <- list2(...)
+  if (!is.null(inherit)) {
+    # Add units from inherit that aren't already in time_units
+    new_names <- setdiff(names(inherit), names(time_units))
+    time_units <- c(time_units, inherit[new_names])
+  }
   
   cal <- structure(
     time_units,

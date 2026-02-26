@@ -36,11 +36,7 @@ cal_gregorian <- new_calendar(
   year = new_class("tu_year", parent = mt_tz_unit),
   quarter = new_class("tu_quarter", parent = mt_tz_unit),
   month = new_class("tu_month", parent = mt_tz_unit),
-  day = cal_time_civil_midnight$day,
-  hour = cal_time_civil_midnight$hour,
-  minute = cal_time_civil_midnight$minute,
-  second = cal_time_civil_midnight$second,
-  millisecond = cal_time_civil_midnight$millisecond,
+  inherit = cal_time_civil_midnight,
   class = "cal_gregorian"
 )
 
