@@ -5,6 +5,7 @@
 \alias{month_of_year}
 \alias{day_of_year}
 \alias{day_of_month}
+\alias{time_of_day}
 \alias{day_of_week}
 \alias{week_of_year}
 \title{Cyclical time helpers}
@@ -14,6 +15,8 @@ month_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
 day_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 day_of_month(data, discrete = TRUE, calendar = time_calendar(data), ...)
+
+time_of_day(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 day_of_week(data, discrete = TRUE, calendar = time_calendar(data), ...)
 

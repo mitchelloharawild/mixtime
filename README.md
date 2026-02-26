@@ -25,13 +25,13 @@ handling temporal data at different frequencies, making it ideal for:
 **📈 Linear Time** - Create linear time vectors with `linear_time()` or
 with helpers:
 
-- `yearquarter()`, `yearmonth()`, `yearweek()`, `yearmonthday()`
+- `yearquarter()`, `yearmonth()`, `yearmonthday()`, `yearweek()`
 
 **🔄 Cyclical Time** - Create cyclical time vectors with
 `cyclical_time()` or with helpers:
 
-- `month_of_year()`, `day_of_year()`, `day_of_month()`, `day_of_week()`,
-  `week_of_year()`
+- `month_of_year()`, `day_of_year()`, `day_of_month()`, `time_of_day()`,
+  `day_of_week()`, `week_of_year()`
 
 **🕰️ Time types**
 
@@ -168,7 +168,7 @@ the `chronon` loops over).
 
 ``` r
 # The `calendar` argument provides a masking scope to `chronon` and `cycle`
-cyclical_time(demo_date, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
+cyclical_time(demo_date, chronon = day(1L), cycles = list(week(1L)), calendar = cal_isoweek)
 #> <mixtime[1]>
 #> [1] Sun
 ```
@@ -232,11 +232,11 @@ a specified time unit.
 ``` r
 # Round dates to different granularities
 floor_time(demo_date, cal_gregorian$month(1L))
-#> [1] "2026-02-01"
+#> Date of length 0
 round_time(demo_date, cal_isoweek$week(1L))
-#> [1] "2026-02-23"
+#> Date of length 0
 ceiling_time(demo_date, cal_gregorian$month(1L))
-#> [1] "2026-03-01"
+#> Date of length 0
 ```
 
 ### Time Sequences

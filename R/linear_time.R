@@ -147,12 +147,11 @@ linear_time <- function(
     }
   })
   
-  if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
-    stop("All elements in granules must be time unit objects", call. = FALSE)
-  }
-  
   if (!inherits(chronon, "mixtime::mt_unit")) {
-    stop("chronon must be a time unit object", call. = FALSE)
+    cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
+  }
+  if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
+    cli::cli_abort("All elements in {.var granules} must be time unit objects.", call. = FALSE)
   }
   
   # Attach timezone to chronon and granules

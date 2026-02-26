@@ -234,9 +234,9 @@ seq.mt_cyclical <- function(from, to, by, length.out = NULL, along.with = NULL, 
   }
 
   # Cyclical period
-  period <- chronon_cardinality(attr(ptype, "cycle"), attr(ptype, "chronon"))
+  period <- chronon_cardinality(attr(ptype, "cycles")[[1L]], attr(ptype, "chronon"))
 
-  # Adjust from:to for looping around cycle
+  # Adjust from:to for looping around cycles
   if (!is.null(arg$to) && !is.null(arg$from)) {
     if (arg$by%||%1 > 0 && to < from) {
       arg$to <- arg$to + period
