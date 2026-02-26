@@ -366,8 +366,7 @@ vec_arith.mt_linear.mt_linear <- function(op, x, y, ...) {
 #' @method vec_cast.Date mt_linear
 #' @export
 vec_cast.Date.mt_linear <- function(x, ...) {
-  chronon <- time_chronon(x)
-  as.Date(chronon_divmod(chronon, cal_gregorian$day(1L), vec_data(x))$chronon)
+  as.Date(chronon_convert(x, cal_gregorian$day(1L)))
 }
 
 #' @method vec_cast.POSIXct mt_linear
