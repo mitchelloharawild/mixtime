@@ -37,6 +37,11 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
     return(x)
   }
 
+  # Add default tz if not given in `to` chronon
+  if (S7::prop_exists(to, "tz") && !nzchar(to@tz)){
+    to@tz <- tz_name(from)
+  } 
+
   # Find path along convertable time units
   path <- S7_graph_dispatch(
     unique(c(
