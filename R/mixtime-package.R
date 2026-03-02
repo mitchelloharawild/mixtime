@@ -8,7 +8,7 @@
 #' @importFrom S7 method method<-
 #' @import lifecycle
 #' @import vctrs
-#' @importFrom rlang ensym enexpr enquo sym expr quo eval_tidy
+#' @importFrom rlang ensym ensyms enexpr enexprs enquo enquos sym syms expr exprs quo quos eval_tidy
 #' @importFrom S7 method<- super new_generic new_class new_property
 #' @useDynLib mixtime, .registration = TRUE
 ## usethis namespace: end

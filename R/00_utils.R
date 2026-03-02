@@ -103,3 +103,12 @@ gcd <- function(a, b) {
 eval_cal <- function(expr, cal) {
   eval_tidy({{expr}}, data = cal)
 }
+
+quo_add_dots <- function(quo, ...){
+  dots <- enquos(...)
+  expr <- rlang::quo_get_expr(quo)
+  rlang::quo_set_expr(
+    quo, 
+    as.call(c(as.list(expr), list2(...)))
+  )
+}

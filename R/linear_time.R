@@ -5,8 +5,8 @@
 #' of time (e.g., years, months), while the chronon is the smallest indivisible
 #' time unit (e.g., days, hours).
 #' 
-#' @param chronon A time unit object representing the chronon (e.g., `day(1)`)
-#' @param granules A list of time unit objects representing the granules 
+#' @param chronon A bare call for a time unit object representing the chronon (e.g., `day(1)`)
+#' @param granules A bare call for a list of time unit objects representing the granules 
 #'   (e.g., `list(year(1), month(1))`)
 #' @param fallback_calendar A fallback calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
@@ -47,10 +47,12 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
   function(
     data, discrete = TRUE, calendar = time_calendar(data), ...
   ) {
+    # Add tz / loc to chronon
+    chronon <- quo_add_dots(chronon, ...)
+
     linear_time(
       data, chronon = !!chronon, granules = !!granules, discrete = discrete, 
-      calendar = cal_fallback(calendar, fallback_calendar),
-      ...
+      calendar = cal_fallback(calendar, fallback_calendar)
     )
   }
 }
@@ -123,11 +125,6 @@ linear_time <- function(
   data, chronon = time_chronon(data), discrete = TRUE, 
   calendar = time_calendar(data), granules = chronon_granules(chronon)
 ) {
-  # Parse text data
-  if (is.character(data)) {
-    data <- as.POSIXct(data, tz = tz_name(chronon))
-  }
-
   # Evaluate chronon and granules with a calendar mask
   quo_chronon <- enquo(chronon)
   quo_granules <- enquo(granules)
@@ -142,6 +139,11 @@ linear_time <- function(
       cli::cli_abort(e$message, call = NULL)
     }
   })
+
+  # Parse text data
+  if (is.character(data)) {
+    data <- as.POSIXct(data, tz = tz_name(chronon))
+  }
   
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)

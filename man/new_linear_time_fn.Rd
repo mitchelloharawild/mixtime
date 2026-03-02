@@ -11,9 +11,9 @@ new_linear_time_fn(
 )
 }
 \arguments{
-\item{chronon}{A time unit object representing the chronon (e.g., \code{day(1)})}
+\item{chronon}{A bare call for a time unit object representing the chronon (e.g., \code{day(1)})}
 
-\item{granules}{A list of time unit objects representing the granules
+\item{granules}{A bare call for a list of time unit objects representing the granules
 (e.g., \code{list(year(1), month(1))})}
 
 \item{fallback_calendar}{A fallback calendar used to find the time units for
