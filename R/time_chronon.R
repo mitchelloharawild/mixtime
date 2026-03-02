@@ -34,7 +34,7 @@ S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
-  cal_gregorian$day(1L)
+  cal_gregorian$day(1L, tz = "UTC")
 }
 
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
@@ -42,13 +42,13 @@ S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {
-  cal_gregorian$month(1L)
+  cal_gregorian$month(1L, tz = "UTC")
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearquarter")) <- function(x) {
-  cal_gregorian$quarter(1L)
+  cal_gregorian$quarter(1L, tz = "UTC")
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearweek")) <- function(x) {
-  cal_isoweek$week(1L)
+  cal_isoweek$week(1L, tz = "UTC")
 }
