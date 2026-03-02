@@ -44,7 +44,7 @@ test_that("cyclical_time() month_of_year handles timezone-induced date shifts", 
   expect_equal(format(melbourne_month), "Jan")
   
   # UTC should also be January 1st (month 1)
-  utc_month <- month_of_year(pacific_time)
+  utc_month <- month_of_year(pacific_time, tz = "UTC")
   expect_equal(format(utc_month), "Jan")
 })
 
@@ -70,7 +70,7 @@ test_that("cyclical_time() day_of_year handles year boundary transitions", {
   expect_equal(as.character(format(pacific_doy)), "366")
   
   # In UTC, this is 2021-01-01, so day 1 of 2021
-  utc_doy <- day_of_year(pacific_time)
+  utc_doy <- day_of_year(pacific_time, tz = "UTC")
   expect_equal(as.character(format(utc_doy)), "01")
 })
 
