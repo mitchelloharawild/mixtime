@@ -209,8 +209,8 @@ S7_graph_glb <- function(signatures, chronons) {
 
   int_nodes <- seq_along(classes)
   int_edges <- vec_match(unlist(chr_signatures), chr_classes)
-  int_edge_to <- int_edges[seq(1, length(int_edges), by = 2)]
-  int_edge_from <- int_edges[seq(2, length(int_edges), by = 2)]
+  int_edge_from <- int_edges[seq(1, length(int_edges), by = 2)]
+  int_edge_to <- int_edges[seq(2, length(int_edges), by = 2)]
   
   int_chronons <- vec_match(vapply(chronons, S7_class_id, character(1L)), chr_classes)
 
