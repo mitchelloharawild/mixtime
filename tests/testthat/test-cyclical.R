@@ -6,7 +6,7 @@ test_that("Cyclical time handles text parsing with set timezones", {
   expect_equal(format(result), "Wed")
   
   # Test with UTC
-  result_utc <- day_of_week("2020-01-01", tz = "UTC")
+  result_utc <- day_of_week("2020-01-01")
   expect_equal(format(result_utc), "Wed")
   
   # Test with Europe/Berlin (same date, so same day of week)
@@ -44,7 +44,7 @@ test_that("cyclical_time() month_of_year handles timezone-induced date shifts", 
   expect_equal(format(melbourne_month), "Jan")
   
   # UTC should also be January 1st (month 1)
-  utc_month <- month_of_year(pacific_time, tz = "UTC")
+  utc_month <- month_of_year(pacific_time)
   expect_equal(format(utc_month), "Jan")
 })
 
@@ -53,7 +53,7 @@ test_that("cyclical_time() day_of_month handles date boundaries across timezones
   utc_time <- as.POSIXct("2020-01-31 23:00:00", tz = "UTC")
   
   # In UTC, this is the 31st
-  utc_dom <- day_of_month(utc_time, tz = "UTC")
+  utc_dom <- day_of_month(utc_time)
   expect_equal(as.character(format(utc_dom)), "31")
   
   # In Australia/Sydney (UTC+11), this is February 1st (day 1)
@@ -70,7 +70,7 @@ test_that("cyclical_time() day_of_year handles year boundary transitions", {
   expect_equal(as.character(format(pacific_doy)), "366")
   
   # In UTC, this is 2021-01-01, so day 1 of 2021
-  utc_doy <- day_of_year(pacific_time, tz = "UTC")
+  utc_doy <- day_of_year(pacific_time)
   expect_equal(as.character(format(utc_doy)), "01")
 })
 
@@ -108,10 +108,10 @@ test_that("cyclical_time() discrete vs continuous modes work with timezones", {
   utc_time <- as.POSIXct("2020-06-15 12:30:45", tz = "UTC")
   
   # Discrete mode should return clean labels without percentage
-  discrete_dow <- day_of_week(utc_time, tz = "UTC", discrete = TRUE)
+  discrete_dow <- day_of_week(utc_time, discrete = TRUE)
   expect_equal(format(discrete_dow), "Mon")
   
   # Continuous mode should include fractional percentage
-  continuous_dow <- day_of_week(utc_time, tz = "UTC", discrete = FALSE)
+  continuous_dow <- day_of_week(utc_time, discrete = FALSE)
   expect_equal(format(continuous_dow), "Mon-52.1%")
 })

@@ -17,7 +17,7 @@ test_that("Linear time handles text parsing with set timezones", {
 test_that("linear_time() creates hour and minute times with timezone", {
   # Create a POSIXct in America/Los_Angeles
   base_time <- as.POSIXct("2020-01-15 14:30:00", tz = "America/Los_Angeles")
-  result <- linear_time(base_time, minute(1L), tz = "America/Los_Angeles")
+  result <- linear_time(base_time, minute(1L, tz = "America/Los_Angeles"))
   
   # Should include date and time in Pacific timezone
   expect_s3_class(result, "mixtime")
@@ -25,17 +25,17 @@ test_that("linear_time() creates hour and minute times with timezone", {
   
   # Test with UTC
   base_utc <- as.POSIXct("2020-01-15 09:15:00", tz = "UTC")
-  result_utc <- linear_time(base_utc, minute(1L), tz = "UTC")
+  result_utc <- linear_time(base_utc, minute(1L, tz = "UTC"))
   expect_match(format(result_utc), "2020-01-15 09:15")
   
   # Test with Australia/Melbourne
   base_melb <- as.POSIXct("2020-01-15 23:45:00", tz = "Australia/Melbourne")
-  result_melb <- linear_time(base_melb, minute(1L), tz = "Australia/Melbourne")
+  result_melb <- linear_time(base_melb, minute(1L, tz = "Australia/Melbourne"))
   expect_match(format(result_melb), "2020-01-15 23:45 AEDT")
   
   # Test with hour precision
   base_berlin <- as.POSIXct("2020-01-15 16:00:00", tz = "Europe/Berlin")
-  result_hour <- linear_time(base_berlin, hour(1L), tz = "Europe/Berlin")
+  result_hour <- linear_time(base_berlin, hour(1L, tz = "Europe/Berlin"))
   expect_match(format(result_hour), "2020-01-15 16h CET")
 })
 
@@ -61,10 +61,10 @@ test_that("linear_time() preserves instant across timezone conversions", {
   pacific_time <- as.POSIXct("2020-06-15 09:00:00", tz = "America/Los_Angeles")
   
   # Convert to Australia/Melbourne
-  melbourne_converted <- linear_time(pacific_time, tz = "Australia/Melbourne")
+  melbourne_converted <- linear_time(pacific_time, chronon = second(1L, tz = "Australia/Melbourne"))
   
   # Convert back to America/Los_Angeles
-  pacific_back <- linear_time(melbourne_converted, tz = "America/Los_Angeles")
+  pacific_back <- linear_time(melbourne_converted, chronon = second(1L, tz = "America/Los_Angeles"))
   
   # Should represent the same instant in time
   expect_equal(as.numeric(pacific_time), as.numeric(pacific_back))
