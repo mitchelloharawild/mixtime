@@ -47,6 +47,7 @@ mt_tz_unit <- new_class(
 #' @export
 cal_time_civil_midnight <- new_calendar(
   day = new_class("tu_day", parent = mt_tz_unit),
+  ampm = new_class("tu_ampm", parent = mt_tz_unit),
   hour = new_class("tu_hour", parent = mt_tz_unit),
   minute = new_class("tu_minute", parent = mt_tz_unit),
   second = new_class("tu_second", parent = mt_tz_unit),
@@ -58,6 +59,8 @@ cal_time_civil_midnight <- new_calendar(
 # Time unit labels
 method(time_unit_full, cal_time_civil_midnight$day) <- function(x) "day"
 method(time_unit_abbr, cal_time_civil_midnight$day) <- function(x) "D"
+method(time_unit_full, cal_time_civil_midnight$ampm) <- function(x) "halfday"
+method(time_unit_abbr, cal_time_civil_midnight$ampm) <- function(x) "hd"
 method(time_unit_full, cal_time_civil_midnight$hour) <- function(x) "hour"
 method(time_unit_abbr, cal_time_civil_midnight$hour) <- function(x) "h"
 method(time_unit_full, cal_time_civil_midnight$minute) <- function(x) "minute"
@@ -86,7 +89,23 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$day, cal_time_civil_midnight$hour)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*24/vec_data(y)
+  vec_data(x)*24L/vec_data(y)
+}
+
+## AMPM <-> DAY
+method(
+  chronon_cardinality, 
+  list(cal_time_civil_midnight$day, cal_time_civil_midnight$ampm)
+) <- function(x, y, at = NULL) {
+  vec_data(x)*2L/vec_data(y)
+}
+
+## AMPM <-> HOUR
+method(
+  chronon_cardinality, 
+  list(cal_time_civil_midnight$ampm, cal_time_civil_midnight$hour)
+) <- function(x, y, at = NULL) {
+  vec_data(x)*12L/vec_data(y)
 }
 
 ## HOUR <-> MINUTE
@@ -94,7 +113,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$hour, cal_time_civil_midnight$minute)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*60/vec_data(y)
+  vec_data(x)*60L/vec_data(y)
 }
 
 ## MINUTE <-> SECOND
@@ -102,7 +121,7 @@ method(
   chronon_cardinality,
   list(cal_time_civil_midnight$minute, cal_time_civil_midnight$second)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*60/vec_data(y)
+  vec_data(x)*60L/vec_data(y)
 }
 
 ## SECOND <-> MILLISECOND
@@ -110,7 +129,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$second, cal_time_civil_midnight$millisecond)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*1000/vec_data(y)
+  vec_data(x)*1000L/vec_data(y)
 }
 
 
@@ -119,9 +138,18 @@ method(cyclical_labels, list(cal_time_civil_midnight$day, S7::class_any)) <- fun
   # Days count with 1-indexing
   sprintf("%02d", i + 1L)
 }
+method(cyclical_labels, list(cal_time_civil_midnight$ampm, S7::class_any)) <- function(granule, cycle, i) {
+  # 0 is AM, 1 is PM
+  c("AM", "PM")[i%%2 + 1L]
+}
 method(cyclical_labels, list(cal_time_civil_midnight$hour, S7::class_any)) <- function(granule, cycle, i) {
-  # Hours count with 0-indexing
-  sprintf("%02d", i)
+  if (S7::S7_inherits(cycle, cal_time_civil_midnight$ampm)) {
+    # 12 hours count with 12,1,2,...,11
+    sprintf("%02d", (i-1L)%%12L + 1L)
+  } else {
+    # 24 hours count with 0-indexing
+    sprintf("%02d", i)
+  }
 }
 method(cyclical_labels, list(cal_time_civil_midnight$minute, S7::class_any)) <- function(granule, cycle, i) {
   # Minutes count with 0-indexing
