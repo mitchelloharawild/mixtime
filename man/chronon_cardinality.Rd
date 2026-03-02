@@ -10,9 +10,9 @@ chronon_cardinality(x, y, ...)
 chronon_cardinality.S7_methods(x, y, at = NULL)
 }
 \arguments{
-\item{x}{The primary time unit}
+\item{x}{The finer time unit (e.g. \code{cal_gregorian$month(1L)})}
 
-\item{y}{The time unit to convert \code{x} into}
+\item{y}{The coarser time unit (e.g. \code{cal_gregorian$year(1L)})}
 
 \item{...}{Additional arguments for methods.}
 
@@ -46,24 +46,24 @@ two systems.
 }
 \examples{
 # There are 12 months in a year
-with(cal_gregorian, chronon_cardinality(year(1L), month(1L)))
+with(cal_gregorian, chronon_cardinality(month(1L), year(1L)))
 
 # There are 7 days in a week
-with(cal_isoweek, chronon_cardinality(week(1L), day(1L)))
+with(cal_isoweek, chronon_cardinality(day(1L), week(1L)))
 
 # There are 3600 seconds in an hour
-with(cal_gregorian, chronon_cardinality(hour(1L), second(1L)))
+with(cal_gregorian, chronon_cardinality(second(1L), hour(1L)))
 
 # There are 18 "2 months" in 3 years
-with(cal_gregorian, chronon_cardinality(year(3L), month(2L)))
+with(cal_gregorian, chronon_cardinality(month(2L), year(3L)))
 
 # There are 365 days in 2025 (a common year)
-with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2025-01-01"))))
+with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2025-01-01"))))
 
 # There are 366 days in 2024 (a leap year)
-with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2024-01-01"))))
+with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2024-01-01"))))
 
 # There are 29 days in February 2024 (a leap year)
-with(cal_gregorian, chronon_cardinality(month(1L), day(1L), at = yearmonth(as.Date("2024-02-01"))))
+with(cal_gregorian, chronon_cardinality(day(1L), month(1L), at = yearmonth(as.Date("2024-02-01"))))
 
 }

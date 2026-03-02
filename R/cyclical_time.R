@@ -224,7 +224,7 @@ vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
     stop("Only integer addition and subtraction supported for cyclical time", call. = FALSE)
   }
-  period <- chronon_cardinality(attr(x, "cycle"), attr(x, "chronon"))
+  period <- chronon_cardinality(attr(x, "chronon"), attr(x, "cycle"))
   vec_restore((vec_arith_base(op, vec_data(x), y, ...) - 1L) %% period + 1L, x)
 }
 #' @importFrom vctrs vec_arith_base

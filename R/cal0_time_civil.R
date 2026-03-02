@@ -84,52 +84,52 @@ method(chronon_format, cal_time_civil_midnight$minute) <- function(x) "{year}-{l
 method(chronon_format, cal_time_civil_midnight$second) <- function(x) "{year}-{lbl(month, label = FALSE)}-{day} {hour}:{minute}:{second}"
 method(chronon_format, cal_time_civil_midnight$millisecond) <- function(x) "{year}-{lbl(month, label = FALSE)}-{day} {hour}:{minute}:{second}.{millisecond}"
 
-## DAY <-> HOUR
+## HOURs in DAYs
 method(
   chronon_cardinality, 
-  list(cal_time_civil_midnight$day, cal_time_civil_midnight$hour)
+  list(cal_time_civil_midnight$hour, cal_time_civil_midnight$day)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*24L/vec_data(y)
+  vec_data(y)*24L/vec_data(x)
 }
 
-## AMPM <-> DAY
+## AMPMs in DAYs
 method(
   chronon_cardinality, 
-  list(cal_time_civil_midnight$day, cal_time_civil_midnight$ampm)
+  list(cal_time_civil_midnight$ampm, cal_time_civil_midnight$day)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*2L/vec_data(y)
+  vec_data(y)*2L/vec_data(x)
 }
 
-## AMPM <-> HOUR
+## HOURs in AMPMs
 method(
   chronon_cardinality, 
-  list(cal_time_civil_midnight$ampm, cal_time_civil_midnight$hour)
+  list(cal_time_civil_midnight$hour, cal_time_civil_midnight$ampm)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*12L/vec_data(y)
+  vec_data(y)*12L/vec_data(x)
 }
 
-## HOUR <-> MINUTE
+## MINUTEs in HOURs
 method(
   chronon_cardinality, 
-  list(cal_time_civil_midnight$hour, cal_time_civil_midnight$minute)
+  list(cal_time_civil_midnight$minute, cal_time_civil_midnight$hour)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*60L/vec_data(y)
+  vec_data(y)*60L/vec_data(x)
 }
 
-## MINUTE <-> SECOND
+## SECONDs in MINUTEs
 method(
   chronon_cardinality,
-  list(cal_time_civil_midnight$minute, cal_time_civil_midnight$second)
+  list(cal_time_civil_midnight$second, cal_time_civil_midnight$minute)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*60L/vec_data(y)
+  vec_data(y)*60L/vec_data(x)
 }
 
-## SECOND <-> MILLISECOND
+## MILLISECONDs in SECONDs
 method(
   chronon_cardinality, 
-  list(cal_time_civil_midnight$second, cal_time_civil_midnight$millisecond)
+  list(cal_time_civil_midnight$millisecond, cal_time_civil_midnight$second)
 ) <- function(x, y, at = NULL) {
-  vec_data(x)*1000L/vec_data(y)
+  vec_data(y)*1000L/vec_data(x)
 }
 
 

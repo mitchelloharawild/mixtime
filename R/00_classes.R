@@ -30,8 +30,8 @@ mt_unit_s3 <- S7::new_S3_class(
 #' Time units enable calendar arithmetic through two key generic methods
 #' that should be implemented for custom time units:
 #' 
-#' * `chronon_cardinality(from, to, at)` - Returns the number of `to` units
-#'   that fit within one `from` unit. This can be a fixed value (e.g.,
+#' * `chronon_cardinality(x, y, at)` - Returns the number of `x` units
+#'   that fit within one `y` unit. This can be a fixed value (e.g.,
 #'   7 days per week) or variable based on `at` (e.g., 28-31 days per month).
 #'   
 #' * `chronon_divmod(x, from, to)` - Converts time unit `x` from units of

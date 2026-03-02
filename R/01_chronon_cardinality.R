@@ -10,8 +10,8 @@
 #' and so an optional time point defined in terms of `y` chronons can be
 #' provided with `at`.
 #' 
-#' @param x The primary time unit
-#' @param y The time unit to convert `x` into
+#' @param x The finer time unit (e.g. `cal_gregorian$month(1L)`)
+#' @param y The coarser time unit (e.g. `cal_gregorian$year(1L)`)
 #' @param ... Additional arguments for methods.
 #' @param at Optional time point for context-dependent cardinality, defined in
 #' terms of `y` (e.g., if `y` is `month()`, then `at` could be a 
@@ -35,25 +35,25 @@
 #' 
 #' @examples
 #' # There are 12 months in a year
-#' with(cal_gregorian, chronon_cardinality(year(1L), month(1L)))
+#' with(cal_gregorian, chronon_cardinality(month(1L), year(1L)))
 #' 
 #' # There are 7 days in a week
-#' with(cal_isoweek, chronon_cardinality(week(1L), day(1L)))
+#' with(cal_isoweek, chronon_cardinality(day(1L), week(1L)))
 #' 
 #' # There are 3600 seconds in an hour
-#' with(cal_gregorian, chronon_cardinality(hour(1L), second(1L)))
+#' with(cal_gregorian, chronon_cardinality(second(1L), hour(1L)))
 #' 
 #' # There are 18 "2 months" in 3 years
-#' with(cal_gregorian, chronon_cardinality(year(3L), month(2L)))
+#' with(cal_gregorian, chronon_cardinality(month(2L), year(3L)))
 #' 
 #' # There are 365 days in 2025 (a common year)
-#' with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2025-01-01"))))
+#' with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2025-01-01"))))
 #' 
 #' # There are 366 days in 2024 (a leap year)
-#' with(cal_gregorian, chronon_cardinality(year(1L), day(1L), at = year(as.Date("2024-01-01"))))
+#' with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2024-01-01"))))
 #' 
 #' # There are 29 days in February 2024 (a leap year)
-#' with(cal_gregorian, chronon_cardinality(month(1L), day(1L), at = yearmonth(as.Date("2024-02-01"))))
+#' with(cal_gregorian, chronon_cardinality(day(1L), month(1L), at = yearmonth(as.Date("2024-02-01"))))
 #'
 #' @export
 chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
@@ -82,16 +82,17 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   if (!is.null(y_env <- chronon_cardinality@methods[[S7_class_id(y)]])) {
     if (S7_class_id(x) %in% names(y_env)) {
       # Matching inverse method found, use it with inversion.
+      # TODO: Convert at to x units?
       return(1/chronon_cardinality(y, x, at = at))
     }
   }
 
   # No specific method defined between these classes
   # Attempt graph traversal to find a sequence of methods
-  path <- S7_graph_dispatch(method_signatures(chronon_cardinality), x, y)
+  path <- S7_graph_dispatch(method_signatures(chronon_cardinality), y, x)
 
-  path[[1]] <- x
-  path[[length(path)]] <- y
+  path[[1]] <- y
+  path[[length(path)]] <- x
   # Initialise intermediate classes with 1L
   path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
 
@@ -99,7 +100,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   for (i in seq(2, length.out = length(path)-1)) {
     ## QUESTION: Why does this not work with `generic` instead of `chronon_cardinality`? S7 bug?
 
-    result <- chronon_cardinality(result, path[[i]], at)
+    result <- chronon_cardinality(path[[i]], result, at)
     if (!is.null(at)) at <- at*result
     # Class the result with the next class in the path
     result <- attr(path[[i]], "S7_class")(result)

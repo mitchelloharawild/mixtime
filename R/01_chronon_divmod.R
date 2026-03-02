@@ -73,7 +73,7 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # Backward convert remainder
   for (i in seq(length(remainder), by = -1L, length.out = length(remainder) - 1L)) {
     if (remainder[[i]] != 0) {
-      remainder[[i-1L]] <- remainder[[i-1L]] + chronon_cardinality(path[[i]], path[[i-1L]], chronon[[i]])*remainder[[i]]
+      remainder[[i-1L]] <- remainder[[i-1L]] + chronon_cardinality(path[[i-1L]], path[[i]], chronon[[i]])*remainder[[i]]
     }
   }
 
@@ -94,7 +94,7 @@ chronon_divmod_dispatch <- function(from, to, x) {
 
 ## Fallback to chronon_cardinality for regular time units
 chronon_divmod_regular <- function(from, to, x) {
-  divisor <- chronon_cardinality(to, from)
+  divisor <- chronon_cardinality(from, to)
   list(
     div = x %/% divisor,
     mod = x %% divisor

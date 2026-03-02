@@ -58,23 +58,23 @@ method(chronon_format, cal_gregorian$quarter) <- function(x) "{year} Q{quarter}"
 method(chronon_format, cal_gregorian$month) <- function(x) "{year} {month}"
 
 ### Calendar algebra methods for Gregorian time units
-method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$quarter)) <- function(x, y, at = NULL) {
-  vec_data(x)*4/vec_data(y)
+method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$year)) <- function(x, y, at = NULL) {
+  vec_data(y)*4/vec_data(x)
 }
-method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$month)) <- function(x, y, at = NULL) {
-  vec_data(x)*12/vec_data(y)
+method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$year)) <- function(x, y, at = NULL) {
+  vec_data(y)*12/vec_data(x)
 }
-method(chronon_cardinality, list(cal_gregorian$year, cal_gregorian$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$year)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
     stop("The number of days in a year requires the time context `at`.", call. = FALSE)
   }
-  if(vec_data(x) != 1L) {
+  if(vec_data(y) != 1L) {
     cli::cli_abort("Multi-year chronons are not yet supported for conversion to days.")
   }
-  (is_leap_year(1970L + as.integer(at)) + 365L)/vec_data(y)
+  (is_leap_year(1970L + as.integer(at)) + 365L)/vec_data(x)
 }
-method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$month)) <- function(x, y, at = NULL) {
-  vec_data(x)*3/vec_data(y)
+method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$quarter)) <- function(x, y, at = NULL) {
+  vec_data(y)*3/vec_data(x)
 }
 
 monthdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
@@ -84,7 +84,7 @@ is_leap_year <- function(year) {
   (year %% 4L == 0L & year %% 100L != 0L) | (year %% 400L == 0L)
 }
 
-method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$month)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
     stop("The number of days in a month requires the time context `at`.", call. = FALSE)
   }
@@ -113,12 +113,12 @@ method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$day)) <- fun
 ### Chronon casting between Gregorian time units
 method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
-  # if (chronon_cardinality(to, cal_gregorian$month(1L)) != 1L) {
+  # if (chronon_cardinality(cal_gregorian$month(1L), to) != 1L) {
   #   stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
   # }
 
   # Scale `x` to be 1 day increments
-  x_scale <- chronon_cardinality(from, cal_gregorian$day(1L))
+  x_scale <- chronon_cardinality(cal_gregorian$day(1L), from)
   x <- x_scale * x
 
   # Shift to days since 0000-03-01 (algorithm anchor)
@@ -136,10 +136,10 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function
 
   # Scale 1 month result (res) to `to` months increments
   res <- (year-1970L)*12L + month - 1L
-  res_scale <- chronon_cardinality(to, cal_gregorian$month(1L))
+  res_scale <- chronon_cardinality(cal_gregorian$month(1L), to)
   # Importantly, updating the remainder days that now span multiple months
   if (res_scale != 1L) {
-    chronon_cardinality(to, from, res %/% res_scale)
+    chronon_cardinality(from, to, res %/% res_scale)
   }
 
   list(
@@ -149,7 +149,7 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function
 }
 method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function(from, to, x) {
   # Convert to months since epoch
-  x <- chronon_cardinality(from, cal_gregorian$month(1L))*x
+  x <- chronon_cardinality(cal_gregorian$month(1L), from)*x
   
   year <- x%/%12L + 1970L
   ly <- as.integer(is_leap_year(year))
@@ -166,7 +166,7 @@ method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function
     (month > 2) * (-2 + ly) - ly
 
   # Scale by `to` day chronons
-  result <- result / chronon_cardinality(to, cal_gregorian$day(1L))
+  result <- result / chronon_cardinality(cal_gregorian$day(1L), to)
 
   list(
     div = result,
@@ -177,12 +177,12 @@ method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function
 
 method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to years
-  if (chronon_cardinality(to, cal_gregorian$year(1L)) != 1L) {
+  if (chronon_cardinality(cal_gregorian$year(1L), to) != 1L) {
     stop("Converting to non-year chronons from days not yet supported", call. = FALSE)
   }
 
   # Scale `x` to be 1 day increments
-  x_scale <- chronon_cardinality(from, cal_gregorian$day(1L))
+  x_scale <- chronon_cardinality(cal_gregorian$day(1L), from)
   x <- x_scale * x
 
   # Shift to days since 0000-03-01 (algorithm anchor)
@@ -206,7 +206,7 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(
 }
 method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(from, to, x) {
   # Convert to years since epoch
-  x <- chronon_cardinality(from, cal_gregorian$year(1L))*x
+  x <- chronon_cardinality(cal_gregorian$year(1L), from)*x
   
   floor_int <- function(x) as.integer(floor(x))
 
@@ -223,7 +223,7 @@ method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(
   
   
   # Scale by `to` day chronons
-  d <- d / chronon_cardinality(to, cal_gregorian$day(1L))
+  d <- d / chronon_cardinality(cal_gregorian$day(1L), to)
 
   list(
     div = d,

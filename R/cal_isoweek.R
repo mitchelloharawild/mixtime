@@ -34,10 +34,10 @@ cal_isoweek <- new_calendar(
 )
 
 # Time unit labels
-S7::method(time_unit_full, cal_isoweek$year) <- function(x) "isoyear"
-S7::method(time_unit_abbr, cal_isoweek$year) <- function(x) "IY"
-S7::method(time_unit_full, cal_isoweek$week) <- function(x) "week"
-S7::method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
+method(time_unit_full, cal_isoweek$year) <- function(x) "isoyear"
+method(time_unit_abbr, cal_isoweek$year) <- function(x) "IY"
+method(time_unit_full, cal_isoweek$week) <- function(x) "week"
+method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
 
 # Default granules
 method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_isoweek$year(1L))
@@ -49,26 +49,26 @@ method(chronon_format, cal_isoweek$week) <- function(x) "{year} W{week}"
 # 1:1 mapping for isoyears to years 
 # TODO - this is not entirely accurate, but is currently necessary
 # for converting the 1970 epoch in the print method
-S7::method(chronon_cardinality, list(cal_gregorian$year, cal_isoweek$year)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_gregorian$year, cal_isoweek$year)) <- function(x, y, at = NULL) {
   vec_data(x)*1L/vec_data(y)
 }
 
-S7::method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$day)) <- function(x, y, at = NULL) {
-  vec_data(x)*7L/vec_data(y)
+method(chronon_cardinality, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y, at = NULL) {
+  vec_data(y)*7L/vec_data(x)
 }
 
-S7::method(chronon_divmod, list(cal_isoweek$day, cal_isoweek$week)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_isoweek$day, cal_isoweek$week)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
-  divisor <- chronon_cardinality(to, from)
+  divisor <- chronon_cardinality(from, to)
   list(
     div = (x + 3L) %/% divisor,
     mod = (x + 3L) %% divisor
   )
 }
 
-S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(from, to, x) {
   # TODO: Add week start specification (e.g., week starts on Monday vs Sunday)
-  mult <- chronon_cardinality(from, to)
+  mult <- chronon_cardinality(to, from)
 
   list(
     div = x*mult - 3L,
@@ -76,9 +76,9 @@ S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(
   )
 }
 
-S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from weeks to ISO years
-  if (chronon_cardinality(to, cal_isoweek$year(1L)) != 1L) {
+  if (chronon_cardinality(cal_isoweek$year(1L), to) != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
 
@@ -105,8 +105,8 @@ S7::method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function
   )
 }
 
-S7::method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(from, to, x) {
-  if (chronon_cardinality(from, cal_isoweek$year(1L)) != 1L) {
+method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(from, to, x) {
+  if (chronon_cardinality(cal_isoweek$year(1L), from) != 1L) {
     stop("Converting from multi-year chronons to weeks is not yet supported", call. = FALSE)
   }
 
@@ -139,7 +139,7 @@ S7::method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function
 week.abb <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 week.name <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-S7::method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, label = TRUE, abbr = TRUE) {
+method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, label = TRUE, abbr = TRUE) {
   # TODO: Add offset for different week starting days
   if (!label) {
     i + 1L
@@ -149,7 +149,7 @@ S7::method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function
     week.name[i + 1L]
   }
 }
-S7::method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- function(granule, cycle, i) {
   # Weeks count with 1-indexing
   sprintf("%02d", i + 1L)
 }

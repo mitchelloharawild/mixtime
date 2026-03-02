@@ -165,13 +165,13 @@ test_that("chronon_cardinality handles months with variable days", {
   # This requires the `at` context parameter
   # Test that error is thrown when at is NULL
   expect_error(
-    chronon_cardinality(cal_gregorian$month(1L), cal_gregorian$day(1L), at = NULL),
+    chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = NULL),
     "time context"
   )
   
   # Test that error is thrown for years without at
   expect_error(
-    chronon_cardinality(cal_gregorian$year(1L), cal_gregorian$day(1L), at = NULL),
+    chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$year(1L), at = NULL),
     "time context"
   )
 })

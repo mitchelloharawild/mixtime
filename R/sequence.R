@@ -160,7 +160,7 @@ seq.mt_linear <- function(
     
     missing_on_invalid <- is.character(on_invalid) && length(on_invalid) > 1L
     on_invalid <- match.arg(on_invalid)
-    cycle_size <- chronon_cardinality(by, chronon, res)
+    cycle_size <- chronon_cardinality(chronon, by, res)
     # Check if the sequence offset will overflow the cycle
     if (any(if (by < 0) cycle_size >= seq_part else cycle_size <= seq_part)) {
       if (missing_on_invalid) {
@@ -234,7 +234,7 @@ seq.mt_cyclical <- function(from, to, by, length.out = NULL, along.with = NULL, 
   }
 
   # Cyclical period
-  period <- chronon_cardinality(attr(ptype, "cycles")[[1L]], attr(ptype, "chronon"))
+  period <- chronon_cardinality(attr(ptype, "chronon"), attr(ptype, "cycles")[[1L]])
 
   # Adjust from:to for looping around cycles
   if (!is.null(arg$to) && !is.null(arg$from)) {
@@ -247,7 +247,7 @@ seq.mt_cyclical <- function(from, to, by, length.out = NULL, along.with = NULL, 
 
   # Convert `by` to match `ptype` units
   if (!is.null(arg$by) && S7::S7_inherits(arg$by, mt_unit)) {
-    arg$by <- chronon_cardinality(arg$by, time_chronon(ptype))
+    arg$by <- chronon_cardinality(time_chronon(ptype), arg$by)
   }
 
   # Generate linear sequence

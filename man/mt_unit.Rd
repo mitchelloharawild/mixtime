@@ -53,8 +53,8 @@ constructor functions accessible via \code{$} notation (e.g., \code{calendar$day
 Time units enable calendar arithmetic through two key generic methods
 that should be implemented for custom time units:
 \itemize{
-\item \code{chronon_cardinality(from, to, at)} - Returns the number of \code{to} units
-that fit within one \code{from} unit. This can be a fixed value (e.g.,
+\item \code{chronon_cardinality(x, y, at)} - Returns the number of \code{x} units
+that fit within one \code{y} unit. This can be a fixed value (e.g.,
 7 days per week) or variable based on \code{at} (e.g., 28-31 days per month).
 \item \code{chronon_divmod(x, from, to)} - Converts time unit \code{x} from units of
 \code{from} to units of \code{to}, returning a list with \code{div} (the quotient)

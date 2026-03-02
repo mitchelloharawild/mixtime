@@ -109,10 +109,10 @@ test_that("cal_isoweek$week chronon_cardinality works correctly", {
   day_unit <- cal_isoweek$day(1L)
   
   # 1 week = 7 days
-  expect_equal(chronon_cardinality(week_unit, day_unit), 7)
+  expect_equal(chronon_cardinality(day_unit, week_unit), 7)
   
   # 2 weeks = 14 days
-  expect_equal(chronon_cardinality(cal_isoweek$week(2L), day_unit), 14)
+  expect_equal(chronon_cardinality(day_unit, cal_isoweek$week(2L)), 14)
 })
 
 test_that("chronon_divmod from days to weeks works", {
