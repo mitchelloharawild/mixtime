@@ -4,12 +4,12 @@
 \alias{new_cyclical_time_fn}
 \title{Cyclical time function factory}
 \usage{
-new_cyclical_time_fn(chronon, cycle, fallback_calendar = cal_gregorian)
+new_cyclical_time_fn(chronon, cycles, fallback_calendar = cal_gregorian)
 }
 \arguments{
 \item{chronon}{A time unit object representing the chronon (e.g., \code{day(1L)})}
 
-\item{cycle}{A time unit object representing the cycle (e.g., \code{week(1L)})}
+\item{cycles}{A time unit object representing the cycle (e.g., \code{week(1L)})}
 
 \item{fallback_calendar}{A fallback calendar used to find the time units for
 conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}

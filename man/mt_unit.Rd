@@ -9,7 +9,7 @@
 \usage{
 mt_unit(.data = 1L)
 
-mt_tz_unit(.data = 1L, tz = "UTC")
+mt_tz_unit(.data = 1L, tz = "")
 
 mt_loc_unit(.data = 1L, lat = 0, lon = 0, alt = 0)
 }

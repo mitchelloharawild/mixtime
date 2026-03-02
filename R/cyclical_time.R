@@ -7,7 +7,7 @@
 #' units form a cyclical time point (e.g., day of the week).
 #' 
 #' @param chronon A time unit object representing the chronon (e.g., `day(1L)`)
-#' @param cycle A time unit object representing the cycle (e.g., `week(1L)`)
+#' @param cycles A time unit object representing the cycle (e.g., `week(1L)`)
 #' @param fallback_calendar A fallback calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
@@ -22,11 +22,11 @@
 #' month_of_year(Sys.Date())
 #' 
 #' @export
-new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregorian) {
+new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregorian) {
   # Capture chronon and cycle for later evaluation within
   # the user-specified calendar
   chronon <- enquo(chronon)
-  cycle <- enquo(cycle)
+  cycles <- enquo(cycles)
   force(fallback_calendar)
 
   function(
@@ -36,7 +36,7 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
     chronon <- quo_add_dots(chronon, ...)
 
     cyclical_time(
-      data, chronon = !!chronon, cycle = !!cycle, discrete = discrete, 
+      data, chronon = !!chronon, cycles = !!cycles, discrete = discrete, 
       calendar = cal_fallback(calendar, fallback_calendar)
     )
   }
