@@ -72,9 +72,6 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
 #'   unquoted expressions like `month(1L)` or `hour(1L)`. Chronons from a
 #'   specific calendar can also be used (e.g. `cal_isoweek$week(1L)`).
 #'   Defaults to the time chronon of the input `data` (`time_chronon(data)`).
-#' @param tz Time zone for the time representation. Defaults to the time zone
-#'   of the input `data` (`tz_name(data)`). Time zones need to be valid 
-#'   identifiers for the IANA time zone database ([`tzdb::tzdb_names()`])
 #' @param discrete Logical. If `TRUE` (default), returns integer chronons since
 #'   Unix epoch (discrete time model). If `FALSE`, returns fractional chronons 
 #'   allowing representation of partial time units (continuous time model).
@@ -124,12 +121,11 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
 #' @export
 linear_time <- function(
   data, chronon = time_chronon(data), discrete = TRUE, 
-  calendar = time_calendar(data), granules = chronon_granules(chronon),
-  tz = tz_name(data)
+  calendar = time_calendar(data), granules = chronon_granules(chronon)
 ) {
   # Parse text data
   if (is.character(data)) {
-    data <- as.POSIXct(data, tz = tz)
+    data <- as.POSIXct(data, tz = tz_name(chronon))
   }
 
   # Evaluate chronon and granules with a calendar mask
@@ -154,12 +150,6 @@ linear_time <- function(
     cli::cli_abort("All elements in {.var granules} must be time unit objects.", call. = FALSE)
   }
   
-  # Attach timezone to chronon and granules
-  if (!is.null(tz)) {
-    chronon@tz <- tz
-    granules <- lapply(granules, function(g) {g@tz <- tz; g})
-  }
-
   # Cast from Date, POSIXct, etc.
   if (!is.numeric(data) || !is.null(attributes(data))) {
     data <- chronon_convert(
@@ -173,7 +163,7 @@ linear_time <- function(
     vctrs::new_vctr(
       data, 
       class = c("mt_linear", "mt_time"),
-      tz = tz, granules = granules, chronon = chronon
+      granules = granules, chronon = chronon
     )
   )
 }

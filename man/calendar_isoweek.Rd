@@ -6,7 +6,7 @@
 \alias{cal_isoweek}
 \title{ISO 8601 time unit classes}
 \format{
-An object of class \code{cal_isoweek} (inherits from \code{mt_calendar}) of length 7.
+An object of class \code{cal_isoweek} (inherits from \code{mt_calendar}) of length 8.
 }
 \usage{
 cal_isoweek

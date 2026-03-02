@@ -6,7 +6,7 @@
 \alias{cal_time_civil_midnight}
 \title{Civil time unit classes}
 \format{
-An object of class \code{cal_time_civil_midnight} (inherits from \code{mt_calendar}) of length 5.
+An object of class \code{cal_time_civil_midnight} (inherits from \code{mt_calendar}) of length 6.
 }
 \usage{
 cal_time_civil_midnight

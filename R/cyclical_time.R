@@ -60,9 +60,6 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
 #'   that defines the period), evaluated in the context of `calendar`. Use
 #'   unquoted expressions like `list(week(1L))` or `list(year(1L))`. The
 #'   time units should be ordered from coarsest (e.g. year) to finest (e.g second).
-#' @param tz Time zone for the time representation. Defaults to the time zone
-#'   of the input `data` (`tz_name(data)`). Time zones need to be valid 
-#'   identifiers for the IANA time zone database ([`tzdb::tzdb_names()`])
 #' @param discrete Logical. If `TRUE` (default), returns integer positions within
 #'   the cycle (discrete time model). If `FALSE`, returns fractional positions 
 #'   allowing representation of partial time units (continuous time model).
@@ -116,12 +113,12 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
 #' 
 #' @export
 cyclical_time <- function(
-  data, chronon = time_chronon(data), cycles, tz = tz_name(data),
+  data, chronon = time_chronon(data), cycles,
   discrete = TRUE, calendar = time_calendar(data)
 ) {
   # Parse text data
   if (is.character(data)) {
-    data <- as.POSIXct(data, tz = tz)
+    data <- as.POSIXct(data, tz = tz_name(chronon))
   }
 
   # Evaluate chronon and cycle with a calendar mask
@@ -146,12 +143,6 @@ cyclical_time <- function(
     cli::cli_abort("All elements in {.var cycles} must be a time unit objects.", call. = FALSE)
   }
   
-  # Attach timezone to chronon and cycles
-  if (!is.null(tz)) {
-    chronon@tz <- tz
-    cycles <- lapply(cycles, function(g) {g@tz <- tz; g})
-  }
-
   # Make numeric data input 1-indexed
   if (is.numeric(data)) data <- data - 1L
   
@@ -177,7 +168,7 @@ cyclical_time <- function(
     vctrs::new_vctr(
       data, 
       class = c("mt_cyclical", "mt_time"),
-      tz = tz, chronon = chronon, cycles = cycles
+      chronon = chronon, cycles = cycles
     )
   )
 }

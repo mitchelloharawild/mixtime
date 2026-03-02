@@ -6,7 +6,7 @@
 \alias{cal_gregorian}
 \title{Gregorian time unit classes}
 \format{
-An object of class \code{cal_gregorian} (inherits from \code{mt_calendar}) of length 8.
+An object of class \code{cal_gregorian} (inherits from \code{mt_calendar}) of length 9.
 }
 \usage{
 cal_gregorian

@@ -8,7 +8,6 @@ cyclical_time(
   data,
   chronon = time_chronon(data),
   cycles,
-  tz = tz_name(data),
   discrete = TRUE,
   calendar = time_calendar(data)
 )
@@ -31,10 +30,6 @@ specific calendar can also be used (e.g. \code{cal_isoweek$day(1L)}).}
 that defines the period), evaluated in the context of \code{calendar}. Use
 unquoted expressions like \code{list(week(1L))} or \code{list(year(1L))}. The
 time units should be ordered from coarsest (e.g. year) to finest (e.g second).}
-
-\item{tz}{Time zone for the time representation. Defaults to the time zone
-of the input \code{data} (\code{tz_name(data)}). Time zones need to be valid
-identifiers for the IANA time zone database (\code{\link[tzdb:tzdb_names]{tzdb::tzdb_names()}})}
 
 \item{discrete}{Logical. If \code{TRUE} (default), returns integer positions within
 the cycle (discrete time model). If \code{FALSE}, returns fractional positions
