@@ -73,7 +73,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {
     # TODO - preserve integer type if possible
-    return(vec_data(x)/vec_data(y))
+    return(vec_data(y)/vec_data(x))
   }
 
   # Try to find a method with arguments swapped
