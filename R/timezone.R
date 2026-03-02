@@ -12,7 +12,14 @@
 #' tz_name(Sys.time())
 #' tz_name(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 tz_name <- S7::new_generic("tz_name", "x")
-S7::method(tz_name, S7::class_POSIXt) <- function(x) attr(x, "tzone") %||% "UTC"
+S7::method(tz_name, S7::class_POSIXt) <- function(x) {
+  tz <- attr(x, "tzone")
+  if (!is.null(tz)) {
+    if (nzchar(tz)) tz else Sys.timezone()
+  } else {
+    "UTC"
+  }
+}
 S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
 S7::method(tz_name, S7::new_S3_class("mt_linear")) <- function(x) tz_name(time_chronon(x))
 S7::method(tz_name, S7::new_S3_class("mixtime")) <- function(x) tz_name(time_chronon(x))
