@@ -32,10 +32,12 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
   function(
     data, discrete = TRUE, calendar = time_calendar(data), ...
   ) {
+    # Add tz / loc to chronon
+    chronon <- quo_add_dots(chronon, ...)
+
     cyclical_time(
       data, chronon = !!chronon, cycle = !!cycle, discrete = discrete, 
-      calendar = cal_fallback(calendar, fallback_calendar),
-      ...
+      calendar = cal_fallback(calendar, fallback_calendar)
     )
   }
 }
@@ -116,11 +118,6 @@ cyclical_time <- function(
   data, chronon = time_chronon(data), cycles,
   discrete = TRUE, calendar = time_calendar(data)
 ) {
-  # Parse text data
-  if (is.character(data)) {
-    data <- as.POSIXct(data, tz = tz_name(chronon))
-  }
-
   # Evaluate chronon and cycle with a calendar mask
   quo_chronon <- enquo(chronon)
   quo_cycles <- enquo(cycles)
@@ -140,6 +137,11 @@ cyclical_time <- function(
   if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
     chronon@tz <- tz_name(data)
   } 
+  
+  # Parse text data
+  if (is.character(data)) {
+    data <- as.POSIXct(data, tz = tz_name(chronon))
+  }
   
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
@@ -191,7 +193,6 @@ format.mt_cyclical <- function(x, ...) {
 vec_cast.character.mt_cyclical <- function(x, to, ...) {
   chronon <- attr(x, "chronon")
   cycles <- attr(x, "cycles")
-  tz <- attr(x, "tz")
 
   xf <- floor(x <- vec_data(x))
   out <- cyclical_labels(chronon, cycles[[1L]], xf)
