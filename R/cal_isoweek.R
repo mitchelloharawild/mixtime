@@ -50,7 +50,7 @@ method(chronon_format, cal_isoweek$week) <- function(x) "{year} W{week}"
 # TODO - this is not entirely accurate, but is currently necessary
 # for converting the 1970 epoch in the print method
 method(chronon_cardinality, list(cal_gregorian$year, cal_isoweek$year)) <- function(x, y, at = NULL) {
-  vec_data(x)*1L/vec_data(y)
+  vec_data(y)*1L/vec_data(x)
 }
 
 method(chronon_cardinality, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y, at = NULL) {

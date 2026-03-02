@@ -89,7 +89,7 @@ method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$month)) <- fun
     stop("The number of days in a month requires the time context `at`.", call. = FALSE)
   }
 
-  n_months <- vec_data(x)
+  n_months <- vec_data(y)
 
   if(n_months >= 12) {
     cli::cli_abort("Month chronons >= 12 are not yet supported for conversion to days.")
@@ -107,7 +107,7 @@ method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$month)) <- fun
   feb_year <- year + (start_month - 1L + feb_offset) %/% 12L
   md <- period_len[period_idx] + (contains_feb & is_leap_year(feb_year))
 
-  md/vec_data(y)
+  md/vec_data(x)
 }
 
 ### Chronon casting between Gregorian time units
