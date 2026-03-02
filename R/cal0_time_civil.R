@@ -3,9 +3,9 @@
 mt_tz_unit <- new_class(
   "mt_tz_unit", 
   parent = mt_unit,
-  properties = list(tz = new_property(S7::class_character, default = "UTC")),
+  properties = list(tz = new_property(S7::class_character, default = "")),
   validator = function(self) {
-    check_tz_name(self@tz)
+    if (nzchar(self@tz)) check_tz_name(self@tz)
     NULL
   }
 )

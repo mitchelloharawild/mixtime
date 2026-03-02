@@ -140,6 +140,11 @@ linear_time <- function(
     }
   })
 
+  # Add default tz if not given in chronon
+  if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
+    chronon@tz <- tz_name(data)
+  } 
+
   # Parse text data
   if (is.character(data)) {
     data <- as.POSIXct(data, tz = tz_name(chronon))

@@ -135,6 +135,11 @@ cyclical_time <- function(
       cli::cli_abort(e$message, call = NULL)
     }
   })
+
+  # Add default tz if not given in chronon
+  if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
+    chronon@tz <- tz_name(data)
+  } 
   
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
