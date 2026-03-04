@@ -53,6 +53,18 @@ method(chronon_cardinality, list(cal_gregorian$year, cal_isoweek$year)) <- funct
   vec_data(y)*1L/vec_data(x)
 }
 
+method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
+  if(vec_data(y) != 1L) {
+    cli::cli_abort("The number of weeks in multi-year chronons is not yet supported.")
+  }
+  if(vec_data(x) != 1L) {
+    cli::cli_abort("The number of multi-weeks in year chronons is not yet supported.")
+  }
+  year <- at + 1970L
+  p <- (year + year %/% 4 - year %/% 100 + year %/% 400) %% 7
+  ifelse(p == 4 | (p == 3 & is_leap_year(year)), 53L, 52L)  
+}
+
 method(chronon_cardinality, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y, at = NULL) {
   vec_data(y)*7L/vec_data(x)
 }
