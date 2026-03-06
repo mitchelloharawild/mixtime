@@ -38,7 +38,7 @@ S7_graph_dispatch <- function(signatures, start, end) {
 }
 
 S7_class_id <- function(x) {
-  if(inherits(x, "S7_object") && !inherits(x, "S7_class")) {
+  if (inherits(x, "S7_object") && !inherits(x, "S7_class")) {
     x <- attr(x, "S7_class")
   }
   paste(x@package, x@name, sep = "::")
@@ -190,6 +190,136 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
   
   # No path found
   return(integer(0))
+}
+
+S7_graph_dispatch_multi <- function(signatures, start, terminals = list(), groups = list()) {
+  classes <- vec_unique(list_unchop(signatures))
+
+  S7_signature_id <- function(sig) {
+    if (!is.list(sig)) return(S7_class_id(sig))
+    lapply(sig, S7_signature_id)
+  }
+
+  chr_signatures <- S7_signature_id(signatures)
+  chr_classes    <- vapply(classes, S7_class_id, character(1L))
+
+  int_edges     <- vec_match(unlist(chr_signatures), chr_classes)
+  int_edge_from <- int_edges[seq(1, length(int_edges), by = 2)]
+  int_edge_to   <- int_edges[seq(2, length(int_edges), by = 2)]
+
+  int_start <- vec_match(S7_class_id(start), chr_classes)
+
+  # terminals: individual nodes that just need to appear somewhere in the tree
+  int_terminals <- vec_match(
+    vapply(terminals, S7_class_id, character(1L)),
+    chr_classes
+  )
+
+  # groups: lists of nodes that must all co-occur on the same root-to-leaf path
+  int_groups <- lapply(groups, function(group) {
+    if (!is.list(group)) group <- list(group)
+    vec_match(vapply(group, S7_class_id, character(1L)), chr_classes)
+  })
+
+  int_tree <- steiner_tree_paths(
+    from      = int_edge_from,
+    to        = int_edge_to,
+    start     = int_start,
+    terminals = int_terminals,
+    groups    = int_groups
+  )
+
+  resolve_tree <- function(node) {
+    list(
+      node     = classes[[node$node]],
+      children = lapply(node$children, resolve_tree)
+    )
+  }
+  resolve_tree(int_tree)
+}
+
+# Returns a nested list: list(node = int, children = list(...))
+# Groups are inserted first (chained BFS ensuring co-occurrence on one path).
+# Terminals are only inserted if not already present in the tree.
+steiner_tree_paths <- function(
+    from      = integer(),
+    to        = integer(),
+    start     = integer(),
+    terminals = integer(),
+    groups    = list()) {
+  if (length(from) != length(to)) return(list())
+  if (length(start) != 1L)        return(list())
+  if (length(from) == 0L)         return(list())
+
+  # Collect all nodes currently present in the tree
+  tree_nodes <- function(tree) {
+    c(tree$node, unlist(lapply(tree$children, tree_nodes)))
+  }
+
+  # For a group of nodes, order by BFS depth from start (shallowest first),
+  # then chain BFS segments: start -> g1 -> g2 -> ...
+  group_path <- function(group) {
+    if (length(group) == 1L) {
+      return(bfs_shortest_path(from = from, to = to, start = start, end = group))
+    }
+    depths <- vapply(group, function(node) {
+      p <- bfs_shortest_path(from = from, to = to, start = start, end = node)
+      if (length(p) == 0L) Inf else length(p) - 1L
+    }, numeric(1L))
+    ordered_group <- group[order(depths)]
+
+    waypoints <- c(start, ordered_group)
+    path <- integer(0)
+    for (i in seq_len(length(waypoints) - 1L)) {
+      segment <- bfs_shortest_path(
+        from  = from, to = to,
+        start = waypoints[[i]], end = waypoints[[i + 1L]]
+      )
+      if (length(segment) == 0L) return(integer(0))
+      path <- c(path, if (i == 1L) segment else segment[-1L])
+    }
+    path
+  }
+
+  insert_path <- function(tree, path) {
+    if (length(path) == 0L) return(tree)
+
+    node <- path[[1L]]
+    rest <- path[-1L]
+
+    child_idx <- which(vapply(tree$children, function(c) c$node == node, logical(1L)))
+
+    if (length(child_idx) == 0L) {
+      new_child <- insert_path(list(node = node, children = list()), rest)
+      tree$children <- c(tree$children, list(new_child))
+    } else {
+      tree$children[[child_idx]] <- insert_path(tree$children[[child_idx]], rest)
+    }
+
+    tree
+  }
+
+  tree <- list(node = start, children = list())
+
+  # 1. Insert group paths first (enforce co-occurrence)
+  for (group in groups) {
+    path <- group_path(group)
+    if (length(path) > 1L) {
+      tree <- insert_path(tree, path[-1L])
+    }
+  }
+
+  # 2. Insert terminals only if not already in the tree
+  for (terminal in terminals) {
+    if (!terminal %in% tree_nodes(tree)) {
+      path <- bfs_shortest_path(from = from, to = to, start = start, end = terminal)
+      if (length(path) > 1L) {
+        tree <- insert_path(tree, path[-1L])
+      }
+    }
+  }
+
+  tree
 }
 
 S7_graph_glb <- function(signatures, chronons) {
