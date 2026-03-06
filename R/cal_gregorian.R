@@ -48,6 +48,9 @@ method(time_unit_abbr, cal_gregorian$quarter) <- function(x) "Q"
 method(time_unit_full, cal_gregorian$month) <- function(x) "month"
 method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
 
+# Epoch for years
+method(chronon_epoch, cal_gregorian$year) <- function(x) 1970L
+
 # Default granules
 method(chronon_granules, cal_gregorian$quarter) <- function(x) list(cal_gregorian$year(1L))
 method(chronon_granules, cal_gregorian$month) <- function(x) list(cal_gregorian$year(1L))
