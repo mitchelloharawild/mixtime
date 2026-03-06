@@ -49,13 +49,6 @@ method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_isoweek$year(
 method(chronon_format, cal_isoweek$year) <- function(x) "{year}"
 method(chronon_format, cal_isoweek$week) <- function(x) "{year} W{week}"
 
-# 1:1 mapping for isoyears to years 
-# TODO - this is not entirely accurate, but is currently necessary
-# for converting the 1970 epoch in the print method
-method(chronon_cardinality, list(cal_gregorian$year, cal_isoweek$year)) <- function(x, y, at = NULL) {
-  vec_data(y)*1L/vec_data(x)
-}
-
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
   if(vec_data(y) != 1L) {
     cli::cli_abort("The number of weeks in multi-year chronons is not yet supported.")
