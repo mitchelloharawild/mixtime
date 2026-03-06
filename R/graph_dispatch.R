@@ -229,9 +229,22 @@ S7_graph_dispatch_multi <- function(signatures, start, terminals = list(), group
     groups    = int_groups
   )
 
+  # Computed once; captured by resolve_tree via closure
+  all_objects <- c(list(start), terminals, unlist(groups, recursive = FALSE))
+  all_ids     <- vapply(all_objects, S7_class_id, character(1L))
+
   resolve_tree <- function(node) {
+    node_id <- chr_classes[[node$node]]
+    match_i <- match(node_id, all_ids)
+
+    resolved <- if (!is.na(match_i)) {
+      all_objects[[match_i]]
+    } else {
+      classes[[node$node]](1L)
+    }
+
     list(
-      node     = classes[[node$node]],
+      node     = resolved,
       children = lapply(node$children, resolve_tree)
     )
   }
