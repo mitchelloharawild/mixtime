@@ -46,8 +46,9 @@ method(chronon_epoch, cal_isoweek$year) <- function(x) 1970L
 method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_isoweek$year(1L))
 
 # Default formats
-method(chronon_format, cal_isoweek$year) <- function(x) "{year}"
-method(chronon_format, cal_isoweek$week) <- function(x) "{year} W{week}"
+method(chronon_format_linear, cal_isoweek$year) <- function(x) "{lin(year)}"
+method(chronon_format_linear, cal_isoweek$week) <- function(x) "{lin(year)} W{cyc(week,year)}"
+method(chronon_format_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y) "{cyc(day,week,label=TRUE)}"
 
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
   if(vec_data(y) != 1L) {
@@ -147,11 +148,11 @@ method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(fro
 week.abb <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 week.name <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, label = TRUE, abbr = TRUE) {
+method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE) {
   # TODO: Add offset for different week starting days
   if (!label) {
-    i + 1L
-  } else if (abbr) {
+    as.character(i + 1L)
+  } else if (abbreviate) {
     week.abb[i + 1L]
   } else {
     week.name[i + 1L]

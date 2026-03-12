@@ -84,7 +84,6 @@ day_of_week(as.Date("2025-12-15") + 0:6)
 
 }
 \seealso{
-\code{\link[=cyclical_time]{cyclical_time()}} for creating custom cyclical time vectors,
-\link{linear_time_helpers} for linear time helper functions,
+\code{\link[=cyclical_time]{cyclical_time()}} for creating cyclical time vectors,
 \code{\link[=new_cyclical_time_fn]{new_cyclical_time_fn()}} for creating cyclical time helper functions
 }

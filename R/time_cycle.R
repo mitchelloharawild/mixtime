@@ -15,13 +15,21 @@
 #' time_cycle(Sys.Date())
 #' 
 #' # The cycle of a cyclical time object
-#' time_cycle(cyclical_time(Sys.Date(), cal_gregorian$year(1L)))
+#' time_cycle(month_of_year(Sys.Date()))
 #' 
 #' @export
 time_cycle <- S7::new_generic("time_cycle", "x")
 
 S7::method(time_cycle, S7::class_any) <- function(x) {
   NULL
+}
+
+S7::method(time_cycle, S7::new_S3_class("mixtime")) <- function(x) {
+  v <- attr(x, "v")
+  if (length(v) > 1L) {
+    cli::cli_abort("time_cycle() only supports single-typed mixtime vectors, not multi-typed.")
+  }
+  time_cycle(v[[1L]])
 }
 
 S7::method(time_cycle, S7::new_S3_class("mt_time")) <- function(x) {

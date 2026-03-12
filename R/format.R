@@ -44,64 +44,102 @@ mt_unit_display <- function(x, units, parts, ...) {
   }
 }
 
-time_format_linear_impl <- function(x, format = chronon_format(time_chronon(x)), ...) {
-  # Cascading formatting based on granules and chronon
-  units <- c(
-    attr(x, "granules"),
-    list(time_chronon(x))
-  )
-  force(format)
-  
-  is_discrete <- is.integer(x)
-  if (is_zoned <- tz_name(time_chronon(x)) != "UTC") {
-    # Apply timezone offset to produce local time
-    tz_ext <- tz_abbreviation(x)
-    x <- vec_data(x) + trunc(tz_offset(x))
+time_format_default <- function(x) {
+  chronon <- time_chronon(x)
+  cycle <- time_cycle(x)
+
+  fmt <- if (is.null(cycle)) {
+    chronon_format_linear(chronon)
   } else {
-    x <- vec_data(x)
+    chronon_format_cyclical(chronon, cycle)
   }
+
+  # Add format attributes (e.g. tz or location)
+  fmt <- paste0(fmt, chronon_format_attr(chronon))
+
+  # Add fractional
+  if (is.double(x)) fmt <- paste(fmt, "{frac(.time)}")
+  fmt
+}
+
+time_format_impl <- function(x, format = time_format_default(x), ...) {
+  chronon <- time_chronon(x)
+  cal <- time_calendar(chronon)
   
-  # Initialise display granules
-  parts <- rep(list(numeric(length(x))), n_units <- length(units))
-  parts[[n_units]] <- floor(x)
-  
-  # Compute fractional component of chronon
-  if(!is_discrete) {
-    frac <- x - parts[[n_units]]
-  }
-
-  # Compute display granules
-  for (i in seq(n_units, by = -1L, length.out = n_units - 1L)) {
-    mod <- chronon_divmod(units[[i]], units[[i-1L]], parts[[i]])
-    parts[[i - 1L]] <- mod$div
-    parts[[i]] <- mod$mod
-  }
-
-  # Add epoch offset to the largest granule
-  # TODO: Use calendar specific epochs
-  parts[[1L]] <- parts[[1L]] - chronon_convert_impl(-1970L, cal_gregorian$year(1L), units[[1L]], discrete = TRUE, tz = "UTC")
-
   # Create glue evaluation environment
+  as_tu <- function(x) {
+    if (S7::S7_inherits(x, mt_unit)) x else x(1L)
+  }
   env <- rlang::new_environment(
     data = c(
       # The calendar units from chronon
-      time_calendar(units[[length(units)]]),
-      # The lbl() helper function
-      lbl = function(x, ...) mt_unit_display(x, units, parts, ...)
+      cal,
+
+      # The label helper functions, returns time units and label options
+      lin = function(x, ...) structure(list(as_tu(x)), ...),
+      cyc = function(x, y, ...) {
+        structure(list(as_tu(x), as_tu(y)), ...)
+      },
+
+      # Attribute helper functions
+      tz = tz_abbreviation,
+      loc = function(x) {
+        chronon <- time_chronon(x)
+        if (!S7::S7_inherits(mt_loc_unit)) return("")
+        lat <- chronon@lat
+        lon <- chronon@lon
+        alt <- chronon@alt
+        lat_str <- sprintf("%.4f%s", abs(lat), if (lat >= 0) "N" else "S")
+        lon_str <- sprintf("%.4f%s", abs(lon), if (lon >= 0) "E" else "W")
+        if (alt != 0) {
+          paste0(lat_str, " ", lon_str, " ", sprintf("%.0fm", alt))
+        } else {
+          paste0(lat_str, " ", lon_str)
+        }
+      },
+      frac = function(x) {
+        x <- as.numeric(x)
+        sprintf("%.1f%%", (x - floor(x))*100)
+      },
+        
+      # Attach .time for specialised usage (e.g. tz_abbreviation(.time))
+      list(.time = x)
     ),
     parent = rlang::caller_env()
   )
 
-  out <- mt_glue_fmt(format, env = env, units, parts)
+  out <- mt_glue_fmt(format, env = env)
+  out_parts <- !vapply(out, is.character, logical(1L))
 
+  # # Early exit if parts are not needed
+  # if (!length(out$res)) return(rep_len(out$chr, length(x)))
 
-  if(!is_discrete) {
-    out <- paste(out, sprintf("%.1f%%", frac*100))
-  }
+  # TODO: Resolve automatic formatting usage (e.g. {year})
+  # If it is the coarsest time unit, use linear_labels
+  # Otherwise, use cyclical_labels with the next finest time unit.
 
-  if (is_zoned) {
-    out <- paste(out, tz_ext)
-  }
+  # Compute the numeric parts for display
+  res_split <- split(out[out_parts], lengths(out[out_parts]))
+  parts <- chronon_parts(
+    x        = x,
+    linear   = unlist(res_split[["1"]], recursive = FALSE),
+    cyclical = res_split[["2"]]
+  )
 
-  out
+  # Apply labels
+  parts$linear <- .mapply(
+    \(tu, x) rlang::exec(linear_labels, tu[[1L]], x, !!!attributes(tu)), 
+    dots = list(res_split[["1"]], parts$linear), 
+    MoreArgs = NULL
+  )
+  parts$cyclical <- .mapply(
+    # TODO floor(x) shouldn't be necessary, fix chronon_parts()?
+    \(tu, x) rlang::exec(cyclical_labels, tu[[1L]], tu[[2L]], floor(x), !!!attributes(tu)), 
+    dots = list(res_split[["2"]], parts$cyclical), 
+    MoreArgs = NULL
+  )
+
+  # Insert time labels into format string
+  out[out_parts] <- unsplit(Filter(length, parts), lengths(out[out_parts]))
+  rlang::exec(paste0, !!!out)
 }

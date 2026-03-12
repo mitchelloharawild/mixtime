@@ -8,17 +8,53 @@
 #' @importFrom rlang is_empty
 #' @export
 new_mixtime <- function(x = list()) {
-  validate_x <- vapply(x, mixtime_valid, logical(1L))
-
-  if (!all(validate_x)) {
-    stop("A mixtime must contain only valid time points")
-  }
-  vecvec::new_vecvec(x, class = "mixtime")
+  stopifnot(inherits(x, "mt_time"))
+  vecvec::new_vecvec(list(x), class = "mixtime")
 }
 
 #' @export
-mixtime <- function(...) {
-  new_mixtime(rlang::list2(...))
+mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data), discrete = TRUE) {
+  # Add default tz if not given in chronon or cycle
+  if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
+    chronon@tz <- tz_name(data)
+  }
+  if (!is.null(cycle) && S7::prop_exists(cycle, "tz") && !nzchar(cycle@tz)){
+    cycle@tz <- chronon@tz
+  }
+
+  # Parse text data
+  if (is.character(data)) {
+    data <- as.POSIXct(data, tz = tz_name(chronon))
+  }
+  
+  # Validate time units
+  if (!inherits(chronon, "mixtime::mt_unit")) {
+    cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
+  }
+  if (!is.null(cycle) && !inherits(cycle, "mixtime::mt_unit")) {
+    cli::cli_abort("{.var cycle} must be a time unit object.", call. = FALSE)
+  }
+
+    # Cast from Date, POSIXct, etc.
+  if (!is.numeric(data) || !is.null(attributes(data))) {
+    data <- chronon_convert(
+      data,
+      chronon,
+      discrete = discrete
+    )
+  }
+
+  new_mixtime(
+    vctrs::new_vctr(
+      data, 
+      class = c(
+        if(is.null(cycle)) "mt_linear" else "mt_cyclical",
+        "mt_time"
+      ),
+      chronon = chronon, 
+      cycle = cycle
+    )
+  )
 }
 
 #' Convert time class into a mixtime
@@ -45,25 +81,6 @@ as_mixtime <- function(x, ...) {
 is_mixtime <- function(x) {
   inherits(x, "mixtime")
 }
-
-#' Check if times can be used within mixtime
-#' 
-#' @param x A vector of times.
-#' 
-#' @return A logical vector.
-#' 
-#' @export
-mixtime_valid <- function(x) {
-  UseMethod("mixtime_valid")
-}
-
-#' @export
-mixtime_valid.default <- function(x) {
-  isTRUE(tsibble::index_valid(x))
-}
-
-#' @export
-mixtime_valid.mixtime <- function(x) TRUE
 
 #' @export
 vec_ptype_full.mixtime <- function(x, ...) "mixtime"
@@ -102,7 +119,8 @@ vec_ptype2.mixtime <- function(x, y, ...) {
   if (!(x_is_time && y_is_time) && !(is.numeric(x) || is.numeric(y))) {
     vctrs::stop_incompatible_type(x, y, x_arg = "", y_arg = "")
   }
-  new_mixtime()
+  # new_mixtime()
+  vecvec::new_vecvec(class = "mixtime")
 }
 
 #' @export

@@ -29,7 +29,7 @@ interval_pull.mt_linear <- function(x) {
   interval <- list(vec_data(chronon))
   names(interval) <- names(tsbl_interval_units)[tsbl_unit]
 
-  inject(tsibble::new_interval(!!!interval))
+  rlang::inject(tsibble::new_interval(!!!interval))
 }
 
 tsbl_interval_units <- c(

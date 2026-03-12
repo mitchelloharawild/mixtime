@@ -60,7 +60,7 @@
 #' 
 #' # Cyclical time sequences
 #' seq(month_of_year(0L), month_of_year(11L))
-#' seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
+#' # seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
 #' seq(day_of_week(0L), day_of_week(6L), by = 1)
 #' 
 #' @rdname seq.mixtime
@@ -73,12 +73,12 @@ seq.mixtime <- function(...) {
   )
   
   # Call seq method with bare vectors
-  mixtime(rlang::exec(seq, !!!arg))
+  new_mixtime(rlang::exec(seq, !!!arg))
 }
 
 #' @rdname seq.mixtime
 #' @export
-seq.mt_linear <- function(
+seq.mt_time <- function(
   from, to, by, length.out = NULL, along.with = NULL, 
   on_invalid = c("nearest", "overflow"), ...
 ) {
@@ -196,69 +196,69 @@ seq.mt_linear <- function(
   vec_restore(res, ptype)
 }
 
-#' @rdname seq.mixtime
-#' @export
-seq.mt_cyclical <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
-  if (!is.null(along.with)) {
-    length.out <- length(along.with)
-  }
-  else if (!is.null(length.out)) {
-    if (length(length.out) != 1L) 
-      stop(sprintf("'%s' must be of length 1", length.out))
-    length.out <- ceiling(length.out)
-  }
+# #' @rdname seq.mixtime
+# #' @export
+# seq.mt_cyclical <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
+#   if (!is.null(along.with)) {
+#     length.out <- length(along.with)
+#   }
+#   else if (!is.null(length.out)) {
+#     if (length(length.out) != 1L) 
+#       stop(sprintf("'%s' must be of length 1", length.out))
+#     length.out <- ceiling(length.out)
+#   }
 
-  # Capture extra arguments
-  arg <- rlang::list2(...)
-  if (!missing(by)) arg$by <- by
-  if (!is.null(length.out)) arg$length.out <- length.out
-  # NB: Passing along.with = NULL to seq.int causes an overflow in R
-  if (!is.null(along.with)) arg$along.with <- along.with
+#   # Capture extra arguments
+#   arg <- rlang::list2(...)
+#   if (!missing(by)) arg$by <- by
+#   if (!is.null(length.out)) arg$length.out <- length.out
+#   # NB: Passing along.with = NULL to seq.int causes an overflow in R
+#   if (!is.null(along.with)) arg$along.with <- along.with
   
-  # Parse `by` argument
-  if (is.character(arg$by)) arg$by <- parse_time_unit(arg$by)
+#   # Parse `by` argument
+#   if (is.character(arg$by)) arg$by <- parse_time_unit(arg$by)
 
-  # Convert mt_cyclical to numeric for seq() method
-  if (!missing(from) && inherits(from, "mt_cyclical")) {
-    ptype <- from
-    arg$from <- vctrs::vec_data(from)
-  }
-  if (!missing(to) && inherits(to, "mt_cyclical")) {
-    arg$to <- vctrs::vec_data(to)
-    if (!is.null(arg$from)) {
-      # Require compatible cyclical time objects for from:to
-      vec_assert(to, from)
-    } else {
-      ptype <- to
-    }
-  }
+#   # Convert mt_cyclical to numeric for seq() method
+#   if (!missing(from) && inherits(from, "mt_cyclical")) {
+#     ptype <- from
+#     arg$from <- vctrs::vec_data(from)
+#   }
+#   if (!missing(to) && inherits(to, "mt_cyclical")) {
+#     arg$to <- vctrs::vec_data(to)
+#     if (!is.null(arg$from)) {
+#       # Require compatible cyclical time objects for from:to
+#       vec_assert(to, from)
+#     } else {
+#       ptype <- to
+#     }
+#   }
 
-  # Cyclical period
-  period <- chronon_cardinality(attr(ptype, "chronon"), attr(ptype, "cycles")[[1L]])
+#   # Cyclical period
+#   period <- chronon_cardinality(attr(ptype, "chronon"), attr(ptype, "cycles")[[1L]])
 
-  # Adjust from:to for looping around cycles
-  if (!is.null(arg$to) && !is.null(arg$from)) {
-    if (arg$by%||%1 > 0 && to < from) {
-      arg$to <- arg$to + period
-    } else if (to > from && arg$by%||%1 < 0) {
-      arg$to <- arg$to - period
-    }
-  }
+#   # Adjust from:to for looping around cycles
+#   if (!is.null(arg$to) && !is.null(arg$from)) {
+#     if (arg$by%||%1 > 0 && to < from) {
+#       arg$to <- arg$to + period
+#     } else if (to > from && arg$by%||%1 < 0) {
+#       arg$to <- arg$to - period
+#     }
+#   }
 
-  # Convert `by` to match `ptype` units
-  if (!is.null(arg$by) && S7::S7_inherits(arg$by, mt_unit)) {
-    arg$by <- chronon_cardinality(time_chronon(ptype), arg$by)
-  }
+#   # Convert `by` to match `ptype` units
+#   if (!is.null(arg$by) && S7::S7_inherits(arg$by, mt_unit)) {
+#     arg$by <- chronon_cardinality(time_chronon(ptype), arg$by)
+#   }
 
-  # Generate linear sequence
-  res <- rlang::inject(seq.int(!!!arg))
+#   # Generate linear sequence
+#   res <- rlang::inject(seq.int(!!!arg))
 
-  # Compute cyclical component
-  res <- res %% period
+#   # Compute cyclical component
+#   res <- res %% period
   
-  # Restore integer type for discrete time input
-  if (is.integer(ptype)) res <- as.integer(res)
+#   # Restore integer type for discrete time input
+#   if (is.integer(ptype)) res <- as.integer(res)
   
-  # Restore cyclical time attributes
-  vec_restore(res, ptype)
-}
+#   # Restore cyclical time attributes
+#   vec_restore(res, ptype)
+# }

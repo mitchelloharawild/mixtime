@@ -8,8 +8,7 @@ linear_time(
   data,
   chronon = time_chronon(data),
   discrete = TRUE,
-  calendar = time_calendar(data),
-  granules = chronon_granules(chronon)
+  calendar = time_calendar(data)
 )
 }
 \arguments{
@@ -34,11 +33,6 @@ allowing representation of partial time units (continuous time model).}
 \item{calendar}{Calendar system used to evaluate \code{chronon} and \code{granules}.
 Defaults to \code{time_calendar(data)} for existing time objects. Common options
 include \link{cal_gregorian} and \link{cal_isoweek}.}
-
-\item{granules}{A list of time unit expressions representing structural units
-larger than the chronon (e.g., years, quarters, months). These define how
-time is displayed and grouped. Use unquoted expressions like
-\code{list(year(1L), quarter(1L))}. Defaults to an empty list.}
 }
 \value{
 A \code{mt_linear} time vector, which is a subclass of \code{mt_time}.
@@ -50,18 +44,16 @@ time representations that aren't covered by the convenience functions like
 \code{\link[=yearmonth]{yearmonth()}} or \code{\link[=yearweek]{yearweek()}}.
 }
 \examples{
-# Hourly time with year-month-day granules
+# Hourly time
 linear_time(
   Sys.time(),
-  chronon = hour(1L),
-  granules = list(year(1L), month(1L), day(1L))
+  chronon = hour(1L)
 )
 
-# Monthly chronons with year-quarter granules
+# Monthly time
 linear_time(
   Sys.Date(),
-  chronon = month(1L),
-  granules = list(year(1L), quarter(1L))
+  chronon = month(1L)
 )
 
 # Discrete vs continuous time
@@ -69,12 +61,12 @@ linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 
 # ISO week calendar with week-day structure
-#linear_time(
-#  Sys.Date(),
-#  chronon = day(1L),
-#  granules = list(year(1L), week(1L)),
-#  calendar = cal_isoweek
-#)
+# TODO - needs default format strings to dispatch on calendar
+# linear_time(
+#   Sys.Date(),
+#   chronon = day(1L),
+#   calendar = cal_isoweek
+# )
 
 }
 \seealso{

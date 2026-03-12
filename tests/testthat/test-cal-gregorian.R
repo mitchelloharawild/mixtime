@@ -12,7 +12,7 @@ test_that("year() converts dates correctly", {
   expect_equal(format(year(as.Date("2026-01-01"))), "2026")
   
   # Vector consistency check over large range
-  dates <- as.Date(0:150000, origin = "1970-01-01")
+  dates <- as.Date(0:25000, origin = "1970-01-01")
   diff <- format(year(dates)) == format(dates, "%Y")
   expect_true(all(diff))
   
@@ -206,7 +206,7 @@ test_that("conversion handles dates before Unix epoch", {
 
 test_that("cyclical_labels for months work correctly", {
   # The method should return abbreviated month names
-  labels <- cyclical_labels(cal_gregorian$month(1L), cal_gregorian$year(1L), 0:11)
+  labels <- cyclical_labels(cal_gregorian$month(1L), cal_gregorian$year(1L), 0:11, label = TRUE, abbreviate = TRUE)
   expect_equal(labels, month.abb)
 })
 

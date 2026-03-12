@@ -7,7 +7,7 @@
 cyclical_time(
   data,
   chronon = time_chronon(data),
-  cycles,
+  cycle,
   discrete = TRUE,
   calendar = time_calendar(data)
 )
@@ -21,14 +21,14 @@ cyclical_time(
 \item Other time objects
 }}
 
-\item{chronon}{A time units representing the chronon (smallest
+\item{chronon}{A time unit representing the chronon (smallest
 indivisible time unit), evaluated in the context of \code{calendar}. Use
 unquoted expressions like \code{day(1L)} or \code{month(1L)}. Chronons from a
 specific calendar can also be used (e.g. \code{cal_isoweek$day(1L)}).}
 
-\item{cycles}{A list of time unit(s) representing the cycle (larger time unit
+\item{cycle}{A time unit representing the cycle (larger time unit
 that defines the period), evaluated in the context of \code{calendar}. Use
-unquoted expressions like \code{list(week(1L))} or \code{list(year(1L))}. The
+unquoted expressions like \code{week(1L)} or \code{year(1L)}. The
 time units should be ordered from coarsest (e.g. year) to finest (e.g second).}
 
 \item{discrete}{Logical. If \code{TRUE} (default), returns integer positions within
@@ -53,7 +53,7 @@ like \code{\link[=day_of_week]{day_of_week()}} or \code{\link[=month_of_year]{mo
 cyclical_time(
   Sys.Date(),
   chronon = day(1L),
-  cycles = list(week(1L)),
+  cycle = week(1L),
   calendar = cal_isoweek
 )
 
@@ -61,7 +61,7 @@ cyclical_time(
 cyclical_time(
   Sys.Date(),
   chronon = month(1L),
-  cycles = list(year(1L))
+  cycle = year(1L)
 )
 
 # Discrete vs continuous time
@@ -73,7 +73,7 @@ yearweek(Sys.time(), discrete = FALSE)
 cyclical_time(
   Sys.Date(),
   chronon = day(1L),
-  cycles = list(month(1L)),
+  cycle = month(1L),
   calendar = cal_gregorian
 )
 
@@ -81,7 +81,7 @@ cyclical_time(
 cyclical_time(
   Sys.time(),
   chronon = second(1L),
-  cycles = list(day(1L), hour(1L), minute(1L))
+  cycle = day(1L)
 )
 
 }

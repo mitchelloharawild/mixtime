@@ -3,7 +3,7 @@ test_that("Cyclical time handles text parsing with set timezones", {
   result <- day_of_week("2020-01-01", tz = "America/Los_Angeles")
   
   # 2020-01-01 is a Wednesday
-  expect_equal(format(result), "Wed")
+  expect_equal(format(result), "Wed PST")
   
   # Test with UTC
   result_utc <- day_of_week("2020-01-01")
@@ -11,7 +11,7 @@ test_that("Cyclical time handles text parsing with set timezones", {
   
   # Test with Europe/Berlin (same date, so same day of week)
   result_berlin <- day_of_week("2020-01-01", tz = "Europe/Berlin")
-  expect_equal(format(result_berlin), "Wed")
+  expect_equal(format(result_berlin), "Wed CET")
 })
 
 test_that("cyclical_time() handles timezone conversions showing position differences", {
@@ -20,15 +20,15 @@ test_that("cyclical_time() handles timezone conversions showing position differe
   
   # In Melbourne, this is 2020-01-01 (Wednesday)
   melbourne_dow <- day_of_week(melbourne_time, tz = "Australia/Melbourne")
-  expect_equal(format(melbourne_dow), "Wed")
+  expect_equal(format(melbourne_dow), "Wed AEDT")
   
   # Convert to America/Los_Angeles - should be 2019-12-31 (Tuesday)
   pacific_dow <- day_of_week(melbourne_time, tz = "America/Los_Angeles")
-  expect_equal(format(pacific_dow), "Tue")
+  expect_equal(format(pacific_dow), "Tue PST")
   
   # Convert to Europe/Berlin - should be 2019-12-31 (Tuesday)
   berlin_dow <- day_of_week(melbourne_time, tz = "Europe/Berlin")
-  expect_equal(format(berlin_dow), "Tue")
+  expect_equal(format(berlin_dow), "Tue CET")
 })
 
 test_that("cyclical_time() month_of_year handles timezone-induced date shifts", {
@@ -37,11 +37,11 @@ test_that("cyclical_time() month_of_year handles timezone-induced date shifts", 
   
   # In Pacific time, this is December (month 12)
   pacific_month <- month_of_year(pacific_time, tz = "America/Los_Angeles")
-  expect_equal(format(pacific_month), "Dec")
+  expect_equal(format(pacific_month), "Dec PST")
   
   # Convert to Australia/Melbourne - should be next day (2021-01-01), January (month 1)
   melbourne_month <- month_of_year(pacific_time, tz = "Australia/Melbourne")
-  expect_equal(format(melbourne_month), "Jan")
+  expect_equal(format(melbourne_month), "Jan AEDT")
   
   # UTC should also be January 1st (month 1)
   utc_month <- month_of_year(pacific_time, tz = "UTC")
@@ -58,7 +58,7 @@ test_that("cyclical_time() day_of_month handles date boundaries across timezones
   
   # In Australia/Sydney (UTC+11), this is February 1st (day 1)
   sydney_dom <- day_of_month(utc_time, tz = "Australia/Sydney")
-  expect_equal(as.character(format(sydney_dom)), "01")
+  expect_equal(as.character(format(sydney_dom)), "01 AEDT")
 })
 
 test_that("cyclical_time() day_of_year handles year boundary transitions", {
@@ -67,7 +67,7 @@ test_that("cyclical_time() day_of_year handles year boundary transitions", {
   
   # In Pacific time, this is day 366 of 2020 (leap year)
   pacific_doy <- day_of_year(pacific_time, tz = "America/Los_Angeles")
-  expect_equal(as.character(format(pacific_doy)), "366")
+  expect_equal(as.character(format(pacific_doy)), "366 PST")
   
   # In UTC, this is 2021-01-01, so day 1 of 2021
   utc_doy <- day_of_year(pacific_time, tz = "UTC")
@@ -80,11 +80,11 @@ test_that("cyclical_time() week_of_year handles timezone shifts across week boun
   
   # In Pacific time, 2020-01-01 is in week 1
   pacific_week <- week_of_year(pacific_time, tz = "America/Los_Angeles")
-  expect_equal(format(pacific_week), "01")
+  expect_equal(format(pacific_week), "01 PST")
   
   # Convert to Australia/Melbourne - becomes 2020-01-02, still in week 1
   melbourne_week <- week_of_year(pacific_time, tz = "Australia/Melbourne")
-  expect_equal(format(melbourne_week), "01")
+  expect_equal(format(melbourne_week), "01 AEDT")
 })
 
 test_that("cyclical_time() preserves cycle position for same calendar day across timezones", {
@@ -98,9 +98,9 @@ test_that("cyclical_time() preserves cycle position for same calendar day across
   sydney_dow <- day_of_week(utc_time, tz = "Australia/Sydney")
   
   # All should show Monday
-  expect_equal(format(pacific_dow), "Mon")
-  expect_equal(format(berlin_dow), "Mon")
-  expect_equal(format(sydney_dow), "Mon")
+  expect_equal(format(pacific_dow), "Mon PDT")
+  expect_equal(format(berlin_dow), "Mon CEST")
+  expect_equal(format(sydney_dow), "Mon AEST")
 })
 
 test_that("cyclical_time() discrete vs continuous modes work with timezones", {
@@ -113,5 +113,5 @@ test_that("cyclical_time() discrete vs continuous modes work with timezones", {
   
   # Continuous mode should include fractional percentage
   continuous_dow <- day_of_week(utc_time, discrete = FALSE)
-  expect_equal(format(continuous_dow), "Mon-52.1%")
+  expect_equal(format(continuous_dow), "Mon 52.1%")
 })

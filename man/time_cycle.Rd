@@ -25,6 +25,6 @@ time object, such as cyclical time representations.
 time_cycle(Sys.Date())
 
 # The cycle of a cyclical time object
-time_cycle(cyclical_time(Sys.Date(), cal_gregorian$year(1L)))
+time_cycle(month_of_year(Sys.Date()))
 
 }

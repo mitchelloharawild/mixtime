@@ -56,9 +56,10 @@ method(chronon_granules, cal_gregorian$quarter) <- function(x) list(cal_gregoria
 method(chronon_granules, cal_gregorian$month) <- function(x) list(cal_gregorian$year(1L))
 
 # Default formats
-method(chronon_format, cal_gregorian$year) <- function(x) "{year}"
-method(chronon_format, cal_gregorian$quarter) <- function(x) "{year} Q{quarter}"
-method(chronon_format, cal_gregorian$month) <- function(x) "{year} {month}"
+method(chronon_format_linear, cal_gregorian$year) <- function(x) "{lin(year)}"
+method(chronon_format_linear, cal_gregorian$quarter) <- function(x) "{lin(year)} Q{cyc(quarter,year)}"
+method(chronon_format_linear, cal_gregorian$month) <- function(x) "{lin(year)} {cyc(month,year,label=TRUE,abbreviate=TRUE)}"
+method(chronon_format_cyclical, list(cal_gregorian$month, cal_gregorian$year)) <- function(x, y) "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
 
 ### Calendar algebra methods for Gregorian time units
 method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$year)) <- function(x, y, at = NULL) {
@@ -239,9 +240,9 @@ method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(
   # Quarters count with 1-indexing
   as.character(i + 1L)
 }
-method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i, label = TRUE, abbr = TRUE) {
+method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE) {
   if (label) {
-    (if (abbr) month.abb else month.name)[i+1L] 
+    (if (abbreviate) month.abb else month.name)[i+1L] 
   } else {
     sprintf("%02d", i + 1L)
   }

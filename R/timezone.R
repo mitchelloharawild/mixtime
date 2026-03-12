@@ -21,7 +21,7 @@ S7::method(tz_name, S7::class_POSIXt) <- function(x) {
   }
 }
 S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
-S7::method(tz_name, S7::new_S3_class("mt_linear")) <- function(x) tz_name(time_chronon(x))
+S7::method(tz_name, S7::new_S3_class("mt_time")) <- function(x) tz_name(time_chronon(x))
 S7::method(tz_name, S7::new_S3_class("mixtime")) <- function(x) tz_name(time_chronon(x))
 S7::method(tz_name, S7::class_any) <- function(x) "UTC"
 
@@ -46,12 +46,15 @@ method(tz_offset, S7::new_S3_class("mixtime")) <- function(x, ...) {
     vecvec::vecvec_apply(x, tz_offset, ...)
   )
 }
-method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, tz = tz_name(x), ...) {
-  time_s <- as.double(as.POSIXct(x))
+method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(x), ...) {
+  if(tz == "UTC") return(rep(0, length(x)))
+  tu_s <- cal_time_civil_midnight$second(1L)
+  time_s <- chronon_convert(x, tu_s)
   offset_s <- get_tz_offset(time_s, tz)
   nz_offset <- offset_s != 0
+  if(!any(nz_offset)) return(rep(0, length(x)))
   offset_s[nz_offset] <- offset_s[nz_offset]*chronon_cardinality(
-    time_chronon(x), cal_time_civil_midnight$second(1L), time_s[nz_offset]
+    time_chronon(x), tu_s, time_s[nz_offset]
   )
   offset_s
 }
@@ -71,7 +74,11 @@ method(tz_offset, S7::new_S3_class("mt_linear")) <- function(x, tz = tz_name(x),
 #' tz_abbreviation(Sys.time())
 #' tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
 tz_abbreviation <- function(x) {
-  get_tz_abbreviation(as.double(as.POSIXct(x)), tz_name(x))
+  # TODO: Handle timezone changes within chronon using [before]/[after]
+  get_tz_abbreviation(
+    chronon_convert(x, cal_time_civil_midnight$second(1L)),
+    tz_name(x)
+  )
 }
 
 #' Get timezone transitions

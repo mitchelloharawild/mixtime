@@ -4,17 +4,10 @@
 \alias{new_linear_time_fn}
 \title{Linear time function factory}
 \usage{
-new_linear_time_fn(
-  chronon,
-  granules = list(),
-  fallback_calendar = cal_gregorian
-)
+new_linear_time_fn(chronon, fallback_calendar = cal_gregorian)
 }
 \arguments{
 \item{chronon}{A bare call for a time unit object representing the chronon (e.g., \code{day(1)})}
-
-\item{granules}{A bare call for a list of time unit objects representing the granules
-(e.g., \code{list(year(1), month(1))})}
 
 \item{fallback_calendar}{A fallback calendar used to find the time units for
 conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}
@@ -24,31 +17,31 @@ A function used to create linear time points.
 }
 \description{
 \code{new_linear_time_fn()} creates a linear time function for a specified
-chronon and granules. Granules are larger time units that define the structure
-of time (e.g., years, months), while the chronon is the smallest indivisible
-time unit (e.g., days, hours).
+chronon. A chronon is the smallest indivisible time unit (e.g., days, hours).
 }
 \examples{
 
+# NOTE: These examples need updating to define default granules/format strings.
+
 # A year-month time representation with months as the chronon
-ym <- new_linear_time_fn(month(1L), list(year(1L)))
+ym <- new_linear_time_fn(month(1L))
 ym(Sys.Date())
 
 # A year-quarter-month time representation with months as the chronon
-yqm <- new_linear_time_fn(month(1L), list(year(1L), quarter(1L)))
+yqm <- new_linear_time_fn(month(1L))
 yqm(1:100)
 yqm(Sys.Date())
 
 # A year-day time representation with days as the chronon
-yd <- new_linear_time_fn(day(1L), list(year(1L)))
+yd <- new_linear_time_fn(day(1L))
 yd(Sys.Date())
 
 # Gregorian date time with hourly precision
-ymd_h <- new_linear_time_fn(hour(1L), list(year(1L), month(1L), day(1L)))
+ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 
 # ISO-week-date calendar
-ywd <- new_linear_time_fn(day(1L), list(year(1L), week(1L)), fallback_calendar = cal_isoweek)
+ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)
 ywd(Sys.Date())
 
 }

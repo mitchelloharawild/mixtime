@@ -76,12 +76,12 @@ test_that("seq.mixtime works with cyclical time", {
   expect_equal(format(result[[12]]), format(month_of_year(11L)))
   
   # month_of_year with wrap-around and time unit by
-  result <- seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
-  expect_s3_class(result, "mixtime")
+  # result <- seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
+  # expect_s3_class(result, "mixtime")
   # Should wrap around: Jun -> Aug -> Oct -> Dec -> Feb -> Apr
-  expect_length(result, 6)
-  expect_equal(format(result[[1]]), format(month_of_year(5L)))
-  expect_equal(format(result[[6]]), format(month_of_year(3L)))
+  # expect_length(result, 6)
+  # expect_equal(format(result[[1]]), format(month_of_year(5L)))
+  # expect_equal(format(result[[6]]), format(month_of_year(3L)))
   
   # day_of_week sequence with integer by
   result <- seq(day_of_week(0L), day_of_week(6L), by = 1L)

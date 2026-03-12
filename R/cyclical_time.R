@@ -7,7 +7,7 @@
 #' units form a cyclical time point (e.g., day of the week).
 #' 
 #' @param chronon A time unit object representing the chronon (e.g., `day(1L)`)
-#' @param cycles A time unit object representing the cycle (e.g., `week(1L)`)
+#' @param cycle A time unit object representing the cycle (e.g., `week(1L)`)
 #' @param fallback_calendar A fallback calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
@@ -15,18 +15,18 @@
 #' 
 #' @examples
 #' 
-#' day_of_week <- new_cyclical_time_fn(day(1L), list(week(1L)), fallback_calendar = cal_isoweek)
+#' day_of_week <- new_cyclical_time_fn(day(1L), week(1L), fallback_calendar = cal_isoweek)
 #' day_of_week(Sys.Date())
 #' 
-#' month_of_year <- new_cyclical_time_fn(month(1L), list(year(1L)))
+#' month_of_year <- new_cyclical_time_fn(month(1L), year(1L))
 #' month_of_year(Sys.Date())
 #' 
 #' @export
-new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregorian) {
+new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregorian) {
   # Capture chronon and cycle for later evaluation within
   # the user-specified calendar
   chronon <- enquo(chronon)
-  cycles <- enquo(cycles)
+  cycle <- enquo(cycle)
   force(fallback_calendar)
 
   function(
@@ -36,7 +36,7 @@ new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregor
     chronon <- quo_add_dots(chronon, ...)
 
     cyclical_time(
-      data, chronon = !!chronon, cycles = !!cycles, discrete = discrete, 
+      data, chronon = !!chronon, cycle = !!cycle, discrete = discrete, 
       calendar = cal_fallback(calendar, fallback_calendar)
     )
   }
@@ -54,13 +54,13 @@ new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregor
 #'   - Character strings (parsed as dates/times)
 #'   - Date or POSIXct objects
 #'   - Other time objects
-#' @param chronon A time units representing the chronon (smallest 
+#' @param chronon A time unit representing the chronon (smallest 
 #'   indivisible time unit), evaluated in the context of `calendar`. Use 
 #'   unquoted expressions like `day(1L)` or `month(1L)`. Chronons from a
 #'   specific calendar can also be used (e.g. `cal_isoweek$day(1L)`).
-#' @param cycles A list of time unit(s) representing the cycle (larger time unit
+#' @param cycle A time unit representing the cycle (larger time unit
 #'   that defines the period), evaluated in the context of `calendar`. Use
-#'   unquoted expressions like `list(week(1L))` or `list(year(1L))`. The
+#'   unquoted expressions like `week(1L)` or `year(1L)`. The
 #'   time units should be ordered from coarsest (e.g. year) to finest (e.g second).
 #' @param discrete Logical. If `TRUE` (default), returns integer positions within
 #'   the cycle (discrete time model). If `FALSE`, returns fractional positions 
@@ -82,7 +82,7 @@ new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregor
 #' cyclical_time(
 #'   Sys.Date(),
 #'   chronon = day(1L),
-#'   cycles = list(week(1L)),
+#'   cycle = week(1L),
 #'   calendar = cal_isoweek
 #' )
 #' 
@@ -90,7 +90,7 @@ new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregor
 #' cyclical_time(
 #'   Sys.Date(),
 #'   chronon = month(1L),
-#'   cycles = list(year(1L))
+#'   cycle = year(1L)
 #' )
 #' 
 #' # Discrete vs continuous time
@@ -102,7 +102,7 @@ new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregor
 #' cyclical_time(
 #'   Sys.Date(),
 #'   chronon = day(1L),
-#'   cycles = list(month(1L)),
+#'   cycle = month(1L),
 #'   calendar = cal_gregorian
 #' )
 #' 
@@ -110,92 +110,55 @@ new_cyclical_time_fn <- function(chronon, cycles, fallback_calendar = cal_gregor
 #' cyclical_time(
 #'   Sys.time(),
 #'   chronon = second(1L),
-#'   cycles = list(day(1L), hour(1L), minute(1L))
+#'   cycle = day(1L)
 #' )
 #' 
 #' @export
 cyclical_time <- function(
-  data, chronon = time_chronon(data), cycles,
+  data, chronon = time_chronon(data), cycle,
   discrete = TRUE, calendar = time_calendar(data)
 ) {
   # Evaluate chronon and cycle with a calendar mask
   quo_chronon <- enquo(chronon)
-  quo_cycles <- enquo(cycles)
+  quo_cycle <- enquo(cycle)
   tryCatch({
     chronon <- eval_tidy(quo_chronon, data = calendar)
-    cycles <- eval_tidy(quo_cycles, data = calendar)
+    stopifnot(S7::S7_inherits(chronon, mt_unit))
+    cycle <- eval_tidy(quo_cycle, data = calendar)
+    stopifnot(S7::S7_inherits(cycle, mt_unit))
   }, error = function(e) {
     if (inherits(calendar, "mt_calendar_fb")) {
       chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
-      cycles <<- eval_tidy(quo_cycles, data = attr(calendar, "fallback"))
+      cycle <<- eval_tidy(quo_cycle, data = attr(calendar, "fallback"))
     } else {
       cli::cli_abort(e$message, call = NULL)
     }
   })
 
-  # Add default tz if not given in chronon
-  if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
-    chronon@tz <- tz_name(data)
-  } 
-  
-  # Parse text data
-  if (is.character(data)) {
-    data <- as.POSIXct(data, tz = tz_name(chronon))
-  }
-  
-  if (!inherits(chronon, "mixtime::mt_unit")) {
-    cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
-  }
-  if (!all(vapply(cycles, function(c) inherits(c, "mixtime::mt_unit"), logical(1L)))) {
-    cli::cli_abort("All elements in {.var cycles} must be a time unit objects.", call. = FALSE)
-  }
-  
   # Make numeric data input 1-indexed
   if (is.numeric(data)) data <- data - 1L
-  
-  # Cast to continuous time from Date, POSIXct, etc.
-  if (!is.numeric(data) || !is.null(attributes(data))) {
-    data <- chronon_convert(
-      data,
-      chronon,
-      discrete = discrete
-    )
-  }
+  # TODO - numeric data should default to origin-less cyclical time
 
-  # Reduce to cyclical time with divmod methods
-  data <- chronon_divmod(from = chronon, to = cycles[[1L]], x = data)$mod
-  
-  # Ensure data is integer for discrete data
-  # (since chronon_divmod()$mod may not respect discrete)
-  if (discrete) {
-    data <- as.integer(data)
-  }
 
-  mixtime(
-    vctrs::new_vctr(
-      data, 
-      class = c("mt_cyclical", "mt_time"),
-      chronon = chronon, cycles = cycles
-    )
-  )
+  mixtime(data, chronon = chronon, cycle = cycle, discrete = discrete)
+
+  # TODO - For origin-less cyclical time, reduce to cyclical time with divmod methods
+  # data <- chronon_divmod(from = chronon, to = cycle, x = data)$mod
 }
 
 #' @export
-mixtime_valid.mt_cyclical <- function(x) TRUE
-
-#' @export
-format.mt_cyclical <- function(x, ...) {
-    as.character(x)
+format.mt_cyclical <- function(x, format = time_format_default(x), ...) {
+  time_format_impl(x, format = format, ...)
 }
 
 #' @method vec_cast.character mt_cyclical
 #' @export
 vec_cast.character.mt_cyclical <- function(x, to, ...) {
-  chronon <- attr(x, "chronon")
-  cycles <- attr(x, "cycles")
+  chronon <- time_chronon(x)
+  cycle <- time_cycle(x)
 
   xf <- floor(x <- vec_data(x))
-  out <- cyclical_labels(chronon, cycles[[1L]], xf)
+  out <- cyclical_labels(chronon, cycle[[1L]], xf)
 
   is_discrete <- is.integer(x)
   if(!is_discrete) {
@@ -216,27 +179,27 @@ vec_cast.double.mt_cyclical <- function(x, to, ...) {
   vec_cast(vec_data(x), double())
 }
 
-#' @importFrom vctrs vec_arith
-#' @method vec_arith mt_cyclical
-#' @export
-vec_arith.mt_cyclical <- function(op, x, y, ...) {
-  UseMethod("vec_arith.mt_cyclical", y)
-}
+# #' @importFrom vctrs vec_arith
+# #' @method vec_arith mt_cyclical
+# #' @export
+# vec_arith.mt_cyclical <- function(op, x, y, ...) {
+#   UseMethod("vec_arith.mt_cyclical", y)
+# }
 
-#' @importFrom vctrs vec_arith_base
-#' @method vec_arith.mt_cyclical integer
-#' @export
-vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
-  if (!op %in% c("+", "-")) {
-    stop("Only integer addition and subtraction supported for cyclical time", call. = FALSE)
-  }
-  period <- chronon_cardinality(attr(x, "chronon"), attr(x, "cycle"))
-  vec_restore((vec_arith_base(op, vec_data(x), y, ...) - 1L) %% period + 1L, x)
-}
-#' @importFrom vctrs vec_arith_base
-#' @method vec_arith.mt_cyclical double
-#' @export
-vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
+# #' @importFrom vctrs vec_arith_base
+# #' @method vec_arith.mt_cyclical integer
+# #' @export
+# vec_arith.mt_cyclical.integer <- function(op, x, y, ...) {
+#   if (!op %in% c("+", "-")) {
+#     stop("Only integer addition and subtraction supported for cyclical time", call. = FALSE)
+#   }
+#   period <- chronon_cardinality(attr(x, "chronon"), attr(x, "cycle"))
+#   vec_restore((vec_arith_base(op, vec_data(x), y, ...) - 1L) %% period + 1L, x)
+# }
+# #' @importFrom vctrs vec_arith_base
+# #' @method vec_arith.mt_cyclical double
+# #' @export
+# vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 
 #' Cyclical time helpers
 #' 
@@ -278,8 +241,7 @@ vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 #' )
 #' ```
 #' 
-#' @seealso [cyclical_time()] for creating custom cyclical time vectors,
-#'   [linear_time_helpers] for linear time helper functions,
+#' @seealso [cyclical_time()] for creating cyclical time vectors,
 #'   [new_cyclical_time_fn()] for creating cyclical time helper functions
 #' 
 #' @examples
@@ -293,28 +255,28 @@ vec_arith.mt_cyclical.double <- vec_arith.mt_cyclical.integer
 #' @export
 month_of_year <- new_cyclical_time_fn(
   chronon = month(1L),
-  cycle = list(year(1L))
+  cycle = year(1L)
 )
 
 #' @rdname cyclical_time_helpers
 #' @export
 day_of_year <- new_cyclical_time_fn(
   chronon = day(1L),
-  cycle = list(year(1L))
+  cycle = year(1L)
 )
 
 #' @rdname cyclical_time_helpers
 #' @export
 day_of_month <- new_cyclical_time_fn(
   chronon = day(1L),
-  cycle = list(month(1L))
+  cycle = month(1L)
 )
 
 #' @rdname cyclical_time_helpers
 #' @export
 time_of_day <- new_cyclical_time_fn(
   chronon = second(1L),
-  cycle = list(day(1L), hour(1L), minute(1L)),
+  cycle = day(1L),
   fallback_calendar = cal_time_civil_midnight
 )
 
@@ -322,7 +284,7 @@ time_of_day <- new_cyclical_time_fn(
 #' @export
 day_of_week <- new_cyclical_time_fn(
   chronon = day(1L),
-  cycle = list(week(1L)),
+  cycle = week(1L),
   fallback_calendar = cal_isoweek
 )
 
@@ -330,6 +292,6 @@ day_of_week <- new_cyclical_time_fn(
 #' @export
 week_of_year <- new_cyclical_time_fn(
   chronon = week(1L),
-  cycle = list(year(1L)),
+  cycle = year(1L),
   fallback_calendar = cal_isoweek
 )

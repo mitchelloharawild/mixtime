@@ -1,13 +1,9 @@
 #' Linear time function factory
 #' 
 #' `new_linear_time_fn()` creates a linear time function for a specified
-#' chronon and granules. Granules are larger time units that define the structure
-#' of time (e.g., years, months), while the chronon is the smallest indivisible
-#' time unit (e.g., days, hours).
+#' chronon. A chronon is the smallest indivisible time unit (e.g., days, hours).
 #' 
 #' @param chronon A bare call for a time unit object representing the chronon (e.g., `day(1)`)
-#' @param granules A bare call for a list of time unit objects representing the granules 
-#'   (e.g., `list(year(1), month(1))`)
 #' @param fallback_calendar A fallback calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
@@ -15,33 +11,34 @@
 #' 
 #' @examples
 #' 
+#' # NOTE: These examples need updating to define default granules/format strings.
+#' 
 #' # A year-month time representation with months as the chronon
-#' ym <- new_linear_time_fn(month(1L), list(year(1L)))
+#' ym <- new_linear_time_fn(month(1L))
 #' ym(Sys.Date())
 #' 
 #' # A year-quarter-month time representation with months as the chronon
-#' yqm <- new_linear_time_fn(month(1L), list(year(1L), quarter(1L)))
+#' yqm <- new_linear_time_fn(month(1L))
 #' yqm(1:100)
 #' yqm(Sys.Date())
 #' 
 #' # A year-day time representation with days as the chronon
-#' yd <- new_linear_time_fn(day(1L), list(year(1L)))
+#' yd <- new_linear_time_fn(day(1L))
 #' yd(Sys.Date())
 #' 
 #' # Gregorian date time with hourly precision
-#' ymd_h <- new_linear_time_fn(hour(1L), list(year(1L), month(1L), day(1L)))
+#' ymd_h <- new_linear_time_fn(hour(1L))
 #' ymd_h(Sys.time())
 #' 
 #' # ISO-week-date calendar
-#' ywd <- new_linear_time_fn(day(1L), list(year(1L), week(1L)), fallback_calendar = cal_isoweek)
+#' ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)
 #' ywd(Sys.Date())
 #' 
 #' @export
-new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = cal_gregorian) {
+new_linear_time_fn <- function(chronon, fallback_calendar = cal_gregorian) {
   # Capture chronon and granularity for later evaluation within
   # the user-specified calendar
   chronon <- enquo(chronon)
-  granules <- enquo(granules)
   force(fallback_calendar)
 
   function(
@@ -51,7 +48,7 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
     chronon <- quo_add_dots(chronon, ...)
 
     linear_time(
-      data, chronon = !!chronon, granules = !!granules, discrete = discrete, 
+      data, chronon = !!chronon, discrete = discrete, 
       calendar = cal_fallback(calendar, fallback_calendar)
     )
   }
@@ -80,10 +77,6 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
 #' @param calendar Calendar system used to evaluate `chronon` and `granules`.
 #'   Defaults to `time_calendar(data)` for existing time objects. Common options
 #'   include [cal_gregorian] and [cal_isoweek].
-#' @param granules A list of time unit expressions representing structural units
-#'   larger than the chronon (e.g., years, quarters, months). These define how
-#'   time is displayed and grouped. Use unquoted expressions like 
-#'   `list(year(1L), quarter(1L))`. Defaults to an empty list.
 #' 
 #' @return A `mt_linear` time vector, which is a subclass of `mt_time`.
 #' 
@@ -94,18 +87,16 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
 #' - [cal_gregorian], [cal_isoweek] for calendar systems
 #' 
 #' @examples
-#' # Hourly time with year-month-day granules
+#' # Hourly time
 #' linear_time(
 #'   Sys.time(),
-#'   chronon = hour(1L),
-#'   granules = list(year(1L), month(1L), day(1L))
+#'   chronon = hour(1L)
 #' )
 #' 
-#' # Monthly chronons with year-quarter granules
+#' # Monthly time
 #' linear_time(
 #'   Sys.Date(),
-#'   chronon = month(1L),
-#'   granules = list(year(1L), quarter(1L))
+#'   chronon = month(1L)
 #' )
 #' 
 #' # Discrete vs continuous time
@@ -113,81 +104,42 @@ new_linear_time_fn <- function(chronon, granules = list(), fallback_calendar = c
 #' linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #' 
 #' # ISO week calendar with week-day structure
-#' #linear_time(
-#' #  Sys.Date(),
-#' #  chronon = day(1L),
-#' #  granules = list(year(1L), week(1L)),
-#' #  calendar = cal_isoweek
-#' #)
+#' # TODO - needs default format strings to dispatch on calendar
+#' # linear_time(
+#' #   Sys.Date(),
+#' #   chronon = day(1L),
+#' #   calendar = cal_isoweek
+#' # )
 #' 
 #' @export
 linear_time <- function(
   data, chronon = time_chronon(data), discrete = TRUE, 
-  calendar = time_calendar(data), granules = chronon_granules(chronon)
+  calendar = time_calendar(data)
 ) {
   # Evaluate chronon and granules with a calendar mask
   quo_chronon <- enquo(chronon)
-  quo_granules <- enquo(granules)
   tryCatch({
     chronon <- eval_tidy(quo_chronon, data = calendar)
-    granules <- eval_tidy(quo_granules, data = calendar)
   }, error = function(e) {
     if (inherits(calendar, "mt_calendar_fb")) {
       chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
-      granules <<- eval_tidy(quo_granules, data = attr(calendar, "fallback"))
     } else {
       cli::cli_abort(e$message, call = NULL)
     }
   })
 
-  # Add default tz if not given in chronon
-  if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
-    chronon@tz <- tz_name(data)
-  } 
-
-  # Parse text data
-  if (is.character(data)) {
-    data <- as.POSIXct(data, tz = tz_name(chronon))
-  }
-  
-  if (!inherits(chronon, "mixtime::mt_unit")) {
-    cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
-  }
-  if (!all(vapply(granules, function(g) inherits(g, "mixtime::mt_unit"), logical(1L)))) {
-    cli::cli_abort("All elements in {.var granules} must be time unit objects.", call. = FALSE)
-  }
-  
-  # Cast from Date, POSIXct, etc.
-  if (!is.numeric(data) || !is.null(attributes(data))) {
-    data <- chronon_convert(
-      data,
-      chronon,
-      discrete = discrete
-    )
-  }
-
-  mixtime(
-    vctrs::new_vctr(
-      data, 
-      class = c("mt_linear", "mt_time"),
-      granules = granules, chronon = chronon
-    )
-  )
+  mixtime(data, chronon = chronon, discrete = discrete)
 }
 
 #' @export
-mixtime_valid.mt_linear <- function(x) TRUE
-
-#' @importFrom rlang inject
-#' @export
-format.mt_linear <- function(x, format = chronon_format(time_chronon(x)), ...) {
-  time_format_linear_impl(x, format = format, ...)
+format.mt_linear <- function(x, format = time_format_default(x), ...) {
+  time_format_impl(x, format = format, ...)
 }
 
 #' @method vec_cast.character mt_linear
 #' @export
 vec_cast.character.mt_linear <- function(x, to, ...) {
-  time_format_linear_impl(x)
+  time_format_impl(x)
 }
 
 #' @method vec_cast.integer mt_linear
@@ -283,35 +235,33 @@ year <- new_linear_time_fn(
 #' @rdname linear_time_helpers
 #' @export
 yearquarter <- new_linear_time_fn(
-  chronon = quarter(1L),
-  granules = list(year(1L))
+  chronon = quarter(1L)
 )
 
 #' @rdname linear_time_helpers
 #' @export
 yearmonth <- new_linear_time_fn(
-  chronon = month(1L),
-  granules = list(year(1L))
+  chronon = month(1L)
 )
 
+# TODO - rename to `date`
 #' @rdname linear_time_helpers
 #' @export
 yearmonthday <- new_linear_time_fn(
-  chronon = day(1L),
-  granules = list(year(1L), month(1L))
+  chronon = day(1L)
 )
 
 #' @rdname linear_time_helpers
 #' @export
 yearweek <- new_linear_time_fn(
-  granules = list(year(1L)), chronon = week(1L),
+  chronon = week(1L),
   fallback_calendar = cal_isoweek
 )
 
 #' @importFrom vctrs vec_math
-#' @method vec_math mt_linear
+#' @method vec_math mt_time
 #' @export
-vec_math.mt_linear <- function(.fn, .x, ...) {
+vec_math.mt_time <- function(.fn, .x, ...) {
   if (.fn == "mean") {
     res <- vctrs::vec_math_base(.fn, .x, ...)
     if (is.integer(.x)) {
@@ -326,16 +276,16 @@ vec_math.mt_linear <- function(.fn, .x, ...) {
 }
 
 #' @importFrom vctrs vec_arith
-#' @method vec_arith mt_linear
+#' @method vec_arith mt_time
 #' @export
-vec_arith.mt_linear <- function(op, x, y, ...) {
-  UseMethod("vec_arith.mt_linear", y)
+vec_arith.mt_time <- function(op, x, y, ...) {
+  UseMethod("vec_arith.mt_time", y)
 }
 
 #' @importFrom vctrs vec_arith_base
-#' @method vec_arith.mt_linear integer
+#' @method vec_arith.mt_time integer
 #' @export
-vec_arith.mt_linear.integer <- function(op, x, y, ...) {
+vec_arith.mt_time.integer <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
     stop("Only numeric addition and subtraction supported for continuous time", call. = FALSE)
   }
@@ -345,14 +295,14 @@ vec_arith.mt_linear.integer <- function(op, x, y, ...) {
   res
 }
 #' @importFrom vctrs vec_arith_base
-#' @method vec_arith.mt_linear double
+#' @method vec_arith.mt_time double
 #' @export
-vec_arith.mt_linear.double <- vec_arith.mt_linear.integer
+vec_arith.mt_time.double <- vec_arith.mt_time.integer
 
 
-#' @method vec_arith.mt_linear mt_linear
+#' @method vec_arith.mt_time mt_time
 #' @export
-vec_arith.mt_linear.mt_linear <- function(op, x, y, ...) {
+vec_arith.mt_time.mt_time <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
     stop("Only numeric addition and subtraction supported for continuous time", call. = FALSE)
   }
