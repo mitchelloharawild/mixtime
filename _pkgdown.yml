@@ -24,8 +24,9 @@ reference:
   - year
   - yearquarter
   - yearmonth
-  - date
   - yearweek
+  - date
+  - datetime
 
 - title: "Cyclical Time Representations"
   desc: "Functions to create and work with cyclical time representations"

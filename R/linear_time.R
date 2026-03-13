@@ -246,15 +246,21 @@ yearmonth <- new_linear_time_fn(
 
 #' @rdname linear_time_helpers
 #' @export
+yearweek <- new_linear_time_fn(
+  chronon = week(1L),
+  fallback_calendar = cal_isoweek
+)
+
+#' @rdname linear_time_helpers
+#' @export
 date <- new_linear_time_fn(
   chronon = day(1L)
 )
 
 #' @rdname linear_time_helpers
 #' @export
-yearweek <- new_linear_time_fn(
-  chronon = week(1L),
-  fallback_calendar = cal_isoweek
+datetime <- new_linear_time_fn(
+  chronon = second(1L)
 )
 
 #' @importFrom vctrs vec_math

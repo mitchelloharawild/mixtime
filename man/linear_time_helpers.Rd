@@ -5,8 +5,9 @@
 \alias{year}
 \alias{yearquarter}
 \alias{yearmonth}
-\alias{date}
 \alias{yearweek}
+\alias{date}
+\alias{datetime}
 \title{Linear time helper functions}
 \usage{
 year(data, discrete = TRUE, calendar = time_calendar(data), ...)
@@ -15,9 +16,11 @@ yearquarter(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 yearmonth(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
+yearweek(data, discrete = TRUE, calendar = time_calendar(data), ...)
+
 date(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-yearweek(data, discrete = TRUE, calendar = time_calendar(data), ...)
+datetime(data, discrete = TRUE, calendar = time_calendar(data), ...)
 }
 \arguments{
 \item{data}{A vector of time points (e.g. \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXt})}
