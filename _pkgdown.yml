@@ -24,7 +24,7 @@ reference:
   - year
   - yearquarter
   - yearmonth
-  - yearmonthday
+  - date
   - yearweek
 
 - title: "Cyclical Time Representations"

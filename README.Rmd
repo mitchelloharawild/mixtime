@@ -30,7 +30,7 @@ mixtime provides flexible time classes for time series analysis and forecasting 
 
 **📈 Linear Time** - Create linear time vectors with `linear_time()` or with helpers:
 
-  * `yearquarter()`, `yearmonth()`, `yearmonthday()`, `yearweek()`
+  * `yearquarter()`, `yearmonth()`, `yearweek()`, `date()`
 
 **🔄 Cyclical Time** - Create cyclical time vectors with `cyclical_time()` or with helpers:
 
@@ -110,7 +110,7 @@ Linear time helper functions are available to quickly create common time points.
 yearquarter(demo_date) + 0:7
 yearmonth(demo_date) + 0:11
 yearweek(demo_date) + 0:10
-yearmonthday(demo_date) + 0:6
+date(demo_date) + 0:6
 ```
 
 The mixtime package allows time of different granulities to be combined in a single vector.
@@ -128,7 +128,7 @@ A cyclical time vector is defined by two calendar time units: a `chronon` (the s
 
 ```{r}
 # The `calendar` argument provides a masking scope to `chronon` and `cycle`
-cyclical_time(demo_date, chronon = day(1L), cycles = list(week(1L)), calendar = cal_isoweek)
+cyclical_time(demo_date, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
 ```
 
 There are several cyclical time helper functions for convenience.
@@ -150,13 +150,13 @@ All linear and cyclical time vectors support timezones via the `tz` argument.
 ```{r timezone}
 demo_time
 # Same day (Sunday) in LA
-yearmonthday(demo_time, tz = "America/Los_Angeles")
-yearmonthday(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
+date(demo_time, tz = "America/Los_Angeles")
+date(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
 day_of_week(demo_time, tz = "America/Los_Angeles")
 
 # Next day (Monday) in Melbourne (23% through the 23rd)
-yearmonthday(demo_time, tz = "Australia/Melbourne")
-yearmonthday(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
+date(demo_time, tz = "Australia/Melbourne")
+date(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
 day_of_week(demo_time, tz = "Australia/Melbourne")
 ```
 
@@ -180,7 +180,7 @@ The `seq()` function creates sequences of time points iterating by a given time 
 seq(yearmonth(demo_date), by = 1L, length.out = 10)
 
 # Calendar time units allow sequencing by other units
-seq(yearmonthday(demo_date), by = cal_gregorian$month(1L), length.out = 8)
+seq(date(demo_date), by = cal_gregorian$month(1L), length.out = 8)
 ```
 
 

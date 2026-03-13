@@ -244,10 +244,9 @@ yearmonth <- new_linear_time_fn(
   chronon = month(1L)
 )
 
-# TODO - rename to `date`
 #' @rdname linear_time_helpers
 #' @export
-yearmonthday <- new_linear_time_fn(
+date <- new_linear_time_fn(
   chronon = day(1L)
 )
 

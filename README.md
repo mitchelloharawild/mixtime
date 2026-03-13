@@ -25,7 +25,7 @@ handling temporal data at different frequencies, making it ideal for:
 **📈 Linear Time** - Create linear time vectors with `linear_time()` or
 with helpers:
 
-- `yearquarter()`, `yearmonth()`, `yearmonthday()`, `yearweek()`
+- `yearquarter()`, `yearmonth()`, `yearweek()`, `date()`
 
 **🔄 Cyclical Time** - Create cyclical time vectors with
 `cyclical_time()` or with helpers:
@@ -66,6 +66,11 @@ remotes::install_github("mitchelloharawild/mixtime")
 
 ``` r
 library(mixtime)
+#> 
+#> Attaching package: 'mixtime'
+#> The following object is masked from 'package:base':
+#> 
+#>     date
 demo_time <- as.POSIXct("2026-02-22 18:30:42", tz = "UTC")
 demo_date <- as.Date("2026-02-22")
 ```
@@ -87,6 +92,7 @@ cal_gregorian
 #>   - quarter
 #>   - month
 #>   - day
+#>   - ampm
 #>   - hour
 #>   - minute
 #>   - second
@@ -95,12 +101,12 @@ cal_gregorian
 # A 1-month time unit
 cal_gregorian$month(1L) # (1L is integer 1)
 #> <mixtime::tu_month> int 1
-#>  @ tz: chr "UTC"
+#>  @ tz: chr ""
 
 # A 2-week time unit (fortnights)
 cal_isoweek$week(2L)
 #> <mixtime::tu_week> int 2
-#>  @ tz: chr "UTC"
+#>  @ tz: chr ""
 ```
 
 ### Linear Time
@@ -143,7 +149,7 @@ yearweek(demo_date) + 0:10
 #> <mixtime[11]>
 #>  [1] 2026 W08 2026 W09 2026 W10 2026 W11 2026 W12 2026 W13 2026 W14 2026 W15
 #>  [9] 2026 W16 2026 W17 2026 W18
-yearmonthday(demo_date) + 0:6
+date(demo_date) + 0:6
 #> <mixtime[7]>
 #> [1] 2026-02-22 2026-02-23 2026-02-24 2026-02-25 2026-02-26 2026-02-27 2026-02-28
 ```
@@ -168,7 +174,7 @@ the `chronon` loops over).
 
 ``` r
 # The `calendar` argument provides a masking scope to `chronon` and `cycle`
-cyclical_time(demo_date, chronon = day(1L), cycles = list(week(1L)), calendar = cal_isoweek)
+cyclical_time(demo_date, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
 #> <mixtime[1]>
 #> [1] Sun
 ```
@@ -190,7 +196,7 @@ day_of_week(demo_date)
 # Continuous cyclical time shows progress through chronons
 day_of_week(demo_time, discrete = FALSE)
 #> <mixtime[1]>
-#> [1] Sun-77.1%
+#> [1] Sun 77.1%
 ```
 
 ### Timezones
@@ -202,26 +208,26 @@ argument.
 demo_time
 #> [1] "2026-02-22 18:30:42 UTC"
 # Same day (Sunday) in LA
-yearmonthday(demo_time, tz = "America/Los_Angeles")
+date(demo_time, tz = "America/Los_Angeles")
 #> <mixtime[1]>
 #> [1] 2026-02-22 PST
-yearmonthday(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
+date(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-22 77.1% PST
+#> [1] 2026-02-22 PST 77.1%
 day_of_week(demo_time, tz = "America/Los_Angeles")
 #> <mixtime[1]>
-#> [1] Sun
+#> [1] Sun PST
 
 # Next day (Monday) in Melbourne (23% through the 23rd)
-yearmonthday(demo_time, tz = "Australia/Melbourne")
+date(demo_time, tz = "Australia/Melbourne")
 #> <mixtime[1]>
 #> [1] 2026-02-23 AEDT
-yearmonthday(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
+date(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-22 77.1% AEDT
+#> [1] 2026-02-22 AEDT 77.1%
 day_of_week(demo_time, tz = "Australia/Melbourne")
 #> <mixtime[1]>
-#> [1] Mon
+#> [1] Mon AEDT
 ```
 
 ### Temporal Manipulation
@@ -252,7 +258,7 @@ seq(yearmonth(demo_date), by = 1L, length.out = 10)
 #>  [9] 2026 Oct 2026 Nov
 
 # Calendar time units allow sequencing by other units
-seq(yearmonthday(demo_date), by = cal_gregorian$month(1L), length.out = 8)
+seq(date(demo_date), by = cal_gregorian$month(1L), length.out = 8)
 #> <mixtime[8]>
 #> [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22
 #> [8] 2026-09-22

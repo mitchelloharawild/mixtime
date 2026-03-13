@@ -5,7 +5,7 @@
 \alias{year}
 \alias{yearquarter}
 \alias{yearmonth}
-\alias{yearmonthday}
+\alias{date}
 \alias{yearweek}
 \title{Linear time helper functions}
 \usage{
@@ -15,7 +15,7 @@ yearquarter(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 yearmonth(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-yearmonthday(data, discrete = TRUE, calendar = time_calendar(data), ...)
+date(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 yearweek(data, discrete = TRUE, calendar = time_calendar(data), ...)
 }

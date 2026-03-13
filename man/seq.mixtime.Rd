@@ -74,19 +74,19 @@ seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"))
 seq(yearquarter("2020-01-01"), length.out = 5, by = 3)
 
 # Linear time sequences with string intervals
-seq(yearmonthday("2020-01-01"), yearmonthday("2020-12-31"), by = "1 month")
+seq(date("2020-01-01"), date("2020-12-31"), by = "1 month")
 seq(yearmonth("2020-01-01"), yearmonth("2025-01-01"), by = "1 year")
-seq(yearmonthday("2020-01-01"), length.out = 10, by = "2 weeks")
+seq(date("2020-01-01"), length.out = 10, by = "2 weeks")
 
 # Linear time sequences with time units
 seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$month(2L))
-seq(yearmonthday("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))
-seq(yearmonthday("2020-01-01"), yearmonthday("2020-01-31"), by = cal_gregorian$day(7L))
+seq(date("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))
+seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))
 
 # Handling invalid dates with on_invalid
-seq(yearmonthday("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses nearest
-seq(yearmonthday("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "nearest")
-seq(yearmonthday("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
+seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses nearest
+seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "nearest")
+seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 
 # Cyclical time sequences
 seq(month_of_year(0L), month_of_year(11L))
