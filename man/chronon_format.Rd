@@ -5,12 +5,15 @@
 \alias{chronon_format_cyclical}
 \title{Default formatting strings for chronons}
 \usage{
-chronon_format_linear(x, ...)
+chronon_format_linear(x, cal = time_calendar(x), ...)
 
 chronon_format_cyclical(x, y, ...)
 }
 \arguments{
 \item{x}{A chronon (time unit) object.}
+
+\item{cal}{The calendar of the chronon, used to disambiguate format strings for
+time units that are shared across calendars (e.g. \code{cal_gregorian$day} and \code{cal_isoweek$day}).}
 
 \item{...}{Additional arguments for methods.}
 
@@ -28,5 +31,6 @@ that can be interpolated with actual values.
 chronon_format_linear(cal_gregorian$year(1L))
 chronon_format_linear(cal_gregorian$month(1L))
 chronon_format_linear(cal_gregorian$day(1L))
+chronon_format_linear(cal_isoweek$day(1L))
 
 }

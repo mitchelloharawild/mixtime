@@ -7,6 +7,8 @@
 #'
 #' @param x A chronon (time unit) object.
 #' @param y A chronon (time unit) for the cycle size.
+#' @param cal The calendar of the chronon, used to disambiguate format strings for 
+#'   time units that are shared across calendars (e.g. `cal_gregorian$day` and `cal_isoweek$day`).
 #' @param ... Additional arguments for methods.
 #'
 #' @return A character string containing the default format template for the chronon.
@@ -16,11 +18,13 @@
 #' chronon_format_linear(cal_gregorian$year(1L))
 #' chronon_format_linear(cal_gregorian$month(1L))
 #' chronon_format_linear(cal_gregorian$day(1L))
+#' chronon_format_linear(cal_isoweek$day(1L))
 #' 
 #' @rdname chronon_format
-chronon_format_linear <- new_generic("chronon_format_linear", "x")
-method(chronon_format_linear, mt_unit) <- function(x) {
-  cal <- time_calendar(x)
+chronon_format_linear <- new_generic("chronon_format_linear", c("x", "cal"), function(x, cal = time_calendar(x), ...) {
+  S7::S7_dispatch()
+})
+method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
   tu_i <- match(S7_class_id(x), vapply(cal, S7_class_id, character(1L)))
   paste0("{lin(", names(cal)[tu_i], ")}")
 }

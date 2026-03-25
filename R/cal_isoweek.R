@@ -46,8 +46,9 @@ method(chronon_epoch, cal_isoweek$year) <- function(x) 1970L
 method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_isoweek$year(1L))
 
 # Default formats
-method(chronon_format_linear, cal_isoweek$year) <- function(x) "{lin(year)}"
-method(chronon_format_linear, cal_isoweek$week) <- function(x) "{lin(year)} W{cyc(week,year)}"
+method(chronon_format_linear, list(cal_isoweek$year, class_any)) <- function(x, cal) "{lin(year)}"
+method(chronon_format_linear, list(cal_isoweek$week, class_any)) <- function(x, cal) "{lin(year)} W{cyc(week,year)}"
+method(chronon_format_linear, list(cal_isoweek$day, S7::new_S3_class("cal_isoweek"))) <- function(x, cal) "{lin(year)}-W{cyc(week,year)}-{cyc(day,week,label=TRUE)}"
 method(chronon_format_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y) "{cyc(day,week,label=TRUE)}"
 
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {

@@ -78,11 +78,11 @@ method(chronon_granules, cal_time_civil_midnight$second) <- function(x) list(cal
 method(chronon_granules, cal_time_civil_midnight$millisecond) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L), cal_gregorian$minute(1L), cal_gregorian$second(1L))
 
 # Default formats
-method(chronon_format_linear, cal_time_civil_midnight$day) <- function(x) "{lin(year)}-{cyc(month,year)}-{cyc(day, month)}"
-method(chronon_format_linear, cal_time_civil_midnight$hour) <- function(x) "{lin(year)}-{cyc(month, year, label = FALSE)}-{cyc(day, month)} {cyc(hour, day)}h"
-method(chronon_format_linear, cal_time_civil_midnight$minute) <- function(x) "{lin(year)}-{cyc(month, year, label = FALSE)}-{cyc(day, month)} {cyc(hour, day)}:{cyc(minute, hour)}"
-method(chronon_format_linear, cal_time_civil_midnight$second) <- function(x) "{lin(year)}-{cyc(month, year, label = FALSE)}-{cyc(day, month)} {cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}"
-method(chronon_format_linear, cal_time_civil_midnight$millisecond) <- function(x) "{lin(year)}-{cyc(month, year, label = FALSE)}-{cyc(day, month)} {cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}"
+method(chronon_format_linear, list(cal_time_civil_midnight$day, class_any)) <- function(x, cal) "{lin(year)}-{cyc(month,year)}-{cyc(day, month)}"
+method(chronon_format_linear, list(cal_time_civil_midnight$hour, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}h")
+method(chronon_format_linear, list(cal_time_civil_midnight$minute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}")
+method(chronon_format_linear, list(cal_time_civil_midnight$second, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}")
+method(chronon_format_linear, list(cal_time_civil_midnight$millisecond, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}")
 method(chronon_format_cyclical, list(cal_time_civil_midnight$millisecond, cal_time_civil_midnight$day)) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}"
 method(chronon_format_cyclical, list(cal_time_civil_midnight$second, cal_time_civil_midnight$day)) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}"
 method(chronon_format_cyclical, list(cal_time_civil_midnight$minute, cal_time_civil_midnight$day)) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}"

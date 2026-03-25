@@ -56,9 +56,11 @@ method(chronon_granules, cal_gregorian$quarter) <- function(x) list(cal_gregoria
 method(chronon_granules, cal_gregorian$month) <- function(x) list(cal_gregorian$year(1L))
 
 # Default formats
-method(chronon_format_linear, cal_gregorian$year) <- function(x) "{lin(year)}"
-method(chronon_format_linear, cal_gregorian$quarter) <- function(x) "{lin(year)} Q{cyc(quarter,year)}"
-method(chronon_format_linear, cal_gregorian$month) <- function(x) "{lin(year)} {cyc(month,year,label=TRUE,abbreviate=TRUE)}"
+method(chronon_format_linear, list(cal_gregorian$year, class_any)) <- function(x, cal) "{lin(year)}"
+method(chronon_format_linear, list(cal_gregorian$quarter, class_any)) <- function(x, cal) "{lin(year)} Q{cyc(quarter,year)}"
+method(chronon_format_linear, list(cal_gregorian$month, class_any)) <- function(x, cal) "{lin(year)} {cyc(month,year,label=TRUE,abbreviate=TRUE)}"
+method(chronon_format_linear, list(cal_gregorian$day, S7::new_S3_class("cal_gregorian"))) <- function(x, cal) "{lin(year)}-{cyc(month,year)}-{cyc(day,month)}"
+
 method(chronon_format_cyclical, list(cal_gregorian$month, cal_gregorian$year)) <- function(x, y) "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
 
 ### Calendar algebra methods for Gregorian time units
