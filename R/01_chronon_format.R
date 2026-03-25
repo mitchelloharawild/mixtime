@@ -28,6 +28,13 @@ method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
   tu_i <- match(S7_class_id(x), vapply(cal, S7_class_id, character(1L)))
   paste0("{lin(", names(cal)[tu_i], ")}")
 }
+
+#' @examples
+#' chronon_format_cyclical(cal_gregorian$month(1L), cal_gregorian$year(1L))
+#' chronon_format_cyclical(cal_gregorian$day(1L), cal_gregorian$month(1L))
+#' chronon_format_cyclical(cal_isoweek$day(1L), cal_isoweek$week(1L))
+#' chronon_format_cyclical(cal_isoweek$week(1L), cal_isoweek$year(1L))
+#' 
 #' @rdname chronon_format
 #' @export
 chronon_format_cyclical <- new_generic("chronon_format_cyclical", c("x", "y"))

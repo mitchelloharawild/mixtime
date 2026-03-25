@@ -50,6 +50,7 @@ method(chronon_format_linear, list(cal_isoweek$year, class_any)) <- function(x, 
 method(chronon_format_linear, list(cal_isoweek$week, class_any)) <- function(x, cal) "{lin(year)} W{cyc(week,year)}"
 method(chronon_format_linear, list(cal_isoweek$day, S7::new_S3_class("cal_isoweek"))) <- function(x, cal) "{lin(year)}-W{cyc(week,year)}-{cyc(day,week,label=TRUE)}"
 method(chronon_format_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y) "{cyc(day,week,label=TRUE)}"
+method(chronon_format_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y) "W{cyc(week,year)}"
 
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
   if(vec_data(y) != 1L) {
