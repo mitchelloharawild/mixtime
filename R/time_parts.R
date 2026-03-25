@@ -21,7 +21,12 @@
 #   - `$cyclical`: a list of integer vectors, one per element of `cyclical`.
 chronon_parts <- function(x, linear = list(), cyclical = list()) {
   start_tu <- time_chronon(x)
-  x <- vec_data(x) + trunc(tz_offset(x))
+
+  # Apply time zone offset to x, with truncation for discrete time models.
+  x_tz <- tz_offset(x)
+  x <- vec_data(x)
+  if(is.integer(x)) x_tz <- trunc(x_tz)
+  x <- x + x_tz
 
   # Find suitable graph path for repeated chronon_divmod() calls
   # that computes all cyclical and linear parts.

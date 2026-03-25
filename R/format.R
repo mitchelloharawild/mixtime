@@ -98,7 +98,11 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
         }
       },
       frac = function(x) {
-        x <- as.numeric(x)
+        # Apply time zone offset to x, with truncation for discrete time models.
+        x_tz <- tz_offset(x)
+        x <- vec_data(x)
+        if(is.integer(x)) x_tz <- trunc(x_tz)
+        x <- x + x_tz
         sprintf("%.1f%%", (x - floor(x))*100)
       },
         
