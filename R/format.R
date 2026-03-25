@@ -111,6 +111,28 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   out <- mt_glue_fmt(format, env = env)
   out_parts <- !vapply(out, is.character, logical(1L))
 
+  # Resolve bare S7 class tokens (e.g. from {year}, {month}, {day}) into
+  # lin/cyc lists using the chronon_cardinality graph to order fine->coarse.
+  s7_class_lgl <- vapply(out, inherits, logical(1L), "S7_class")
+  if (any(s7_class_lgl)) {
+    class_idx <- which(s7_class_lgl)
+    class_num <- length(class_idx)
+
+    # Initialise as time units of size 1L
+    out[class_idx] <- lapply(out[class_idx], function(f) f(1L))
+
+    # Find order of granularity from fine -> coarse
+    ordered_idx <- class_idx[S7_order_granules(out[class_idx])]
+
+    # Replace string parts such that:
+    # * finer time units are cyclical with the next coarser
+    for (i in seq_len(class_num - 1L)) {
+      out[[ordered_idx[i]]] <- list(out[[ordered_idx[i]]], out[[ordered_idx[i+1L]]])
+    }
+    # * coarsest time unit is linear
+    out[[ordered_idx[class_num]]] <- list(out[[ordered_idx[class_num]]])
+  }
+
   # # Early exit if parts are not needed
   # if (!length(out$res)) return(rep_len(out$chr, length(x)))
 
