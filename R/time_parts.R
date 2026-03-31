@@ -87,6 +87,28 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   }
   traverse(path, start_tu, x)
 
+  # Check if all targets were found
+  if (any(lin_missed <- vapply(linear_results, is.null, logical(1L)))) {
+    cli::cli_abort(
+      c(
+        "The following linear time parts could not be computed from the input time object:",
+        i = "{time_unit_full(linear[lin_missed])} ({linear[lin_missed]})",
+        i = "All requested linear parts need to be included as granules for {.code linear_time()}"
+      ),
+      call = NULL
+    )
+  }
+  if (any(cyc_missed <- vapply(cyclical_results, is.null, logical(1L)))) {
+    cli::cli_abort(
+      c(
+        "The following cyclical time parts could not be computed from the input time object:",
+        i = "{time_unit_full(cyclical[cyc_missed])} ({cyclical[cyc_missed][[1L]]$from} -> {cyclical[cyc_missed][[1L]]$to})",
+        i = "All requested cyclical parts need to be included as granules for {.code linear_time()}"
+      ),
+      call = NULL
+    )
+  }
+
   # Return list of the same order as input
   list(linear = linear_results, cyclical = cyclical_results)
 }
