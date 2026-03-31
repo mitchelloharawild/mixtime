@@ -69,7 +69,7 @@ The following time units are available in the solar calendar systems.
 }
 \examples{
 # Find the time of a new moon in the Gregorian calendar
-t <- linear_time(Sys.Date(), cal_time_lunar$phase(0, lat = -37.8136, lon = 144.9631))
+t <- linear_time(Sys.Date(), cal_time_lunar$month(1L, lat = -37.8136, lon = 144.9631))
 datetime(t, tz = "Australia/Melbourne")
 
 
