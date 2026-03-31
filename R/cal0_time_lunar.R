@@ -70,17 +70,17 @@ method(chronon_divmod, list(cal_time_lunar$phase, cal_time_civil_midnight$second
 lunar_phase_abbr <- c("NM", "WxC", "FQ", "WxG", "FM", "WnG", "LQ", "WnC")
 lunar_phase_full <- c("new moon", "waxing crescent", "first quarter", "waxing gibbous", "full moon", "waning gibbous", "last quarter", "waning crescent")
 lunar_phase_emoji <- c("🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘")
-method(cyclical_labels, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE, emoji = TRUE, intermediate = TRUE) {
+method(cyclical_labels, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(granule, cycle, i, label = TRUE, abbreviate = TRUE, emoji = TRUE, intermediate = TRUE) {
+  i <- i + 1L
   if (label) {
-    i <- floor(i)
     if (emoji) {
-      lunar_phase_emoji[i + 1L]
+      lunar_phase_emoji[i]
     } else if (abbreviate) {
-      lunar_phase_abbr[i + 1L]
+      lunar_phase_abbr[i]
     } else {
-      lunar_phase_full[i + 1L]
+      lunar_phase_full[i]
     }
   } else {
-    sprintf("%02.1f%%", i*12.5)
+    as.character(i)
   }
 }
