@@ -26,7 +26,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   x_tz <- tz_offset(x)
   x <- vec_data(x)
   if(is.integer(x)) x_tz <- trunc(x_tz)
-  x <- x + x_tz
+  x <- floor(x + x_tz)
 
   # Find suitable graph path for repeated chronon_divmod() calls
   # that computes all cyclical and linear parts.

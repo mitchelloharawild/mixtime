@@ -223,3 +223,8 @@ test_that("time_unit methods return correct strings", {
   expect_equal(time_unit_full(cal_gregorian$hour(1L)), "hour")
   expect_equal(time_unit_abbr(cal_gregorian$hour(1L)), "h")
 })
+
+test_that("formatting of fractional/continuous dates (discrete = FALSE) around March 31st", {
+  t <- date(.POSIXct(1774949379), discrete = FALSE)
+  expect_equal(format(t), "2026-03-31 39.6%")
+})
