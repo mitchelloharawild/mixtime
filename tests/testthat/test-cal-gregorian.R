@@ -158,7 +158,7 @@ test_that("reverse conversion from year to Date works correctly", {
   
   # Years should match
   years_check <- as.integer(format(dates_back, "%Y"))
-  expect_equal(years_check, 1970L + 0:500)
+  expect_equal(years_check, 0:500)
 })
 
 test_that("chronon_cardinality handles months with variable days", {

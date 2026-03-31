@@ -27,6 +27,11 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
     data <- as.POSIXct(data, tz = tz_name(chronon))
   }
   
+  # Apply origin offset for numeric data
+  if (is.numeric(data)) {
+    data <- data - chronon_epoch(chronon)
+  }
+
   # Validate time units
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
@@ -35,7 +40,7 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
     cli::cli_abort("{.var cycle} must be a time unit object.", call. = FALSE)
   }
 
-    # Cast from Date, POSIXct, etc.
+  # Cast from Date, POSIXct, etc.
   if (!is.numeric(data) || !is.null(attributes(data))) {
     data <- chronon_convert(
       data,
