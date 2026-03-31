@@ -80,11 +80,11 @@ test_that("cyclical_time() week_of_year handles timezone shifts across week boun
   
   # In Pacific time, 2020-01-01 is in week 1
   pacific_week <- week_of_year(pacific_time, tz = "America/Los_Angeles")
-  expect_equal(format(pacific_week), "01 PST")
+  expect_equal(format(pacific_week), "W01 PST")
   
   # Convert to Australia/Melbourne - becomes 2020-01-02, still in week 1
   melbourne_week <- week_of_year(pacific_time, tz = "Australia/Melbourne")
-  expect_equal(format(melbourne_week), "01 AEDT")
+  expect_equal(format(melbourne_week), "W01 AEDT")
 })
 
 test_that("cyclical_time() preserves cycle position for same calendar day across timezones", {
