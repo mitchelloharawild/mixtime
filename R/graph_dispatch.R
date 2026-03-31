@@ -5,37 +5,37 @@
 # Order a list of S7 classes (or mt_unit objects) from finest to coarsest using
 # directed reachability in the chronon_cardinality method graph, where edges
 # point from fine -> coarse. Returns an integer vector of indices.
-S7_order_granules <- function(classes) {
-  class_ids <- vapply(classes, S7_class_id, character(1L))
+# S7_order_granules <- function(classes) {
+#   class_ids <- vapply(classes, S7_class_id, character(1L))
 
-  sigs        <- method_signatures(chronon_cardinality)
-  all_sig_cls <- vec_unique(list_unchop(sigs))
-  chr_all     <- vapply(all_sig_cls, S7_class_id, character(1L))
+#   sigs        <- method_signatures(chronon_cardinality)
+#   all_sig_cls <- vec_unique(list_unchop(sigs))
+#   chr_all     <- vapply(all_sig_cls, S7_class_id, character(1L))
 
-  int_edges     <- vec_match(
-    unlist(lapply(sigs, function(s) vapply(s, S7_class_id, character(1L)))),
-    chr_all
-  )
-  int_edge_from <- int_edges[seq(1L, length(int_edges), by = 2L)]
-  int_edge_to   <- int_edges[seq(2L, length(int_edges), by = 2L)]
+#   int_edges     <- vec_match(
+#     unlist(lapply(sigs, function(s) vapply(s, S7_class_id, character(1L)))),
+#     chr_all
+#   )
+#   int_edge_from <- int_edges[seq(1L, length(int_edges), by = 2L)]
+#   int_edge_to   <- int_edges[seq(2L, length(int_edges), by = 2L)]
 
-  # Kahn's topological sort: fine nodes (in-degree 0) come first
-  n         <- length(chr_all)
-  in_degree <- tabulate(int_edge_to, nbins = n)
-  queue     <- which(in_degree == 0L)
-  topo      <- integer(0L)
+#   # Kahn's topological sort: fine nodes (in-degree 0) come first
+#   n         <- length(chr_all)
+#   in_degree <- tabulate(int_edge_to, nbins = n)
+#   queue     <- which(in_degree == 0L)
+#   topo      <- integer(0L)
 
-  while (length(queue) > 0L) {
-    v         <- queue[[1L]]; queue <- queue[-1L]
-    topo      <- c(topo, v)
-    nbrs      <- int_edge_to[int_edge_from == v]
-    in_degree[nbrs] <- in_degree[nbrs] - 1L
-    queue     <- c(queue, nbrs[in_degree[nbrs] == 0L])
-  }
+#   while (length(queue) > 0L) {
+#     v         <- queue[[1L]]; queue <- queue[-1L]
+#     topo      <- c(topo, v)
+#     nbrs      <- int_edge_to[int_edge_from == v]
+#     in_degree[nbrs] <- in_degree[nbrs] - 1L
+#     queue     <- c(queue, nbrs[in_degree[nbrs] == 0L])
+#   }
 
-  int_targets <- vec_match(class_ids, chr_all)
-  order(match(int_targets, topo))
-}
+#   int_targets <- vec_match(class_ids, chr_all)
+#   order(match(int_targets, topo))
+# }
 
 method_signatures <- function(generic) {
   traverse_methods(generic@methods)

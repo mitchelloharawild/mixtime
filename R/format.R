@@ -119,22 +119,39 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   # lin/cyc lists using the chronon_cardinality graph to order fine->coarse.
   s7_class_lgl <- vapply(out, inherits, logical(1L), "S7_class")
   if (any(s7_class_lgl)) {
-    class_idx <- which(s7_class_lgl)
-    class_num <- length(class_idx)
+    bare_units <- vapply(out[s7_class_lgl], S7_class_id, character(1L))
+    cal <- time_calendar(x)
 
-    # Initialise as time units of size 1L
-    out[class_idx] <- lapply(out[class_idx], function(f) f(1L))
+    tu_i <- match(
+      bare_units,
+      vapply(cal, S7_class_id, character(1L))
+    )
 
-    # Find order of granularity from fine -> coarse
-    ordered_idx <- class_idx[S7_order_granules(out[class_idx])]
+    cli::cli_abort(
+      c(
+        "Bare time unit tokens are not supported in format strings.",
+        i = "Use {.fn lin} for linear (coarsest) units, e.g. {.code {paste0('{lin(', names(cal)[tu_i[1]], ')}')}}}",
+        i = "Use {.fn cyc} for cyclical units, e.g. {.code {paste0('{cyc(', names(cal)[tu_i[1]], ', <coarser_unit>)}')}}"
+      ),
+      call = NULL
+    )
 
-    # Replace string parts such that:
-    # * finer time units are cyclical with the next coarser
-    for (i in seq_len(class_num - 1L)) {
-      out[[ordered_idx[i]]] <- list(out[[ordered_idx[i]]], out[[ordered_idx[i+1L]]])
-    }
-    # * coarsest time unit is linear
-    out[[ordered_idx[class_num]]] <- list(out[[ordered_idx[class_num]]])
+    # class_idx <- which(s7_class_lgl)
+    # class_num <- length(class_idx)
+
+    # # Initialise as time units of size 1L
+    # out[class_idx] <- lapply(out[class_idx], function(f) f(1L))
+
+    # # Find order of granularity from fine -> coarse
+    # ordered_idx <- class_idx[S7_order_granules(out[class_idx])]
+
+    # # Replace string parts such that:
+    # # * finer time units are cyclical with the next coarser
+    # for (i in seq_len(class_num - 1L)) {
+    #   out[[ordered_idx[i]]] <- list(out[[ordered_idx[i]]], out[[ordered_idx[i+1L]]])
+    # }
+    # # * coarsest time unit is linear
+    # out[[ordered_idx[class_num]]] <- list(out[[ordered_idx[class_num]]])
   }
 
   # # Early exit if parts are not needed
