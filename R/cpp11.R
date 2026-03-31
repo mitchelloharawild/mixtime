@@ -4,6 +4,22 @@ mt_glue_fmt <- function(input, env) {
   .Call(`_mixtime_mt_glue_fmt`, input, env)
 }
 
+approx_lunations_from_utc <- function(unix_times) {
+  .Call(`_mixtime_approx_lunations_from_utc`, unix_times)
+}
+
+approx_utc_from_lunations <- function(lunation_counts) {
+  .Call(`_mixtime_approx_utc_from_lunations`, lunation_counts)
+}
+
+approx_lunar_phase_from_utc <- function(unix_times) {
+  .Call(`_mixtime_approx_lunar_phase_from_utc`, unix_times)
+}
+
+approx_utc_from_lunar_phase <- function(lunation_counts) {
+  .Call(`_mixtime_approx_utc_from_lunar_phase`, lunation_counts)
+}
+
 approx_sunrises_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
   .Call(`_mixtime_approx_sunrises_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
 }

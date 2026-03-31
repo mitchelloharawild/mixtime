@@ -13,6 +13,34 @@ extern "C" SEXP _mixtime_mt_glue_fmt(SEXP input, SEXP env) {
   END_CPP11
 }
 // timeastro.cpp
+doubles approx_lunations_from_utc(doubles unix_times);
+extern "C" SEXP _mixtime_approx_lunations_from_utc(SEXP unix_times) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_lunations_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_utc_from_lunations(doubles lunation_counts);
+extern "C" SEXP _mixtime_approx_utc_from_lunations(SEXP lunation_counts) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_utc_from_lunations(cpp11::as_cpp<cpp11::decay_t<doubles>>(lunation_counts)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_lunar_phase_from_utc(doubles unix_times);
+extern "C" SEXP _mixtime_approx_lunar_phase_from_utc(SEXP unix_times) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_lunar_phase_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times)));
+  END_CPP11
+}
+// timeastro.cpp
+doubles approx_utc_from_lunar_phase(doubles lunation_counts);
+extern "C" SEXP _mixtime_approx_utc_from_lunar_phase(SEXP lunation_counts) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_utc_from_lunar_phase(cpp11::as_cpp<cpp11::decay_t<doubles>>(lunation_counts)));
+  END_CPP11
+}
+// timeastro.cpp
 doubles approx_sunrises_from_utc(doubles unix_times, double lat_deg, double lon_deg, double alt_deg);
 extern "C" SEXP _mixtime_approx_sunrises_from_utc(SEXP unix_times, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
   BEGIN_CPP11
@@ -120,22 +148,26 @@ extern "C" SEXP _mixtime_get_tz_transitions(SEXP start_posixct, SEXP end_posixct
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixtime_approx_dawns_from_utc",     (DL_FUNC) &_mixtime_approx_dawns_from_utc,     4},
-    {"_mixtime_approx_dusks_from_utc",     (DL_FUNC) &_mixtime_approx_dusks_from_utc,     4},
-    {"_mixtime_approx_midnights_from_utc", (DL_FUNC) &_mixtime_approx_midnights_from_utc, 3},
-    {"_mixtime_approx_noons_from_utc",     (DL_FUNC) &_mixtime_approx_noons_from_utc,     3},
-    {"_mixtime_approx_sunrises_from_utc",  (DL_FUNC) &_mixtime_approx_sunrises_from_utc,  4},
-    {"_mixtime_approx_sunsets_from_utc",   (DL_FUNC) &_mixtime_approx_sunsets_from_utc,   4},
-    {"_mixtime_approx_utc_from_dawns",     (DL_FUNC) &_mixtime_approx_utc_from_dawns,     4},
-    {"_mixtime_approx_utc_from_dusks",     (DL_FUNC) &_mixtime_approx_utc_from_dusks,     4},
-    {"_mixtime_approx_utc_from_midnights", (DL_FUNC) &_mixtime_approx_utc_from_midnights, 3},
-    {"_mixtime_approx_utc_from_noons",     (DL_FUNC) &_mixtime_approx_utc_from_noons,     3},
-    {"_mixtime_approx_utc_from_sunrises",  (DL_FUNC) &_mixtime_approx_utc_from_sunrises,  4},
-    {"_mixtime_approx_utc_from_sunsets",   (DL_FUNC) &_mixtime_approx_utc_from_sunsets,   4},
-    {"_mixtime_get_tz_abbreviation",       (DL_FUNC) &_mixtime_get_tz_abbreviation,       2},
-    {"_mixtime_get_tz_offset",             (DL_FUNC) &_mixtime_get_tz_offset,             2},
-    {"_mixtime_get_tz_transitions",        (DL_FUNC) &_mixtime_get_tz_transitions,        3},
-    {"_mixtime_mt_glue_fmt",               (DL_FUNC) &_mixtime_mt_glue_fmt,               2},
+    {"_mixtime_approx_dawns_from_utc",       (DL_FUNC) &_mixtime_approx_dawns_from_utc,       4},
+    {"_mixtime_approx_dusks_from_utc",       (DL_FUNC) &_mixtime_approx_dusks_from_utc,       4},
+    {"_mixtime_approx_lunar_phase_from_utc", (DL_FUNC) &_mixtime_approx_lunar_phase_from_utc, 1},
+    {"_mixtime_approx_lunations_from_utc",   (DL_FUNC) &_mixtime_approx_lunations_from_utc,   1},
+    {"_mixtime_approx_midnights_from_utc",   (DL_FUNC) &_mixtime_approx_midnights_from_utc,   3},
+    {"_mixtime_approx_noons_from_utc",       (DL_FUNC) &_mixtime_approx_noons_from_utc,       3},
+    {"_mixtime_approx_sunrises_from_utc",    (DL_FUNC) &_mixtime_approx_sunrises_from_utc,    4},
+    {"_mixtime_approx_sunsets_from_utc",     (DL_FUNC) &_mixtime_approx_sunsets_from_utc,     4},
+    {"_mixtime_approx_utc_from_dawns",       (DL_FUNC) &_mixtime_approx_utc_from_dawns,       4},
+    {"_mixtime_approx_utc_from_dusks",       (DL_FUNC) &_mixtime_approx_utc_from_dusks,       4},
+    {"_mixtime_approx_utc_from_lunar_phase", (DL_FUNC) &_mixtime_approx_utc_from_lunar_phase, 1},
+    {"_mixtime_approx_utc_from_lunations",   (DL_FUNC) &_mixtime_approx_utc_from_lunations,   1},
+    {"_mixtime_approx_utc_from_midnights",   (DL_FUNC) &_mixtime_approx_utc_from_midnights,   3},
+    {"_mixtime_approx_utc_from_noons",       (DL_FUNC) &_mixtime_approx_utc_from_noons,       3},
+    {"_mixtime_approx_utc_from_sunrises",    (DL_FUNC) &_mixtime_approx_utc_from_sunrises,    4},
+    {"_mixtime_approx_utc_from_sunsets",     (DL_FUNC) &_mixtime_approx_utc_from_sunsets,     4},
+    {"_mixtime_get_tz_abbreviation",         (DL_FUNC) &_mixtime_get_tz_abbreviation,         2},
+    {"_mixtime_get_tz_offset",               (DL_FUNC) &_mixtime_get_tz_offset,               2},
+    {"_mixtime_get_tz_transitions",          (DL_FUNC) &_mixtime_get_tz_transitions,          3},
+    {"_mixtime_mt_glue_fmt",                 (DL_FUNC) &_mixtime_mt_glue_fmt,                 2},
     {NULL, NULL, 0}
 };
 }
