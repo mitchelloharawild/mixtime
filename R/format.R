@@ -177,7 +177,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   )
   parts$cyclical <- .mapply(
     # TODO floor(x) shouldn't be necessary, fix chronon_parts()?
-    \(tu, x) rlang::exec(cyclical_labels, tu[[1L]], tu[[2L]], x, !!!attributes(tu)),
+    \(tu, x) rlang::exec(cyclical_labels, tu[[1L]], tu[[2L]], floor(x), !!!attributes(tu)), 
     dots = list(res_split[["2"]], parts$cyclical), 
     MoreArgs = NULL
   )
