@@ -20,7 +20,7 @@ linear_labels <- S7::new_generic("linear_labels", "granule")
 #' @rdname linear_labels
 linear_labels.S7_methods <- function(granule, i) S7_method_docs()
 
-method(linear_labels, mt_unit) <- function(granule, i, label = FALSE, abbreviate = FALSE) {
+method(linear_labels, mt_unit) <- function(granule, i, label = FALSE, abbreviate = TRUE) {
   if (!label) return(as.character(i))
   # TODO - pluralise the full time unit
   paste0(i, if (abbreviate) time_unit_abbr(granule) else time_unit_full(granule))
