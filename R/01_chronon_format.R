@@ -26,7 +26,7 @@ chronon_format_linear <- new_generic("chronon_format_linear", c("x", "cal"), fun
 })
 method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
   tu_i <- match(S7_class_id(x), vapply(cal, S7_class_id, character(1L)))
-  paste0("{lin(", names(cal)[tu_i], ")}")
+  paste0(time_unit_abbr(x), "{lin(", names(cal)[tu_i], ")}")
 }
 
 #' @examples
@@ -44,7 +44,7 @@ method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
     c(S7_class_id(x), S7_class_id(y)),
     vapply(cal, S7_class_id, character(1L))
   )
-  paste0("{cyc(", paste0(names(cal)[tu_i], collapse = ","), ")}")
+  paste0(time_unit_abbr(x), "{cyc(", paste0(names(cal)[tu_i], collapse = ","), ")}")
 }
 
 #' Default formatting strings for chronon attributes

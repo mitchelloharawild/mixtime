@@ -1,0 +1,279 @@
+---
+title: "Extending mixtime"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{extending-mixtime}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(mixtime)
+```
+
+This vignette documents the extension points made available in mixtime for
+creating new calendars and time units. As a running example, we will build a
+**financial calendar** where a year has 13 periods of exactly 4 weeks each
+(a "4-4-5" style retail/fiscal calendar simplified to equal periods).
+
+The topics covered are:
+
+* Calendars: `new_calendar()`
+* Time units: S7 classes inheriting from `mt_unit`, `mt_tz_unit`, or `mt_loc_unit`
+* Calendar arithmetic: `chronon_cardinality()` and `chronon_divmod()`
+* Labels: `time_unit_abbr()`, `time_unit_full()`, and `cyclical_labels()`
+* Time vector helpers: `new_linear_time_fn()` and `new_cyclical_time_fn()`
+
+## Time units
+
+Time units are the building blocks of calendars. Every time unit is an S7
+class that inherits from one of three base classes:
+
+| Base class    | Properties | Use case |
+|---------------|------------|----------|
+| `mt_unit`     | none beyond `.data` | Purely abstract / epoch-relative units |
+| `mt_tz_unit`  | `tz` (IANA timezone string) | Civil-time units aligned to a timezone |
+| `mt_loc_unit` | `lat`, `lon`, `alt` | Astronomical units whose boundaries depend on geographic location (e.g. solar days) |
+
+All three accept a single numeric `.data` argument representing the *size* of
+the unit (e.g. `1L` for "one month"). Units are created with `S7::new_class()`:
+
+```{r time-units}
+# A timezone-aware fiscal period unit
+tu_fiscal_period <- S7::new_class("tu_fiscal_period", parent = mt_tz_unit)
+
+# A timezone-aware fiscal year unit
+tu_fiscal_year <- S7::new_class("tu_fiscal_year", parent = mt_tz_unit)
+```
+
+Instantiate a unit by calling it like a function:
+
+```{r unit-constructors}
+tu_fiscal_period(1L)
+tu_fiscal_period(1L, tz = "America/New_York")
+```
+
+## Calendars
+
+A **calendar** is a named collection of time units. Use `new_calendar()` to
+define one. Each argument name becomes a constructor accessible via `$`
+notation on the returned calendar object. An optional `inherit` argument pulls
+in all units from an existing calendar (units defined in `...` take
+precedence).
+
+```{r new-calendar}
+cal_fiscal <- new_calendar(
+  year   = tu_fiscal_year,
+  period = tu_fiscal_period,
+  # Inherit civil-time sub-day units (hour, minute, second, …) from the
+  # built-in Gregorian calendar
+  inherit = cal_gregorian,
+  class = "cal_fiscal"
+)
+
+cal_fiscal
+```
+
+Unit constructors are now accessible via `$`:
+
+```{r calendar-access}
+cal_fiscal$year(1L)
+cal_fiscal$period(1L, tz = "UTC")
+```
+
+## Calendar arithmetic
+
+Two S7 generics drive all calendar calculations: `chronon_cardinality()` and
+`chronon_divmod()`. You must implement at least one of them for every pair of
+adjacent units in your calendar.
+
+### Cardinality
+
+`chronon_cardinality(from, to, at = NULL)` returns the number of `to` units
+that fit inside one `from` unit. For units with a *fixed* relationship (e.g.
+7 days per week) the `at` argument can be ignored. For *variable* relationships
+(e.g. days per month) `at` is the 0-indexed count of `from` units since the
+Unix epoch (1970-01-01 UTC) and should be used to compute the exact count.
+
+In our fiscal calendar every period is exactly 4 weeks (28 days), and every
+year contains exactly 13 periods - so both relationships are fixed:
+
+```{r cardinality}
+# 13 fiscal periods per fiscal year
+S7::method(chronon_cardinality, list(cal_fiscal$year, cal_fiscal$period)) <-
+  function(x, y, at = NULL) {
+    vec_data(x) * 13L / vec_data(y)
+  }
+
+# Each fiscal period is 28 days (4 weeks × 7 days)
+S7::method(chronon_cardinality, list(cal_fiscal$period, cal_gregorian$day)) <-
+  function(x, y, at = NULL) {
+    vec_data(x) * 28L / vec_data(y)
+  }
+
+# Verify
+chronon_cardinality(cal_fiscal$year(1L),   cal_fiscal$period(1L)) # 13
+chronon_cardinality(cal_fiscal$period(1L), cal_gregorian$day(1L))  # 28
+```
+
+### Divmod
+
+`chronon_divmod(from, to, x)` converts an integer vector `x` (chronons
+measured in `from` units since the epoch) into `to` units. It returns a list
+with:
+
+* `div` - the quotient (chronons in `to` units)
+* `mod` - the remainder (leftover `from` chronons)
+
+This is needed for irregular conversions that cannot be derived from
+`chronon_cardinality()` alone, such as mapping a day number to its containing
+month. For our fiscal calendar the epoch anchor is 1970-01-01, which falls in
+fiscal period 1 of fiscal year 1970.
+
+```{r divmod}
+# Days → fiscal periods
+S7::method(chronon_divmod, list(cal_gregorian$day, cal_fiscal$period)) <-
+  function(from, to, x) {
+    # Scale x to individual days
+    scale <- chronon_cardinality(from, cal_gregorian$day(1L))
+    days  <- scale * x
+
+    period_size <- chronon_cardinality(to, cal_gregorian$day(1L))  # 28
+    list(
+      div = days %/% period_size,
+      mod = days  %% period_size
+    )
+  }
+
+# Fiscal periods → days
+S7::method(chronon_divmod, list(cal_fiscal$period, cal_gregorian$day)) <-
+  function(from, to, x) {
+    mult <- chronon_cardinality(from, cal_gregorian$day(1L))  # 28
+    list(
+      div = x * mult,
+      mod = 0L
+    )
+  }
+
+# Days → fiscal years
+S7::method(chronon_divmod, list(cal_gregorian$day, cal_fiscal$year)) <-
+  function(from, to, x) {
+    scale       <- chronon_cardinality(from, cal_gregorian$day(1L))
+    days        <- scale * x
+    year_size   <- 13L * 28L  # 364 days per fiscal year
+    list(
+      div = days %/% year_size,
+      mod = days  %% year_size
+    )
+  }
+
+# Fiscal years → days
+S7::method(chronon_divmod, list(cal_fiscal$year, cal_gregorian$day)) <-
+  function(from, to, x) {
+    mult <- 13L * 28L  # 364
+    list(
+      div = x * mult,
+      mod = 0L
+    )
+  }
+
+# Quick sanity check - day 28 should be the start of period 2
+with(cal_fiscal, chronon_divmod(cal_gregorian$day(1L), period(1L), 28L))
+```
+
+## Labels
+
+Three generics control how time units appear as text.
+
+### `time_unit_full()` and `time_unit_abbr()`
+
+These return the singular full name and the short abbreviation for a unit,
+respectively. They are used in messages and in tsibble interval displays.
+
+```{r unit-labels}
+S7::method(time_unit_full, cal_fiscal$year)   <- function(x) "fiscal year"
+S7::method(time_unit_abbr, cal_fiscal$year)   <- function(x) "FY"
+
+S7::method(time_unit_full, cal_fiscal$period) <- function(x) "fiscal period"
+S7::method(time_unit_abbr, cal_fiscal$period) <- function(x) "FP"
+
+time_unit_full(cal_fiscal$year(1L))    # "fiscal year"
+time_unit_abbr(cal_fiscal$period(1L))  # "FP"
+```
+
+### `cyclical_labels()`
+
+`cyclical_labels(granule, cycle, i)` returns human-readable labels for the
+0-indexed position `i` of `granule` within `cycle`. This is used when
+formatting cyclical time vectors (e.g. "Jan", "Feb", … for months within a
+year).
+
+The default method falls back to `paste0(time_unit_abbr(granule), i)`, so you
+only need to override it when you want custom labels.
+
+```{r cyclical-labels}
+# Fiscal periods within a fiscal year: "FP01", "FP02", …, "FP13"
+S7::method(cyclical_labels, list(cal_fiscal$period, cal_fiscal$year)) <-
+  function(granule, cycle, i, ...) {
+    sprintf("FP%02d", i + 1L)
+  }
+
+# Demonstrate the default and the custom override
+with(cal_gregorian, cyclical_labels(month(1L),  year(1L),   0:11))
+with(cal_isoweek,   cyclical_labels(day(1L),    week(1L),   0:6))
+with(cal_fiscal,    cyclical_labels(period(1L), year(1L),   0:12))
+```
+
+## Time vector helpers
+
+Once the calendar algebra is in place you can build reusable time-vector
+constructors.
+
+### `new_linear_time_fn()`
+
+`new_linear_time_fn(chronon, granules, fallback_calendar)` returns a function
+that converts arbitrary input to a linear (non-repeating) time vector. The
+`chronon` is the finest resolution stored; `granules` lists coarser units used
+for display grouping.
+
+```{r linear-fn}
+# Year-period linear time (like yearmonth() but for fiscal periods)
+fiscal_period <- new_linear_time_fn(
+  chronon           = period(1L),
+  granules          = list(year(1L)),
+  fallback_calendar = cal_fiscal
+)
+
+# Fiscal year only
+fiscal_year <- new_linear_time_fn(
+  chronon           = year(1L),
+  fallback_calendar = cal_fiscal
+)
+
+fiscal_period(as.Date("1970-01-01") + 0:3 * 28)
+fiscal_year(as.Date("1970-01-01") + 0:2 * 364)
+```
+
+### `new_cyclical_time_fn()`
+
+`new_cyclical_time_fn(chronon, cycle, fallback_calendar)` returns a function
+that captures the *position within a repeating cycle* - for example the period
+number within a fiscal year.
+
+```{r cyclical-fn}
+period_of_fiscal_year <- new_cyclical_time_fn(
+  chronon           = period(1L),
+  cycle             = list(year(1L)),
+  fallback_calendar = cal_fiscal
+)
+
+# Period number (1–13) for a handful of dates
+period_of_fiscal_year(as.Date("1970-01-01") + c(0, 28, 56, 364))
+```
