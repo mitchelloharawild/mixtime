@@ -23,8 +23,8 @@
 #' @name calendar_time_solar
 #' @export
 cal_time_lunar <- new_calendar(
-  month = S7::new_class("tu_month_synodic", parent = mt_loc_unit),
-  phase = S7::new_class("tu_phase_synodic", parent = mt_loc_unit)
+  month = S7::new_class("tu_lunar_month", parent = mt_loc_unit),
+  phase = S7::new_class("tu_lunar_phase", parent = mt_loc_unit)
 )
 
 # Time unit labels
@@ -35,8 +35,8 @@ method(time_unit_abbr, cal_time_lunar$phase) <- function(x) "LP"
 
 # Default formats
 method(chronon_format_linear, list(cal_time_lunar$month, class_any)) <- function(x, cal) "L{lin(month)}"
-method(chronon_format_linear, list(cal_time_lunar$phase, class_any)) <- function(x, cal) "L{lin(month)} {cyc(phase,month,label=TRUE)}"
-method(chronon_format_cyclical, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(x, y) "{cyc(phase,month,label=TRUE)}"
+method(chronon_format_linear, list(cal_time_lunar$phase, class_any)) <- function(x, cal) "L{lin(month)} {cyc(phase,month)}"
+method(chronon_format_cyclical, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(x, y) "{cyc(phase,month)}"
 
 # Epoch for lunations
 method(chronon_epoch, cal_time_lunar$month) <- function(x) 953L
