@@ -74,9 +74,9 @@ S7_graph_dispatch <- function(signatures, start, end) {
 
 S7_class_id <- function(x) {
   if (inherits(x, "S7_object") && !inherits(x, "S7_class")) {
-    x <- attr(x, "S7_class")
+    x <- S7::S7_class(x)
   }
-  paste(x@package, x@name, sep = "::")
+  paste(c(x@package, x@name), collapse = "::")
 }
 
 traverse_methods <- function(x) {
