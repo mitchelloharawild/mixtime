@@ -1,6 +1,10 @@
 .onLoad <- function(...) {
+  # Register S7 methods
+  S7::methods_register()
+  
+  # Initialise tzdb package
   tzdb::tzdb_initialize()
-
+       
   vctrs_exports <- getNamespaceExports(asNamespace("vctrs"))
 
   vec_cast_generics <- vctrs_exports[startsWith(vctrs_exports, "vec_cast.")]
