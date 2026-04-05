@@ -61,11 +61,28 @@ S7_graph_dispatch <- function(signatures, start, end) {
   int_edge_from <- int_edges[seq(1, length(int_edges), by = 2)]
   int_edge_to <- int_edges[seq(2, length(int_edges), by = 2)]
   
+  int_node_start <- vec_match(S7_class_id(start), chr_classes)
+  int_node_end <- vec_match(S7_class_id(end), chr_classes)
+  if (is.na(int_node_start) || is.na(int_node_end)) {
+    missing_units <- c(
+      if (is.na(int_node_start)) S7_class_id(start),
+      if (is.na(int_node_end)) S7_class_id(end)
+    )
+    cli::cli_abort(
+      c(
+        "There were no registered calendar arithmetic methods for the following classes: {paste(missing_units, collapse = \", \")}.",
+        "i" = "Have you registered calendar arithmetic S7 methods for these classes?",
+        ">" = "See the {.vignette mixtime::extending-mixtime} vignette for more details."
+      ),
+      call. = FALSE
+    )
+  }
+
   int_path <- bfs_shortest_path(
     from = int_edge_from,
     to = int_edge_to,
-    start = vec_match(S7_class_id(start), chr_classes),
-    end = vec_match(S7_class_id(end), chr_classes)
+    start = int_node_start,
+    end = int_node_end
   )
 
   # Instantiate path of classed S7 objects for dispatch
