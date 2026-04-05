@@ -215,7 +215,6 @@ test_that("chronon_parts() handles vectorised inputs", {
   # 09:20:30 => 20*60+30 = 1230; 15:45:00 => 45*60+0 = 2700
   expect_equal(result$cyclical[[2L]], c(1230L, 2700L))
 
-
   t_mult <- as.POSIXct(
     c("2024-01-15 09:20:30", "2024-06-21 15:45:00", "2024-12-31 23:59:59"),
     tz = "UTC"
