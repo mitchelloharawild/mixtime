@@ -41,10 +41,12 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   # Linear: match on child node class id, keyed by position
   linear_ids <- vapply(linear, S7_class_id, character(1L))
 
-  # Cyclical: match on (parent class id, child class id) pairs, keyed by position
+  # Cyclical: match on (chronon class id, cycle class id) pairs, keyed by position.
+  # - chronon = x[[1]]: the finer unit (the desired output unit)
+  # - cycle   = x[[2]]: the coarser unit (the period of repetition)
   cyclical_ids <- data.frame(
-    from = vapply(cyclical, function(x) S7_class_id(x[[1L]]), character(1L)),
-    to = vapply(cyclical, function(x) S7_class_id(x[[2L]]), character(1L))
+    chronon = vapply(cyclical, function(x) S7_class_id(x[[1L]]), character(1L)),
+    cycle   = vapply(cyclical, function(x) S7_class_id(x[[2L]]), character(1L))
   )
 
   # Prepare results to be filled via recursive divmod execution
@@ -57,33 +59,47 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     linear_results[[i]] <- x + chronon_epoch(start_tu)
   }
 
-  # Traverse the divmod path to compute parts
+  # Traverse the divmod path to compute parts.
   traverse <- function(node, parent_tu, x) {
-    for (child in node$children) {
-      child_tu <- child$node
+    child_tu <- node$node
 
-      dm <- chronon_divmod(
-        from = parent_tu,
-        to   = child_tu,
-        x    = x
-      )
+    dm <- chronon_divmod(
+      from = parent_tu,
+      to   = child_tu,
+      x    = x
+    )
 
-      child_id  <- S7_class_id(child_tu)
-      parent_id <- S7_class_id(parent_tu)
+    child_id  <- S7_class_id(child_tu)
+    parent_id <- S7_class_id(parent_tu)
 
-      # Collect linear result: div when child matches a linear target
-      if (!is.na(i <- vec_match(child_id, linear_ids))) {
-        linear_results[[i]] <<- dm$div + chronon_epoch(child_tu)
-      }
-
-      # Collect cyclical result: mod when (parent, child) matches a cyclical spec
-      if (!is.na(i <- vec_match(data.frame(from = parent_id, to = child_id), cyclical_ids))) {
-        cyclical_results[[i]] <<- dm$mod
-      }
-
-      # Recurse with div as the new values
-      traverse(child, child_tu, dm$div)
+    # Collect linear result: div when child matches a linear target
+    linear_match <- which(child_id == linear_ids)
+    if (length(linear_match) > 0L) {
+      linear_results[linear_match] <<- dm$div + chronon_epoch(child_tu)
     }
+
+    # Recurse each child with $div as the new time point (now in child_tu units) 
+    cyclical_incomplete <- unlist(lapply(node$children, traverse, child_tu, dm$div))
+    
+    # Unwing recursion with backward conversion for cyclical parts:
+    # For any incomplete cyclical result whose chronon (finer unit) is coarser
+    # than parent_tu, accumulate: result <- result * cardinality + dm$mod
+    # using the cardinality at the current dm$div position.
+    for (i in cyclical_incomplete) {
+      chronon_id <- cyclical_ids$chronon[[i]]
+      cyclical_results[[i]] <<- cyclical_results[[i]] * chronon_cardinality(parent_tu, child_tu, dm$div) + dm$mod
+    }
+
+    # Initialise new incomplete cyclical results started at this location
+    cycle_match <- which(child_id == cyclical_ids$cycle)
+    if (length(cycle_match) > 0L) {
+      cyclical_results[cycle_match] <<- dm$mod
+      # Add any new incomplete cyclical targets started at this step
+      cyclical_incomplete <- c(cyclical_incomplete, cycle_match)
+    }
+
+    # Return vector of which cyclical targets are still incomplete after this step
+    cyclical_incomplete[cyclical_ids$chronon[cyclical_incomplete] != parent_id]
   }
   traverse(path, start_tu, x)
 
