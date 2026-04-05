@@ -75,7 +75,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     # Collect linear result: div when child matches a linear target
     linear_match <- which(child_id == linear_ids)
     if (length(linear_match) > 0L) {
-      linear_results[linear_match] <<- dm$div + chronon_epoch(child_tu)
+      linear_results[linear_match] <<- list(dm$div + chronon_epoch(child_tu))
     }
 
     # Recurse each child with $div as the new time point (now in child_tu units) 
@@ -93,7 +93,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     # Initialise new incomplete cyclical results started at this location
     cycle_match <- which(child_id == cyclical_ids$cycle)
     if (length(cycle_match) > 0L) {
-      cyclical_results[cycle_match] <<- dm$mod
+      cyclical_results[cycle_match] <<- list(dm$mod)
       # Add any new incomplete cyclical targets started at this step
       cyclical_incomplete <- c(cyclical_incomplete, cycle_match)
     }
