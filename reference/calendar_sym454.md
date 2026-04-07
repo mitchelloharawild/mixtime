@@ -22,6 +22,12 @@ A time unit object for the Symmetry454 calendar system.
 
 ## Details
 
+The Symmetry454 calendar (Sym454) is a perennial solar calendar proposed
+by Dr. Irv Bromberg. It preserves the traditional 12-month structure and
+7-day week, with months arranged in a symmetrical 4-5-4 week pattern per
+quarter. Every month starts on Monday and has a whole number of weeks,
+meaning no month ever contains a partial week.
+
 The following time units are available in the Symmetry454 calendar
 (`cal_sym454$`).
 
@@ -42,12 +48,6 @@ The following time units are available in the Symmetry454 calendar
 
 - `millisecond()`: Millisecond unit
 
-The Symmetry454 calendar (Sym454) is a perennial solar calendar proposed
-by Dr. Irv Bromberg. It preserves the traditional 12-month structure and
-7-day week, with months arranged in a symmetrical 4-5-4 week pattern per
-quarter. Every month starts on Monday and has a whole number of weeks,
-meaning no month ever contains a partial week.
-
 ### Leap years
 
 Rather than intercalary days, Symmetry454 uses a **leap week** appended
@@ -62,8 +62,7 @@ northward equinoctial year.
 
 [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)
 for creating linear time points, and
-<https://www.kalendis.free.nf/symmetry.htm> for full calendar
-specifications.
+<https://en.wikipedia.org/wiki/Symmetry454> for more calendar details.
 
 ## Examples
 

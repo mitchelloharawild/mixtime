@@ -127,7 +127,12 @@ boundaries defined by lunar events.
 - [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
   : Lunar time unit classes
 
-## Timezones
+## Time Attributes
+
+Functions for working with attributes of time units, such as timezones
+or locations.
+
+### Timezones
 
 Functions for working with timezones and timezone information
 
@@ -139,6 +144,16 @@ Functions for working with timezones and timezone information
   : Get timezone abbreviation
 - [`tz_transitions()`](https://pkg.mitchelloharawild.com/mixtime/reference/tz_transitions.md)
   : Get timezone transitions
+
+### Locations
+
+Functions for working with geographic locations and their associated
+information
+
+- [`loc_latitude()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime_location.md)
+  [`loc_longitude()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime_location.md)
+  [`loc_altitude()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime_location.md)
+  : Extract locations from an object
 
 ## Mixtime Objects
 
