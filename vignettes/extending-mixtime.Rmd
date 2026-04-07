@@ -212,21 +212,13 @@ Methods for `chronon_divmod()` return a list with:
 
 Note that all time values are zero-indexed, so `$div = 0` is January 1970, and `$mod = 0` is the first day of the month. So the above result can be interpreted as `$div = 1` is February 1970 and `$mod = 14` is 14 remaining days (i.e. the 15th).
 
-The Symmetry454 calendar has an irregular cardinality for weeks → months (because of the 4–5–4 pattern and leap weeks), so a divmod method is required. The key challenge is correctly accounting for the 293-year leap year pattern. Symmetry454 leap weeks follow a structured sub-cycle pattern: 293 years decompose into five groups (45+79+45+79+45 years), each of which decomposes further into primary 17-year sub-cycles (with 3 leap years) and secondary 11-year sub-cycles (with 2 leap years). The majority of the following code uses this structure to efficiently count how many leap weeks have occurred before any given week number in a cycle.
-
-Another complication is that mixtime methods support n-unit time vectors (e.g. 2 months), so the divmod must also account for the possibility of converting from a multi-month period that may contain a leap week. If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (vctrs::vec_data(to) != 1L) stop("...")`).
+The Symmetry454 calendar has an irregular cardinality for weeks → months (because of the 4–5–4 pattern and leap weeks), so a divmod method is required. The key challenge is correctly accounting for the [293-year leap year pattern](https://kalendis.free.nf/leap/293-leap-pattern.pdf). Symmetry454 leap weeks follow a structured sub-cycle pattern: 293 years decompose into five groups (45+79+45+79+45 years), each of which decomposes further into primary 17-year sub-cycles (with 3 leap years) and secondary 11-year sub-cycles (with 2 leap years). The majority of the following code uses this structure to efficiently count how many leap weeks have occurred before any given week number in a cycle.
 
 ```{r divmod}
 S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(from, to, x) {
-    # The number of weeks in each n-month period
-    month_size <- vctrs::vec_data(to)
-    weeks_len <- circsum(c(4L, 5L, 4L), month_size)
+    # 1. Account for leap weeks by regularising x to have a fixed 52 weeks per year
 
-    # The total weeks in a full n-month cycle
-    weeks_tot <- sum(weeks_len)
-
-    # Account for leap years which have a 293-year cycle (containing 52 leap weeks).
     # The symmetrical sub-cycles of the 293-year leap week cycle are:
     #   17+11+17 + 17+17+11+17+17 + 17+11+17 + 17+17+11+17+17 + 17+11+17
     #   = 45 + 79 + 45 + 79 + 45 = 293
@@ -267,28 +259,45 @@ S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
     # (37 leap years occur in the cycle before the epoch, so we add 37 back.)
     x_reg <- x - n_leaps + 37L
 
-    # Find which n-month cycle we're in based on the regularised week count
+    # 2. Use the 4-5-4 pattern to find the month (div) and week remainder (mod)
+    ## The number of weeks in each n-month period
+    month_size <- vctrs::vec_data(to)
+    weeks_len <- circsum(c(4L, 5L, 4L), month_size)
+
+    ## The total weeks in a full n-month cycle
+    weeks_tot <- sum(weeks_len)
+
+    ## Find which n-month cycle we're in based on the regularised week count
     period_full <- x_reg %/% weeks_tot
 
-    # Identify leap weeks: a week is a leap week if it is in the last regularised
-    # position of a year AND a new leap week is introduced at that point.
-    last_weeks  <- which(x_reg %% 52L >= 51L)
-    leap_weeks  <- last_weeks[n_leaps[last_weeks] - leaps_symmetry454(x_cyc[last_weeks] - 1L) > 0L]
-
-    # Find which part within the n-month cycle we're in
+    ## Find which part within the n-month cycle we're in
     weeks_seq  <- cumsum(weeks_len[-length(weeks_len)])
     period_part <- rowSums(outer(x_reg %% weeks_tot, weeks_seq, ">="))
 
     # div: total complete n-month cycles + complete n-months within the current cycle
     div <- period_full * length(weeks_len) + period_part
-
     # mod: remaining (regularised) weeks within the current n-month period
     mod <- x_reg %% weeks_tot - c(0L, weeks_seq)[period_part + 1L]
+
+
+    # 3. Adjust the remainder to account for leap weeks that were removed during regularisation.
+
+    # Identify leap weeks: a week is a leap week if it is in the last regularised
+    # position of a year AND a new leap week is introduced at that point.
+    last_weeks  <- which(x_reg %% 52L >= 51L)
+    leap_weeks  <- last_weeks[n_leaps[last_weeks] - leaps_symmetry454(x_cyc[last_weeks] - 1L) > 0L]
     mod[leap_weeks] <- mod[leap_weeks] + 1L  # restore leap week to remainder
 
+    # Return the divmod result
     list(div = div, mod = mod)
   }
+```
 
+The general strategy used in the above code is to first remove the complexity of the 293-year leap week cycle by regularising the week count to have a fixed 52 weeks per year (essentially subtracting the cumulative leap weeks from each cycle). This regularised week count is easier to work with the 4-5-4 pattern, which we use to find the converted month (div) as the number of complete n-month cycles plus the number of complete n-months within the current cycle, and the regularised week remainder (mod) as the remaining weeks within the current n-month period. The final step is to adjust the remainder to account for any leap weeks that were removed during regularisation.
+
+While most of this complication relates to the leap week pattern, `chronon_divmod()` methods are further complicated by the generality of converting between n-unit time granules (e.g. converting from 1 week to 2 month chronons). If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (vctrs::vec_data(to) != 1L) stop("...")`).
+
+```{r}
 # Week 19 (0-indexed) of 1970 is the 2nd week (div=1) of May 1970 (mod=4)
 with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 18L))
 
