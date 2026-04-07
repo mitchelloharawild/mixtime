@@ -85,13 +85,21 @@ reference:
   contents:
   - calendar_time_lunar
 
-- title: "Timezones"
+- title: "Time Attributes"
+  desc: "Functions for working with attributes of time units, such as timezones or locations."
+- subtitle: "Timezones"
   desc: "Functions for working with timezones and timezone information"
   contents:
   - tz_name
   - tz_offset
   - tz_abbreviation
   - tz_transitions
+- subtitle: "Locations"
+  desc: "Functions for working with geographic locations and their associated information"
+  contents:
+  - loc_latitude
+  - loc_longitude
+  - loc_altitude
 
 - title: "Mixtime Objects"
   desc: "Functions for creating and working with mixtime objects that can contain multiple time granularities."
