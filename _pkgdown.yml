@@ -80,6 +80,10 @@ reference:
   desc: "Solar time systems where day boundaries are defined by solar events (sunrise, noon, or sunset) at specific geographic locations."
   contents:
   - calendar_time_solar
+- subtitle: "Lunar Time System"
+  desc: "The lunar time system where each month begins at the new moon, with day boundaries defined by lunar events."
+  contents:
+  - calendar_time_lunar
 
 - title: "Timezones"
   desc: "Functions for working with timezones and timezone information"

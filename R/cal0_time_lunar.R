@@ -20,7 +20,7 @@
 #' datetime(t, tz = "Australia/Melbourne")
 #' 
 #' 
-#' @name calendar_time_solar
+#' @name calendar_time_lunar
 #' @export
 cal_time_lunar <- new_calendar(
   month = S7::new_class("tu_lunar_month", parent = mt_loc_unit),
