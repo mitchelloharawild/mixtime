@@ -2,7 +2,6 @@
 % Please edit documentation in R/mixtime-package.R
 \docType{package}
 \name{mixtime-package}
-\alias{mixtime}
 \alias{mixtime-package}
 \title{mixtime: Mixed Temporal Vectors and Operations}
 \description{
