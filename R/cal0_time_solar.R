@@ -4,7 +4,7 @@
 #' day is at sunrise, sunset, or noon. This calendar is intended to be
 #' built on by other calendars to add common time components.
 #'
-#' @return A time unit object for the Gregorian calendar system.
+#' @format A location-based calendar containing solar time units.
 #' 
 #' @details
 #' The following time units are available in the solar calendar systems.

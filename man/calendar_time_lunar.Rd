@@ -6,13 +6,10 @@
 \alias{cal_time_lunar}
 \title{Lunar time unit classes}
 \format{
-An object of class \code{mt_calendar} of length 2.
+A location-based calendar containing lunar time units.
 }
 \usage{
 cal_time_lunar
-}
-\value{
-A time unit object for the Gregorian calendar system.
 }
 \description{
 Time unit constructors for the lunar time system where the boundary of each

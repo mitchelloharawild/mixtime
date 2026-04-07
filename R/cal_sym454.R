@@ -3,7 +3,7 @@
 #' Time unit constructors for the Symmetry454 calendar system. These units can be
 #' used with [linear_time()] to create custom time representations.
 #'
-#' @return A time unit object for the Symmetry454 calendar system.
+#' @format A civil-based calendar containing Symmetry454 time units.
 #'
 #' @details
 #' The Symmetry454 calendar (Sym454) is a perennial solar calendar proposed by

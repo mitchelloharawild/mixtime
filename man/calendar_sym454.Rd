@@ -6,13 +6,10 @@
 \alias{cal_sym454}
 \title{Symmetry454 time unit classes}
 \format{
-An object of class \code{cal_sym454} (inherits from \code{mt_calendar}) of length 9.
+A civil-based calendar containing Symmetry454 time units.
 }
 \usage{
 cal_sym454
-}
-\value{
-A time unit object for the Symmetry454 calendar system.
 }
 \description{
 Time unit constructors for the Symmetry454 calendar system. These units can be

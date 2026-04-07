@@ -3,7 +3,7 @@
 #' Time unit constructors for the ISO 8601 calendar system. These units can be
 #' used with [linear_time()] to create custom time representations.
 #'
-#' @return A time unit object for the ISO 8601 calendar system.
+#' @format A civil-based calendar containing ISO 8601 time units.
 #' 
 #' @details
 #' The following time units are available in the ISO week date calendar:

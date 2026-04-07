@@ -11,7 +11,7 @@
 \alias{cal_time_solar_dusk}
 \title{Solar time unit classes}
 \format{
-An object of class \code{mt_calendar} of length 1.
+A location-based calendar containing solar time units.
 
 An object of class \code{mt_calendar} of length 1.
 
@@ -35,9 +35,6 @@ cal_time_solar_midnight
 cal_time_solar_dawn
 
 cal_time_solar_dusk
-}
-\value{
-A time unit object for the Gregorian calendar system.
 }
 \description{
 Time unit constructors for the solar time system where the boundary of each

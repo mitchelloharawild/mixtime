@@ -6,13 +6,10 @@
 \alias{cal_isoweek}
 \title{ISO 8601 time unit classes}
 \format{
-An object of class \code{cal_isoweek} (inherits from \code{mt_calendar}) of length 8.
+A civil-based calendar containing ISO 8601 time units.
 }
 \usage{
 cal_isoweek
-}
-\value{
-A time unit object for the ISO 8601 calendar system.
 }
 \description{
 Time unit constructors for the ISO 8601 calendar system. These units can be

@@ -6,13 +6,10 @@
 \alias{cal_gregorian}
 \title{Gregorian time unit classes}
 \format{
-An object of class \code{cal_gregorian} (inherits from \code{mt_calendar}) of length 9.
+A civil-based calendar containing Gregorian time units.
 }
 \usage{
 cal_gregorian
-}
-\value{
-A time unit object for the Gregorian calendar system.
 }
 \description{
 Time unit constructors for the Gregorian calendar system. These units can be

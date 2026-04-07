@@ -3,7 +3,7 @@
 #' Time unit constructors for the Gregorian calendar system. These units can be
 #' used with [linear_time()] to create custom time representations.
 #'
-#' @return A time unit object for the Gregorian calendar system.
+#' @format A civil-based calendar containing Gregorian time units.
 #' 
 #' @details
 #' The following time units are available in the Gregorian calendar (`cal_gregorian$`).
