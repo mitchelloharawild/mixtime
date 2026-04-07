@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message = FALSE}
 library(mixtime)
 ```
 
@@ -22,14 +22,16 @@ This vignette documents the extension points made available in mixtime for creat
 
 The extension points covered are:
 
-* Calendars: `new_calendar()`
-* Time units: S7 classes inheriting from `mt_unit`, `mt_tz_unit`, or `mt_loc_unit`
-* Calendar arithmetic: `chronon_cardinality()`, `chronon_divmod()`, and `chronon_epoch()`
-* Labels: 
-  * Time units: `time_unit_abbr()`, `time_unit_full()`
-  * Time labels: `linear_labels()`, `cyclical_labels()`
-  * Time formats: `chronon_format_linear()`, `chronon_format_cyclical()` 
-* Time vector helpers: `new_linear_time_fn()` and `new_cyclical_time_fn()`
+* [Time units](#time-units): S7 classes inheriting from `mt_unit`, `mt_tz_unit`, or `mt_loc_unit`
+* [Calendars](#calendars): Creating calendars from time units with `new_calendar()`
+* [Calendar arithmetic](#calendar-arithmetic) for defining temporal relationships between time units:
+  * [Cardinality](#cardinality): Define the number of finer units in a coarser unit with `chronon_cardinality()`
+  * [Divmod](#divmod): Define the division and remainder of time units with `chronon_divmod()`
+  * [Epoch anchors](#epoch): Define the reference point for a time unit with `chronon_epoch()`
+* [Labels](#labels) for displaying time, defined by: 
+  * [Time units](#display-time-units): temporal properties (e.g. interval) and user messages with `time_unit_abbr()`, `time_unit_full()`
+  * [Time labels](#time-labels): labelling granular components of time with `linear_labels()`, `cyclical_labels()`
+  * [Time formats](#time-formats): default format strings with `chronon_format_linear()`, `chronon_format_cyclical()` 
 
 The mixtime package uses S7 for all extension methods. If you are new to S7, the vignette on [generics and methods](https://rconsortium.github.io/S7/articles/generics-methods.html) is a good place to start. It is best to develop new calendars and time units in a separate package that imports mixtime, and registering your methods with the following [`.onLoad` hook](https://rconsortium.github.io/S7/articles/packages.html):
 
@@ -39,7 +41,7 @@ The mixtime package uses S7 for all extension methods. If you are new to S7, the
 }
 ```
 
-## Time units
+## Time units {#time-units}
 
 Time units are the building blocks of calendars. Time units are S7 classes that inherit `mt_unit`, a purely abstract time unit class.
 
@@ -63,7 +65,7 @@ S7::new_class("tu_symmetry454_month", parent = mt_tz_unit)
 
 These time units are typically exported within a calendar object (shown below) and accessed via `$` notation.
 
-## Calendars
+## Calendars {#calendars}
 
 A calendar is a named collection of time units, created with `new_calendar()`. An optional `inherit` argument pulls in all units from an existing calendar (units defined in `...` take precedence). It is useful to inherit from a base calendar that defines common time units for civil and astronomical calendars. The base calendars provided by mixtime are:
 
@@ -95,7 +97,7 @@ cal_symmetry454$month(1L, tz = "UTC")
 
 These time units can be used as chronons/cycles within `mixtime()` (and also `linear_time()`, `cyclical_time()`). The temporal relationships between these units must be defined by the calendar arithmetic methods described below.
 
-## Calendar arithmetic
+## Calendar arithmetic {#calendar-arithmetic}
 
 Two S7 generics drive all calendar calculations: `chronon_cardinality()` and `chronon_divmod()`. These functions are used to manipulate time, such as converting between units, generating sequences, and comparing time points. The details of how they work are not important for users of the calendar, but they are the main extension points for developers creating new calendars.
 
@@ -103,7 +105,7 @@ For a time unit to be useful in mixtime, at minimum a `chronon_cardinality()` me
 
 Defining these methods for time units between different calendars is also possible, which allows for interoperability between calendars. In most cases, calendars will share a common base calendar (e.g. `cal_time_civil_midnight`) which provides a common time unit (e.g. civil days) or methods for converting between different calendars (e.g. civil midnight to solar midnight).
 
-### Cardinality
+### Cardinality {#cardinality}
 
 The cardinality is the number of finer units that fit inside a coarser unit. For example, there are 7 days in a week, so the cardinality of `cal_isoweek$day(1L)` in terms of `cal_isoweek$week(1L)` is 7.
 
@@ -193,7 +195,7 @@ chronon_cardinality(cal_symmetry454$year(1L), cal_symmetry454$month(1L))
 chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$week(2L), at = 0:4)
 ```
 
-### Divmod
+### Divmod {#divmod}
 
 The divmod operation is a combined division and modulus that converts between time units and is defined with `chronon_divmod()` methods. These methods are required to efficiently convert between units with irregular relationships, such as days → months. For regular relationships (e.g. days → weeks) the divmod is automatically derived from `chronon_cardinality()` methods alone.
 
@@ -302,7 +304,7 @@ If a direct `chronon_divmod()` method is not defined for a pair of units, mixtim
 with(cal_symmetry454, chronon_divmod(day(1L), year(1L), 839L))
 ```
 
-### Epoch anchors
+### Epoch anchors {#epoch}
 
 The `chronon_epoch()` method defines the anchor point for a time unit, which is the reference point for all time calculations. The epoch is used as the zero point for time points, for example time point 0 in `cal_gregorian$year(1L)` corresponds to the year 1970. This anchor maps the internal numeric representation of time (e.g. years since epoch) to a real-world time point (e.g. "1970"), and is used as the origin for numeric inputs and labelling linear parts of time.
 
@@ -312,26 +314,24 @@ This implementation of the Symmetry454 calendar has the origin (t = 0) at 1970 W
 S7::method(chronon_epoch, cal_symmetry454$year) <- function(x) 1970L
 ```
 
-## Displaying time
+## Displaying time {#labels}
 
 The labelling methods control how time units and time points are displayed as text. They are used in messages, plot axes, and when formatting time vectors with `format()`. The formatting methods return format strings that are parsed by `format_mixtime()` to generate the final labels.
 
-### Time units
+### Time units {#display-time-units}
 
 Each time unit has two format methods:
 
 * `time_unit_full()` returns the singular full name of the unit (e.g. "Symmetry454 year")
-* `time_unit_abbr()` returns the short abbreviation of the unit (e.g. "S454Y")
+* `time_unit_abbr()` returns the short abbreviation of the unit (e.g. "Y")
 
 The full name is used in messages (e.g. "Can't convert from Symmetry454 year to day") and the abbreviation is used for displaying time intervals and durations.
 
 ```{r}
 S7::method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year"
-S7::method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "S454Y"
+S7::method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "Y"
 S7::method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month"
-S7::method(time_unit_abbr, cal_symmetry454$month) <- function(x) "S454M"
-S7::method(time_unit_full, cal_symmetry454$week)  <- function(x) "Symmetry454 week"
-S7::method(time_unit_abbr, cal_symmetry454$week)  <- function(x) "S454W"
+S7::method(time_unit_abbr, cal_symmetry454$month) <- function(x) "M"
 ```
 
 The time unit abbreviations are also used in the default time formatting string, so we can now create and view a Symmetry454 linear time vector:
@@ -349,13 +349,16 @@ year(as.Date("1955-11-12"), calendar = cal_symmetry454)
 Cyclical time vectors can also be created with the new calendar, and the default formatting string will use the time unit abbreviations:
 
 ```{r}
-cyclical_time(as.Date("1955-11-12"), chronon = cal_symmetry454$week(1L), cycle = cal_symmetry454$year(1L))
+# Week of the month
+cyclical_time(as.Date("1955-11-12"), chronon = week(1L), cycle = month(1L), calendar = cal_symmetry454)
+
+# Month of the year
 month_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
 ```
 
-While descriptive, the calendar scoping of "S454" in the time unit abbreviations produces format strings that are difficult to read. To improve readability, we can define time format methods that use more concise format strings.
+Cyclical time labels default to 0-indexing, so the month of year is labelled as "10" for November. This can be improved by defining custom label methods as described in the next section.
 
-### Time labels
+### Time labels {#time-labels}
 
 The time label functions describe how each granule of time (e.g. years, months, weeks) is displayed. There are two types of labels to consider: linear time labels are for continuous time units (usually the coarsest time unit, years), and cyclical time labels are for time units that nest (cycle over) another granule (e.g. months within a year, days within a week).
 
@@ -381,6 +384,8 @@ Then the transition from 1 BC to 1 AD is appropriately labelled:
 ```{r}
 year(-1:2, calendar = cal_symmetry454)
 ```
+
+We'll remove the "Y" prefix from the year format strings with the time format methods below to make these labels more readable.
 
 #### Cyclical time labels: `cyclical_labels()`
 
@@ -408,27 +413,39 @@ S7::method(cyclical_labels, list(cal_symmetry454$week, cal_symmetry454$month)) <
 
 The other cyclical labels (e.g. day of week) are inherited from `cal_isoweek` since we reused the ISO week unit, so they are correctly labelled as days of the week (e.g. "Mon", "Tue", ...).
 
-With these linear and cyclical label methods in place, the default time formats now produce more informative labels for Symmetry454 time vectors:
-
 ```{r}
-yearmonth(as.Date("1955-11-12"), calendar = cal_symmetry454)
-yearweek(as.Date("1955-11-12"), calendar = cal_symmetry454)
-date(as.Date("1955-11-12"), calendar = cal_symmetry454)
+# Month of year
+month_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
+# Week of month
+cyclical_time(as.Date("1955-11-12"), chronon = cal_symmetry454$week(1L), cycle = cal_symmetry454$month(1L))
+
+# Day of week (inherited from cal_isoweek)
+day_of_week(as.Date("1955-11-12"), calendar = cal_symmetry454)
+# Day of year (inherited from cal_time_civil_midnight)
+day_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
 ```
 
-### Time formats
+With both linear and cyclical label methods in place, the formatting now produces correctly indexed and more informative labels for Symmetry454 time vectors:
+
+```{r}
+date(as.Date("1955-11-12"), calendar = cal_symmetry454)
+yearweek(as.Date("1955-11-12"), calendar = cal_symmetry454)
+yearmonth(as.Date("1955-11-12"), calendar = cal_symmetry454)
+```
+
+These default formats can be improved to better suit the Symmetry454 calendar. For example, the week format of `YYYY WW` is inherited from `cal_isoweek` but `YYYY-MM-WW` is more informative for Symmetry454 since the weeks are nested within months. The default format for months is `MM`, but `YYYY-MM` is more informative. The time format methods below allow us to change the default formats for linear and cyclical time vectors.
+
+### Time formats {#time-formats}
 
 <!-- TODO: Time formatting vignette -->
 The default formatting for time vectors is defined by `chronon_format_linear()` for linear time and `chronon_format_cyclical()` for cyclical time. These methods return mixtime format strings which are used to format and print time vectors. A mixtime format string is a [glue](https://glue.tidyverse.org/) style string where time granules wrapped in `{}` are replaced with granule labels for the corresponding time points.
 
 There are two types of granule labels useful for these time format strings:
 
-* `lin(<time unit>)` - Granule labels for linear time units, usually the largest granule (e.g. `lin(year(1L))`).
-* `cyc(<time unit>, <cycle unit>)` - Granule labels for cyclical time units, where the labels are relative to the cycle (e.g. `cyc(month(1L), year(1L))` is the month within the year).
+* `lin(<time unit>)` - Granule labels for linear time units, usually the largest granule (e.g. `lin(year(1L))`). These labels are produced by `linear_labels()`.
+* `cyc(<time unit>, <cycle unit>)` - Granule labels for cyclical time units, where the labels are relative to the cycle (e.g. `cyc(month(1L), year(1L))` is the month within the year). These labels are produced by `cyclical_labels()`.
 
 The `<time unit>` and `<cycle unit>` placeholders in the format string must evaluate to a time unit of a calendar. For convenience, unevaluated named time units (e.g. `lin(year)`) default to a size 1 time unit (e.g. `lin(year(1L))`), and the calendar is inferred from the time vector being formatted. It is also possible to explicitly specify the calendar (e.g. `lin(cal_symmetry454$year(1L))`), which allows time formats to use granules from different calendars.
-
-Linear granule labels are evaluated with `linear_labels()`, and cyclical granule labels are evaluated with `cyclical_labels()`. The default methods for these generics return the internal numeric representation of the time point (e.g. "0", "1", "2", ...), but they can be overridden to return custom labels.
 
 #### Linear time formats: `chronon_format_linear()`
 
