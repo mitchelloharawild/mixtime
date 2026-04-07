@@ -217,6 +217,10 @@ The Symmetry454 calendar has an irregular cardinality for weeks → months (beca
 ```{r divmod}
 S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(from, to, x) {
+    # Most of this code works on 1-week units
+    week_size <- vctrs::vec_data(from)
+    x <- x * week_size  # convert n-weeks to 1-weeks
+
     # 1. Account for leap weeks by regularising x to have a fixed 52 weeks per year
 
     # The symmetrical sub-cycles of the 293-year leap week cycle are:
@@ -252,7 +256,7 @@ S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
     # Offset x to align with the nearest 293-year cycle boundary before the epoch.
     # There are 349 leap years between year 1-W1 and the 1970-W1 epoch, and the
     # nearest cycle start is (1969*52 + 349) %% (293*52 + 52) = 11009 weeks before epoch.
-    x_cyc <- x + 11010L  # +1 for 0-indexing of x
+    x_cyc <- x + 11009L + week_size  # right align multi-week units
     n_leaps <- leaps_symmetry454(x_cyc)
 
     # Regularise x to have exactly 52 weeks per year by subtracting leap weeks.
@@ -282,11 +286,15 @@ S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
 
     # 3. Adjust the remainder to account for leap weeks that were removed during regularisation.
 
-    # Identify leap weeks: a week is a leap week if it is in the last regularised
-    # position of a year AND a new leap week is introduced at that point.
+    # Identify leap weeks re-using cumulative in-cycle leap week counts: leaps_symmetry454()
+    # If the week added a leap week from the previous, then it itself must be a leap week.
+    # Applied only to regularised 52/53rd weeks of the year (only these weeks can be leap weeks)
     last_weeks  <- which(x_reg %% 52L >= 51L)
-    leap_weeks  <- last_weeks[n_leaps[last_weeks] - leaps_symmetry454(x_cyc[last_weeks] - 1L) > 0L]
+    leap_weeks  <- last_weeks[n_leaps[last_weeks] - leaps_symmetry454(x_cyc[last_weeks] - week_size) > 0L]
     mod[leap_weeks] <- mod[leap_weeks] + 1L  # restore leap week to remainder
+
+    # Scale mod back to the original n-unit week size
+    mod <- mod %/% week_size
 
     # Return the divmod result
     list(div = div, mod = mod)
@@ -295,14 +303,19 @@ S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
 
 The general strategy used in the above code is to first remove the complexity of the 293-year leap week cycle by regularising the week count to have a fixed 52 weeks per year (essentially subtracting the cumulative leap weeks from each cycle). This regularised week count is easier to work with the 4-5-4 pattern, which we use to find the converted month (div) as the number of complete n-month cycles plus the number of complete n-months within the current cycle, and the regularised week remainder (mod) as the remaining weeks within the current n-month period. The final step is to adjust the remainder to account for any leap weeks that were removed during regularisation.
 
-While most of this complication relates to the leap week pattern, `chronon_divmod()` methods are further complicated by the generality of converting between n-unit time granules (e.g. converting from 1 week to 2 month chronons). If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (vctrs::vec_data(to) != 1L) stop("...")`).
-
 ```{r}
 # Week 19 (0-indexed) of 1970 is the 2nd week (div=1) of May 1970 (mod=4)
 with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 18L))
 
 # Week 52 (0-indexed) is the leap week of 1970; it is the 5th week (div=4) of Dec 1970 (mod=11)
 with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 52L))
+```
+
+While most of this complication relates to the leap week pattern, `chronon_divmod()` methods are further complicated by the generality of converting between n-unit time granules (e.g. converting from 1 week to 2 month chronons). If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (vctrs::vec_data(to) != 1L) stop("...")`).
+
+```{r}
+# The 5th fortnight of 1970 is the 3rd fortnight (div=2) of Feb 1970 (mod=1)
+with(cal_symmetry454, chronon_divmod(week(2L), month(1L), 4L))
 ```
 
 If a direct `chronon_divmod()` method is not defined for a pair of units, mixtime will attempt to derive it by chaining together divmod operations along the shortest path of intermediate units.
