@@ -85,6 +85,17 @@ S7_graph_dispatch <- function(signatures, start, end) {
     end = int_node_end
   )
 
+  if (length(int_path) == 0L) {
+    cli::cli_abort(
+      c(
+        "There is no path of registered calendar arithmetic methods between the classes {S7_class_id(start)} and {S7_class_id(end)}.",
+        "i" = "Have you registered calendar arithmetic S7 methods connecting these classes?",
+        ">" = "See the {.vignette mixtime::extending-mixtime} vignette for more details."
+      ),
+      call. = FALSE
+    )
+  }
+
   # Instantiate path of classed S7 objects for dispatch
   classes[int_path]
 }
