@@ -45,10 +45,10 @@ new_time(as.double(Sys.Date()), chronon = cal_gregorian$day(1L, tz = Sys.timezon
 # Create a discrete mixtime time vector for the current date and time
 new_time(as.integer(Sys.time()), chronon = cal_gregorian$second(1L, tz = Sys.timezone()))
 #> <mt_linear[1]>
-#> [1] 2026-04-07 10:13:40
+#> [1] 2026-04-07 10:15:54
 
 # Create a discrete mixtime time vector for the time of day (cyclical time)
 new_time(as.integer(Sys.time()), chronon = cal_gregorian$second(1L, tz = Sys.timezone()), cycle = cal_gregorian$day(1L, tz = Sys.timezone()))
 #> <mt_cyclical[1]>
-#> [1] 10:13:40
+#> [1] 10:15:54
 ```
