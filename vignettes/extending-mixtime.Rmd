@@ -18,262 +18,477 @@ knitr::opts_chunk$set(
 library(mixtime)
 ```
 
-This vignette documents the extension points made available in mixtime for
-creating new calendars and time units. As a running example, we will build a
-**financial calendar** where a year has 13 periods of exactly 4 weeks each
-(a "4-4-5" style retail/fiscal calendar simplified to equal periods).
+This vignette documents the extension points made available in mixtime for creating new calendars and time units. As a running example, we will build the [Symmetry454 calendar](https://en.wikipedia.org/wiki/Symmetry454), a perpetual solar calendar where every year has 12 months arranged in a 4–5–4 week pattern (four weeks, five weeks, four weeks per month), with an occasional 53rd week added to December in leap years. This implementation closely matches the implementation of `mixtime::cal_sym454`.
 
-The topics covered are:
+The extension points covered are:
 
 * Calendars: `new_calendar()`
 * Time units: S7 classes inheriting from `mt_unit`, `mt_tz_unit`, or `mt_loc_unit`
-* Calendar arithmetic: `chronon_cardinality()` and `chronon_divmod()`
-* Labels: `time_unit_abbr()`, `time_unit_full()`, and `cyclical_labels()`
+* Calendar arithmetic: `chronon_cardinality()`, `chronon_divmod()`, and `chronon_epoch()`
+* Labels: 
+  * Time units: `time_unit_abbr()`, `time_unit_full()`
+  * Time labels: `linear_labels()`, `cyclical_labels()`
+  * Time formats: `chronon_format_linear()`, `chronon_format_cyclical()` 
 * Time vector helpers: `new_linear_time_fn()` and `new_cyclical_time_fn()`
+
+The mixtime package uses S7 for all extension methods. If you are new to S7, the vignette on [generics and methods](https://rconsortium.github.io/S7/articles/generics-methods.html) is a good place to start. It is best to develop new calendars and time units in a separate package that imports mixtime, and registering your methods with the following [`.onLoad` hook](https://rconsortium.github.io/S7/articles/packages.html):
+
+```{r}
+.onLoad <- function(...) {
+  S7::methods_register()
+}
+```
 
 ## Time units
 
-Time units are the building blocks of calendars. Every time unit is an S7
-class that inherits from one of three base classes:
+Time units are the building blocks of calendars. Time units are S7 classes that inherit `mt_unit`, a purely abstract time unit class.
 
-| Base class    | Properties | Use case |
-|---------------|------------|----------|
-| `mt_unit`     | none beyond `.data` | Purely abstract / epoch-relative units |
-| `mt_tz_unit`  | `tz` (IANA timezone string) | Civil-time units aligned to a timezone |
-| `mt_loc_unit` | `lat`, `lon`, `alt` | Astronomical units whose boundaries depend on geographic location (e.g. solar days) |
+In practice, most time units should inherit either:
 
-All three accept a single numeric `.data` argument representing the *size* of
-the unit (e.g. `1L` for "one month"). Units are created with `S7::new_class()`:
+* `mt_tz_unit` for civil-time units whose boundaries depend on a timezone (e.g. months, days, hours, ...), or
+* `mt_loc_unit` for astronomical-time units whose boundaries depend on geographic location (e.g. solar days).
+
+All time units accept a numeric `.data` argument representing the size of the unit (e.g. `1L` for "one month"). Additional arguments needed for your time unit can be defined with S7 by:
+
+* inheriting properties from `mt_tz_unit` (`tz` IANA names) or `mt_loc_unit` (for `lon`, `lat`, and `alt`),
+* defining custom S7 properties with `S7::new_class(properties = ...)`.
+
+The name of a time unit's S7 class becomes the internal identifier for that unit, so it should be unique across all calendars. The class name is not important to users of the calendar, but it should be descriptive for developers.
 
 ```{r time-units}
-# A timezone-aware fiscal period unit
-tu_fiscal_period <- S7::new_class("tu_fiscal_period", parent = mt_tz_unit)
-
-# A timezone-aware fiscal year unit
-tu_fiscal_year <- S7::new_class("tu_fiscal_year", parent = mt_tz_unit)
+# Timezone-aware Symmetry454 year and month units
+S7::new_class("tu_symmetry454_year",  parent = mt_tz_unit)
+S7::new_class("tu_symmetry454_month", parent = mt_tz_unit)
 ```
 
-Instantiate a unit by calling it like a function:
-
-```{r unit-constructors}
-tu_fiscal_period(1L)
-tu_fiscal_period(1L, tz = "America/New_York")
-```
+These time units are typically exported within a calendar object (shown below) and accessed via `$` notation.
 
 ## Calendars
 
-A **calendar** is a named collection of time units. Use `new_calendar()` to
-define one. Each argument name becomes a constructor accessible via `$`
-notation on the returned calendar object. An optional `inherit` argument pulls
-in all units from an existing calendar (units defined in `...` take
-precedence).
+A calendar is a named collection of time units, created with `new_calendar()`. An optional `inherit` argument pulls in all units from an existing calendar (units defined in `...` take precedence). It is useful to inherit from a base calendar that defines common time units for civil and astronomical calendars. The base calendars provided by mixtime are:
+
+* `cal_time_civil_midnight`: civil time units anchored at midnight (e.g. days, hours, minutes, seconds, ...)
+* `cal_time_solar_***`: solar time units anchored at sunrise, noon, sunset or midnight (e.g. solar days)
+* `cal_time_lunar`: lunar time units (e.g. lunar months, lunar phases)
 
 ```{r new-calendar}
-cal_fiscal <- new_calendar(
-  year   = tu_fiscal_year,
-  period = tu_fiscal_period,
-  # Inherit civil-time sub-day units (hour, minute, second, …) from the
-  # built-in Gregorian calendar
-  inherit = cal_gregorian,
-  class = "cal_fiscal"
+cal_symmetry454 <- new_calendar(
+  year  = S7::new_class("tu_symmetry454_year",  parent = mt_tz_unit),
+  month = S7::new_class("tu_symmetry454_month", parent = mt_tz_unit),
+  week  = cal_isoweek$week,
+  # Inherit civil-time units (day, hour, minute, second, ...)
+  inherit = cal_time_civil_midnight,
+  class = "cal_symmetry454"
 )
 
-cal_fiscal
+cal_symmetry454
 ```
+
+In this case, the time unit for weeks exactly matches the ISO week unit, so we can reuse the existing `cal_isoweek$week` unit rather than defining a new one. This is because our implementation below of the Symmetry454 calendar has the same week structure as the ISO calendar (same epoch, 7-day length, and Monday start). If your calendar unit shares the same name but has a different structure (e.g. a month comprised of 4 or 5 weeks), a new time unit with a unique S7 class must be defined (similar to the year and month units above).
 
 Unit constructors are now accessible via `$`:
 
 ```{r calendar-access}
-cal_fiscal$year(1L)
-cal_fiscal$period(1L, tz = "UTC")
+cal_symmetry454$year(1L)
+cal_symmetry454$month(1L, tz = "UTC")
 ```
+
+These time units can be used as chronons/cycles within `mixtime()` (and also `linear_time()`, `cyclical_time()`). The temporal relationships between these units must be defined by the calendar arithmetic methods described below.
 
 ## Calendar arithmetic
 
-Two S7 generics drive all calendar calculations: `chronon_cardinality()` and
-`chronon_divmod()`. You must implement at least one of them for every pair of
-adjacent units in your calendar.
+Two S7 generics drive all calendar calculations: `chronon_cardinality()` and `chronon_divmod()`. These functions are used to manipulate time, such as converting between units, generating sequences, and comparing time points. The details of how they work are not important for users of the calendar, but they are the main extension points for developers creating new calendars.
+
+For a time unit to be useful in mixtime, at minimum a `chronon_cardinality()` method between itself and the next coarser unit must be defined. Time units with irregular relationships (e.g. days → months) also require `chronon_divmod()` to efficiently compute relationships between units.
+
+Defining these methods for time units between different calendars is also possible, which allows for interoperability between calendars. In most cases, calendars will share a common base calendar (e.g. `cal_time_civil_midnight`) which provides a common time unit (e.g. civil days) or methods for converting between different calendars (e.g. civil midnight to solar midnight).
 
 ### Cardinality
 
-`chronon_cardinality(from, to, at = NULL)` returns the number of `to` units
-that fit inside one `from` unit. For units with a *fixed* relationship (e.g.
-7 days per week) the `at` argument can be ignored. For *variable* relationships
-(e.g. days per month) `at` is the 0-indexed count of `from` units since the
-Unix epoch (1970-01-01 UTC) and should be used to compute the exact count.
+The cardinality is the number of finer units that fit inside a coarser unit. For example, there are 7 days in a week, so the cardinality of `cal_isoweek$day(1L)` in terms of `cal_isoweek$week(1L)` is 7.
 
-In our fiscal calendar every period is exactly 4 weeks (28 days), and every
-year contains exactly 13 periods - so both relationships are fixed:
+```{r}
+chronon_cardinality(cal_isoweek$day(1L), cal_isoweek$week(1L))
+```
 
-```{r cardinality}
-# 13 fiscal periods per fiscal year
-S7::method(chronon_cardinality, list(cal_fiscal$year, cal_fiscal$period)) <-
+For units with a fixed relationship (e.g. 7 days per week) the `at` argument can be ignored. The `at` variable disambiguates the point in time for variable cardinalities (e.g. days per month), `at` is the internal numeric representation of time in the coarser unit (e.g. months since epoch for days → months).
+
+```{r}
+chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 0L) # Jan 1970
+chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 1L) # Feb 1970
+chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 25L) # Feb 1972 (leap year)
+```
+
+In the Symmetry454 calendar every year has exactly 12 months (a fixed relationship).
+
+```{r cardinality-fixed}
+# Each Symmetry454 year has 12 months
+S7::method(chronon_cardinality, list(cal_symmetry454$month, cal_symmetry454$year)) <-
   function(x, y, at = NULL) {
-    vec_data(x) * 13L / vec_data(y)
+    vctrs::vec_data(y) * 12L / vctrs::vec_data(x)
+  }
+chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$year(1L))
+```
+
+The number of weeks in each month follows the repeating **4–5–4** pattern across each quarter (months 1–3: 4, 5, 4 weeks; months 4–6: 4, 5, 4 weeks; and so on). The `circsum()` helper computes how many weeks fall in an n-month period by summing the appropriate slice of this cycle, which is especially useful when the `month` unit has a size greater than 1.
+
+Symmetry454 uses a **293-year leap-week cycle**: a year is a leap year (gaining a 53rd week in December) when `(52 * year + 146) %% 293 < 52`. This differs substantially from the familiar Gregorian leap-day rule and produces 52 leap years in every 293-year period.
+
+```{r cardinality-variable}
+S7::method(chronon_cardinality, list(cal_symmetry454$week, cal_symmetry454$month)) <-
+  function(x, y, at = NULL) {
+    # The number of weeks in each n-month period
+    month_size <- vctrs::vec_data(y)
+    nweeks_cyc <- circsum(c(4L, 5L, 4L), month_size)
+
+    # Find which n-month period we're in based on the "at" position (months since epoch)
+    period <- at %% length(nweeks_cyc) + 1L
+
+    nweeks <- nweeks_cyc[period]
+
+    # Add the extra week to December for Symmetry454 leap years.
+    # A year is a leap year when (52*year + 146) %% 293 < 52.
+    m1 <- at * month_size
+    contains_dec <- which((m1 %% 12L) >= (12L - month_size))
+    year <- 1970L + m1[contains_dec] %/% 12L
+    is_leap_year <- ((52 * year + 146L) %% 293L) < 52L
+
+    nweeks[contains_dec[is_leap_year]] <- nweeks[contains_dec[is_leap_year]] + 1L
+
+    # Scale by the number of weeks in the week time unit
+    nweeks / vctrs::vec_data(x)
   }
 
-# Each fiscal period is 28 days (4 weeks × 7 days)
-S7::method(chronon_cardinality, list(cal_fiscal$period, cal_gregorian$day)) <-
-  function(x, y, at = NULL) {
-    vec_data(x) * 28L / vec_data(y)
-  }
+# The 4-5-4 cycle across a full Symmetry454 year
+chronon_cardinality(cal_symmetry454$week(1L), cal_symmetry454$month(1L), at = 0:11)
 
-# Verify
-chronon_cardinality(cal_fiscal$year(1L),   cal_fiscal$period(1L)) # 13
-chronon_cardinality(cal_fiscal$period(1L), cal_gregorian$day(1L))  # 28
+# 1970 is a leap year (53 weeks), so December has 5 weeks instead of 4
+chronon_cardinality(cal_symmetry454$week(1L), cal_symmetry454$month(1L), at = 11L)
+
+# Non-leap year: December has the usual 4 weeks
+chronon_cardinality(cal_symmetry454$week(1L), cal_symmetry454$month(1L), at = 12:23) # Dec 1971
+
+# The number of weeks in a multi-month period is the sum of the weeks in each month
+chronon_cardinality(cal_symmetry454$week(1L), cal_symmetry454$month(2L), at = 0:5)
+```
+
+Cardinality methods are only required for adjacent time units (e.g. month → year, week → month), but they can be defined for non-adjacent units as an optimization. If a direct cardinality method is not defined, mixtime will attempt to derive it by computing cardinality along a path of intermediate units.
+
+```{r}
+# The number of weeks in a Symmetry454 year (derived from week → month → year)
+# Note that the leap year in 1970 (at = 0) produces 53 weeks via week → month.
+chronon_cardinality(cal_symmetry454$week(1L), cal_symmetry454$year(1L), at = 0:4)
+
+# The number of days in a Symmetry454 year (derived from day → week → month → year)
+chronon_cardinality(cal_symmetry454$day(1L), cal_symmetry454$year(1L), at = 0:4)
+```
+
+The cardinality methods also define which units are finer/coarser for operations requiring graph traversal, so it is essential that the first unit is the finer unit and the second unit is the coarser unit. The inverse cardinality method (with the units flipped) is automatically derived, so you should only define one direction (finer → coarser) of the relationship.
+
+```{r}
+# The number of Symmetry454 years in a month is the inverse of months → years (1/12)
+chronon_cardinality(cal_symmetry454$year(1L), cal_symmetry454$month(1L))
+
+# The number of Symmetry454 months in 2 weeks (requires `at` since weeks → months is irregular)
+chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$week(2L), at = 0:4)
 ```
 
 ### Divmod
 
-`chronon_divmod(from, to, x)` converts an integer vector `x` (chronons
-measured in `from` units since the epoch) into `to` units. It returns a list
-with:
+The divmod operation is a combined division and modulus that converts between time units and is defined with `chronon_divmod()` methods. These methods are required to efficiently convert between units with irregular relationships, such as days → months. For regular relationships (e.g. days → weeks) the divmod is automatically derived from `chronon_cardinality()` methods alone.
+
+`chronon_divmod(from, to, x)` converts times `x` in the `from` units into time points in `to` units. For example, the date "1970-02-15" is day 45 since epoch (`x = 45` and `from = cal_gregorian$day(1L)`), converted to months (`to = cal_gregorian$month(1L)`) gives 1 month and 14 days (div = 1, mod = 14).
+
+```{r}
+chronon_divmod(cal_gregorian$day(1L), cal_gregorian$month(1L), 45L)
+```
+
+Methods for `chronon_divmod()` return a list with:
 
 * `div` - the quotient (chronons in `to` units)
 * `mod` - the remainder (leftover `from` chronons)
 
-This is needed for irregular conversions that cannot be derived from
-`chronon_cardinality()` alone, such as mapping a day number to its containing
-month. For our fiscal calendar the epoch anchor is 1970-01-01, which falls in
-fiscal period 1 of fiscal year 1970.
+Note that all time values are zero-indexed, so `$div = 0` is January 1970, and `$mod = 0` is the first day of the month. So the above result can be interpreted as `$div = 1` is February 1970 and `$mod = 14` is 14 remaining days (i.e. the 15th).
+
+The Symmetry454 calendar has an irregular cardinality for weeks → months (because of the 4–5–4 pattern and leap weeks), so a divmod method is required. The key challenge is correctly accounting for the 293-year leap year pattern. Symmetry454 leap weeks follow a structured sub-cycle pattern: 293 years decompose into five groups (45+79+45+79+45 years), each of which decomposes further into primary 17-year sub-cycles (with 3 leap years) and secondary 11-year sub-cycles (with 2 leap years). The majority of the following code uses this structure to efficiently count how many leap weeks have occurred before any given week number in a cycle.
+
+Another complication is that mixtime methods support n-unit time vectors (e.g. 2 months), so the divmod must also account for the possibility of converting from a multi-month period that may contain a leap week. If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (vctrs::vec_data(to) != 1L) stop("...")`).
 
 ```{r divmod}
-# Days → fiscal periods
-S7::method(chronon_divmod, list(cal_gregorian$day, cal_fiscal$period)) <-
+S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(from, to, x) {
-    # Scale x to individual days
-    scale <- chronon_cardinality(from, cal_gregorian$day(1L))
-    days  <- scale * x
+    # The number of weeks in each n-month period
+    month_size <- vctrs::vec_data(to)
+    weeks_len <- circsum(c(4L, 5L, 4L), month_size)
 
-    period_size <- chronon_cardinality(to, cal_gregorian$day(1L))  # 28
-    list(
-      div = days %/% period_size,
-      mod = days  %% period_size
-    )
+    # The total weeks in a full n-month cycle
+    weeks_tot <- sum(weeks_len)
+
+    # Account for leap years which have a 293-year cycle (containing 52 leap weeks).
+    # The symmetrical sub-cycles of the 293-year leap week cycle are:
+    #   17+11+17 + 17+17+11+17+17 + 17+11+17 + 17+17+11+17+17 + 17+11+17
+    #   = 45 + 79 + 45 + 79 + 45 = 293
+    # Primary (length 17) sub-cycles have 3 leap years: 00100000100000100
+    # Secondary (length 11) sub-cycles have 2 leap years: 00100000100
+    leaps_cycle_17 <- function(w) (w >= 157L) + (w >= 470L) + (w >= 783L)
+    leaps_cycle_11 <- function(w) (w >= 157L) + (w >= 470L)
+    leaps_cycle_45 <- function(w) {
+      ifelse(w < 887L,  leaps_cycle_17(w),
+      ifelse(w < 1461L, 3L + leaps_cycle_11(w - 887L),
+                        5L + leaps_cycle_17(w - 1461L)))
+    }
+    leaps_cycle_79 <- function(w) {
+      ifelse(w < 887L,  leaps_cycle_17(w),
+      ifelse(w < 1774L, 3L  + leaps_cycle_17(w - 887L),
+      ifelse(w < 2348L, 6L  + leaps_cycle_11(w - 1774L),
+      ifelse(w < 3235L, 8L  + leaps_cycle_17(w - 2348L),
+                        11L + leaps_cycle_17(w - 3235L)))))
+    }
+    leaps_symmetry454 <- function(x) {
+      # There are 15288 weeks in a full 293-year cycle (293*52 + 52 leap weeks)
+      w <- x %% 15288L
+      x %/% 15288L * 52L +
+      ifelse(w < 2348L,  leaps_cycle_45(w),
+      ifelse(w < 6470L,  8L  + leaps_cycle_79(w - 2348L),
+      ifelse(w < 8818L,  22L + leaps_cycle_45(w - 6470L),
+      ifelse(w < 12940L, 30L + leaps_cycle_79(w - 8818L),
+                         44L + leaps_cycle_45(w - 12940L)))))
+    }
+
+    # Offset x to align with the nearest 293-year cycle boundary before the epoch.
+    # There are 349 leap years between year 1-W1 and the 1970-W1 epoch, and the
+    # nearest cycle start is (1969*52 + 349) %% (293*52 + 52) = 11009 weeks before epoch.
+    x_cyc <- x + 11010L  # +1 for 0-indexing of x
+    n_leaps <- leaps_symmetry454(x_cyc)
+
+    # Regularise x to have exactly 52 weeks per year by subtracting leap weeks.
+    # (37 leap years occur in the cycle before the epoch, so we add 37 back.)
+    x_reg <- x - n_leaps + 37L
+
+    # Find which n-month cycle we're in based on the regularised week count
+    period_full <- x_reg %/% weeks_tot
+
+    # Identify leap weeks: a week is a leap week if it is in the last regularised
+    # position of a year AND a new leap week is introduced at that point.
+    last_weeks  <- which(x_reg %% 52L >= 51L)
+    leap_weeks  <- last_weeks[n_leaps[last_weeks] - leaps_symmetry454(x_cyc[last_weeks] - 1L) > 0L]
+
+    # Find which part within the n-month cycle we're in
+    weeks_seq  <- cumsum(weeks_len[-length(weeks_len)])
+    period_part <- rowSums(outer(x_reg %% weeks_tot, weeks_seq, ">="))
+
+    # div: total complete n-month cycles + complete n-months within the current cycle
+    div <- period_full * length(weeks_len) + period_part
+
+    # mod: remaining (regularised) weeks within the current n-month period
+    mod <- x_reg %% weeks_tot - c(0L, weeks_seq)[period_part + 1L]
+    mod[leap_weeks] <- mod[leap_weeks] + 1L  # restore leap week to remainder
+
+    list(div = div, mod = mod)
   }
 
-# Fiscal periods → days
-S7::method(chronon_divmod, list(cal_fiscal$period, cal_gregorian$day)) <-
-  function(from, to, x) {
-    mult <- chronon_cardinality(from, cal_gregorian$day(1L))  # 28
-    list(
-      div = x * mult,
-      mod = 0L
-    )
-  }
+# Week 19 (0-indexed) of 1970 is the 2nd week (div=1) of May 1970 (mod=4)
+with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 18L))
 
-# Days → fiscal years
-S7::method(chronon_divmod, list(cal_gregorian$day, cal_fiscal$year)) <-
-  function(from, to, x) {
-    scale       <- chronon_cardinality(from, cal_gregorian$day(1L))
-    days        <- scale * x
-    year_size   <- 13L * 28L  # 364 days per fiscal year
-    list(
-      div = days %/% year_size,
-      mod = days  %% year_size
-    )
-  }
-
-# Fiscal years → days
-S7::method(chronon_divmod, list(cal_fiscal$year, cal_gregorian$day)) <-
-  function(from, to, x) {
-    mult <- 13L * 28L  # 364
-    list(
-      div = x * mult,
-      mod = 0L
-    )
-  }
-
-# Quick sanity check - day 28 should be the start of period 2
-with(cal_fiscal, chronon_divmod(cal_gregorian$day(1L), period(1L), 28L))
+# Week 52 (0-indexed) is the leap week of 1970; it is the 5th week (div=4) of Dec 1970 (mod=11)
+with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 52L))
 ```
 
-## Labels
+If a direct `chronon_divmod()` method is not defined for a pair of units, mixtime will attempt to derive it by chaining together divmod operations along the shortest path of intermediate units.
 
-Three generics control how time units appear as text.
-
-### `time_unit_full()` and `time_unit_abbr()`
-
-These return the singular full name and the short abbreviation for a unit,
-respectively. They are used in messages and in tsibble interval displays.
-
-```{r unit-labels}
-S7::method(time_unit_full, cal_fiscal$year)   <- function(x) "fiscal year"
-S7::method(time_unit_abbr, cal_fiscal$year)   <- function(x) "FY"
-
-S7::method(time_unit_full, cal_fiscal$period) <- function(x) "fiscal period"
-S7::method(time_unit_abbr, cal_fiscal$period) <- function(x) "FP"
-
-time_unit_full(cal_fiscal$year(1L))    # "fiscal year"
-time_unit_abbr(cal_fiscal$period(1L))  # "FP"
+```{r}
+# Divmod for converting days → years is derived from days → weeks → months → years
+# Gregorian day 839 since unix epoch (1972-04-19) is symmetry454 day 101 (mod=100) of year 1972 (div=2)
+with(cal_symmetry454, chronon_divmod(day(1L), year(1L), 839L))
 ```
 
-### `cyclical_labels()`
+### Epoch anchors
 
-`cyclical_labels(granule, cycle, i)` returns human-readable labels for the
-0-indexed position `i` of `granule` within `cycle`. This is used when
-formatting cyclical time vectors (e.g. "Jan", "Feb", … for months within a
-year).
+The `chronon_epoch()` method defines the anchor point for a time unit, which is the reference point for all time calculations. The epoch is used as the zero point for time points, for example time point 0 in `cal_gregorian$year(1L)` corresponds to the year 1970. This anchor maps the internal numeric representation of time (e.g. years since epoch) to a real-world time point (e.g. "1970"), and is used as the origin for numeric inputs and labelling linear parts of time.
 
-The default method falls back to `paste0(time_unit_abbr(granule), i)`, so you
-only need to override it when you want custom labels.
+This implementation of the Symmetry454 calendar has the origin (t = 0) at 1970 W1, so `cal_symmetry454$year(1L)` has an epoch of 1970.
 
-```{r cyclical-labels}
-# Fiscal periods within a fiscal year: "FP01", "FP02", …, "FP13"
-S7::method(cyclical_labels, list(cal_fiscal$period, cal_fiscal$year)) <-
+```{r}
+S7::method(chronon_epoch, cal_symmetry454$year) <- function(x) 1970L
+```
+
+## Displaying time
+
+The labelling methods control how time units and time points are displayed as text. They are used in messages, plot axes, and when formatting time vectors with `format()`. The formatting methods return format strings that are parsed by `format_mixtime()` to generate the final labels.
+
+### Time units
+
+Each time unit has two format methods:
+
+* `time_unit_full()` returns the singular full name of the unit (e.g. "Symmetry454 year")
+* `time_unit_abbr()` returns the short abbreviation of the unit (e.g. "S454Y")
+
+The full name is used in messages (e.g. "Can't convert from Symmetry454 year to day") and the abbreviation is used for displaying time intervals and durations.
+
+```{r}
+S7::method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year"
+S7::method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "S454Y"
+S7::method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month"
+S7::method(time_unit_abbr, cal_symmetry454$month) <- function(x) "S454M"
+S7::method(time_unit_full, cal_symmetry454$week)  <- function(x) "Symmetry454 week"
+S7::method(time_unit_abbr, cal_symmetry454$week)  <- function(x) "S454W"
+```
+
+The time unit abbreviations are also used in the default time formatting string, so we can now create and view a Symmetry454 linear time vector:
+
+```{r}
+linear_time(as.Date("1955-11-12"), chronon = cal_symmetry454$year(1L))
+```
+
+The linear time helper functions can also be used with the new calendar:
+
+```{r}
+year(as.Date("1955-11-12"), calendar = cal_symmetry454)
+```
+
+Cyclical time vectors can also be created with the new calendar, and the default formatting string will use the time unit abbreviations:
+
+```{r}
+cyclical_time(as.Date("1955-11-12"), chronon = cal_symmetry454$week(1L), cycle = cal_symmetry454$year(1L))
+month_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
+```
+
+While descriptive, the calendar scoping of "S454" in the time unit abbreviations produces format strings that are difficult to read. To improve readability, we can define time format methods that use more concise format strings.
+
+### Time labels
+
+The time label functions describe how each granule of time (e.g. years, months, weeks) is displayed. There are two types of labels to consider: linear time labels are for continuous time units (usually the coarsest time unit, years), and cyclical time labels are for time units that nest (cycle over) another granule (e.g. months within a year, days within a week).
+
+The `linear_labels()` and `cyclical_labels()` methods should return character vectors of the same length as the input time indices `i`.
+
+While not enforced, we recommend using the following argument names for common label options:
+
+* `label`: if `TRUE`, return labelled values (e.g. "January", "February", ...), otherwise return unlabelled values (e.g. "1", "2", ...)
+* `abbreviate`: if `TRUE` (and `label` is `TRUE`), return abbreviated labels (e.g. "Jan", "Feb", ...), otherwise return full labels (e.g. "January", "February", ...)
+
+#### Linear time labels: `linear_labels()`
+
+In most cases, the default linear labels provided by `linear_labels()` are sufficient, which simply return the internal numeric representation of the time point (e.g. "0", "1", "2", ...). An example of when this default could be improved is by correctly labelling years about the era boundary (e.g. "2BC", "1BC", "1", "2", ... instead of "-1", "0", "1", "2", ...).
+
+```{r}
+S7::method(linear_labels, cal_symmetry454$year) <- function(granule, i, ...) {
+  ifelse(i <= 0L, paste0(-i + 1L, "BC"), i)
+}
+```
+
+Then the transition from 1 BC to 1 AD is appropriately labelled:
+
+```{r}
+year(-1:2, calendar = cal_symmetry454)
+```
+
+#### Cyclical time labels: `cyclical_labels()`
+
+It is common to need custom labels for cyclical time units, since cyclical time points often have familiar labels (e.g. Jan, Feb, ... for months in years) or are 1-indexed (e.g. 1, 2, ... for days in a month). The default method for `cyclical_labels()` simply uses the internal 0-indexed numeric representation of the time point.
+
+```{r}
+# Labels for months of the year, essentially the same as Gregorian months in years.
+S7::method(cyclical_labels, list(cal_symmetry454$month, cal_symmetry454$year)) <-
+  function(granule, cycle, i, label = FALSE, abbreviate = FALSE, ...) {
+    if (label) {
+      # Index into R's localised month name objects (month.name and month.abb)
+      if (abbreviate) month.abb[i + 1L] else month.name[i + 1L]
+    } else {
+      # Use i + 1L for 1-indexing months (so January is 1, February is 2, ...)
+      sprintf("%02d", i + 1L)
+    }
+  }
+
+# Labels for weeks of the month are simply 1-indexed (e.g. "W1", "W2", ...)
+S7::method(cyclical_labels, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(granule, cycle, i, ...) {
-    sprintf("FP%02d", i + 1L)
+    as.character(i + 1L)
   }
-
-# Demonstrate the default and the custom override
-with(cal_gregorian, cyclical_labels(month(1L),  year(1L),   0:11))
-with(cal_isoweek,   cyclical_labels(day(1L),    week(1L),   0:6))
-with(cal_fiscal,    cyclical_labels(period(1L), year(1L),   0:12))
 ```
 
-## Time vector helpers
+The other cyclical labels (e.g. day of week) are inherited from `cal_isoweek` since we reused the ISO week unit, so they are correctly labelled as days of the week (e.g. "Mon", "Tue", ...).
 
-Once the calendar algebra is in place you can build reusable time-vector
-constructors.
+With these linear and cyclical label methods in place, the default time formats now produce more informative labels for Symmetry454 time vectors:
 
-### `new_linear_time_fn()`
-
-`new_linear_time_fn(chronon, granules, fallback_calendar)` returns a function
-that converts arbitrary input to a linear (non-repeating) time vector. The
-`chronon` is the finest resolution stored; `granules` lists coarser units used
-for display grouping.
-
-```{r linear-fn}
-# Year-period linear time (like yearmonth() but for fiscal periods)
-fiscal_period <- new_linear_time_fn(
-  chronon           = period(1L),
-  granules          = list(year(1L)),
-  fallback_calendar = cal_fiscal
-)
-
-# Fiscal year only
-fiscal_year <- new_linear_time_fn(
-  chronon           = year(1L),
-  fallback_calendar = cal_fiscal
-)
-
-fiscal_period(as.Date("1970-01-01") + 0:3 * 28)
-fiscal_year(as.Date("1970-01-01") + 0:2 * 364)
+```{r}
+yearmonth(as.Date("1955-11-12"), calendar = cal_symmetry454)
+yearweek(as.Date("1955-11-12"), calendar = cal_symmetry454)
+date(as.Date("1955-11-12"), calendar = cal_symmetry454)
 ```
 
-### `new_cyclical_time_fn()`
+### Time formats
 
-`new_cyclical_time_fn(chronon, cycle, fallback_calendar)` returns a function
-that captures the *position within a repeating cycle* - for example the period
-number within a fiscal year.
+<!-- TODO: Time formatting vignette -->
+The default formatting for time vectors is defined by `chronon_format_linear()` for linear time and `chronon_format_cyclical()` for cyclical time. These methods return mixtime format strings which are used to format and print time vectors. A mixtime format string is a [glue](https://glue.tidyverse.org/) style string where time granules wrapped in `{}` are replaced with granule labels for the corresponding time points.
 
-```{r cyclical-fn}
-period_of_fiscal_year <- new_cyclical_time_fn(
-  chronon           = period(1L),
-  cycle             = list(year(1L)),
-  fallback_calendar = cal_fiscal
-)
+There are two types of granule labels useful for these time format strings:
 
-# Period number (1–13) for a handful of dates
-period_of_fiscal_year(as.Date("1970-01-01") + c(0, 28, 56, 364))
+* `lin(<time unit>)` - Granule labels for linear time units, usually the largest granule (e.g. `lin(year(1L))`).
+* `cyc(<time unit>, <cycle unit>)` - Granule labels for cyclical time units, where the labels are relative to the cycle (e.g. `cyc(month(1L), year(1L))` is the month within the year).
+
+The `<time unit>` and `<cycle unit>` placeholders in the format string must evaluate to a time unit of a calendar. For convenience, unevaluated named time units (e.g. `lin(year)`) default to a size 1 time unit (e.g. `lin(year(1L))`), and the calendar is inferred from the time vector being formatted. It is also possible to explicitly specify the calendar (e.g. `lin(cal_symmetry454$year(1L))`), which allows time formats to use granules from different calendars.
+
+Linear granule labels are evaluated with `linear_labels()`, and cyclical granule labels are evaluated with `cyclical_labels()`. The default methods for these generics return the internal numeric representation of the time point (e.g. "0", "1", "2", ...), but they can be overridden to return custom labels.
+
+#### Linear time formats: `chronon_format_linear()`
+
+Linear time formats dispatch on the chronon and calendar. The calendar is needed to disambiguate identical time units that exist in multiple calendars. In this case, `cal_symmetry454$day` is common to most civil calendars, and `cal_symmetry454$week` shares the same implementation as `cal_isoweek$week` - in both cases a Symmetry 454 format method is needed to display dates appropriately.
+
+```{r}
+# Simply display years as numbers (e.g. "1970", "1971", ...)
+S7::method(
+  chronon_format_linear,
+  list(cal_symmetry454$year, S7::class_any)
+) <- function(x, cal) "{lin(year(1L))}"
+
+# Display labelled months as month within year (e.g. "1970 Jan", "1970 Feb", ...)
+S7::method(
+  chronon_format_linear,
+  list(cal_symmetry454$month, S7::class_any)
+) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}"
+
+# Display weeks as week in month in year (e.g. "1970-01-W1", "1970-01-W2", ...)
+S7::method(
+  chronon_format_linear,
+  list(cal_symmetry454$week, S7::new_S3_class("cal_symmetry454"))
+) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}"
+
+# Format days as day in week in month in year (e.g. "1970-Jan-W1-Mon", "1970-Jan-W1-Tue", ...)
+S7::method(
+  chronon_format_linear,
+  list(cal_symmetry454$day, S7::new_S3_class("cal_symmetry454"))
+) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}-{cyc(day(1L), week(1L), label=TRUE, abbreviate=TRUE)}"
+```
+
+With these default time formatting strings in place, the linear time vectors now have more informative default labels:
+
+```{r}
+# Years are formatted as YYYY
+year(as.Date("1955-11-12"), calendar = cal_symmetry454)
+
+# Months are formatted as YYYY Mon
+yearmonth(as.Date("1955-11-12"), calendar = cal_symmetry454)
+
+# Weeks are formatted as YYYY-MM-WW
+yearweek(as.Date("1955-11-12"), calendar = cal_symmetry454)
+
+# Days are formatted as YYYY-MM-WW-DD
+linear_time(as.Date(c("1985-10-26", "1955-11-05", "1955-11-12")), chronon = cal_symmetry454$day(1L))
+```
+
+#### Cyclical time formats: `chronon_format_cyclical()`
+
+Cyclical time formats dispatch on the chronon and cycle.  Defining methods for cyclical time formats is necessary when particular formatting with labels is desired (e.g. month of year or day of week labels). All other combinations of chronon and cycle will fall back to the default format, which combines the time unit abbreviation with the cycle label (e.g. "W1" for week 1 of the month or year).
+
+```{r}
+# Format months in years as abbreviated month labels (e.g. "Jan", "Feb", ...)
+S7::method(
+  chronon_format_cyclical,
+  list(cal_symmetry454$month, cal_symmetry454$year)
+) <- function(x, y) "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
+```
+
+These methods are used when formatting cyclical time vectors, such as month of year:
+```{r}
+month_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
 ```
