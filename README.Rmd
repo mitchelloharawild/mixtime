@@ -56,6 +56,12 @@ mixtime provides flexible time classes for time series analysis and forecasting 
 
 ## Installation
 
+The mixtime package can be installed from CRAN with:
+
+``` r
+install.packages("mixtime")
+```
+
 The development version can be installed from [GitHub](https://github.com/mitchelloharawild/mixtime) with:
 
 ``` r

@@ -54,6 +54,12 @@ with helpers:
 
 ## Installation
 
+The mixtime package can be installed from CRAN with:
+
+``` r
+install.packages("mixtime")
+```
+
 The development version can be installed from
 [GitHub](https://github.com/mitchelloharawild/mixtime) with:
 
@@ -188,7 +194,7 @@ month_of_year(demo_date)
 #> [1] Feb
 week_of_year(demo_date)
 #> <mixtime[1]>
-#> [1] 08
+#> [1] W08
 day_of_week(demo_date)
 #> <mixtime[1]>
 #> [1] Sun
@@ -213,7 +219,7 @@ date(demo_time, tz = "America/Los_Angeles")
 #> [1] 2026-02-22 PST
 date(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-22 PST 77.1%
+#> [1] 2026-02-22 PST 43.8%
 day_of_week(demo_time, tz = "America/Los_Angeles")
 #> <mixtime[1]>
 #> [1] Sun PST
@@ -224,7 +230,7 @@ date(demo_time, tz = "Australia/Melbourne")
 #> [1] 2026-02-23 AEDT
 date(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-22 AEDT 77.1%
+#> [1] 2026-02-23 AEDT 23.0%
 day_of_week(demo_time, tz = "Australia/Melbourne")
 #> <mixtime[1]>
 #> [1] Mon AEDT
