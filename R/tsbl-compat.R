@@ -1,14 +1,10 @@
 
-#' @importFrom tsibble index_valid
-#' @export
 index_valid.mixtime <- function(x) {
   TRUE
 }
 
-#' @importFrom tsibble interval_pull
-#' @export
 interval_pull.mixtime <- function(x) {
-  intvls <- lapply(attr(x, "v"), function(x) interval_pull(x))
+  intvls <- lapply(attr(x, "v"), function(x) tsibble::interval_pull(x))
   x <- new_rcrd(
     vec_rbind(!!!lapply(intvls, new_data_frame)),
     .regular = any(vapply(intvls, attr, logical(1L), which = ".regular")),
@@ -16,12 +12,8 @@ interval_pull.mixtime <- function(x) {
   )
 }
 
-#' @importFrom tsibble index_valid
-#' @export
 index_valid.mt_linear <- function(x) TRUE
 
-#' @importFrom tsibble interval_pull
-#' @export
 interval_pull.mt_linear <- function(x) {
   chronon <- time_chronon(x)
   tsbl_unit <- vec_match(S7_class_id(chronon), tsbl_interval_units)

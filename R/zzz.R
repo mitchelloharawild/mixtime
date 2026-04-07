@@ -5,8 +5,13 @@
   # Initialise tzdb package
   tzdb::tzdb_initialize()
        
+  # Register tsibble methods
+  register_s3_method("tsibble", "index_valid", "mixtime", index_valid.mixtime)
+  register_s3_method("tsibble", "interval_pull", "mixtime", interval_pull.mixtime)
+  register_s3_method("tsibble", "index_valid", "mt_linear", index_valid.mt_linear)
+  register_s3_method("tsibble", "interval_pull", "mt_linear", interval_pull.mt_linear)
+       
   vctrs_exports <- getNamespaceExports(asNamespace("vctrs"))
-
   vec_cast_generics <- vctrs_exports[startsWith(vctrs_exports, "vec_cast.")]
   # Register vec_cast.*.mixtime methods
   lapply(vec_cast_generics, register_s3_method,

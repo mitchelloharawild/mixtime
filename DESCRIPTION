@@ -35,12 +35,12 @@ Imports:
     lifecycle,
     vctrs,
     rlang,
-    tsibble,
     cli,
     S7,
     vecvec,
     tzdb
 Suggests: 
+    tsibble,
     testthat,
     pillar,
     knitr,
