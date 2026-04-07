@@ -70,13 +70,6 @@ method(time_unit_abbr, cal_time_civil_midnight$second) <- function(x) "s"
 method(time_unit_full, cal_time_civil_midnight$millisecond) <- function(x) "millisecond"
 method(time_unit_abbr, cal_time_civil_midnight$millisecond) <- function(x) "ms"
 
-# Default granules
-method(chronon_granules, cal_time_civil_midnight$day) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L))
-method(chronon_granules, cal_time_civil_midnight$hour) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L))
-method(chronon_granules, cal_time_civil_midnight$minute) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L))
-method(chronon_granules, cal_time_civil_midnight$second) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L), cal_gregorian$minute(1L))
-method(chronon_granules, cal_time_civil_midnight$millisecond) <- function(x) list(cal_gregorian$year(1L), cal_gregorian$month(1L), cal_gregorian$day(1L), cal_gregorian$hour(1L), cal_gregorian$minute(1L), cal_gregorian$second(1L))
-
 # Default formats
 method(chronon_format_linear, list(cal_time_civil_midnight$day, class_any)) <- function(x, cal) "{lin(year)}-{cyc(month,year)}-{cyc(day, month)}"
 method(chronon_format_linear, list(cal_time_civil_midnight$hour, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}h")

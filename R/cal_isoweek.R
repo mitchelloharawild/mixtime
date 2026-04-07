@@ -42,9 +42,6 @@ method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
 # Epoch for years
 method(chronon_epoch, cal_isoweek$year) <- function(x) 1970L
 
-# Default granules
-method(chronon_granules, cal_isoweek$week) <- function(x) list(cal_isoweek$year(1L))
-
 # Default formats
 method(chronon_format_linear, list(cal_isoweek$year, class_any)) <- function(x, cal) "{lin(year)}"
 method(chronon_format_linear, list(cal_isoweek$week, class_any)) <- function(x, cal) "{lin(year)} W{cyc(week,year)}"

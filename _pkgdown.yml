@@ -103,7 +103,6 @@ reference:
   - chronon_convert
   - chronon_divmod
   - chronon_common
-  - chronon_granules
   - mt_unit
   - time_chronon
   - time_calendar
