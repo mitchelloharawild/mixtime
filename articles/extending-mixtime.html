@@ -548,6 +548,13 @@ generality of converting between n-unit time granules (e.g. converting
 from 1 week to 2 month chronons). If this generality is not needed, your
 method can raise an error when the time unit is not size 1
 (e.g. <code>if (vctrs::vec_data(to) != 1L) stop("...")</code>).</p>
+<p>The inverse relationship must also be defined to convert from months
+→ weeks. When converting from coarser → finer units, integer values for
+<code>x</code> introduce temporal indeterminacy. The convention for
+divmod methods is to left-align the conversion (use the first moment of
+the month). For brevity, the inverse divmod method is not shown here but
+can be found in the package’s <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/cal_sym454.R" class="external-link"><code>cal_sym454</code>
+source code</a></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The 5th fortnight of 1970 is the 3rd fortnight (div=2) of Feb 1970 (mod=1)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">cal_symmetry454</span>, <span class="fu"><a href="../reference/chronon_divmod.html">chronon_divmod</a></span><span class="op">(</span><span class="fu">week</span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span>, <span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fl">4L</span><span class="op">)</span><span class="op">)</span></span>
