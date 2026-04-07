@@ -56,6 +56,8 @@ method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
 #' @param ... Additional arguments for methods.
 #'
 #' @return A character string containing the default format suffix for the chronon.
+#' 
+#' @export
 chronon_format_attr <- new_generic("chronon_format_attr", "x")
 method(chronon_format_attr, mt_unit) <- function(x) {
   ""

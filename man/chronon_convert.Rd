@@ -39,4 +39,6 @@ chronon_convert(Sys.Date(), cal_gregorian$month(1L), discrete = TRUE)
 
 # Convert from seconds since epoch to hours since epoch
 chronon_convert(Sys.time(), cal_gregorian$hour(1L))
+
 }
+\keyword{internal}
