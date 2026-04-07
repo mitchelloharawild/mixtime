@@ -28,8 +28,6 @@
 #' 
 #' # The common chronon between months, quarters, and years is a month
 #' with(cal_gregorian, chronon_common(month(1L), quarter(1L), year(1L)))
-#' 
-#' @export
 chronon_common <- function(..., .ptype = NULL) {
   # TODO: Validate that the supplied .ptype can represent all input chronons
   if (!is.null(.ptype)) return(.ptype)

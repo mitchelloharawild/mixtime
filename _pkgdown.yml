@@ -101,9 +101,7 @@ reference:
   desc: "These low-level functions define the relationships and labels between time units. Adding S7 methods for them allow the creation of custom time units and calendars."
   contents:
   - chronon_cardinality
-  - chronon_convert
   - chronon_divmod
-  - chronon_common
   - mt_unit
   - time_chronon
   - time_calendar
