@@ -35,6 +35,9 @@ mixtime(Sys.Date())
 # Create a mixtime for the current date and time
 mixtime(Sys.time())
 
+# Convert time from tsibble units to mixtime
+mixtime(tsibble::yearmonth("2024 Jan"))
+
 # Create a mixtime for the time of day (cyclical time)
 mixtime(Sys.time(), cycle = cal_gregorian$day(1L))
 
