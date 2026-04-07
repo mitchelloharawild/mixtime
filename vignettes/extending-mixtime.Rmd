@@ -313,6 +313,8 @@ with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 52L))
 
 While most of this complication relates to the leap week pattern, `chronon_divmod()` methods are further complicated by the generality of converting between n-unit time granules (e.g. converting from 1 week to 2 month chronons). If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (vctrs::vec_data(to) != 1L) stop("...")`).
 
+The inverse relationship must also be defined to convert from months → weeks. When converting from coarser → finer units, integer values for `x` introduce temporal indeterminacy. The convention for divmod methods is to left-align the conversion (use the first moment of the month). For brevity, the inverse divmod method is not shown here but can be found in the package's [`cal_sym454` source code](https://github.com/mitchelloharawild/mixtime/blob/main/R/cal_sym454.R)
+
 ```{r}
 # The 5th fortnight of 1970 is the 3rd fortnight (div=2) of Feb 1970 (mod=1)
 with(cal_symmetry454, chronon_divmod(week(2L), month(1L), 4L))
