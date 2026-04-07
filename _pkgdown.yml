@@ -110,7 +110,6 @@ reference:
   - time_unit_abbr
   - time_unit_full
   - cyclical_labels
-  - mixtime_valid
   - new_cyclical_time_fn
   - new_linear_time_fn
   - circsum
