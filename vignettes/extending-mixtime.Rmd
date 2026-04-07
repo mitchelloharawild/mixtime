@@ -2,7 +2,7 @@
 title: "Extending mixtime"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{extending-mixtime}
+  %\VignetteIndexEntry{Extending mixtime}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
