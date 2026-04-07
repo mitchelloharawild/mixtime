@@ -22,6 +22,11 @@ yearmonth() or yearweek()."><meta property="og:image" content="https://pkg.mitch
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mitchelloharawild/mixtime/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -50,9 +55,7 @@ time representations that aren't covered by the convenience functions like
 <span>  <span class="va">data</span>,</span>
 <span>  chronon <span class="op">=</span> <span class="fu"><a href="time_chronon.html">time_chronon</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span>
 <span>  discrete <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span>
-<span>  granules <span class="op">=</span> <span class="fu"><a href="chronon_granules.html">chronon_granules</a></span><span class="op">(</span><span class="va">chronon</span><span class="op">)</span>,</span>
-<span>  tz <span class="op">=</span> <span class="fu"><a href="tz_name.html">tz_name</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span>  calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,19 +90,6 @@ allowing representation of partial time units (continuous time model).</p></dd>
 Defaults to <code>time_calendar(data)</code> for existing time objects. Common options
 include <a href="calendar_gregorian.html">cal_gregorian</a> and <a href="calendar_isoweek.html">cal_isoweek</a>.</p></dd>
 
-
-<dt id="arg-granules">granules<a class="anchor" aria-label="anchor" href="#arg-granules"></a></dt>
-<dd><p>A list of time unit expressions representing structural units
-larger than the chronon (e.g., years, quarters, months). These define how
-time is displayed and grouped. Use unquoted expressions like
-<code>list(year(1L), quarter(1L))</code>. Defaults to an empty list.</p></dd>
-
-
-<dt id="arg-tz">tz<a class="anchor" aria-label="anchor" href="#arg-tz"></a></dt>
-<dd><p>Time zone for the time representation. Defaults to the time zone
-of the input <code>data</code> (<code>tz_name(data)</code>). Time zones need to be valid
-identifiers for the IANA time zone database (<code><a href="https://tzdb.r-lib.org/reference/tzdb_names.html" class="external-link">tzdb::tzdb_names()</a></code>)</p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -117,41 +107,37 @@ identifiers for the IANA time zone database (<code><a href="https://tzdb.r-lib.o
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Hourly time with year-month-day granules</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Hourly time</span></span></span>
 <span class="r-in"><span><span class="fu">linear_time</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  chronon <span class="op">=</span> <span class="fu">hour</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  granules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  chronon <span class="op">=</span> <span class="fu">hour</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-24-h2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07 10h</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Monthly chronons with year-quarter granules</span></span></span>
+<span class="r-in"><span><span class="co"># Monthly time</span></span></span>
 <span class="r-in"><span><span class="fu">linear_time</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  chronon <span class="op">=</span> <span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  granules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">quarter</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  chronon <span class="op">=</span> <span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Q1-M1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Apr</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Discrete vs continuous time</span></span></span>
 <span class="r-in"><span><span class="fu">linear_time</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07</span>
 <span class="r-in"><span><span class="fu">linear_time</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-24-9.3%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07 42.6%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ISO week calendar with week-day structure</span></span></span>
-<span class="r-in"><span><span class="fu">linear_time</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  chronon <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  granules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  calendar <span class="op">=</span> <span class="va">cal_isoweek</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-W9-Tue</span>
+<span class="r-in"><span><span class="co"># TODO - needs default format strings to dispatch on calendar</span></span></span>
+<span class="r-in"><span><span class="co"># linear_time(</span></span></span>
+<span class="r-in"><span><span class="co">#   Sys.Date(),</span></span></span>
+<span class="r-in"><span><span class="co">#   chronon = day(1L),</span></span></span>
+<span class="r-in"><span><span class="co">#   calendar = cal_isoweek</span></span></span>
+<span class="r-in"><span><span class="co"># )</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

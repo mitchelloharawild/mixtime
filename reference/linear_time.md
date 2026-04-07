@@ -15,9 +15,7 @@ linear_time(
   data,
   chronon = time_chronon(data),
   discrete = TRUE,
-  calendar = time_calendar(data),
-  granules = chronon_granules(chronon),
-  tz = tz_name(data)
+  calendar = time_calendar(data)
 )
 ```
 
@@ -58,20 +56,6 @@ linear_time(
   and
   [cal_isoweek](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_isoweek.md).
 
-- granules:
-
-  A list of time unit expressions representing structural units larger
-  than the chronon (e.g., years, quarters, months). These define how
-  time is displayed and grouped. Use unquoted expressions like
-  `list(year(1L), quarter(1L))`. Defaults to an empty list.
-
-- tz:
-
-  Time zone for the time representation. Defaults to the time zone of
-  the input `data` (`tz_name(data)`). Time zones need to be valid
-  identifiers for the IANA time zone database
-  ([`tzdb::tzdb_names()`](https://tzdb.r-lib.org/reference/tzdb_names.html))
-
 ## Value
 
 A `mt_linear` time vector, which is a subclass of `mt_time`.
@@ -96,39 +80,35 @@ A `mt_linear` time vector, which is a subclass of `mt_time`.
 ## Examples
 
 ``` r
-# Hourly time with year-month-day granules
+# Hourly time
 linear_time(
   Sys.time(),
-  chronon = hour(1L),
-  granules = list(year(1L), month(1L), day(1L))
+  chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-Feb-24-h2
+#> [1] 2026-04-07 10h
 
-# Monthly chronons with year-quarter granules
+# Monthly time
 linear_time(
   Sys.Date(),
-  chronon = month(1L),
-  granules = list(year(1L), quarter(1L))
+  chronon = month(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-Q1-M1
+#> [1] 2026 Apr
 
 # Discrete vs continuous time
 linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-24
+#> [1] 2026-04-07
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-24-9.3%
+#> [1] 2026-04-07 42.6%
 
 # ISO week calendar with week-day structure
-linear_time(
-  Sys.Date(),
-  chronon = day(1L),
-  granules = list(year(1L), week(1L)),
-  calendar = cal_isoweek
-)
-#> <mixtime[1]>
-#> [1] 2026-W9-Tue
+# TODO - needs default format strings to dispatch on calendar
+# linear_time(
+#   Sys.Date(),
+#   chronon = day(1L),
+#   calendar = cal_isoweek
+# )
 ```

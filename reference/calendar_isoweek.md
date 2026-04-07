@@ -14,7 +14,7 @@ cal_isoweek
 ## Format
 
 An object of class `cal_isoweek` (inherits from `mt_calendar`) of length
-7.
+8.
 
 ## Value
 

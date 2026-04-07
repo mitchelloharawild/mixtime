@@ -18,8 +18,9 @@ Convenience functions for common linear time representations
 - [`year()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
   [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
   [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
-  [`yearmonthday()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
   [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  [`date()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  [`datetime()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
   : Linear time helper functions
 
 ## Cyclical Time Representations
@@ -40,6 +41,7 @@ Convenience functions for common cyclical time representations
 - [`month_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
   [`day_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
   [`day_of_month()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
+  [`time_of_day()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
   [`day_of_week()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
   [`week_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
   : Cyclical time helpers
@@ -49,8 +51,7 @@ Convenience functions for common cyclical time representations
 Functions for manipulating and transforming time objects.
 
 - [`seq(`*`<mixtime>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
-  [`seq(`*`<mt_linear>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
-  [`seq(`*`<mt_cyclical>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
+  [`seq(`*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
   : Generate sequences of mixtime values
 - [`round_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
   [`ceiling_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
@@ -76,6 +77,13 @@ The ISO 8601 week date calendar system with ISO years and weeks.
 
 - [`cal_isoweek`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_isoweek.md)
   : ISO 8601 time unit classes
+
+### Symmetry454 Calendar System
+
+The Symmetry454 calendar system with years, months, weeks, and days.
+
+- [`cal_sym454`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_sym454.md)
+  : Symmetry454 time unit classes
 
 ### Custom Calendars
 
@@ -106,7 +114,18 @@ Solar time systems where day boundaries are defined by solar events
 - [`cal_time_solar_sunset`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
   [`cal_time_solar_sunrise`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
   [`cal_time_solar_noon`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+  [`cal_time_solar_midnight`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+  [`cal_time_solar_dawn`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+  [`cal_time_solar_dusk`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
   : Solar time unit classes
+
+### Lunar Time System
+
+The lunar time system where each month begins at the new moon, with day
+boundaries defined by lunar events.
+
+- [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
+  : Lunar time unit classes
 
 ## Timezones
 
@@ -126,12 +145,27 @@ Functions for working with timezones and timezone information
 Functions for creating and working with mixtime objects that can contain
 multiple time granularities.
 
+- [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+  : Create a mixtime vector
 - [`new_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_mixtime.md)
-  : Create a new mixtime
+  : Constructor for mixtime vectors
+- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
+  : Constructor for mixtime time vectors
 - [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
   : Convert time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_mixtime.md)
   : Check if the object is a mixtime
+
+### Mixtime Accessors
+
+Functions for accessing the components of mixtime objects.
+
+- [`time_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_calendar.md)
+  : Obtain the calendar of a time object
+- [`time_chronon()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_chronon.md)
+  : Obtain the chronon of a time object
+- [`time_cycle()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_cycle.md)
+  : Obtain the cycle of a time object
 
 ## Extensibility methods
 
@@ -139,38 +173,48 @@ These low-level functions define the relationships and labels between
 time units. Adding S7 methods for them allow the creation of custom time
 units and calendars.
 
+### Time units and calendars
+
+- [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_calendar.md)
+  : Create a new calendar
+- [`mt_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
+  [`mt_loc_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
+  [`mt_tz_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
+  : Base S7 class for creating new time units
+
+### Calendar arithmetic
+
 - [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
   [`chronon_cardinality.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
   : Cardinality between time units
-- [`chronon_convert()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_convert.md)
-  [`chronon_convert.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_convert.md)
-  : Convert between chronons
 - [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
   [`chronon_divmod.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
   : Convert between chronons of different time units
-- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)
-  : Find a common chronon from a set of chronons
-- [`chronon_granules()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_granules.md)
-  : Default linear time granules for chronons
-- [`mt_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
-  [`mt_tz_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
-  [`mt_loc_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
-  : Base S7 class for creating new time units
-- [`time_chronon()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_chronon.md)
-  : Obtain the chronon of a time object
-- [`time_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_calendar.md)
-  : Obtain the calendar of a time object
+- [`chronon_epoch()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_epoch.md)
+  : Epoch offset for chronons
+- [`circsum()`](https://pkg.mitchelloharawild.com/mixtime/reference/circsum.md)
+  : Compute circular rolling sums
+
+### Time labels and formatting
+
 - [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   : Time units as a string
+- [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
+  [`linear_labels.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
+  : Friendly labels for linear relationships
 - [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
   [`cyclical_labels.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
   : Friendly labels for cyclical relationships
-- [`mixtime_valid()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime_valid.md)
-  : Check if times can be used within mixtime
+- [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
+  [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
+  : Default formatting strings for chronons
+- [`chronon_format_attr()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format_attr.md)
+  : Default formatting strings for chronon attributes
+
+### Convenience function factories
+
 - [`new_cyclical_time_fn()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_cyclical_time_fn.md)
   : Cyclical time function factory
 - [`new_linear_time_fn()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_linear_time_fn.md)
   : Linear time function factory
-- [`circsum()`](https://pkg.mitchelloharawild.com/mixtime/reference/circsum.md)
-  : Compute circular rolling sums

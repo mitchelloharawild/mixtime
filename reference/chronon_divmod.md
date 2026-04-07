@@ -45,21 +45,21 @@ An list of two elements:
 ## Examples
 
 ``` r
-# Convert day 16 since epoch into weeks since epoch (and remainder days)
+# Convert day 16 after epoch (1970-01-01) into weeks since epoch (and remainder days)
 with(cal_isoweek, chronon_divmod(day(1L), week(1L), 16L))
-#> $chronon
+#> $div
 #> [1] 2
 #> 
-#> $remainder
+#> $mod
 #> [1] 5
 #> 
 
-# Convert week 4 since epoch into days since epoch
+# Convert week 4 after epoch (1970-W1) into days since epoch
 with(cal_isoweek, chronon_divmod(week(1L), day(1L), 4L))
-#> $chronon
+#> $div
 #> [1] 25
 #> 
-#> $remainder
+#> $mod
 #> [1] 0
 #> 
 ```

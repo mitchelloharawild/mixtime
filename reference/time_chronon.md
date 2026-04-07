@@ -49,5 +49,5 @@ time_chronon(yearmonth(Sys.Date()))
 # The common chronon of a mixed time object is the finest chronon
 time_chronon(c(yearmonth(Sys.Date()), Sys.Date()))
 #> <mixtime::tu_day> int 1
-#>  @ tz: chr "UTC"
+#>  @ tz: chr ""
 ```

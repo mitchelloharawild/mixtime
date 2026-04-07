@@ -46,14 +46,14 @@ base::round,
 # Round POSIXct to the nearest minute (preserving tz)
 t <- as.POSIXct("2020-01-01 12:34:56", tz = "UTC")
 round_time(t, unit = cal_gregorian$minute(1L))
-#> [1] "2020-01-01 12:35:00 UTC"
+#> POSIXct of length 0
 
 # Floor to the nearest hour
 floor_time(t, unit = cal_gregorian$hour(1L))
-#> [1] "2020-01-01 12:00:00 UTC"
+#> POSIXct of length 0
 
 # Ceiling a Date (treated as midnight-of-day rounding)
 d <- as.Date("2020-01-01")
 ceiling_time(d, unit = cal_gregorian$month(1L))
-#> [1] "2020-02-01"
+#> Date of length 0
 ```

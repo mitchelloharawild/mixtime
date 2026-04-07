@@ -38,6 +38,7 @@ time_calendar(Sys.Date())
 #>   - quarter
 #>   - month
 #>   - day
+#>   - ampm
 #>   - hour
 #>   - minute
 #>   - second
@@ -51,6 +52,7 @@ time_calendar(Sys.time())
 #>   - quarter
 #>   - month
 #>   - day
+#>   - ampm
 #>   - hour
 #>   - minute
 #>   - second
@@ -63,6 +65,7 @@ time_calendar(yearweek(Sys.Date()))
 #>   - year
 #>   - week
 #>   - day
+#>   - ampm
 #>   - hour
 #>   - minute
 #>   - second
@@ -70,12 +73,10 @@ time_calendar(yearweek(Sys.Date()))
 
 # A mixed time object returns a list of calendars
 time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
-#> <cal_gregorian>
+#> <cal_time_civil_midnight>
 #> Time units:
-#>   - year
-#>   - quarter
-#>   - month
 #>   - day
+#>   - ampm
 #>   - hour
 #>   - minute
 #>   - second

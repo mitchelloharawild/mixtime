@@ -9,7 +9,7 @@ determine how time values can be interpreted and manipulated.
 ## Usage
 
 ``` r
-new_calendar(..., class = character())
+new_calendar(..., inherit = NULL, class = character())
 ```
 
 ## Arguments
@@ -22,6 +22,11 @@ new_calendar(..., class = character())
   that inherits from `mt_unit` or `mt_tz_unit`. The names define the
   calendar's fields and are used to access unit constructors (e.g.,
   `calendar$year()`).
+
+- inherit:
+
+  Optional calendar to inherit time units from. Units defined in `...`
+  will override inherited units with the same name.
 
 - class:
 

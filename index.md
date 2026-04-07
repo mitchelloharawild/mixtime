@@ -14,37 +14,46 @@ handling temporal data at different frequencies, making it ideal for:
 
 **📈 Linear Time** - Create linear time vectors with
 [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)
-or with helpers: \*
-[`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
-[`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
-[`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
-[`yearmonthday()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+or with helpers:
+
+- [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`date()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
 
 **🔄 Cyclical Time** - Create cyclical time vectors with
 [`cyclical_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time.md)
-or with helpers: \*
-[`month_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
-[`day_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
-[`day_of_month()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
-[`day_of_week()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
-[`week_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
+or with helpers:
 
-**🕰️ Time types** \* Discrete and continuous time models \* Timezone
-support for all chronons \* Custom granule sizes (e.g. `week(2L)` for
-fortnights) \* Mixed granularity vectors for different temporal
-resolution over time (or series)
+- [`month_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+  [`day_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+  [`day_of_month()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+  [`time_of_day()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+  [`day_of_week()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
+  [`week_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
 
-**📅 Calendar Systems** - Support for several calendars: \*
-`cal_gregorian` - Gregorian dates (e.g. 2026-02-17) \* `cal_isoweek` -
-ISO week dates (e.g. 2026-W8-Tue) \* More calendars coming, including
-custom censored calendars
+**🕰️ Time types**
 
-**🧮 Temporal Operations** \* Rounding:
-[`floor_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
-[`round_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
-[`ceiling_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
-\* Sequencing: [`seq()`](https://rdrr.io/r/base/seq.html) for linear and
-cyclical time points
+- Discrete and continuous time models
+- Timezone support for all chronons
+- Custom granule sizes (e.g. `week(2L)` for fortnights)
+- Mixed granularity vectors for different temporal resolution over time
+  (or series)
+
+**📅 Calendar Systems** - Support for several calendars:
+
+- `cal_gregorian` - Gregorian dates (e.g. 2026-02-17)
+- `cal_isoweek` - ISO week dates (e.g. 2026-W8-Tue)
+- More calendars coming, including custom censored calendars
+
+**🧮 Temporal Operations**
+
+- Rounding:
+  [`floor_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
+  [`round_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
+  [`ceiling_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
+- Sequencing: [`seq()`](https://rdrr.io/r/base/seq.html) for linear and
+  cyclical time points
 
 ## Installation
 
@@ -60,6 +69,11 @@ remotes::install_github("mitchelloharawild/mixtime")
 
 ``` r
 library(mixtime)
+#> 
+#> Attaching package: 'mixtime'
+#> The following object is masked from 'package:base':
+#> 
+#>     date
 demo_time <- as.POSIXct("2026-02-22 18:30:42", tz = "UTC")
 demo_date <- as.Date("2026-02-22")
 ```
@@ -81,6 +95,7 @@ cal_gregorian
 #>   - quarter
 #>   - month
 #>   - day
+#>   - ampm
 #>   - hour
 #>   - minute
 #>   - second
@@ -89,12 +104,12 @@ cal_gregorian
 # A 1-month time unit
 cal_gregorian$month(1L) # (1L is integer 1)
 #> <mixtime::tu_month> int 1
-#>  @ tz: chr "UTC"
+#>  @ tz: chr ""
 
 # A 2-week time unit (fortnights)
 cal_isoweek$week(2L)
 #> <mixtime::tu_week> int 2
-#>  @ tz: chr "UTC"
+#>  @ tz: chr ""
 ```
 
 ### Linear Time
@@ -107,7 +122,7 @@ automatically converted.
 ``` r
 linear_time(demo_date, chronon = cal_gregorian$month(1L))
 #> <mixtime[1]>
-#> [1] 24313
+#> [1] 2026 Feb
 ```
 
 Discrete time models (integer-based values) are used by default, however
@@ -118,7 +133,7 @@ continuous time models (double-based values) can be used with
 # February 22nd is 75% through the month (in non-leap years)
 linear_time(demo_date, chronon = cal_gregorian$month(1L), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 24313-75.0%
+#> [1] 2026 Feb 75.0%
 ```
 
 Linear time helper functions are available to quickly create common time
@@ -128,19 +143,18 @@ points.
 # Create time vectors at different granularities
 yearquarter(demo_date) + 0:7
 #> <mixtime[8]>
-#> [1] 2026-Q1 2026-Q2 2026-Q3 2026-Q4 2027-Q1 2027-Q2 2027-Q3 2027-Q4
+#> [1] 2026 Q1 2026 Q2 2026 Q3 2026 Q4 2027 Q1 2027 Q2 2027 Q3 2027 Q4
 yearmonth(demo_date) + 0:11
 #> <mixtime[12]>
-#>  [1] 2026-Feb 2026-Mar 2026-Apr 2026-May 2026-Jun 2026-Jul 2026-Aug 2026-Sep
-#>  [9] 2026-Oct 2026-Nov 2026-Dec 2027-Jan
+#>  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep
+#>  [9] 2026 Oct 2026 Nov 2026 Dec 2027 Jan
 yearweek(demo_date) + 0:10
 #> <mixtime[11]>
-#>  [1] 2026-W8  2026-W9  2026-W10 2026-W11 2026-W12 2026-W13 2026-W14 2026-W15
-#>  [9] 2026-W16 2026-W17 2026-W18
-yearmonthday(demo_date) + 0:6
+#>  [1] 2026 W08 2026 W09 2026 W10 2026 W11 2026 W12 2026 W13 2026 W14 2026 W15
+#>  [9] 2026 W16 2026 W17 2026 W18
+date(demo_date) + 0:6
 #> <mixtime[7]>
-#> [1] 2026-Feb-22 2026-Feb-23 2026-Feb-24 2026-Feb-25 2026-Feb-26 2026-Feb-27
-#> [7] 2026-Feb-28
+#> [1] 2026-02-22 2026-02-23 2026-02-24 2026-02-25 2026-02-26 2026-02-27 2026-02-28
 ```
 
 The mixtime package allows time of different granulities to be combined
@@ -152,7 +166,7 @@ c(
   yearmonth(demo_date), yearweek(demo_date)
 )
 #> <mixtime[4]>
-#> [1] 2026     2026-Q1  2026-Feb 2026-W8
+#> [1] 2026     2026 Q1  2026 Feb 2026 W08
 ```
 
 ### Cyclical Time
@@ -177,7 +191,7 @@ month_of_year(demo_date)
 #> [1] Feb
 week_of_year(demo_date)
 #> <mixtime[1]>
-#> [1] W8
+#> [1] 08
 day_of_week(demo_date)
 #> <mixtime[1]>
 #> [1] Sun
@@ -185,7 +199,7 @@ day_of_week(demo_date)
 # Continuous cyclical time shows progress through chronons
 day_of_week(demo_time, discrete = FALSE)
 #> <mixtime[1]>
-#> [1] Sun-77.1%
+#> [1] Sun 77.1%
 ```
 
 ### Timezones
@@ -197,26 +211,26 @@ argument.
 demo_time
 #> [1] "2026-02-22 18:30:42 UTC"
 # Same day (Sunday) in LA
-yearmonthday(demo_time, tz = "America/Los_Angeles")
+date(demo_time, tz = "America/Los_Angeles")
 #> <mixtime[1]>
-#> [1] 2026-Feb-22-PST
-yearmonthday(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
+#> [1] 2026-02-22 PST
+date(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-22-10.5%-PST
+#> [1] 2026-02-22 PST 77.1%
 day_of_week(demo_time, tz = "America/Los_Angeles")
 #> <mixtime[1]>
-#> [1] Sun
+#> [1] Sun PST
 
 # Next day (Monday) in Melbourne (23% through the 23rd)
-yearmonthday(demo_time, tz = "Australia/Melbourne")
+date(demo_time, tz = "Australia/Melbourne")
 #> <mixtime[1]>
-#> [1] 2026-Feb-23-AEDT
-yearmonthday(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
+#> [1] 2026-02-23 AEDT
+date(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-23-68.8%-AEDT
+#> [1] 2026-02-22 AEDT 77.1%
 day_of_week(demo_time, tz = "Australia/Melbourne")
 #> <mixtime[1]>
-#> [1] Mon
+#> [1] Mon AEDT
 ```
 
 ### Temporal Manipulation
@@ -227,11 +241,11 @@ a specified time unit.
 ``` r
 # Round dates to different granularities
 floor_time(demo_date, cal_gregorian$month(1L))
-#> [1] "2026-02-01"
+#> Date of length 0
 round_time(demo_date, cal_isoweek$week(1L))
-#> [1] "2026-02-23"
+#> Date of length 0
 ceiling_time(demo_date, cal_gregorian$month(1L))
-#> [1] "2026-03-01"
+#> Date of length 0
 ```
 
 ### Time Sequences
@@ -243,12 +257,12 @@ sequences of time points iterating by a given time unit.
 # Integer increments (advances by chronon's natural unit)
 seq(yearmonth(demo_date), by = 1L, length.out = 10)
 #> <mixtime[10]>
-#>  [1] 2026-Feb 2026-Mar 2026-Apr 2026-May 2026-Jun 2026-Jul 2026-Aug 2026-Sep
-#>  [9] 2026-Oct 2026-Nov
+#>  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep
+#>  [9] 2026 Oct 2026 Nov
 
 # Calendar time units allow sequencing by other units
-seq(yearmonthday(demo_date), by = cal_gregorian$month(1L), length.out = 8)
+seq(date(demo_date), by = cal_gregorian$month(1L), length.out = 8)
 #> <mixtime[8]>
-#> [1] 2026-Feb-22 2026-Mar-22 2026-Apr-22 2026-May-22 2026-Jun-22 2026-Jul-22
-#> [7] 2026-Aug-22 2026-Sep-22
+#> [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22
+#> [8] 2026-09-22
 ```

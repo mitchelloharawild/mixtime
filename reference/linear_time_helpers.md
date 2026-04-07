@@ -13,9 +13,11 @@ yearquarter(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 yearmonth(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
-yearmonthday(data, discrete = TRUE, calendar = time_calendar(data), ...)
-
 yearweek(data, discrete = TRUE, calendar = time_calendar(data), ...)
+
+date(data, discrete = TRUE, calendar = time_calendar(data), ...)
+
+datetime(data, discrete = TRUE, calendar = time_calendar(data), ...)
 ```
 
 ## Arguments
@@ -112,40 +114,40 @@ year(Sys.Date())
 #> [1] 2026
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-14.8%
+#> [1] 2026 26.3%
 
 # ISO week-based year
 year(yearweek(Sys.Date()))
 #> <mixtime[1]>
-#> [1] 2034
+#> [1] 2026
 
 # Year-quarter
 yearquarter(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-Q1
+#> [1] 2026 Q2
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Q1-59.2%
+#> [1] 2026 Q2 5.2%
 
 # Year-month
 yearmonth(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-Feb
+#> [1] 2026 Apr
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-Feb-82.1%
+#> [1] 2026 Apr 20.0%
 
 # Year-week (ISO 8601)
 yearweek(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-W9
+#> [1] 2026 W15
 yearweek(0:52)
 #> <mixtime[53]>
-#>  [1] 1970-W1  1970-W2  1970-W3  1970-W4  1970-W5  1970-W6  1970-W7  1970-W8 
-#>  [9] 1970-W9  1970-W10 1970-W11 1970-W12 1970-W13 1970-W14 1970-W15 1970-W16
-#> [17] 1970-W17 1970-W18 1970-W19 1970-W20 1970-W21 1970-W22 1970-W23 1970-W24
-#> [25] 1970-W25 1970-W26 1970-W27 1970-W28 1970-W29 1970-W30 1970-W31 1970-W32
-#> [33] 1970-W33 1970-W34 1970-W35 1970-W36 1970-W37 1970-W38 1970-W39 1970-W40
-#> [41] 1970-W41 1970-W42 1970-W43 1970-W44 1970-W45 1970-W46 1970-W47 1970-W48
-#> [49] 1970-W49 1970-W50 1970-W51 1970-W52 1970-W53
+#>  [1] 1970 W01 1970 W02 1970 W03 1970 W04 1970 W05 1970 W06 1970 W07 1970 W08
+#>  [9] 1970 W09 1970 W10 1970 W11 1970 W12 1970 W13 1970 W14 1970 W15 1970 W16
+#> [17] 1970 W17 1970 W18 1970 W19 1970 W20 1970 W21 1970 W22 1970 W23 1970 W24
+#> [25] 1970 W25 1970 W26 1970 W27 1970 W28 1970 W29 1970 W30 1970 W31 1970 W32
+#> [33] 1970 W33 1970 W34 1970 W35 1970 W36 1970 W37 1970 W38 1970 W39 1970 W40
+#> [41] 1970 W41 1970 W42 1970 W43 1970 W44 1970 W45 1970 W46 1970 W47 1970 W48
+#> [49] 1970 W49 1970 W50 1970 W51 1970 W52 1970 W53
 ```

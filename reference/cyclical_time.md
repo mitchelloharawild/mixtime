@@ -13,9 +13,8 @@ or
 ``` r
 cyclical_time(
   data,
-  chronon,
+  chronon = time_chronon(data),
   cycle,
-  tz = tz_name(data),
   discrete = TRUE,
   calendar = time_calendar(data)
 )
@@ -37,23 +36,17 @@ cyclical_time(
 
 - chronon:
 
-  A time unit expression representing the chronon (smallest indivisible
-  time unit), evaluated in the context of `calendar`. Use unquoted
-  expressions like `day(1L)` or `month(1L)`. Chronons from a specific
-  calendar can also be used (e.g. `cal_isoweek$day(1L)`).
+  A time unit representing the chronon (smallest indivisible time unit),
+  evaluated in the context of `calendar`. Use unquoted expressions like
+  `day(1L)` or `month(1L)`. Chronons from a specific calendar can also
+  be used (e.g. `cal_isoweek$day(1L)`).
 
 - cycle:
 
-  A time unit expression representing the cycle (larger time unit that
-  defines the period), evaluated in the context of `calendar`. Use
-  unquoted expressions like `week(1L)` or `year(1L)`.
-
-- tz:
-
-  Time zone for the time representation. Defaults to the time zone of
-  the input `data` (`tz_name(data)`). Time zones need to be valid
-  identifiers for the IANA time zone database
-  ([`tzdb::tzdb_names()`](https://tzdb.r-lib.org/reference/tzdb_names.html))
+  A time unit representing the cycle (larger time unit that defines the
+  period), evaluated in the context of `calendar`. Use unquoted
+  expressions like `week(1L)` or `year(1L)`. The time units should be
+  ordered from coarsest (e.g. year) to finest (e.g second).
 
 - discrete:
 
@@ -112,16 +105,16 @@ cyclical_time(
   cycle = year(1L)
 )
 #> <mixtime[1]>
-#> [1] Feb
+#> [1] Apr
 
 # Discrete vs continuous time
 # yearweek(x) is linear_time(x, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
 yearweek(Sys.time(), discrete = TRUE)
 #> <mixtime[1]>
-#> [1] 2026-W9
+#> [1] 2026 W15
 yearweek(Sys.time(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-W9-15.6%
+#> [1] 2026 W15 20.4%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -131,5 +124,14 @@ cyclical_time(
   calendar = cal_gregorian
 )
 #> <mixtime[1]>
-#> [1] 24
+#> [1] D07
+
+# Hours, minutes, and seconds
+cyclical_time(
+  Sys.time(),
+  chronon = second(1L),
+  cycle = day(1L)
+)
+#> <mixtime[1]>
+#> [1] 10:13:36
 ```

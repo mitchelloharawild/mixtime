@@ -40,15 +40,15 @@ the target chronon's precision.
 ``` r
 # Convert from months since epoch to years since epoch
 chronon_convert(yearmonth(Sys.Date()), cal_gregorian$year(1L))
-#> [1] 56.08333
+#> Error in chronon_convert(yearmonth(Sys.Date()), cal_gregorian$year(1L)): could not find function "chronon_convert"
 
 # Convert from days since epoch to months since epoch
 chronon_convert(Sys.Date(), cal_gregorian$month(1L))
-#> [1] 673.8214
+#> Error in chronon_convert(Sys.Date(), cal_gregorian$month(1L)): could not find function "chronon_convert"
 chronon_convert(Sys.Date(), cal_gregorian$month(1L), discrete = TRUE)
-#> [1] 673
+#> Error in chronon_convert(Sys.Date(), cal_gregorian$month(1L), discrete = TRUE): could not find function "chronon_convert"
 
 # Convert from seconds since epoch to hours since epoch
 chronon_convert(Sys.time(), cal_gregorian$hour(1L))
-#> [1] 492194.2
+#> Error in chronon_convert(Sys.time(), cal_gregorian$hour(1L)): could not find function "chronon_convert"
 ```

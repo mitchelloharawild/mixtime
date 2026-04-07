@@ -35,21 +35,17 @@ A time unit object representing the common chronon.
 ``` r
 # The common chronon between days and weeks is a day
 with(cal_isoweek, chronon_common(day(1L), week(1L)))
-#> <mixtime::tu_day> int 1
-#>  @ tz: chr "UTC"
+#> Error in chronon_common(day(1L), week(1L)): could not find function "chronon_common"
 
 # The common chronon between days and months is a day
 chronon_common(cal_isoweek$week(1L), cal_gregorian$month(1L))
-#> <mixtime::tu_day> int 1
-#>  @ tz: chr "UTC"
+#> Error in chronon_common(cal_isoweek$week(1L), cal_gregorian$month(1L)): could not find function "chronon_common"
 
 # The common chronon between hours, months, and years is an hour
 with(cal_gregorian, chronon_common(hour(1L), month(1L), year(1L)))
-#> <mixtime::tu_hour> int 1
-#>  @ tz: chr "UTC"
+#> Error in chronon_common(hour(1L), month(1L), year(1L)): could not find function "chronon_common"
 
 # The common chronon between months, quarters, and years is a month
 with(cal_gregorian, chronon_common(month(1L), quarter(1L), year(1L)))
-#> <mixtime::tu_month> int 1
-#>  @ tz: chr "UTC"
+#> Error in chronon_common(month(1L), quarter(1L), year(1L)): could not find function "chronon_common"
 ```

@@ -16,6 +16,11 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mitchelloharawild/mixtime/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -62,7 +67,7 @@
 
       <dl><dt>
 
-          <code><a href="linear_time_helpers.html">year()</a></code> <code><a href="linear_time_helpers.html">yearquarter()</a></code> <code><a href="linear_time_helpers.html">yearmonth()</a></code> <code><a href="linear_time_helpers.html">yearmonthday()</a></code> <code><a href="linear_time_helpers.html">yearweek()</a></code>
+          <code><a href="linear_time_helpers.html">year()</a></code> <code><a href="linear_time_helpers.html">yearquarter()</a></code> <code><a href="linear_time_helpers.html">yearmonth()</a></code> <code><a href="linear_time_helpers.html">yearweek()</a></code> <code><a href="linear_time_helpers.html">date()</a></code> <code><a href="linear_time_helpers.html">datetime()</a></code>
 
         </dt>
         <dd>Linear time helper functions</dd>
@@ -99,7 +104,7 @@
 
       <dl><dt>
 
-          <code><a href="cyclical_time_helpers.html">month_of_year()</a></code> <code><a href="cyclical_time_helpers.html">day_of_year()</a></code> <code><a href="cyclical_time_helpers.html">day_of_month()</a></code> <code><a href="cyclical_time_helpers.html">day_of_week()</a></code> <code><a href="cyclical_time_helpers.html">week_of_year()</a></code>
+          <code><a href="cyclical_time_helpers.html">month_of_year()</a></code> <code><a href="cyclical_time_helpers.html">day_of_year()</a></code> <code><a href="cyclical_time_helpers.html">day_of_month()</a></code> <code><a href="cyclical_time_helpers.html">time_of_day()</a></code> <code><a href="cyclical_time_helpers.html">day_of_week()</a></code> <code><a href="cyclical_time_helpers.html">week_of_year()</a></code>
 
         </dt>
         <dd>Cyclical time helpers</dd>
@@ -115,7 +120,7 @@
 
       <dl><dt>
 
-          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mt_linear&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mt_cyclical&gt;</i>)</a></code>
+          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mt_time&gt;</i>)</a></code>
 
         </dt>
         <dd>Generate sequences of mixtime values</dd>
@@ -165,6 +170,22 @@
         <dd>ISO 8601 time unit classes</dd>
       </dl></div><div class="section level2">
 
+      <h3 id="symmetry-calendar-system">Symmetry454 Calendar System<a class="anchor" aria-label="anchor" href="#symmetry-calendar-system"></a></h3>
+      <div class="section-desc"><p>The Symmetry454 calendar system with years, months, weeks, and days.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="calendar_sym454.html">cal_sym454</a></code>
+
+        </dt>
+        <dd>Symmetry454 time unit classes</dd>
+      </dl></div><div class="section level2">
+
       <h3 id="custom-calendars">Custom Calendars<a class="anchor" aria-label="anchor" href="#custom-calendars"></a></h3>
       <div class="section-desc"><p>Functions for creating custom calendar systems</p></div>
 
@@ -212,10 +233,26 @@
 
       <dl><dt>
 
-          <code><a href="calendar_time_solar.html">cal_time_solar_sunset</a></code> <code><a href="calendar_time_solar.html">cal_time_solar_sunrise</a></code> <code><a href="calendar_time_solar.html">cal_time_solar_noon</a></code>
+          <code><a href="calendar_time_solar.html">cal_time_solar_sunset</a></code> <code><a href="calendar_time_solar.html">cal_time_solar_sunrise</a></code> <code><a href="calendar_time_solar.html">cal_time_solar_noon</a></code> <code><a href="calendar_time_solar.html">cal_time_solar_midnight</a></code> <code><a href="calendar_time_solar.html">cal_time_solar_dawn</a></code> <code><a href="calendar_time_solar.html">cal_time_solar_dusk</a></code>
 
         </dt>
         <dd>Solar time unit classes</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="lunar-time-system">Lunar Time System<a class="anchor" aria-label="anchor" href="#lunar-time-system"></a></h3>
+      <div class="section-desc"><p>The lunar time system where each month begins at the new moon, with day boundaries defined by lunar events.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="calendar_time_lunar.html">cal_time_lunar</a></code>
+
+        </dt>
+        <dd>Lunar time unit classes</dd>
       </dl></div><div class="section level2">
       <h2 id="timezones">Timezones<a class="anchor" aria-label="anchor" href="#timezones"></a></h2>
 
@@ -265,10 +302,24 @@
 
       <dl><dt>
 
+          <code><a href="mixtime.html">mixtime()</a></code>
+
+        </dt>
+        <dd>Create a mixtime vector</dd>
+
+        <dt>
+
           <code><a href="new_mixtime.html">new_mixtime()</a></code>
 
         </dt>
-        <dd>Create a new mixtime</dd>
+        <dd>Constructor for mixtime vectors</dd>
+
+        <dt>
+
+          <code><a href="new_time.html">new_time()</a></code>
+
+        </dt>
+        <dd>Constructor for mixtime time vectors</dd>
 
         <dt>
 
@@ -284,9 +335,67 @@
         </dt>
         <dd>Check if the object is a mixtime</dd>
       </dl></div><div class="section level2">
+
+      <h3 id="mixtime-accessors">Mixtime Accessors<a class="anchor" aria-label="anchor" href="#mixtime-accessors"></a></h3>
+      <div class="section-desc"><p>Functions for accessing the components of mixtime objects.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="time_calendar.html">time_calendar()</a></code>
+
+        </dt>
+        <dd>Obtain the calendar of a time object</dd>
+
+        <dt>
+
+          <code><a href="time_chronon.html">time_chronon()</a></code>
+
+        </dt>
+        <dd>Obtain the chronon of a time object</dd>
+
+        <dt>
+
+          <code><a href="time_cycle.html">time_cycle()</a></code>
+
+        </dt>
+        <dd>Obtain the cycle of a time object</dd>
+      </dl></div><div class="section level2">
       <h2 id="extensibility-methods">Extensibility methods<a class="anchor" aria-label="anchor" href="#extensibility-methods"></a></h2>
 
       <div class="section-desc"><p>These low-level functions define the relationships and labels between time units. Adding S7 methods for them allow the creation of custom time units and calendars.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+      <h3 id="time-units-and-calendars">Time units and calendars<a class="anchor" aria-label="anchor" href="#time-units-and-calendars"></a></h3>
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="new_calendar.html">new_calendar()</a></code>
+
+        </dt>
+        <dd>Create a new calendar</dd>
+
+        <dt>
+
+          <code><a href="mt_unit.html">mt_unit()</a></code> <code><a href="mt_unit.html">mt_loc_unit()</a></code> <code><a href="mt_unit.html">mt_tz_unit()</a></code>
+
+        </dt>
+        <dd>Base S7 class for creating new time units</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="calendar-arithmetic">Calendar arithmetic<a class="anchor" aria-label="anchor" href="#calendar-arithmetic"></a></h3>
+
 
       <dl></dl></div><div class="section level2">
 
@@ -302,13 +411,6 @@
 
         <dt>
 
-          <code><a href="chronon_convert.html">chronon_convert()</a></code> <code><a href="chronon_convert.html">chronon_convert.S7_methods()</a></code>
-
-        </dt>
-        <dd>Convert between chronons</dd>
-
-        <dt>
-
           <code><a href="chronon_divmod.html">chronon_divmod()</a></code> <code><a href="chronon_divmod.html">chronon_divmod.S7_methods()</a></code>
 
         </dt>
@@ -316,45 +418,40 @@
 
         <dt>
 
-          <code><a href="chronon_common.html">chronon_common()</a></code>
+          <code><a href="chronon_epoch.html">chronon_epoch()</a></code>
 
         </dt>
-        <dd>Find a common chronon from a set of chronons</dd>
+        <dd>Epoch offset for chronons</dd>
 
         <dt>
 
-          <code><a href="chronon_granules.html">chronon_granules()</a></code>
+          <code><a href="circsum.html">circsum()</a></code>
 
         </dt>
-        <dd>Default linear time granules for chronons</dd>
+        <dd>Compute circular rolling sums</dd>
+      </dl></div><div class="section level2">
 
-        <dt>
+      <h3 id="time-labels-and-formatting">Time labels and formatting<a class="anchor" aria-label="anchor" href="#time-labels-and-formatting"></a></h3>
 
-          <code><a href="mt_unit.html">mt_unit()</a></code> <code><a href="mt_unit.html">mt_tz_unit()</a></code> <code><a href="mt_unit.html">mt_loc_unit()</a></code>
 
-        </dt>
-        <dd>Base S7 class for creating new time units</dd>
+      <dl></dl></div><div class="section level2">
 
-        <dt>
 
-          <code><a href="time_chronon.html">time_chronon()</a></code>
 
-        </dt>
-        <dd>Obtain the chronon of a time object</dd>
 
-        <dt>
-
-          <code><a href="time_calendar.html">time_calendar()</a></code>
-
-        </dt>
-        <dd>Obtain the calendar of a time object</dd>
-
-        <dt>
+      <dl><dt>
 
           <code><a href="time_unit_labels.html">time_unit_full()</a></code> <code><a href="time_unit_labels.html">time_unit_abbr()</a></code>
 
         </dt>
         <dd>Time units as a string</dd>
+
+        <dt>
+
+          <code><a href="linear_labels.html">linear_labels()</a></code> <code><a href="linear_labels.html">linear_labels.S7_methods()</a></code>
+
+        </dt>
+        <dd>Friendly labels for linear relationships</dd>
 
         <dt>
 
@@ -365,12 +462,28 @@
 
         <dt>
 
-          <code><a href="mixtime_valid.html">mixtime_valid()</a></code>
+          <code><a href="chronon_format.html">chronon_format_linear()</a></code> <code><a href="chronon_format.html">chronon_format_cyclical()</a></code>
 
         </dt>
-        <dd>Check if times can be used within mixtime</dd>
+        <dd>Default formatting strings for chronons</dd>
 
         <dt>
+
+          <code><a href="chronon_format_attr.html">chronon_format_attr()</a></code>
+
+        </dt>
+        <dd>Default formatting strings for chronon attributes</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="convenience-function-factories">Convenience function factories<a class="anchor" aria-label="anchor" href="#convenience-function-factories"></a></h3>
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="new_cyclical_time_fn.html">new_cyclical_time_fn()</a></code>
 
@@ -383,13 +496,6 @@
 
         </dt>
         <dd>Linear time function factory</dd>
-
-        <dt>
-
-          <code><a href="circsum.html">circsum()</a></code>
-
-        </dt>
-        <dd>Compute circular rolling sums</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

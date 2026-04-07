@@ -20,6 +20,11 @@ month of year)."><meta property="og:image" content="https://pkg.mitchelloharawil
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mitchelloharawild/mixtime/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -46,7 +51,7 @@ month of year).</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'mixtime'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'mt_linear'</span></span>
+<span><span class="co"># S3 method for class 'mt_time'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
 <span>  <span class="va">from</span>,</span>
 <span>  <span class="va">to</span>,</span>
@@ -55,10 +60,7 @@ month of year).</p>
 <span>  along.with <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  on_invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nearest"</span>, <span class="st">"overflow"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for class 'mt_cyclical'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span>, <span class="va">by</span>, length.out <span class="op">=</span> <span class="cn">NULL</span>, along.with <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -125,59 +127,57 @@ day_of_week, etc.), sequences wrap around cyclically.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Linear time sequences with integer by</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="st">"2020-12-01"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[12]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2020-Jan 2020-Feb 2020-Mar 2020-Apr 2020-May 2020-Jun 2020-Jul 2020-Aug</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 2020-Sep 2020-Oct 2020-Nov 2020-Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2020 Jan 2020 Feb 2020 Mar 2020 Apr 2020 May 2020 Jun 2020 Jul 2020 Aug</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 2020 Sep 2020 Oct 2020 Nov 2020 Dec</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearquarter</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">5</span>, by <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[5]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Q1 2020-Q4 2021-Q3 2022-Q2 2023-Q1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020 Q1 2020 Q4 2021 Q3 2022 Q2 2023 Q1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Linear time sequences with string intervals</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-12-31"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"1 month"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-12-31"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"1 month"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[12]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2020-Jan-1 2020-Feb-1 2020-Mar-1 2020-Apr-1 2020-May-1 2020-Jun-1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 2020-Jul-1 2020-Aug-1 2020-Sep-1 2020-Oct-1 2020-Nov-1 2020-Dec-1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2020-01-01 2020-02-01 2020-03-01 2020-04-01 2020-05-01 2020-06-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 2020-07-01 2020-08-01 2020-09-01 2020-10-01 2020-11-01 2020-12-01</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="st">"2025-01-01"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"1 year"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[6]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Jan 2021-Jan 2022-Jan 2023-Jan 2024-Jan 2025-Jan</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">10</span>, by <span class="op">=</span> <span class="st">"2 weeks"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020 Jan 2021 Jan 2022 Jan 2023 Jan 2024 Jan 2025 Jan</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">10</span>, by <span class="op">=</span> <span class="st">"2 weeks"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[10]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2020-Jan-1  2020-Jan-15 2020-Jan-29 2020-Feb-12 2020-Feb-26 2020-Mar-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 2020-Mar-25 2020-Apr-8  2020-Apr-22 2020-May-6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2020-01-01 2020-01-15 2020-01-29 2020-02-12 2020-02-26 2020-03-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] 2020-03-25 2020-04-08 2020-04-22 2020-05-06</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Linear time sequences with time units</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="st">"2020-12-01"</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[6]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Jan 2020-Mar 2020-May 2020-Jul 2020-Sep 2020-Nov</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">5</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020 Jan 2020 Mar 2020 May 2020 Jul 2020 Sep 2020 Nov</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">5</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[5]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Jan-1 2021-Jan-1 2022-Jan-1 2023-Jan-1 2024-Jan-1</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">7L</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-01 2021-01-01 2022-01-01 2023-01-01 2024-01-01</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">7L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[5]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Jan-1  2020-Jan-8  2020-Jan-15 2020-Jan-22 2020-Jan-29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-01 2020-01-08 2020-01-15 2020-01-22 2020-01-29</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Handling invalid dates with on_invalid</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span><span class="op">)</span>  <span class="co"># warns, uses nearest</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span><span class="op">)</span>  <span class="co"># warns, uses nearest</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The cycle offset (31 days) has produced time points that overflow the month</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> cycle.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Using the nearest valid time points in the cycle, `on_invalid = "nearest"`</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>   (the default).</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify `on_invalid` explicitly to suppress this warning.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Jan-31 2020-Feb-29 2020-Mar-31</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span>, on_invalid <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-31 2020-02-29 2020-03-31</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span>, on_invalid <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Jan-31 2020-Feb-29 2020-Mar-31</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonthday</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span>, on_invalid <span class="op">=</span> <span class="st">"overflow"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-31 2020-02-29 2020-03-31</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span>, on_invalid <span class="op">=</span> <span class="st">"overflow"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-Jan-31 2020-Mar-2  2020-Mar-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-31 2020-03-02 2020-03-31</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Cyclical time sequences</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>, <span class="fu"><a href="cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fl">11L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[12]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Dec Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fl">5L</span><span class="op">)</span>, <span class="fu"><a href="cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fl">3L</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[6]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] May Jul Sep Nov Jan Mar</span>
+<span class="r-in"><span><span class="co"># seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>, <span class="fu"><a href="cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="fl">6L</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[7]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Wed Thu Fri Sat Sun Mon Tue</span>

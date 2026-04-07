@@ -17,7 +17,7 @@ cal_time_civil_midnight
 ## Format
 
 An object of class `cal_time_civil_midnight` (inherits from
-`mt_calendar`) of length 5.
+`mt_calendar`) of length 6.
 
 ## Value
 

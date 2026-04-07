@@ -9,9 +9,9 @@ S7 using: `S7::new_class("tu_***", parent = mt_tz_unit)`
 ``` r
 mt_unit(.data = 1L)
 
-mt_tz_unit(.data = 1L, tz = "UTC")
-
 mt_loc_unit(.data = 1L, lat = 0, lon = 0, alt = 0)
+
+mt_tz_unit(.data = 1L, tz = "")
 ```
 
 ## Arguments
@@ -19,11 +19,6 @@ mt_loc_unit(.data = 1L, lat = 0, lon = 0, alt = 0)
 - .data:
 
   The number of time units
-
-- tz:
-
-  The timezone name for the unit (valid units can be found with
-  `[tzdb::tzdb_names()]`)
 
 - lat:
 
@@ -38,6 +33,11 @@ mt_loc_unit(.data = 1L, lat = 0, lon = 0, alt = 0)
 - alt:
 
   Numeric. Altitude in meters above sea level. Default: 0 (sea level).
+
+- tz:
+
+  The timezone name for the unit (valid units can be found with
+  `[tzdb::tzdb_names()]`)
 
 ## Value
 
@@ -63,16 +63,16 @@ accessible via `$` notation (e.g., `calendar$day(1L)`).
 Time units enable calendar arithmetic through two key generic methods
 that should be implemented for custom time units:
 
-- `chronon_cardinality(from, to, at)` - Returns the number of `to` units
-  that fit within one `from` unit. This can be a fixed value (e.g., 7
-  days per week) or variable based on `at` (e.g., 28-31 days per month).
+- `chronon_cardinality(x, y, at)` - Returns the number of `x` units that
+  fit within one `y` unit. This can be a fixed value (e.g., 7 days per
+  week) or variable based on `at` (e.g., 28-31 days per month).
 
 - `chronon_divmod(x, from, to)` - Converts time unit `x` from units of
-  `from` to units of `to`, returning a list with `chronon` (the
-  quotient) and `remainder`. This enables conversions between units that
-  have variable cardinality (e.g., the date 2020-03-23 to the month
-  2020-03). All conversions should be based on chronons since epoch
-  (1970-01-01), in the UTC time zone.
+  `from` to units of `to`, returning a list with `div` (the quotient)
+  and `mod`. This enables conversions between units that have variable
+  cardinality (e.g., the date 2020-03-23 to the month 2020-03). All
+  conversions should be based on chronons since epoch (1970-01-01), in
+  the UTC time zone.
 
 These methods work together to enable mixtime to perform calendar-aware
 arithmetic, understanding that months have variable lengths and handling

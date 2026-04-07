@@ -20,6 +20,11 @@ data's calendar."><meta property="og:image" content="https://pkg.mitchelloharawi
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mitchelloharawild/mixtime/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -49,9 +54,11 @@ data's calendar.</p>
 <span></span>
 <span><span class="fu">yearmonth</span><span class="op">(</span><span class="va">data</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span>, calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">yearmonthday</span><span class="op">(</span><span class="va">data</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span>, calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">yearweek</span><span class="op">(</span><span class="va">data</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span>, calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">yearweek</span><span class="op">(</span><span class="va">data</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span>, calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">date</span><span class="op">(</span><span class="va">data</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span>, calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">datetime</span><span class="op">(</span><span class="va">data</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span>, calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -127,42 +134,42 @@ to create custom representations with any combination of chronons and granules.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026</span>
 <span class="r-in"><span><span class="fu">year</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-14.8%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 26.3%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ISO week-based year</span></span></span>
 <span class="r-in"><span><span class="fu">year</span><span class="op">(</span><span class="fu">yearweek</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Year-quarter</span></span></span>
 <span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Q1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Q2</span>
 <span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Q1-59.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Q2 5.2%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Year-month</span></span></span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Apr</span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-Feb-82.1%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Apr 20.0%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Year-week (ISO 8601)</span></span></span>
 <span class="r-in"><span><span class="fu">yearweek</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-W9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 W15</span>
 <span class="r-in"><span><span class="fu">yearweek</span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">52</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[53]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1970-W1  1970-W2  1970-W3  1970-W4  1970-W5  1970-W6  1970-W7  1970-W8 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 1970-W9  1970-W10 1970-W11 1970-W12 1970-W13 1970-W14 1970-W15 1970-W16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 1970-W17 1970-W18 1970-W19 1970-W20 1970-W21 1970-W22 1970-W23 1970-W24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 1970-W25 1970-W26 1970-W27 1970-W28 1970-W29 1970-W30 1970-W31 1970-W32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] 1970-W33 1970-W34 1970-W35 1970-W36 1970-W37 1970-W38 1970-W39 1970-W40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] 1970-W41 1970-W42 1970-W43 1970-W44 1970-W45 1970-W46 1970-W47 1970-W48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] 1970-W49 1970-W50 1970-W51 1970-W52 1970-W53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1970 W01 1970 W02 1970 W03 1970 W04 1970 W05 1970 W06 1970 W07 1970 W08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 1970 W09 1970 W10 1970 W11 1970 W12 1970 W13 1970 W14 1970 W15 1970 W16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 1970 W17 1970 W18 1970 W19 1970 W20 1970 W21 1970 W22 1970 W23 1970 W24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 1970 W25 1970 W26 1970 W27 1970 W28 1970 W29 1970 W30 1970 W31 1970 W32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] 1970 W33 1970 W34 1970 W35 1970 W36 1970 W37 1970 W38 1970 W39 1970 W40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] 1970 W41 1970 W42 1970 W43 1970 W44 1970 W45 1970 W46 1970 W47 1970 W48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] 1970 W49 1970 W50 1970 W51 1970 W52 1970 W53</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

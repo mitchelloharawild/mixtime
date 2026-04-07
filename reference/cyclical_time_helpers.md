@@ -14,6 +14,8 @@ day_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 day_of_month(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
+time_of_day(data, discrete = TRUE, calendar = time_calendar(data), ...)
+
 day_of_week(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 week_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
@@ -80,9 +82,7 @@ For example, to create a representation for day of the month:
 ## See also
 
 [`cyclical_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time.md)
-for creating custom cyclical time vectors,
-[linear_time_helpers](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
-for linear time helper functions,
+for creating cyclical time vectors,
 [`new_cyclical_time_fn()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_cyclical_time_fn.md)
 for creating cyclical time helper functions
 
@@ -91,10 +91,10 @@ for creating cyclical time helper functions
 ``` r
 month_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] Feb
+#> [1] Apr
 day_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] 55
+#> [1] D97
 day_of_week(Sys.Date())
 #> <mixtime[1]>
 #> [1] Tue
