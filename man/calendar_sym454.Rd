@@ -19,6 +19,12 @@ Time unit constructors for the Symmetry454 calendar system. These units can be
 used with \code{\link[=linear_time]{linear_time()}} to create custom time representations.
 }
 \details{
+The Symmetry454 calendar (Sym454) is a perennial solar calendar proposed by
+Dr. Irv Bromberg. It preserves the traditional 12-month structure and 7-day
+week, with months arranged in a symmetrical 4-5-4 week pattern per quarter.
+Every month starts on Monday and has a whole number of weeks, meaning no
+month ever contains a partial week.
+
 The following time units are available in the Symmetry454 calendar (\verb{cal_sym454$}).
 \itemize{
 \item \code{year()}: Year unit
@@ -30,12 +36,6 @@ The following time units are available in the Symmetry454 calendar (\verb{cal_sy
 \item \code{second()}: Second unit
 \item \code{millisecond()}: Millisecond unit
 }
-
-The Symmetry454 calendar (Sym454) is a perennial solar calendar proposed by
-Dr. Irv Bromberg. It preserves the traditional 12-month structure and 7-day
-week, with months arranged in a symmetrical 4-5-4 week pattern per quarter.
-Every month starts on Monday and has a whole number of weeks, meaning no
-month ever contains a partial week.
 \subsection{Leap years}{
 
 Rather than intercalary days, Symmetry454 uses a \strong{leap week} appended to
@@ -57,7 +57,6 @@ linear_time(
 }
 \seealso{
 \code{\link[=linear_time]{linear_time()}} for creating linear time points, and
-\url{https://www.kalendis.free.nf/symmetry.htm} for full calendar
-specifications.
+\url{https://en.wikipedia.org/wiki/Symmetry454} for more calendar details.
 }
 \keyword{datasets}
