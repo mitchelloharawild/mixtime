@@ -61,6 +61,10 @@ reference:
   desc: "The ISO 8601 week date calendar system with ISO years and weeks."
   contents:
   - calendar_isoweek
+- subtitle: "Symmetry454 Calendar System"
+  desc: "The Symmetry454 calendar system with years, months, weeks, and days."
+  contents:
+  - calendar_sym454
 - subtitle: "Custom Calendars"
   desc: "Functions for creating custom calendar systems"
   contents:
