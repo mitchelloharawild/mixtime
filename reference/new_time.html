@@ -59,38 +59,53 @@ representations (e.g. day-of-week, month-of-year).</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A numeric vector of time points, integers for discrete time or doubles for continuous time.</p></dd>
+<dd><p>A numeric vector of time points, integers for discrete time or
+doubles for continuous time.</p></dd>
 
 
 <dt id="arg-chronon">chronon<a class="anchor" aria-label="anchor" href="#arg-chronon"></a></dt>
-<dd><p>A time unit object representing the smallest indivisible time unit (chronon) for the time vector (e.g. <code>cal_gregorian$day(1L)</code>).</p></dd>
+<dd><p>A time unit object representing the smallest indivisible time
+unit (chronon) for the time vector (e.g. <code>cal_gregorian$day(1L)</code>).</p></dd>
 
 
 <dt id="arg-cycle">cycle<a class="anchor" aria-label="anchor" href="#arg-cycle"></a></dt>
-<dd><p>An optional time unit object representing the cycle for cyclical time (e.g. <code>cal_gregorian$week(1L)</code> for day-of-week). If not provided, the time vector will be treated as linear time.</p></dd>
+<dd><p>An optional time unit object representing the cycle for cyclical
+time (e.g. <code>cal_gregorian$week(1L)</code> for day-of-week). If not provided, the
+time vector will be treated as linear time.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>mt_time</code> vector representing the time points in <code>x</code> according to the specified <code>chronon</code> and <code>cycle</code>.</p>
+    <p>A <code>mt_time</code> vector representing the time points in <code>x</code> according to
+the specified <code>chronon</code> and <code>cycle</code>.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a continuous mixtime time vector for today</span></span></span>
-<span class="r-in"><span><span class="fu">new_time</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">new_time</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mt_linear[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07 0.0%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a discrete mixtime time vector for the current date and time</span></span></span>
-<span class="r-in"><span><span class="fu">new_time</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">new_time</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mt_linear[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07 10:17:48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07 10:21:43</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a discrete mixtime time vector for the time of day (cyclical time)</span></span></span>
-<span class="r-in"><span><span class="fu">new_time</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, cycle <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">new_time</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>  chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>  cycle <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mt_cyclical[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10:17:48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10:21:43</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

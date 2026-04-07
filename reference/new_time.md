@@ -38,17 +38,27 @@ specified `chronon` and `cycle`.
 
 ``` r
 # Create a continuous mixtime time vector for today
-new_time(as.double(Sys.Date()), chronon = cal_gregorian$day(1L, tz = Sys.timezone()))
+new_time(
+  as.double(Sys.Date()),
+  chronon = cal_gregorian$day(1L, tz = Sys.timezone())
+)
 #> <mt_linear[1]>
 #> [1] 2026-04-07 0.0%
 
 # Create a discrete mixtime time vector for the current date and time
-new_time(as.integer(Sys.time()), chronon = cal_gregorian$second(1L, tz = Sys.timezone()))
+new_time(
+  as.integer(Sys.time()),
+  chronon = cal_gregorian$second(1L, tz = Sys.timezone())
+)
 #> <mt_linear[1]>
-#> [1] 2026-04-07 10:17:48
+#> [1] 2026-04-07 10:21:43
 
 # Create a discrete mixtime time vector for the time of day (cyclical time)
-new_time(as.integer(Sys.time()), chronon = cal_gregorian$second(1L, tz = Sys.timezone()), cycle = cal_gregorian$day(1L, tz = Sys.timezone()))
+new_time(
+  as.integer(Sys.time()), 
+  chronon = cal_gregorian$second(1L, tz = Sys.timezone()), 
+  cycle = cal_gregorian$day(1L, tz = Sys.timezone())
+)
 #> <mt_cyclical[1]>
-#> [1] 10:17:48
+#> [1] 10:21:43
 ```
