@@ -2,14 +2,17 @@
 % Please edit documentation in R/mixtime.R
 \name{new_mixtime}
 \alias{new_mixtime}
-\title{Create a new mixtime}
+\title{Constructor for mixtime vectors}
 \usage{
-new_mixtime(x = list())
+new_mixtime(x = new_time())
 }
 \arguments{
-\item{x}{The list of time values to become a mixtime.}
+\item{x}{A mixtime time vector (created with \code{\link[=new_time]{new_time()}}) to wrap in a mixtime class.}
+}
+\value{
+A \code{mixtime} object, which allows mixed-type time vectors to coexist in a single vector.
 }
 \description{
-A mixtime is a vector which describes a point in time. It uses a calendar
-definition to translate a vector of numbers into a point in time.
+Creates a \code{mixtime} vector, which can contain time points of different
+granularities (e.g. monthly and quarterly) in a single vector via \code{vecvec}.
 }

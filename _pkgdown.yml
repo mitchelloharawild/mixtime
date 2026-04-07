@@ -93,6 +93,7 @@ reference:
   desc: "Functions for creating and working with mixtime objects that can contain multiple time granularities."
   contents:
   - new_mixtime
+  - new_time
   - as_mixtime
   - is_mixtime
 
