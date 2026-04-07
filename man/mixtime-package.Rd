@@ -6,7 +6,7 @@
 \alias{mixtime-package}
 \title{mixtime: Mixed Temporal Vectors and Operations}
 \description{
-Flexible time classes for representing mixed temporal granularities and bespoke calendar structures. Supports both linear and circular time representations in discrete and continuous forms across a variety of calendar systems.
+Flexible time classes for time series analysis and forecasting with mixed temporal granularities. Supports linear and cyclical time representations in discrete and continuous forms, with timezone support, across multiple calendar systems including Gregorian and ISO week date calendars. Time points are stored numerically relative to a chronon; an atomic time unit defined by a calendar. Calendrical arithmetic enables conversion between time units (e.g. days to months) and calendar systems. Multi-unit arithmetic allows for temporal analysis with other granules of common calendars (e.g. fortnights are 2-week units). Time vectors of different granularities (e.g. monthly and quarterly) can be combined in a single vector, making mixtime ideal for data that changes observation frequency over time or requires temporal reconciliation across scales. The package is extensible, allowing users to define custom calendars that build upon civil and astronomical time systems.
 }
 \seealso{
 Useful links:
