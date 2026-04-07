@@ -38,7 +38,13 @@ S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
-  cal_gregorian$second(1L, tz = tz_name(x))
+  tz <- attr(x, "tzone")
+  if (!is.null(tz)) {
+    tz <- if (nzchar(tz)) tz else Sys.timezone()
+  } else {
+    tz <- "UTC"
+  }
+  cal_gregorian$second(1L, tz = tz)
 }
 
 S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {

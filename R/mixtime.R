@@ -117,7 +117,9 @@ new_time <- function(x, chronon = NULL, cycle = NULL) {
 mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data), discrete = TRUE) {
   # Add default tz if not given in chronon or cycle
   if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
-    chronon@tz <- tz_name(data)
+    # TODO - handle case where data has multiple timezones
+    # Requires splitting up data into groups with the same timezone
+    chronon@tz <- tz_name(data[1L])
   }
   if (!is.null(cycle) && S7::prop_exists(cycle, "tz") && !nzchar(cycle@tz)){
     cycle@tz <- chronon@tz

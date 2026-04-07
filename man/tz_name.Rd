@@ -12,7 +12,8 @@ tz_name(x, ...)
 \item{...}{Additional arguments passed to methods.}
 }
 \value{
-A character string representing the timezone (e.g., "America/New_York", "UTC").
+A character vector representing the timezone of each time point
+(e.g., "America/New_York", "UTC").
 }
 \description{
 Generic function to extract the timezone from objects that have timezone information.

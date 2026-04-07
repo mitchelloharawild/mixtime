@@ -5,29 +5,28 @@
 #' @param x An object with timezone information.
 #' @param ... Additional arguments passed to methods.
 #'
-#' @return A character string representing the timezone (e.g., "America/New_York", "UTC").
+#' @return A character vector representing the timezone of each time point
+#'   (e.g., "America/New_York", "UTC").
 #' @export
 #'
 #' @examples
 #' tz_name(Sys.time())
 #' tz_name(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 tz_name <- S7::new_generic("tz_name", "x")
-S7::method(tz_name, S7::class_POSIXt) <- function(x) {
-  tz <- attr(x, "tzone")
-  if (!is.null(tz)) {
-    if (nzchar(tz)) tz else Sys.timezone()
-  } else {
-    "UTC"
-  }
-}
-S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
-S7::method(tz_name, S7::new_S3_class("mt_time")) <- function(x) {
-  rep_len(tz_name(time_chronon(x)), length(x))
-}
 S7::method(tz_name, S7::new_S3_class("mixtime")) <- function(x) {
   as.character(vecvec::vecvec_apply(x, tz_name))
 }
-S7::method(tz_name, S7::class_any) <- function(x) "UTC"
+S7::method(tz_name, S7::new_S3_class("mt_time")) <- function(x) {
+  rep_len(tz_name(time_chronon(x)), length(x))
+}
+S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
+
+S7::method(tz_name, S7::class_POSIXt) <- function(x) {
+  rep_len(tz_name(time_chronon(x)), length(x))
+}
+S7::method(tz_name, S7::class_any) <- function(x) {
+  rep_len("UTC", length(x))
+}
 
 #' Get timezone offset
 #'
@@ -43,15 +42,15 @@ S7::method(tz_name, S7::class_any) <- function(x) "UTC"
 #' tz_offset(Sys.time())
 #' tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 tz_offset <- S7::new_generic("tz_offset", "x")
-S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(x), ...) get_tz_offset(x, tz)
-S7::method(tz_offset, S7::class_Date) <- function(x, tz = tz_name(x), ...) rep.int(0, length(x))
+S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(time_chronon(x)), ...) get_tz_offset(x, tz)
+S7::method(tz_offset, S7::class_Date) <- function(x, ...) rep.int(0, length(x))
 method(tz_offset, S7::new_S3_class("mixtime")) <- function(x, ...) {
   vecvec::unvecvec(
     vecvec::vecvec_apply(x, tz_offset, ...)
   )
 }
-method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(x), ...) {
-  if(tz[1] == "UTC") return(rep(0, length(x)))
+method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_chronon(x)), ...) {
+  if(tz == "UTC") return(rep(0, length(x)))
   tu_s <- cal_time_civil_midnight$second(1L)
   time_s <- chronon_convert(x, tu_s)
   offset_s <- get_tz_offset(time_s, tz)

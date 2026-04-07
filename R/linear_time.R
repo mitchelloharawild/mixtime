@@ -318,7 +318,7 @@ vec_arith.mt_time.mt_time <- function(op, x, y, ...) {
 #' @export
 vec_cast.Date.mt_linear <- function(x, to, ...) {
   vec_restore(
-    chronon_convert(x, cal_gregorian$day(1L, tz = tz_name(x))),
+    chronon_convert(x, cal_gregorian$day(1L, tz = tz_name(time_chronon(x)))),
     to
   )
 }
