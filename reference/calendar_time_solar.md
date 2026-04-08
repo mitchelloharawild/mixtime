@@ -22,7 +22,7 @@ cal_time_solar_dusk
 
 ## Format
 
-An object of class `mt_calendar` of length 1.
+A location-based calendar containing solar time units.
 
 An object of class `mt_calendar` of length 1.
 
@@ -33,10 +33,6 @@ An object of class `mt_calendar` of length 1.
 An object of class `mt_calendar` of length 1.
 
 An object of class `mt_calendar` of length 1.
-
-## Value
-
-A time unit object for the Gregorian calendar system.
 
 ## Details
 
@@ -55,5 +51,5 @@ The following time units are available in the solar calendar systems.
 t <- linear_time(Sys.Date(), cal_time_solar_sunset$day(1L, lat = -37.8136, lon = 144.9631))
 datetime(t, tz = "Australia/Melbourne")
 #> <mixtime[1]>
-#> [1] 2026-04-06 18:06:17 AEST
+#> [1] 2026-04-07 18:04:49 AEST
 ```

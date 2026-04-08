@@ -13,12 +13,7 @@ cal_sym454
 
 ## Format
 
-An object of class `cal_sym454` (inherits from `mt_calendar`) of length
-9.
-
-## Value
-
-A time unit object for the Symmetry454 calendar system.
+A civil-based calendar containing Symmetry454 time units.
 
 ## Details
 

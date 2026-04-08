@@ -13,12 +13,7 @@ cal_gregorian
 
 ## Format
 
-An object of class `cal_gregorian` (inherits from `mt_calendar`) of
-length 9.
-
-## Value
-
-A time unit object for the Gregorian calendar system.
+A civil-based calendar containing Gregorian time units.
 
 ## Details
 
@@ -61,5 +56,5 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-04-07 12h
+#> [1] 2026-04-08 00h
 ```

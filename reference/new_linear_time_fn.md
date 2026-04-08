@@ -62,17 +62,17 @@ yqm(Sys.Date())
 yd <- new_linear_time_fn(day(1L))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-04-07
+#> [1] 2026-04-08
 
 # Gregorian date time with hourly precision
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-04-07 12h
+#> [1] 2026-04-08 00h
 
 # ISO-week-date calendar
 ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)
 ywd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-04-07
+#> [1] 2026-04-08
 ```

@@ -21,8 +21,8 @@ tz_name(x, ...)
 
 ## Value
 
-A character string representing the timezone (e.g., "America/New_York",
-"UTC").
+A character vector representing the timezone of each time point (e.g.,
+"America/New_York", "UTC").
 
 ## Examples
 

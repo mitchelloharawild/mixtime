@@ -13,12 +13,7 @@ cal_isoweek
 
 ## Format
 
-An object of class `cal_isoweek` (inherits from `mt_calendar`) of length
-8.
-
-## Value
-
-A time unit object for the ISO 8601 calendar system.
+A civil-based calendar containing ISO 8601 time units.
 
 ## Details
 

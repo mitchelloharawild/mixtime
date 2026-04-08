@@ -102,19 +102,19 @@ conversion if they don't exist in the calendar of the input data (e.g., <code>ca
 <span class="r-in"><span><span class="va">yd</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">yd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gregorian date time with hourly precision</span></span></span>
 <span class="r-in"><span><span class="va">ymd_h</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">hour</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ymd_h</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07 12h</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08 00h</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ISO-week-date calendar</span></span></span>
 <span class="r-in"><span><span class="va">ywd</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, fallback_calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ywd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

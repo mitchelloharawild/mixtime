@@ -12,11 +12,7 @@ cal_time_lunar
 
 ## Format
 
-An object of class `mt_calendar` of length 2.
-
-## Value
-
-A time unit object for the Gregorian calendar system.
+A location-based calendar containing lunar time units.
 
 ## Details
 
