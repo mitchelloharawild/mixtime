@@ -155,30 +155,50 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
   new_mixtime(new_time(data, chronon, cycle))
 }
 
-#' Convert time class into a mixtime
+#' Convert a time class into a mixtime
 #'
-#' @param x A time value to convert to a mixtime
-#' @param ... Additional arguments for methods
+#' Coerces a time object (e.g. `Date`, `POSIXct`, `yearmonth`) to a `mixtime`
+#' vector using [vctrs::vec_cast()]. The chronon and cycle are inferred from
+#' `x` via [time_chronon()] and [time_cycle()].
+#'
+#' @param x A time value to convert to a `mixtime`. Any time class with a defined `time_chronon()` method can be converted (e.g. `Date`, `POSIXct`, `yearmonth`, etc.).
+#' @param ... Additional arguments passed to the underlying [vec_cast()] method.
+#'
+#' @return A `mixtime` object corresponding to `x`.
+#'
+#' @seealso [mixtime()] for constructing a `mixtime` directly from data,
+#'   [is_mixtime()] for testing if an object is a `mixtime`.
+#'
+#' @examples
+#' as_mixtime(Sys.Date())
+#' as_mixtime(Sys.time())
 #'
 #' @export
 as_mixtime <- function(x, ...) {
   vec_cast(x, new_mixtime())
 }
 
-#' Check if the object is a mixtime
+#' Check if an object is a mixtime
 #'
-#' @param x An object.
+#' Tests whether `x` inherits from the `mixtime` class.
 #'
-#' @return `TRUE` if the object inherits from the `mixtime` class.
+#' @param x An object to test.
+#'
+#' @return A scalar logical: `TRUE` if `x` is a `mixtime` vector, `FALSE`
+#'   otherwise.
+#'
+#' @seealso [as_mixtime()] to coerce objects to `mixtime`,
+#'   [mixtime()] to construct a `mixtime`.
 #'
 #' @examples
 #' is_mixtime(Sys.Date())
-#' is_mixtime(yearmonth(1))
+#' is_mixtime(mixtime(Sys.Date()))
 #'
 #' @export
 is_mixtime <- function(x) {
   inherits(x, "mixtime")
 }
+
 
 #' @export
 vec_ptype_full.mixtime <- function(x, ...) "mixtime"

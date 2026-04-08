@@ -33,31 +33,28 @@ position is returned (analagous to time using a continuous time model).}
 
 \item{...}{Additional arguments for \code{\link[=cyclical_time]{cyclical_time()}}, such as \code{tz} for timezones.}
 }
+\value{
+A \code{mixtime} time vector containing an \code{mt_cyclical} vector with chronon and cycle matching the function used.
+}
 \description{
 Helper functions for creating cyclical time representations. These functions
 create time objects that repeat within a larger time cycle, useful for identifying
 seasonal patterns or positions within a calendar period.
 }
-\section{Gregorian cyclical time representations}{
-
-\itemize{
-\item \code{month_of_year()}: Represents the month position within a year (1-12).
-The chronon is one month, cycling within a year.
-\item \code{day_of_year()}: Represents the day position within a year (1-365 or 1-366
-for leap years). The chronon is one day, cycling within a year.
-\item \code{day_of_month()}: Represents the day position within a month (1-28, 1-29,
-1-30, or 1-31 depending on the month). The chronon is one day, cycling
-within a month.
-}
-}
-
-\section{ISO 8601 cyclical time representations}{
+\section{Cyclical time representations}{
 
 \itemize{
 \item \code{day_of_week()}: Represents the day position within a week (1-7) using
 the ISO 8601 standard where weeks start on Monday.
+\item \code{day_of_month()}: Represents the day position within a month (1-28, 1-29,
+1-30, or 1-31 depending on the month). The chronon is one day, cycling
+within a month.
+\item \code{day_of_year()}: Represents the day position within a year (1-365 or 1-366
+for leap years). The chronon is one day, cycling within a year.
 \item \code{week_of_year()}: Represents the week position within a year (1-52 or 1-53)
 using the ISO 8601 week numbering system.
+\item \code{month_of_year()}: Represents the month position within a year (1-12).
+The chronon is one month, cycling within a year.
 }
 }
 

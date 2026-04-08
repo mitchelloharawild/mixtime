@@ -20,4 +20,5 @@ in its specified timezone.
 \examples{
 tz_abbreviation(Sys.time())
 tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
+
 }

@@ -36,7 +36,7 @@ calendar of the input data. Common options include \link{cal_gregorian} and
 \item{...}{Additional arguments for \code{\link[=linear_time]{linear_time()}}, such as \code{tz} for timezones.}
 }
 \value{
-A \code{mt_linear} time vector.
+A \code{mixtime} time vector containing an \code{mt_linear} vector with chronons matching the function used.
 }
 \description{
 Convenience functions for creating common linear time representations. These
@@ -70,7 +70,7 @@ You can also explicitly specify a calendar using the \code{calendar} argument:
 }\if{html}{\out{</div>}}
 }
 
-\section{Custom time representations}{
+\section{Custom linear time representations}{
 
 For more complex time structures, use \code{\link[=linear_time]{linear_time()}} or \code{\link[=new_linear_time_fn]{new_linear_time_fn()}}
 to create custom representations with any combination of chronons and granules.

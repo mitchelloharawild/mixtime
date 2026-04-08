@@ -2,15 +2,29 @@
 % Please edit documentation in R/mixtime.R
 \name{as_mixtime}
 \alias{as_mixtime}
-\title{Convert time class into a mixtime}
+\title{Convert a time class into a mixtime}
 \usage{
 as_mixtime(x, ...)
 }
 \arguments{
-\item{x}{A time value to convert to a mixtime}
+\item{x}{A time value to convert to a \code{mixtime}. Any time class with a defined \code{time_chronon()} method can be converted (e.g. \code{Date}, \code{POSIXct}, \code{yearmonth}, etc.).}
 
-\item{...}{Additional arguments for methods}
+\item{...}{Additional arguments passed to the underlying \code{\link[vctrs:vec_cast]{vctrs::vec_cast()}} method.}
+}
+\value{
+A \code{mixtime} object corresponding to \code{x}.
 }
 \description{
-Convert time class into a mixtime
+Coerces a time object (e.g. \code{Date}, \code{POSIXct}, \code{yearmonth}) to a \code{mixtime}
+vector using \code{\link[vctrs:vec_cast]{vctrs::vec_cast()}}. The chronon and cycle are inferred from
+\code{x} via \code{\link[=time_chronon]{time_chronon()}} and \code{\link[=time_cycle]{time_cycle()}}.
+}
+\examples{
+as_mixtime(Sys.Date())
+as_mixtime(Sys.time())
+
+}
+\seealso{
+\code{\link[=mixtime]{mixtime()}} for constructing a \code{mixtime} directly from data,
+\code{\link[=is_mixtime]{is_mixtime()}} for testing if an object is a \code{mixtime}.
 }

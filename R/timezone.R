@@ -7,11 +7,12 @@
 #'
 #' @return A character vector representing the timezone of each time point
 #'   (e.g., "America/New_York", "UTC").
-#' @export
-#'
+#' 
 #' @examples
 #' tz_name(Sys.time())
 #' tz_name(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
+#' 
+#' @export
 tz_name <- S7::new_generic("tz_name", "x")
 S7::method(tz_name, S7::new_S3_class("mixtime")) <- function(x) {
   as.character(vecvec::vecvec_apply(x, tz_name))
@@ -71,11 +72,12 @@ method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_
 #'   The timezone is extracted from this object.
 #'
 #' @return A character vector of timezone abbreviations.
-#' @export
 #'
 #' @examples
 #' tz_abbreviation(Sys.time())
 #' tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
+#'
+#' @export
 tz_abbreviation <- function(x) {
   # TODO: Handle timezone changes within chronon using [before]/[after]
   get_tz_abbreviation(
@@ -96,7 +98,6 @@ tz_abbreviation <- function(x) {
 #'
 #' @return A data frame containing information about timezone transitions
 #'   in the specified range.
-#' @export
 #'
 #' @examples
 #' # Get all DST transitions in 2024 for New York
@@ -104,6 +105,8 @@ tz_abbreviation <- function(x) {
 #'   as.POSIXct("2024-01-01", tz = "America/New_York"),
 #'   as.POSIXct("2024-12-31", tz = "America/New_York")
 #' )
+#' 
+#' @export
 tz_transitions <- function(start, end) {
   start <- as.double(as.POSIXct(start))
   end <- as.double(as.POSIXct(end))

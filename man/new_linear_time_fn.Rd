@@ -13,7 +13,7 @@ new_linear_time_fn(chronon, fallback_calendar = cal_gregorian)
 conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}
 }
 \value{
-A function used to create linear time points.
+A function used to create linear time points with a specific chronon.
 }
 \description{
 \code{new_linear_time_fn()} creates a linear time function for a specified

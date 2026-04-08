@@ -40,7 +40,7 @@ Defaults to \code{time_calendar(data)} for existing time objects. Common options
 include \link{cal_gregorian} and \link{cal_isoweek}.}
 }
 \value{
-A \code{mt_cyclical} time vector, which is a subclass of \code{mt_time}.
+A \code{mixtime} time vector containing an \code{mt_cyclical} vector.
 }
 \description{
 \code{cyclical_time()} creates a vector of cyclical time points representing

@@ -27,4 +27,5 @@ tz_transitions(
   as.POSIXct("2024-01-01", tz = "America/New_York"),
   as.POSIXct("2024-12-31", tz = "America/New_York")
 )
+
 }

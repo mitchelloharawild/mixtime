@@ -12,8 +12,8 @@
 #' @param ... Additional arguments for methods.
 #' 
 #' @return An list of two elements:
-#' - `chronon`: integer vector of chronons measured in the `to` time unit.
-#' - `remainder`: integer vector of the remainder (in `from` time unit) after
+#' - `div`: integer vector of chronons measured in the `to` time unit.
+#' - `mod`: integer vector of the remainder (in `from` time unit) after
 #'  converting to the `to` time unit.
 #' 
 #' @examples

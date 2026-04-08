@@ -2,21 +2,26 @@
 % Please edit documentation in R/mixtime.R
 \name{is_mixtime}
 \alias{is_mixtime}
-\title{Check if the object is a mixtime}
+\title{Check if an object is a mixtime}
 \usage{
 is_mixtime(x)
 }
 \arguments{
-\item{x}{An object.}
+\item{x}{An object to test.}
 }
 \value{
-\code{TRUE} if the object inherits from the \code{mixtime} class.
+A scalar logical: \code{TRUE} if \code{x} is a \code{mixtime} vector, \code{FALSE}
+otherwise.
 }
 \description{
-Check if the object is a mixtime
+Tests whether \code{x} inherits from the \code{mixtime} class.
 }
 \examples{
 is_mixtime(Sys.Date())
-is_mixtime(yearmonth(1))
+is_mixtime(mixtime(Sys.Date()))
 
+}
+\seealso{
+\code{\link[=as_mixtime]{as_mixtime()}} to coerce objects to \code{mixtime},
+\code{\link[=mixtime]{mixtime()}} to construct a \code{mixtime}.
 }

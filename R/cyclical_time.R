@@ -11,7 +11,7 @@
 #' @param fallback_calendar A fallback calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
-#' @return A function used to create cyclical time points.
+#' @return A function used to create cyclical time points with a specific chronon and cycle.
 #' 
 #' @examples
 #' 
@@ -69,7 +69,7 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
 #'   Defaults to `time_calendar(data)` for existing time objects. Common options
 #'   include [cal_gregorian] and [cal_isoweek].
 #' 
-#' @return A `mt_cyclical` time vector, which is a subclass of `mt_time`.
+#' @return A `mixtime` time vector containing an `mt_cyclical` vector.
 #' 
 #' @seealso 
 #' - [new_cyclical_time_fn()] for creating reusable cyclical time functions
@@ -214,20 +214,18 @@ vec_cast.double.mt_cyclical <- function(x, to, ...) {
 #' @param calendar A calendar object specifying the calendar system to use.
 #' @param ... Additional arguments for [cyclical_time()], such as `tz` for timezones.
 #' 
-#' @section Gregorian cyclical time representations:
-#' - `month_of_year()`: Represents the month position within a year (1-12).
-#'   The chronon is one month, cycling within a year.
-#' - `day_of_year()`: Represents the day position within a year (1-365 or 1-366
-#'   for leap years). The chronon is one day, cycling within a year.
+#' @section Cyclical time representations:
+#' - `day_of_week()`: Represents the day position within a week (1-7) using
+#'   the ISO 8601 standard where weeks start on Monday.
 #' - `day_of_month()`: Represents the day position within a month (1-28, 1-29,
 #'   1-30, or 1-31 depending on the month). The chronon is one day, cycling
 #'   within a month.
-#' 
-#' @section ISO 8601 cyclical time representations:
-#' - `day_of_week()`: Represents the day position within a week (1-7) using
-#'   the ISO 8601 standard where weeks start on Monday.
+#' - `day_of_year()`: Represents the day position within a year (1-365 or 1-366
+#'   for leap years). The chronon is one day, cycling within a year.
 #' - `week_of_year()`: Represents the week position within a year (1-52 or 1-53)
 #'   using the ISO 8601 week numbering system.
+#' - `month_of_year()`: Represents the month position within a year (1-12).
+#'   The chronon is one month, cycling within a year.
 #' 
 #' @section Custom cyclical time representations:
 #' You can create custom cyclical time representations using [cyclical_time()]
@@ -240,6 +238,8 @@ vec_cast.double.mt_cyclical <- function(x, to, ...) {
 #'   fallback_calendar = cal_gregorian
 #' )
 #' ```
+#'  
+#' @return A `mixtime` time vector containing an `mt_cyclical` vector with chronon and cycle matching the function used.
 #' 
 #' @seealso [cyclical_time()] for creating cyclical time vectors,
 #'   [new_cyclical_time_fn()] for creating cyclical time helper functions

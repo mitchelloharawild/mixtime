@@ -7,7 +7,7 @@
 #' @param fallback_calendar A fallback calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
-#' @return A function used to create linear time points.
+#' @return A function used to create linear time points with a specific chronon.
 #' 
 #' @examples
 #' 
@@ -78,7 +78,7 @@ new_linear_time_fn <- function(chronon, fallback_calendar = cal_gregorian) {
 #'   Defaults to `time_calendar(data)` for existing time objects. Common options
 #'   include [cal_gregorian] and [cal_isoweek].
 #' 
-#' @return A `mt_linear` time vector, which is a subclass of `mt_time`.
+#' @return A `mixtime` time vector containing an `mt_linear` vector.
 #' 
 #' @seealso 
 #' - [new_linear_time_fn()] for creating reusable linear time functions
@@ -194,11 +194,11 @@ vec_cast.double.mt_linear <- function(x, to, ...) {
 #' year(yearweek("2025-12-29"), calendar = cal_isoweek)
 #' ```
 #' 
-#' @section Custom time representations:
+#' @section Custom linear time representations:
 #' For more complex time structures, use [linear_time()] or [new_linear_time_fn()]
 #' to create custom representations with any combination of chronons and granules.
 #' 
-#' @return A `mt_linear` time vector.
+#' @return A `mixtime` time vector containing an `mt_linear` vector with chronons matching the function used.
 #' 
 #' @seealso 
 #' - [linear_time()] for creating custom linear time representations

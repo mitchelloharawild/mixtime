@@ -21,8 +21,8 @@ chronon_divmod.S7_methods(from, to, x)
 \value{
 An list of two elements:
 \itemize{
-\item \code{chronon}: integer vector of chronons measured in the \code{to} time unit.
-\item \code{remainder}: integer vector of the remainder (in \code{from} time unit) after
+\item \code{div}: integer vector of chronons measured in the \code{to} time unit.
+\item \code{mod}: integer vector of the remainder (in \code{from} time unit) after
 converting to the \code{to} time unit.
 }
 }

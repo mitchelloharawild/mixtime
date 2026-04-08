@@ -15,7 +15,7 @@ new_cyclical_time_fn(chronon, cycle, fallback_calendar = cal_gregorian)
 conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}
 }
 \value{
-A function used to create cyclical time points.
+A function used to create cyclical time points with a specific chronon and cycle.
 }
 \description{
 \code{new_cyclical_time_fn()} creates a cyclical time function for a specified
