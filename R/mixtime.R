@@ -209,10 +209,15 @@ vec_cast.double.mixtime <- function(x, to, ...) {
   vecvec::unvecvec(x)
 }
 
+time_valid <- function(x) {
+  if (is_mixtime(x)) return(TRUE)
+  !inherits(try(time_chronon(x), silent = TRUE), "try-error")
+}
+
 #' @export
 vec_ptype2.mixtime <- function(x, y, ...) {
-  x_is_time <- isTRUE(index_valid(x))
-  y_is_time <- isTRUE(index_valid(y))
+  x_is_time <- time_valid(x)
+  y_is_time <- time_valid(y)
 
   if (!(x_is_time && y_is_time) && !(is.numeric(x) || is.numeric(y))) {
     vctrs::stop_incompatible_type(x, y, x_arg = "", y_arg = "")
