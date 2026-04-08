@@ -65,6 +65,7 @@ time_format_default <- function(x) {
 time_format_impl <- function(x, format = time_format_default(x), ...) {
   chronon <- time_chronon(x)
   cal <- time_calendar(chronon)
+  x_na <- is.na(x)
   
   # Create glue evaluation environment
   as_tu <- function(x) {
@@ -112,14 +113,14 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
     parent = rlang::caller_env()
   )
 
-  out <- mt_glue_fmt(format, env = env)
-  out_parts <- !vapply(out, is.character, logical(1L))
+  fmt <- mt_glue_fmt(format, env = env)
+  fmt_parts <- !vapply(fmt, is.character, logical(1L))
 
   # Resolve bare S7 class tokens (e.g. from {year}, {month}, {day}) into
   # lin/cyc lists using the chronon_cardinality graph to order fine->coarse.
-  s7_class_lgl <- vapply(out, inherits, logical(1L), "S7_class")
+  s7_class_lgl <- vapply(fmt, inherits, logical(1L), "S7_class")
   if (any(s7_class_lgl)) {
-    bare_units <- vapply(out[s7_class_lgl], S7_class_id, character(1L))
+    bare_units <- vapply(fmt[s7_class_lgl], S7_class_id, character(1L))
     cal <- time_calendar(x)
 
     tu_i <- match(
@@ -140,31 +141,24 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
     # class_num <- length(class_idx)
 
     # # Initialise as time units of size 1L
-    # out[class_idx] <- lapply(out[class_idx], function(f) f(1L))
+    # fmt[class_idx] <- lapply(fmt[class_idx], function(f) f(1L))
 
     # # Find order of granularity from fine -> coarse
-    # ordered_idx <- class_idx[S7_order_granules(out[class_idx])]
+    # ordered_idx <- class_idx[S7_order_granules(fmt[class_idx])]
 
     # # Replace string parts such that:
     # # * finer time units are cyclical with the next coarser
     # for (i in seq_len(class_num - 1L)) {
-    #   out[[ordered_idx[i]]] <- list(out[[ordered_idx[i]]], out[[ordered_idx[i+1L]]])
+    #   fmt[[ordered_idx[i]]] <- list(fmt[[ordered_idx[i]]], fmt[[ordered_idx[i+1L]]])
     # }
     # # * coarsest time unit is linear
-    # out[[ordered_idx[class_num]]] <- list(out[[ordered_idx[class_num]]])
+    # fmt[[ordered_idx[class_num]]] <- list(fmt[[ordered_idx[class_num]]])
   }
 
-  # # Early exit if parts are not needed
-  # if (!length(out$res)) return(rep_len(out$chr, length(x)))
-
-  # TODO: Resolve automatic formatting usage (e.g. {year})
-  # If it is the coarsest time unit, use linear_labels
-  # Otherwise, use cyclical_labels with the next finest time unit.
-
   # Compute the numeric parts for display
-  res_split <- split(out[out_parts], lengths(out[out_parts]))
+  res_split <- split(fmt[fmt_parts], lengths(fmt[fmt_parts]))
   parts <- chronon_parts(
-    x        = x,
+    x        = x[!x_na],
     linear   = unlist(res_split[["1"]], recursive = FALSE),
     cyclical = res_split[["2"]]
   )
@@ -183,6 +177,11 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   )
 
   # Insert time labels into format string
-  out[out_parts] <- unsplit(Filter(length, parts), lengths(out[out_parts]))
-  rlang::exec(paste0, !!!out)
+  if (any(fmt_parts)) {
+    fmt[fmt_parts] <- unsplit(parts[c("linear", "cyclical")], lengths(fmt[fmt_parts]))
+  }
+  out <- character(length(x))
+  out[!x_na] <- rlang::exec(paste0, !!!fmt)
+  out[x_na] <- "NA"
+  out
 }
