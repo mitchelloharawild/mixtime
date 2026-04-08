@@ -58,7 +58,7 @@ linear_time(
 
 ## Value
 
-A `mt_linear` time vector, which is a subclass of `mt_time`.
+A `mixtime` time vector containing an `mt_linear` vector.
 
 ## See also
 
@@ -86,7 +86,7 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-04-08 00h
+#> [1] 2026-04-08 01h
 
 # Monthly time
 linear_time(
@@ -102,7 +102,7 @@ linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 #> [1] 2026-04-08
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-04-08 3.4%
+#> [1] 2026-04-08 4.7%
 
 # ISO week calendar with week-day structure
 # TODO - needs default format strings to dispatch on calendar

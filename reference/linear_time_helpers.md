@@ -51,7 +51,8 @@ datetime(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 ## Value
 
-A `mt_linear` time vector.
+A `mixtime` time vector containing an `mt_linear` vector with chronons
+matching the function used.
 
 ## Details
 
@@ -84,7 +85,7 @@ argument:
 
     year(yearweek("2025-12-29"), calendar = cal_isoweek)
 
-## Custom time representations
+## Custom linear time representations
 
 For more complex time structures, use
 [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)

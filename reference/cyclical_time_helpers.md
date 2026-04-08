@@ -43,25 +43,28 @@ week_of_year(data, discrete = TRUE, calendar = time_calendar(data), ...)
   [`cyclical_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time.md),
   such as `tz` for timezones.
 
-## Gregorian cyclical time representations
+## Value
 
-- `month_of_year()`: Represents the month position within a year (1-12).
-  The chronon is one month, cycling within a year.
+A `mixtime` time vector containing an `mt_cyclical` vector with chronon
+and cycle matching the function used.
 
-- `day_of_year()`: Represents the day position within a year (1-365 or
-  1-366 for leap years). The chronon is one day, cycling within a year.
+## Cyclical time representations
+
+- `day_of_week()`: Represents the day position within a week (1-7) using
+  the ISO 8601 standard where weeks start on Monday.
 
 - `day_of_month()`: Represents the day position within a month (1-28,
   1-29, 1-30, or 1-31 depending on the month). The chronon is one day,
   cycling within a month.
 
-## ISO 8601 cyclical time representations
-
-- `day_of_week()`: Represents the day position within a week (1-7) using
-  the ISO 8601 standard where weeks start on Monday.
+- `day_of_year()`: Represents the day position within a year (1-365 or
+  1-366 for leap years). The chronon is one day, cycling within a year.
 
 - `week_of_year()`: Represents the week position within a year (1-52 or
   1-53) using the ISO 8601 week numbering system.
+
+- `month_of_year()`: Represents the month position within a year (1-12).
+  The chronon is one month, cycling within a year.
 
 ## Custom cyclical time representations
 

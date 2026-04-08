@@ -24,7 +24,7 @@ new_linear_time_fn(chronon, fallback_calendar = cal_gregorian)
 
 ## Value
 
-A function used to create linear time points.
+A function used to create linear time points with a specific chronon.
 
 ## Examples
 
@@ -68,7 +68,7 @@ yd(Sys.Date())
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-04-08 00h
+#> [1] 2026-04-08 01h
 
 # ISO-week-date calendar
 ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)

@@ -37,10 +37,10 @@ chronon_divmod.S7_methods(from, to, x)
 
 An list of two elements:
 
-- `chronon`: integer vector of chronons measured in the `to` time unit.
+- `div`: integer vector of chronons measured in the `to` time unit.
 
-- `remainder`: integer vector of the remainder (in `from` time unit)
-  after converting to the `to` time unit.
+- `mod`: integer vector of the remainder (in `from` time unit) after
+  converting to the `to` time unit.
 
 ## Examples
 

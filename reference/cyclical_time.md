@@ -65,7 +65,7 @@ cyclical_time(
 
 ## Value
 
-A `mt_cyclical` time vector, which is a subclass of `mt_time`.
+A `mixtime` time vector containing an `mt_cyclical` vector.
 
 ## See also
 
@@ -114,7 +114,7 @@ yearweek(Sys.time(), discrete = TRUE)
 #> [1] 2026 W15
 yearweek(Sys.time(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 W15 29.1%
+#> [1] 2026 W15 29.2%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -133,5 +133,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 00:48:48
+#> [1] 01:08:20
 ```

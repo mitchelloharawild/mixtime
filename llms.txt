@@ -442,9 +442,9 @@ multiple time granularities.
 - [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
   : Constructor for mixtime time vectors
 - [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
-  : Convert time class into a mixtime
+  : Convert a time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_mixtime.md)
-  : Check if the object is a mixtime
+  : Check if an object is a mixtime
 
 ### Mixtime Accessors
 

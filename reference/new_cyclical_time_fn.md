@@ -30,7 +30,8 @@ new_cyclical_time_fn(chronon, cycle, fallback_calendar = cal_gregorian)
 
 ## Value
 
-A function used to create cyclical time points.
+A function used to create cyclical time points with a specific chronon
+and cycle.
 
 ## Examples
 

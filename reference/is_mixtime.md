@@ -1,6 +1,6 @@
-# Check if the object is a mixtime
+# Check if an object is a mixtime
 
-Check if the object is a mixtime
+Tests whether `x` inherits from the `mixtime` class.
 
 ## Usage
 
@@ -12,17 +12,25 @@ is_mixtime(x)
 
 - x:
 
-  An object.
+  An object to test.
 
 ## Value
 
-`TRUE` if the object inherits from the `mixtime` class.
+A scalar logical: `TRUE` if `x` is a `mixtime` vector, `FALSE`
+otherwise.
+
+## See also
+
+[`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
+to coerce objects to `mixtime`,
+[`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+to construct a `mixtime`.
 
 ## Examples
 
 ``` r
 is_mixtime(Sys.Date())
 #> [1] FALSE
-is_mixtime(yearmonth(1))
+is_mixtime(mixtime(Sys.Date()))
 #> [1] TRUE
 ```

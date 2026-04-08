@@ -87,7 +87,7 @@ calendar of the input data. Common options include <a href="calendar_gregorian.h
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>mt_linear</code> time vector.</p>
+    <p>A <code>mixtime</code> time vector containing an <code>mt_linear</code> vector with chronons matching the function used.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -110,7 +110,7 @@ one week, with years as the granule. Defaults to ISO 8601 week calendar.</p></li
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="st">"2025-12-29"</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></code></pre><p></p></div>
     </div>
     <div class="section level2">
-    <h2 id="custom-time-representations">Custom time representations<a class="anchor" aria-label="anchor" href="#custom-time-representations"></a></h2>
+    <h2 id="custom-linear-time-representations">Custom linear time representations<a class="anchor" aria-label="anchor" href="#custom-linear-time-representations"></a></h2>
 
 
 <p>For more complex time structures, use <code><a href="linear_time.html">linear_time()</a></code> or <code><a href="new_linear_time_fn.html">new_linear_time_fn()</a></code>
