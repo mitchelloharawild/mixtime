@@ -131,11 +131,6 @@ linear_time <- function(
   mixtime(data, chronon = chronon, discrete = discrete)
 }
 
-#' @export
-format.mt_linear <- function(x, format = time_format_default(x), ...) {
-  time_format_impl(x, format = format, ...)
-}
-
 #' @method vec_cast.character mt_linear
 #' @export
 vec_cast.character.mt_linear <- function(x, to, ...) {

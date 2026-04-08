@@ -146,11 +146,6 @@ cyclical_time <- function(
   # data <- chronon_divmod(from = chronon, to = cycle, x = data)$mod
 }
 
-#' @export
-format.mt_cyclical <- function(x, format = time_format_default(x), ...) {
-  time_format_impl(x, format = format, ...)
-}
-
 #' @method vec_cast.character mt_cyclical
 #' @export
 vec_cast.character.mt_cyclical <- function(x, to, ...) {
