@@ -209,3 +209,60 @@ S7::method(chronon_divmod, list(cal_sym454$week, cal_sym454$month)) <-
     # Return the divmod result
     list(div = div, mod = mod)
   }
+
+S7::method(chronon_divmod, list(cal_sym454$month, cal_sym454$week)) <-
+  function(from, to, x) {
+
+    # 1. Compute 4-5-4 cycle lengths for the given n-month period
+    month_size <- vctrs::vec_data(from)
+    weeks_len <- circsum(c(4L, 5L, 4L), month_size)
+    weeks_seq  <- cumsum(weeks_len)
+    weeks_tot <- weeks_seq[length(weeks_seq)]
+    
+    # Modular arithmetic to find weeks from months (without leap weeks)
+    period_full <- (x %/% length(weeks_len)) * weeks_tot
+    period_part <- stats::approx(
+      x = seq(0, length.out = length(weeks_len) + 1L), 
+      y = c(0L, weeks_seq), 
+      xout = x %% length(weeks_len), 
+    )$y
+
+    # 2. Compute the number of leap weeks to add back in
+    # The symmetrical sub-cycles of the 293-year leap week cycle are:
+    #   17+11+17 + 17+17+11+17+17 + 17+11+17 + 17+17+11+17+17 + 17+11+17
+    #   = 45 + 79 + 45 + 79 + 45 = 293
+    # Primary (length 17) sub-cycles have 3 leap years: 00100000100000100
+    # Secondary (length 11) sub-cycles have 2 leap years: 00100000100
+    leaps_cycle_17 <- function(m) (m >= 35L) + (m >= 107L) + (m >= 179L)
+    leaps_cycle_11 <- function(m) (m >= 35L) + (m >= 107L)
+    leaps_cycle_45 <- function(m) {
+      ifelse(m < 204L,  leaps_cycle_17(m),
+      ifelse(m < 336L,  3L + leaps_cycle_11(m - 204L),
+                        5L + leaps_cycle_17(m - 336L)))
+    }
+    leaps_cycle_79 <- function(m) {
+      ifelse(m < 204L,  leaps_cycle_17(m),
+      ifelse(m < 408L,  3L  + leaps_cycle_17(m - 204L),
+      ifelse(m < 540L,  6L  + leaps_cycle_11(m - 408L),
+      ifelse(m < 744L,  8L  + leaps_cycle_17(m - 540L),
+                        11L + leaps_cycle_17(m - 744L)))))
+    }
+    leaps_symmetry454 <- function(x) {
+      # There are 3516 months in a full 293-year cycle (293*12 months)
+      m <- x %% 3516L
+      x %/% 3516L * 52L +
+      ifelse(m < 540L,   leaps_cycle_45(m),
+      ifelse(m < 1488L,  8L  + leaps_cycle_79(m - 540L),
+      ifelse(m < 2028L,  22L + leaps_cycle_45(m - 1488L),
+      ifelse(m < 2976L,  30L + leaps_cycle_79(m - 2028L),
+                         44L + leaps_cycle_45(m - 2976L)))))
+    }
+    x_cyc <- x + 2531L + month_size  # right align multi-month units
+    n_leaps <- leaps_symmetry454(x_cyc) - 37L # number of leaps after 1970 Jan
+    
+    # 3. Combine complete cycles, partial cycles, and leap week adjustments 
+    # to compute the final number of weeks (div) and remaining months (mod).
+    week_size <- vctrs::vec_data(to)
+    weeks <- period_full + period_part + n_leaps
+    list(div = weeks / week_size, mod = 0L)
+  }

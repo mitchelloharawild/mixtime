@@ -34,6 +34,17 @@ test_that("Cardinality of the Symmetric454 calendar: cal_sym454", {
   )
 })
 
+test_that("Divmod of the Symmetric454 calendar is invertible via Date round-trip", {
+  # Converting Sym454 year integers -> Date -> Sym454 year (continuous) should
+  # recover the original values exactly, since each integer maps to the first
+  # day of that Sym454 year.
+  years <- 1970:2000
+  sym454_years <- linear_time(years, chronon = cal_sym454$year(1L))
+  dates <- as.Date(sym454_years)
+  recovered <- linear_time(dates, chronon = cal_sym454$year(1L), discrete = FALSE)
+  expect_equal(as.double(recovered), as.double(sym454_years))
+})
+
 
 test_that("Divmod of the Symmetric454 calendar: cal_sym454", {
   # Regular 4-5-4 pattern in 1970 (leap year)

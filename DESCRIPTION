@@ -40,6 +40,7 @@ Imports:
     vecvec,
     tzdb
 Suggests: 
+    stats,
     tsibble,
     testthat,
     pillar,
