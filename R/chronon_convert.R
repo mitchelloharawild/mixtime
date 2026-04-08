@@ -23,6 +23,7 @@
 #' # Convert from seconds since epoch to hours since epoch
 #' chronon_convert(Sys.time(), cal_gregorian$hour(1L))
 #' 
+#' @noRd
 #' @keywords internal
 chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 

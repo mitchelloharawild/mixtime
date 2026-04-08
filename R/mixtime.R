@@ -236,7 +236,7 @@ vec_proxy_order.mixtime <- function(x, ...) {
 
     attr(x, "v") <- lapply(attr(x, "v"), function(v) {
       if (is.integer(v)) v <- v + 0.5
-      mixtime::chronon_convert(v, chronon_type)
+      chronon_convert(v, chronon_type)
     })
   }
   vec_proxy_order(vctrs::vec_data(vecvec::unvecvec(x)))
