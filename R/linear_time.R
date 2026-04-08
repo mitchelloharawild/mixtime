@@ -124,6 +124,14 @@ linear_time <- function(
     if (inherits(calendar, "mt_calendar_fb")) {
       chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
     } else {
+      # Special hint for common error of 'week' unit not found in Gregorian calendar
+      if (e$message == "could not find function \"week\"") {
+        e$message <- c(
+          e$message,
+          "i" = "This error often occurs when trying to use a 'week' chronon without the ISO week calendar.\n",
+          ">" = "Try specifying the calendar explicitly, e.g. `calendar = cal_isoweek`."
+        )
+      }
       cli::cli_abort(e$message, call = NULL)
     }
   })
