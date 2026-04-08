@@ -178,7 +178,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
 
   # Insert time labels into format string
   if (any(fmt_parts)) {
-    fmt[fmt_parts] <- unsplit(parts[c("linear", "cyclical")], lengths(fmt[fmt_parts]))
+    fmt[fmt_parts] <- unsplit(Filter(length, parts), lengths(fmt[fmt_parts]))
   }
   out <- character(length(x))
   out[!x_na] <- rlang::exec(paste0, !!!fmt)
