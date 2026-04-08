@@ -21,7 +21,7 @@ Description: Flexible time classes for time series analysis and forecasting with
     frequency over time or requires temporal reconciliation across scales.
     The package is extensible, allowing users to define custom calendars that
     build upon civil and astronomical time systems.
-License: GPL-3
+License: MIT + file LICENSE
 URL: https://pkg.mitchelloharawild.com/mixtime/, https://github.com/mitchelloharawild/mixtime
 BugReports: https://github.com/mitchelloharawild/mixtime/issues
 Encoding: UTF-8
