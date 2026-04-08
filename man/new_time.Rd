@@ -4,7 +4,7 @@
 \alias{new_time}
 \title{Constructor for mixtime time vectors}
 \usage{
-new_time(x, chronon = NULL, cycle = NULL)
+new_time(x = integer(), chronon = NULL, cycle = NULL)
 }
 \arguments{
 \item{x}{A numeric vector of time points, integers for discrete time or

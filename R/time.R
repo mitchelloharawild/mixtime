@@ -37,7 +37,7 @@
 #' )
 #' 
 #' @export
-new_time <- function(x, chronon = NULL, cycle = NULL) {
+new_time <- function(x = integer(), chronon = NULL, cycle = NULL) {
    vctrs::new_vctr(
     x,
     class = c(
