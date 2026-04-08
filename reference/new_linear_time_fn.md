@@ -68,7 +68,7 @@ yd(Sys.Date())
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-04-08 02h
+#> [1] 2026-04-08 03h
 
 # ISO-week-date calendar
 ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)

@@ -86,7 +86,7 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-04-08 02h
+#> [1] 2026-04-08 03h
 
 # Monthly time
 linear_time(
@@ -102,7 +102,7 @@ linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 #> [1] 2026-04-08
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-04-08 12.3%
+#> [1] 2026-04-08 12.9%
 
 # ISO week calendar with week-day structure
 # TODO - needs default format strings to dispatch on calendar
