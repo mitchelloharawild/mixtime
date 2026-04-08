@@ -43,7 +43,9 @@ for testing if an object is a `mixtime`.
 
 ``` r
 as_mixtime(Sys.Date())
-#> Error in new_time(): argument "x" is missing, with no default
+#> <mixtime[1]>
+#> [1] 2026-04-08
 as_mixtime(Sys.time())
-#> Error in new_time(): argument "x" is missing, with no default
+#> <mixtime[1]>
+#> [1] 2026-04-08 02:57:24
 ```
