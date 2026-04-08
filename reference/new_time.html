@@ -38,7 +38,7 @@ representations (e.g. day-of-week, month-of-year)."><meta property="og:image" co
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Constructor for mixtime time vectors</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/mixtime.R" class="external-link"><code>R/mixtime.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/time.R" class="external-link"><code>R/time.R</code></a></small>
       <div class="d-none name"><code>new_time.Rd</code></div>
     </div>
 
@@ -96,7 +96,7 @@ the specified <code>chronon</code> and <code>cycle</code>.</p>
 <span class="r-in"><span>  chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mt_linear[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08 01:08:25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08 01:13:29</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a discrete mixtime time vector for the time of day (cyclical time)</span></span></span>
 <span class="r-in"><span><span class="fu">new_time</span><span class="op">(</span></span></span>
@@ -105,7 +105,7 @@ the specified <code>chronon</code> and <code>cycle</code>.</p>
 <span class="r-in"><span>  cycle <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mt_cyclical[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 01:08:25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 01:13:29</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
