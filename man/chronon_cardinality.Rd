@@ -58,12 +58,21 @@ with(cal_gregorian, chronon_cardinality(second(1L), hour(1L)))
 with(cal_gregorian, chronon_cardinality(month(2L), year(3L)))
 
 # There are 365 days in 2025 (a common year)
-with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2025-01-01"))))
+chronon_cardinality(
+  cal_gregorian$day(1L), cal_gregorian$year(1L),
+  at = year(as.Date("2025-01-01"))
+)
 
 # There are 366 days in 2024 (a leap year)
-with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2024-01-01"))))
+chronon_cardinality(
+  cal_gregorian$day(1L), cal_gregorian$year(1L), 
+  at = mixtime::year(as.Date("2024-01-01"))
+)
 
 # There are 29 days in February 2024 (a leap year)
-with(cal_gregorian, chronon_cardinality(day(1L), month(1L), at = yearmonth(as.Date("2024-02-01"))))
+chronon_cardinality(
+  cal_gregorian$day(1L), cal_gregorian$month(1L), 
+  at = yearmonth(as.Date("2024-02-01"))
+)
 
 }
