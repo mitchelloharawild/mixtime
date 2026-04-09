@@ -190,8 +190,7 @@ vec_ptype2.mixtime <- function(x, y, ...) {
   if (!(x_is_time && y_is_time) && !(is.numeric(x) || is.numeric(y))) {
     vctrs::stop_incompatible_type(x, y, x_arg = "", y_arg = "")
   }
-  # new_mixtime()
-  vecvec::new_vecvec(class = "mixtime")
+  new_mixtime()
 }
 
 #' @export
