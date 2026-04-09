@@ -85,7 +85,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$hour, cal_time_civil_midnight$day)
 ) <- function(x, y, at = NULL) {
-  vec_data(y)*24L/vec_data(x)
+  y@.data*24L/x@.data
 }
 
 ## AMPMs in DAYs
@@ -93,7 +93,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$ampm, cal_time_civil_midnight$day)
 ) <- function(x, y, at = NULL) {
-  vec_data(y)*2L/vec_data(x)
+  y@.data*2L/x@.data
 }
 
 ## HOURs in AMPMs
@@ -101,7 +101,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$hour, cal_time_civil_midnight$ampm)
 ) <- function(x, y, at = NULL) {
-  vec_data(y)*12L/vec_data(x)
+  y@.data*12L/x@.data
 }
 
 ## MINUTEs in HOURs
@@ -109,7 +109,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$minute, cal_time_civil_midnight$hour)
 ) <- function(x, y, at = NULL) {
-  vec_data(y)*60L/vec_data(x)
+  y@.data*60L/x@.data
 }
 
 ## SECONDs in MINUTEs
@@ -117,7 +117,7 @@ method(
   chronon_cardinality,
   list(cal_time_civil_midnight$second, cal_time_civil_midnight$minute)
 ) <- function(x, y, at = NULL) {
-  vec_data(y)*60L/vec_data(x)
+  y@.data*60L/x@.data
 }
 
 ## MILLISECONDs in SECONDs
@@ -125,7 +125,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$millisecond, cal_time_civil_midnight$second)
 ) <- function(x, y, at = NULL) {
-  vec_data(y)*1000L/vec_data(x)
+  y@.data*1000L/x@.data
 }
 
 

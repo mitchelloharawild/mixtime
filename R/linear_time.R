@@ -333,8 +333,4 @@ vec_cast.POSIXct.mt_linear <- function(x, to, ...) {
     chronon_convert(x, cal_gregorian$second(1L, tz = "UTC"), discrete = FALSE),
     to
   )
-  # as.POSIXct(
-  #   chronon_divmod(chronon, second(1L), vec_data(x))$chronon,
-  #   origin = "1970-01-01", tz = attr(x, "tz")
-  # )
 }

@@ -37,7 +37,7 @@ Imports:
     rlang,
     cli,
     S7,
-    vecvec,
+    vecvec (> 0.2.1),
     tzdb
 Suggests: 
     stats,

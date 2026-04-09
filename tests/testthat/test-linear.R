@@ -20,7 +20,7 @@ test_that("linear_time() creates hour and minute times with timezone", {
   result <- linear_time(base_time, minute(1L, tz = "America/Los_Angeles"))
   
   # Should include date and time in Pacific timezone
-  expect_s3_class(result, "mixtime")
+  expect_true(is_mixtime(result))
   expect_match(format(result), "2020-01-15 14:30 PST")
   
   # Test with UTC

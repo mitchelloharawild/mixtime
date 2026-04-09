@@ -14,7 +14,7 @@
 #' 
 #' @export
 tz_name <- S7::new_generic("tz_name", "x")
-S7::method(tz_name, S7::new_S3_class("mixtime")) <- function(x) {
+S7::method(tz_name, class_mixtime) <- function(x) {
   as.character(vecvec::vecvec_apply(x, tz_name))
 }
 S7::method(tz_name, S7::new_S3_class("mt_time")) <- function(x) {
@@ -45,7 +45,7 @@ S7::method(tz_name, S7::class_any) <- function(x) {
 tz_offset <- S7::new_generic("tz_offset", "x")
 S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(time_chronon(x)), ...) get_tz_offset(x, tz)
 S7::method(tz_offset, S7::class_Date) <- function(x, ...) rep.int(0, length(x))
-method(tz_offset, S7::new_S3_class("mixtime")) <- function(x, ...) {
+method(tz_offset, class_mixtime) <- function(x, ...) {
   vecvec::unvecvec(
     vecvec::vecvec_apply(x, tz_offset, ...)
   )

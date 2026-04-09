@@ -33,7 +33,7 @@ chronon_convert.S7_methods <- function(x, to, discrete = FALSE) S7_method_docs()
 chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
   # Convert between same time unit types
   if (identical(S7::S7_class(from), S7::S7_class(to))) {
-    x <- vec_data(x) * vec_data(from) / vec_data(to)
+    x <- vec_data(x) * from@.data / to@.data
     if (discrete) x <- as.integer(floor(x))
     return(x)
   }
@@ -92,7 +92,7 @@ method(chronon_convert, S7::new_S3_class("mt_linear")) <- function(x, to, discre
   chronon_convert_impl(vec_data(x), time_chronon(x), to, discrete)
 }
 
-method(chronon_convert, S7::new_S3_class("mixtime")) <- function(x, to, discrete = FALSE, ...) {
+method(chronon_convert, class_mixtime) <- function(x, to, discrete = FALSE, ...) {
   res <- vecvec::vecvec_apply(x, chronon_convert, to = to, discrete = discrete)
   vecvec::unvecvec(res)
 }

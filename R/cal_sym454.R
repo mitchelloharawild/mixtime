@@ -98,12 +98,12 @@ method(chronon_epoch, cal_sym454$year) <- function(x) 1970L
 ## Cardinality
 S7::method(chronon_cardinality, list(cal_sym454$month, cal_sym454$year)) <-
   function(x, y, at = NULL) {
-    vctrs::vec_data(y) * 12L / vctrs::vec_data(x)
+    y@.data * 12L / x@.data
   }
 S7::method(chronon_cardinality, list(cal_sym454$week, cal_sym454$month)) <-
   function(x, y, at = NULL) {
     # The number of weeks in each n-month period
-    month_size <- vctrs::vec_data(y)
+    month_size <- y@.data
     nweeks_cyc <- circsum(c(4L, 5L, 4L), month_size)
 
     # Find which n-month period we're in based on the "at" position (months since epoch)
@@ -121,14 +121,14 @@ S7::method(chronon_cardinality, list(cal_sym454$week, cal_sym454$month)) <-
     nweeks[contains_dec[is_leap_year]] <- nweeks[contains_dec[is_leap_year]] + 1L
 
     # Scale by the number of weeks in the week time unit
-    nweeks / vctrs::vec_data(x)
+    nweeks / x@.data
   }
 
 ## Divmod
 S7::method(chronon_divmod, list(cal_sym454$week, cal_sym454$month)) <-
   function(from, to, x) {
     # Most of this code works on 1-week units
-    week_size <- vctrs::vec_data(from)
+    week_size <- from@.data
     x <- x * week_size  # convert n-weeks to 1-weeks
 
     # 1. Account for leap weeks by regularising x to have a fixed 52 weeks per year
@@ -175,7 +175,7 @@ S7::method(chronon_divmod, list(cal_sym454$week, cal_sym454$month)) <-
 
     # 2. Use the 4-5-4 pattern to find the month (div) and week remainder (mod)
     ## The number of weeks in each n-month period
-    month_size <- vctrs::vec_data(to)
+    month_size <- to@.data
     weeks_len <- circsum(c(4L, 5L, 4L), month_size)
 
     ## The total weeks in a full n-month cycle
@@ -214,7 +214,7 @@ S7::method(chronon_divmod, list(cal_sym454$month, cal_sym454$week)) <-
   function(from, to, x) {
 
     # 1. Compute 4-5-4 cycle lengths for the given n-month period
-    month_size <- vctrs::vec_data(from)
+    month_size <- from@.data
     weeks_len <- circsum(c(4L, 5L, 4L), month_size)
     weeks_seq  <- cumsum(weeks_len)
     weeks_tot <- weeks_seq[length(weeks_seq)]
@@ -262,7 +262,7 @@ S7::method(chronon_divmod, list(cal_sym454$month, cal_sym454$week)) <-
     
     # 3. Combine complete cycles, partial cycles, and leap week adjustments 
     # to compute the final number of weeks (div) and remaining months (mod).
-    week_size <- vctrs::vec_data(to)
+    week_size <- to@.data
     weeks <- period_full + period_part + n_leaps
     list(div = weeks / week_size, mod = 0L)
   }

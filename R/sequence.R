@@ -64,8 +64,9 @@
 #' seq(day_of_week(0L), day_of_week(6L), by = 1)
 #' 
 #' @rdname seq.mixtime
+#' @method seq mixtime::mixtime
 #' @export
-seq.mixtime <- function(...) {
+`seq.mixtime::mixtime` <- function(...) {
   # Strip mixtime vecvec wrapper
   arg <- lapply(
     rlang::list2(...), 
@@ -125,7 +126,7 @@ seq.mt_time <- function(
     if (is.character(by)) by <- parse_time_unit(by)
     # Numeric `by` uses chronon
     if (is.numeric(by) && !S7::S7_inherits(by, mt_unit)) {
-      attributes(by) <- attributes(chronon)
+      by <- S7::S7_class(chronon)(by)
     }
     
     # Convert to `from`/`to` time chronons to `by` time chronons
@@ -162,7 +163,7 @@ seq.mt_time <- function(
     on_invalid <- match.arg(on_invalid)
     cycle_size <- chronon_cardinality(chronon, by, res)
     # Check if the sequence offset will overflow the cycle
-    if (any(if (by < 0) cycle_size >= seq_part else cycle_size <= seq_part)) {
+    if (any(if (by@.data < 0) cycle_size >= seq_part else cycle_size <= seq_part)) {
       if (missing_on_invalid) {
         cli::cli_warn(c(
           "The cycle offset ({seq_part + 1L} {time_unit_full(chronon)}{cli::qty(seq_part)}{?s}) has produced time points that overflow the {time_unit_full(by)} cycle.",
@@ -171,7 +172,7 @@ seq.mt_time <- function(
         ))
       }
       if (on_invalid == "nearest") {
-        seq_part <- (if (by < 0) pmax else pmin)(cycle_size - 1L, seq_part)
+        seq_part <- (if (by@.data < 0) pmax else pmin)(cycle_size - 1L, seq_part)
       }
     }
     
@@ -221,7 +222,7 @@ seq.mt_time <- function(
 #   # Convert mt_cyclical to numeric for seq() method
 #   if (!missing(from) && inherits(from, "mt_cyclical")) {
 #     ptype <- from
-#     arg$from <- vctrs::vec_data(from)
+#     arg$from <- from@.data
 #   }
 #   if (!missing(to) && inherits(to, "mt_cyclical")) {
 #     arg$to <- vctrs::vec_data(to)

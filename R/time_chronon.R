@@ -23,10 +23,10 @@
 #' time_chronon(c(yearmonth(Sys.Date()), Sys.Date()))
 #' 
 #' @export
-time_chronon <- S7::new_generic("time_unit", "x")
+time_chronon <- S7::new_generic("time_chronon", "x")
 
-S7::method(time_chronon, S7::new_S3_class("mixtime")) <- function(x) {
-  chronon_common(!!!lapply(attr(x, "v"), time_chronon))
+S7::method(time_chronon, class_mixtime) <- function(x) {
+  chronon_common(!!!lapply(x@x, time_chronon))
 }
 
 S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {

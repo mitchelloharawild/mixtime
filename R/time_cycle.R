@@ -24,8 +24,8 @@ S7::method(time_cycle, S7::class_any) <- function(x) {
   NULL
 }
 
-S7::method(time_cycle, S7::new_S3_class("mixtime")) <- function(x) {
-  v <- attr(x, "v")
+S7::method(time_cycle, class_mixtime) <- function(x) {
+  v <- x@x
   if (length(v) > 1L) {
     cli::cli_abort("time_cycle() only supports single-typed mixtime vectors, not multi-typed.")
   }

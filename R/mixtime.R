@@ -10,7 +10,7 @@
 #' @export
 new_mixtime <- function(x = new_time()) {
   stopifnot(inherits(x, "mt_time"))
-  vecvec::new_vecvec(list(x), class = "mixtime")
+  class_mixtime(list(x))
 }
 
 #' Create a mixtime vector
@@ -145,14 +145,14 @@ as_mixtime <- function(x, ...) {
 #'
 #' @export
 is_mixtime <- function(x) {
-  inherits(x, "mixtime")
+  S7::S7_inherits(x, class_mixtime)
 }
 
 #' @export
-vec_ptype_full.mixtime <- function(x, ...) "mixtime"
+method(vec_ptype_full, class_mixtime) <- function(x, ...) "mixtime"
 
 #' @export
-vec_ptype_abbr.mixtime <- function(x, ...) "mixtime"
+method(vec_ptype_abbr, class_mixtime) <- function(x, ...) "mixtime"
 
 vec_cast_to_mixtime <- function(x, to, ...) mixtime(x)
 
@@ -163,18 +163,16 @@ vec_cast_from_mixtime <- function(x, to, ...) {
 
 ## Custom vec cast methods since some time classes don't have cast methods
 
+#' @method vec_cast.character mixtime::mixtime
 #' @export
-#' @method vec_cast.character mixtime
-vec_cast.character.mixtime <- function(x, to, ...) {
-  attr(x, "v") <- lapply(attr(x, "v"), as.character, ...)
-  vecvec::unvecvec(x)
+`vec_cast.character.mixtime::mixtime` <- function(x, to, ...) {
+  unvecvec(vecvec_apply(x, as.character, ...))
 }
 
+#' @method vec_cast.double mixtime::mixtime
 #' @export
-#' @method vec_cast.double mixtime
-vec_cast.double.mixtime <- function(x, to, ...) {
-  attr(x, "v") <- lapply(attr(x, "v"), as.double, ...)
-  vecvec::unvecvec(x)
+`vec_cast.double.mixtime::mixtime` <- function(x, to, ...) {
+  unvecvec(vecvec_apply(x, as.double, ...))
 }
 
 time_valid <- function(x) {
@@ -182,8 +180,9 @@ time_valid <- function(x) {
   !inherits(try(time_chronon(x), silent = TRUE), "try-error")
 }
 
+#' @method vec_ptype2 mixtime::mixtime
 #' @export
-vec_ptype2.mixtime <- function(x, y, ...) {
+`vec_ptype2.mixtime::mixtime` <- function(x, y, ...) {
   x_is_time <- time_valid(x)
   y_is_time <- time_valid(y)
 
@@ -193,18 +192,17 @@ vec_ptype2.mixtime <- function(x, y, ...) {
   new_mixtime()
 }
 
-#' @export
 #' @importFrom vctrs vec_proxy_order
-vec_proxy_order.mixtime <- function(x, ...) {
-  if (length(attr(x, "v")) > 1L) {
+method(vec_proxy_order, class_mixtime) <- function(x, ...) {
+  if (length(x@x) > 1L) {
     # Convert all time values to a common chronon
-    chronons <- lapply(attr(x, "v"), time_chronon)
+    chronons <- lapply(x@x, time_chronon)
     chronon_type <- chronon_common(!!!chronons)
 
-    attr(x, "v") <- lapply(attr(x, "v"), function(v) {
+    x@x <- lapply(x@x, function(v) {
       if (is.integer(v)) v <- v + 0.5
       chronon_convert(v, chronon_type)
     })
   }
-  vec_proxy_order(vctrs::vec_data(vecvec::unvecvec(x)))
+  vec_proxy_order(vecvec::unvecvec(x))
 }

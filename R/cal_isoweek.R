@@ -50,10 +50,10 @@ method(chronon_format_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- func
 method(chronon_format_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y) "W{cyc(week,year)}"
 
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
-  if(vec_data(y) != 1L) {
+  if(y@.data != 1L) {
     cli::cli_abort("The number of weeks in multi-year chronons is not yet supported.")
   }
-  if(vec_data(x) != 1L) {
+  if(x@.data != 1L) {
     cli::cli_abort("The number of multi-weeks in year chronons is not yet supported.")
   }
   year <- at + 1970L
@@ -62,7 +62,7 @@ method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- functio
 }
 
 method(chronon_cardinality, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y, at = NULL) {
-  vec_data(y)*7L/vec_data(x)
+  y@.data*7L/x@.data
 }
 
 method(chronon_divmod, list(cal_isoweek$day, cal_isoweek$week)) <- function(from, to, x) {
@@ -86,8 +86,11 @@ method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(from
 
 method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from weeks to ISO years
-  if (chronon_cardinality(cal_isoweek$year(1L), to) != 1L) {
+  if (to@.data != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
+  }
+  if (from@.data != 1L) {
+    stop("Converting from multi-week chronons to years is not yet supported", call. = FALSE)
   }
 
   td   <- x * 7L
@@ -114,10 +117,13 @@ method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(fro
 }
 
 method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(from, to, x) {
-  if (chronon_cardinality(cal_isoweek$year(1L), from) != 1L) {
-    stop("Converting from multi-year chronons to weeks is not yet supported", call. = FALSE)
+  if (to@.data != 1L) {
+    stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
-
+  if (from@.data != 1L) {
+    stop("Converting from multi-week chronons to years is not yet supported", call. = FALSE)
+  }
+  
   # Split integer year offset and fractional (0-indexed week within year)
   y_off <- floor(x)
   frac  <- x - y_off

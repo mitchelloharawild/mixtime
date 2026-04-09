@@ -1,13 +1,3 @@
-mt_unit_s3 <- S7::new_S3_class(
-  "mixtime::mt_unit", 
-  constructor = function(.data = 1L) .data,
-  validator = function(self) {
-    if (!typeof(self) %in% c("integer", "double")) {
-      sprintf("Underlying data must be <integer> or <double>,  not <%s>", typeof(self))
-    }
-  }
-)
-
 #' Base S7 class for creating new time units
 #' 
 #' This class is the primative class for time units, and should 
@@ -68,4 +58,18 @@ mt_unit_s3 <- S7::new_S3_class(
 #' 
 #' @export
 #' @rdname mt_unit
-mt_unit <- S7::new_class("mt_unit", parent = mt_unit_s3)
+mt_unit <- S7::new_class(
+  "mt_unit", 
+  properties = list(
+    .data = S7::new_property(
+      class = S7::new_union(S7::class_integer, S7::class_double),
+      default = 1L
+    )
+  )
+)
+
+#' @importFrom vecvec class_vecvec
+class_mixtime <- S7::new_class(
+  "mixtime",
+  parent = class_vecvec
+)

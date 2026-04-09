@@ -33,7 +33,7 @@ chronon_divmod.S7_methods <- function(from, to, x) S7_method_docs()
 S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # No casting needed for identical time units
   if (identical(S7::S7_class(from), S7::S7_class(to))) {
-    divisor <- vec_data(to) / vec_data(from)
+    divisor <- to@.data / from@.data
     return(
       list(
         div = vec_data(x) %/% divisor,
