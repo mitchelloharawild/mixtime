@@ -80,8 +80,8 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
   }
   
   # Apply origin offset for numeric data
-  if (is.numeric(data)) {
-    data <- data - chronon_epoch(chronon)
+  if (is.numeric(data) && (epoch <- chronon_epoch(chronon)) != 0L) {
+    data <- data - epoch
   }
 
   # Validate time units
