@@ -127,7 +127,7 @@ In the Symmetry454 calendar every year has exactly 12 months (a fixed relationsh
 # Each Symmetry454 year has 12 months
 S7::method(chronon_cardinality, list(cal_symmetry454$month, cal_symmetry454$year)) <-
   function(x, y, at = NULL) {
-    y@.data * 12L / x@.data
+    y@n * 12L / x@n
   }
 chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$year(1L))
 ```
@@ -140,7 +140,7 @@ Symmetry454 uses a **293-year leap-week cycle**: a year is a leap year (gaining 
 S7::method(chronon_cardinality, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(x, y, at = NULL) {
     # The number of weeks in each n-month period
-    month_size <- y@.data
+    month_size <- y@n
     nweeks_cyc <- circsum(c(4L, 5L, 4L), month_size)
 
     # Find which n-month period we're in based on the "at" position (months since epoch)
@@ -158,7 +158,7 @@ S7::method(chronon_cardinality, list(cal_symmetry454$week, cal_symmetry454$month
     nweeks[contains_dec[is_leap_year]] <- nweeks[contains_dec[is_leap_year]] + 1L
 
     # Scale by the number of weeks in the week time unit
-    nweeks / x@.data
+    nweeks / x@n
   }
 
 # The 4-5-4 cycle across a full Symmetry454 year
@@ -218,7 +218,7 @@ The Symmetry454 calendar has an irregular cardinality for weeks → months (beca
 S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(from, to, x) {
     # Most of this code works on 1-week units
-    week_size <- from@.data
+    week_size <- from@n
     x <- x * week_size  # convert n-weeks to 1-weeks
 
     # 1. Account for leap weeks by regularising x to have a fixed 52 weeks per year
@@ -265,7 +265,7 @@ S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
 
     # 2. Use the 4-5-4 pattern to find the month (div) and week remainder (mod)
     ## The number of weeks in each n-month period
-    month_size <- to@.data
+    month_size <- to@n
     weeks_len <- circsum(c(4L, 5L, 4L), month_size)
 
     ## The total weeks in a full n-month cycle
@@ -311,7 +311,7 @@ with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 18L))
 with(cal_symmetry454, chronon_divmod(week(1L), month(1L), 52L))
 ```
 
-While most of this complication relates to the leap week pattern, `chronon_divmod()` methods are further complicated by the generality of converting between n-unit time granules (e.g. converting from 1 week to 2 month chronons). If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (to@.data != 1L) stop("...")`).
+While most of this complication relates to the leap week pattern, `chronon_divmod()` methods are further complicated by the generality of converting between n-unit time granules (e.g. converting from 1 week to 2 month chronons). If this generality is not needed, your method can raise an error when the time unit is not size 1 (e.g. `if (to@n != 1L) stop("...")`).
 
 The inverse relationship must also be defined to convert from months → weeks. When converting from coarser → finer units, integer values for `x` introduce temporal indeterminacy. The convention for divmod methods is to left-align the conversion (use the first moment of the month). For brevity, the inverse divmod method is not shown here but can be found in the package's [`cal_sym454` source code](https://github.com/mitchelloharawild/mixtime/blob/main/R/cal_sym454.R)
 
