@@ -7,7 +7,7 @@
 cyclical_time(
   data,
   chronon = time_chronon(data),
-  cycle,
+  cycle = time_cycle(data),
   discrete = TRUE,
   calendar = time_calendar(data)
 )

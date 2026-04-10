@@ -8,26 +8,29 @@
 #' 
 #' @param chronon A time unit object representing the chronon (e.g., `day(1L)`)
 #' @param cycle A time unit object representing the cycle (e.g., `week(1L)`)
-#' @param fallback_calendar A fallback calendar used to find the time units for 
+#' @param default_calendar A default calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
 #' @return A function used to create cyclical time points with a specific chronon and cycle.
 #' 
 #' @examples
 #' 
-#' day_of_week <- new_cyclical_time_fn(day(1L), week(1L), fallback_calendar = cal_isoweek)
+#' day_of_week <- new_cyclical_time_fn(day(1L), week(1L), default_calendar = cal_isoweek)
 #' day_of_week(Sys.Date())
 #' 
 #' month_of_year <- new_cyclical_time_fn(month(1L), year(1L))
 #' month_of_year(Sys.Date())
 #' 
 #' @export
-new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregorian) {
-  # Capture chronon and cycle for later evaluation within
-  # the user-specified calendar
-  chronon <- enquo(chronon)
-  cycle <- enquo(cycle)
-  force(fallback_calendar)
+new_cyclical_time_fn <- function(chronon, cycle, default_calendar = cal_gregorian) {
+  chronon <- rlang::new_quosure(
+    enexpr(chronon), 
+    env = rlang::as_data_mask(default_calendar)
+  )
+  cycle <- rlang::new_quosure(
+    enexpr(cycle), 
+    env = rlang::as_data_mask(default_calendar)
+  )
 
   function(
     data, discrete = TRUE, calendar = time_calendar(data), ...
@@ -36,8 +39,8 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
     chronon <- quo_add_dots(chronon, ...)
 
     cyclical_time(
-      data, chronon = !!chronon, cycle = !!cycle, discrete = discrete, 
-      calendar = cal_fallback(calendar, fallback_calendar)
+      data, chronon = !!chronon, cycle = !!cycle, 
+      discrete = discrete, calendar = calendar
     )
   }
 }
@@ -115,32 +118,25 @@ new_cyclical_time_fn <- function(chronon, cycle, fallback_calendar = cal_gregori
 #' 
 #' @export
 cyclical_time <- function(
-  data, chronon = time_chronon(data), cycle,
+  data, chronon = time_chronon(data), cycle = time_cycle(data),
   discrete = TRUE, calendar = time_calendar(data)
 ) {
   # Evaluate chronon and cycle with a calendar mask
   quo_chronon <- enquo(chronon)
   quo_cycle <- enquo(cycle)
   tryCatch({
-    chronon <- eval_tidy(quo_chronon, data = calendar)
-    stopifnot(S7::S7_inherits(chronon, mt_unit))
-    cycle <- eval_tidy(quo_cycle, data = calendar)
-    stopifnot(S7::S7_inherits(cycle, mt_unit))
+    chronon <- eval_tidy(quo_chronon, data = calendar, env = emptyenv())
+    cycle <- eval_tidy(quo_cycle, data = time_calendar(chronon), env = emptyenv())
   }, error = function(e) {
-    if (inherits(calendar, "mt_calendar_fb")) {
-      chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
-      cycle <<- eval_tidy(quo_cycle, data = attr(calendar, "fallback"))
-    } else {
-      # Special hint for common error of 'week' unit not found in Gregorian calendar
-      if (e$message == "could not find function \"week\"") {
-        e$message <- c(
-          e$message,
-          "i" = "This error often occurs when trying to use a 'week' chronon without the ISO week calendar.\n",
-          ">" = "Try specifying the calendar explicitly, e.g. `calendar = cal_isoweek`."
-        )
-      }
-      cli::cli_abort(e$message, call = NULL)
+    # Special hint for common error of 'week' unit not found in Gregorian calendar
+    if (e$message == "could not find function \"week\"") {
+      e$message <- c(
+        e$message,
+        "i" = "This error often occurs when trying to use a 'week' chronon without the ISO week calendar.\n",
+        ">" = "Try specifying the calendar explicitly, e.g. `calendar = cal_isoweek`."
+      )
     }
+    cli::cli_abort(e$message, call = NULL)
   })
 
   # Make numeric data input 1-indexed
@@ -238,7 +234,7 @@ vec_cast.double.mt_cyclical <- function(x, to, ...) {
 #' ```r
 #' day_of_month <- new_cyclical_time_fn(
 #'   chronon = day(1L), cycle = month(1L),
-#'   fallback_calendar = cal_gregorian
+#'   default_calendar = cal_gregorian
 #' )
 #' ```
 #'  
@@ -280,7 +276,7 @@ day_of_month <- new_cyclical_time_fn(
 time_of_day <- new_cyclical_time_fn(
   chronon = second(1L),
   cycle = day(1L),
-  fallback_calendar = cal_time_civil_midnight
+  default_calendar = cal_time_civil_midnight
 )
 
 #' @rdname cyclical_time_helpers
@@ -288,7 +284,7 @@ time_of_day <- new_cyclical_time_fn(
 day_of_week <- new_cyclical_time_fn(
   chronon = day(1L),
   cycle = week(1L),
-  fallback_calendar = cal_isoweek
+  default_calendar = cal_isoweek
 )
 
 #' @rdname cyclical_time_helpers
@@ -296,5 +292,5 @@ day_of_week <- new_cyclical_time_fn(
 week_of_year <- new_cyclical_time_fn(
   chronon = week(1L),
   cycle = year(1L),
-  fallback_calendar = cal_isoweek
+  default_calendar = cal_isoweek
 )

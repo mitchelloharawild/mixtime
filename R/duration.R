@@ -99,11 +99,11 @@ duration <- function(
 #' 
 #' @examples
 #' # Create a months duration function
-#' months <- new_duration_fn(month(1L), fallback_calendar = cal_gregorian)
+#' months <- new_duration_fn(month(1L), default_calendar = cal_gregorian)
 #' months(1:6)
 #' 
 #' # Create a days duration function
-#' days <- new_duration_fn(day(1L), fallback_calendar = cal_gregorian)
+#' days <- new_duration_fn(day(1L), default_calendar = cal_gregorian)
 #' days(1:7)
 #' 
 #' @export

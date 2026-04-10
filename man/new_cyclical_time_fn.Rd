@@ -4,14 +4,14 @@
 \alias{new_cyclical_time_fn}
 \title{Cyclical time function factory}
 \usage{
-new_cyclical_time_fn(chronon, cycle, fallback_calendar = cal_gregorian)
+new_cyclical_time_fn(chronon, cycle, default_calendar = cal_gregorian)
 }
 \arguments{
 \item{chronon}{A time unit object representing the chronon (e.g., \code{day(1L)})}
 
 \item{cycle}{A time unit object representing the cycle (e.g., \code{week(1L)})}
 
-\item{fallback_calendar}{A fallback calendar used to find the time units for
+\item{default_calendar}{A default calendar used to find the time units for
 conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}
 }
 \value{
@@ -26,7 +26,7 @@ units form a cyclical time point (e.g., day of the week).
 }
 \examples{
 
-day_of_week <- new_cyclical_time_fn(day(1L), week(1L), fallback_calendar = cal_isoweek)
+day_of_week <- new_cyclical_time_fn(day(1L), week(1L), default_calendar = cal_isoweek)
 day_of_week(Sys.Date())
 
 month_of_year <- new_cyclical_time_fn(month(1L), year(1L))
