@@ -4,13 +4,13 @@
 \alias{new_duration_fn}
 \title{Duration function factory}
 \usage{
-new_duration_fn(chronon, fallback_calendar = cal_gregorian)
+new_duration_fn(chronon, default_calendar = cal_gregorian)
 }
 \arguments{
 \item{chronon}{A bare call for a time unit object representing the chronon
 (e.g., \code{month(1L)}, \code{day(1L)}).}
 
-\item{fallback_calendar}{A fallback calendar used to resolve the time units
+\item{default_calendar}{A default calendar used to resolve the time units
 if they don't exist in the calendar of the input data (e.g.,
 \code{cal_gregorian}).}
 }

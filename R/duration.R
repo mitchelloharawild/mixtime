@@ -62,15 +62,7 @@ duration <- function(
 
   # Evaluate chronon and cycle with a calendar mask
   quo_chronon <- enquo(chronon)
-  tryCatch({
-    chronon <- eval_tidy(quo_chronon, data = calendar)
-  }, error = function(e) {
-    if (inherits(calendar, "mt_calendar_fb")) {
-      chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
-    } else {
-      cli::cli_abort(e$message, call = NULL)
-    }
-  })
+  chronon <- eval_tidy(quo_chronon, data = calendar, env = emptyenv())
 
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
@@ -87,7 +79,7 @@ duration <- function(
 #' 
 #' @param chronon A bare call for a time unit object representing the chronon
 #'   (e.g., `month(1L)`, `day(1L)`).
-#' @param fallback_calendar A fallback calendar used to resolve the time units
+#' @param default_calendar A default calendar used to resolve the time units
 #'   if they don't exist in the calendar of the input data (e.g.,
 #'   `cal_gregorian`).
 #' 
@@ -115,9 +107,11 @@ duration <- function(
 #' days(1:7)
 #' 
 #' @export
-new_duration_fn <- function(chronon, fallback_calendar = cal_gregorian) {
-  chronon <- enquo(chronon)
-  force(fallback_calendar)
+new_duration_fn <- function(chronon, default_calendar = cal_gregorian) {
+  chronon <- rlang::new_quosure(
+    enexpr(chronon), 
+    env = rlang::as_data_mask(default_calendar)
+  )
   function(n) {
     new_duration(n, chronon = chronon)
   }
@@ -127,10 +121,7 @@ new_duration_fn <- function(chronon, fallback_calendar = cal_gregorian) {
     # Add tz / loc to chronon
     chronon <- quo_add_dots(chronon, ...)
 
-    duration(
-      data, chronon = !!chronon,
-      calendar = cal_fallback(calendar, fallback_calendar)
-    )
+    duration(data, chronon = !!chronon, calendar = calendar)
   }
 }
 
@@ -182,7 +173,7 @@ months <- new_duration_fn(month(1L))
 
 #' @rdname duration_helpers
 #' @export
-weeks <- new_duration_fn(week(1L), fallback_calendar = cal_isoweek)
+weeks <- new_duration_fn(week(1L), default_calendar = cal_isoweek)
 
 #' @rdname duration_helpers
 #' @export

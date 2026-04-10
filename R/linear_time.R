@@ -4,7 +4,7 @@
 #' chronon. A chronon is the smallest indivisible time unit (e.g., days, hours).
 #' 
 #' @param chronon A bare call for a time unit object representing the chronon (e.g., `day(1)`)
-#' @param fallback_calendar A fallback calendar used to find the time units for 
+#' @param default_calendar A default calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
 #' @return A function used to create linear time points with a specific chronon.
@@ -31,15 +31,15 @@
 #' ymd_h(Sys.time())
 #' 
 #' # ISO-week-date calendar
-#' ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)
+#' ywd <- new_linear_time_fn(day(1L), default_calendar = cal_isoweek)
 #' ywd(Sys.Date())
 #' 
 #' @export
-new_linear_time_fn <- function(chronon, fallback_calendar = cal_gregorian) {
-  # Capture chronon and granularity for later evaluation within
-  # the user-specified calendar
-  chronon <- enquo(chronon)
-  force(fallback_calendar)
+new_linear_time_fn <- function(chronon, default_calendar = cal_gregorian) {
+  chronon <- rlang::new_quosure(
+    enexpr(chronon), 
+    env = rlang::as_data_mask(default_calendar)
+  )
 
   function(
     data, discrete = TRUE, calendar = time_calendar(data), ...
@@ -48,8 +48,7 @@ new_linear_time_fn <- function(chronon, fallback_calendar = cal_gregorian) {
     chronon <- quo_add_dots(chronon, ...)
 
     linear_time(
-      data, chronon = !!chronon, discrete = discrete, 
-      calendar = cal_fallback(calendar, fallback_calendar)
+      data, chronon = !!chronon, discrete = discrete, calendar = calendar
     )
   }
 }
@@ -104,12 +103,11 @@ new_linear_time_fn <- function(chronon, fallback_calendar = cal_gregorian) {
 #' linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #' 
 #' # ISO week calendar with week-day structure
-#' # TODO - needs default format strings to dispatch on calendar
-#' # linear_time(
-#' #   Sys.Date(),
-#' #   chronon = day(1L),
-#' #   calendar = cal_isoweek
-#' # )
+#' linear_time(
+#'   Sys.Date(),
+#'   chronon = day(1L),
+#'   calendar = cal_isoweek
+#' )
 #' 
 #' @export
 linear_time <- function(
@@ -119,21 +117,17 @@ linear_time <- function(
   # Evaluate chronon and granules with a calendar mask
   quo_chronon <- enquo(chronon)
   tryCatch({
-    chronon <- eval_tidy(quo_chronon, data = calendar)
+    chronon <- eval_tidy(quo_chronon, data = calendar, env = emptyenv())
   }, error = function(e) {
-    if (inherits(calendar, "mt_calendar_fb")) {
-      chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
-    } else {
-      # Special hint for common error of 'week' unit not found in Gregorian calendar
-      if (e$message == "could not find function \"week\"") {
-        e$message <- c(
-          e$message,
-          "i" = "This error often occurs when trying to use a 'week' chronon without the ISO week calendar.\n",
-          ">" = "Try specifying the calendar explicitly, e.g. `calendar = cal_isoweek`."
-        )
-      }
-      cli::cli_abort(e$message, call = NULL)
+    # Special hint for common error of 'week' unit not found in Gregorian calendar
+    if (e$message == "could not find function \"week\"") {
+      e$message <- c(
+        e$message,
+        "i" = "This error often occurs when trying to use a 'week' chronon without the ISO week calendar.\n",
+        ">" = "Try specifying the calendar explicitly, e.g. `calendar = cal_isoweek`."
+      )
     }
+    cli::cli_abort(e$message, call = NULL)
   })
 
   mixtime(data, chronon = chronon, discrete = discrete)
@@ -251,7 +245,7 @@ yearmonth <- new_linear_time_fn(
 #' @export
 yearweek <- new_linear_time_fn(
   chronon = week(1L),
-  fallback_calendar = cal_isoweek
+  default_calendar = cal_isoweek
 )
 
 #' @rdname linear_time_helpers

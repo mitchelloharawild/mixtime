@@ -4,7 +4,7 @@
 \alias{new_linear_time_fn}
 \title{Linear time function factory}
 \usage{
-new_linear_time_fn(chronon, fallback_calendar = cal_gregorian)
+new_linear_time_fn(chronon, default_calendar = cal_gregorian)
 }
 \arguments{
 \item{chronon}{A bare call for a time unit object representing the chronon (e.g., \code{day(1)})}

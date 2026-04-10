@@ -61,12 +61,11 @@ linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 
 # ISO week calendar with week-day structure
-# TODO - needs default format strings to dispatch on calendar
-# linear_time(
-#   Sys.Date(),
-#   chronon = day(1L),
-#   calendar = cal_isoweek
-# )
+linear_time(
+  Sys.Date(),
+  chronon = day(1L),
+  calendar = cal_isoweek
+)
 
 }
 \seealso{
