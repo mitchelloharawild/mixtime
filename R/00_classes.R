@@ -65,7 +65,12 @@ mt_unit <- S7::new_class(
       class = S7::class_numeric,
       default = 1L
     )
-  )
+  ),
+  validator = function(self) {
+    if (length(self@n) != 1L) {
+      paste0("@n must be length 1 <numeric> value, not length ", length(self@n), ".")
+    }
+  }
 )
 
 #' @importFrom vecvec class_vecvec
