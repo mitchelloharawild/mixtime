@@ -7,14 +7,15 @@
 \alias{mt_tz_unit}
 \title{Base S7 class for creating new time units}
 \usage{
-mt_unit(.data = 1L)
+mt_unit(n = 1L)
 
-mt_loc_unit(.data = 1L, lat = 0, lon = 0, alt = 0)
+mt_loc_unit(n = 1L, lat = 0, lon = 0, alt = 0)
 
-mt_tz_unit(.data = 1L, tz = "")
+mt_tz_unit(n = 1L, tz = "")
 }
 \arguments{
-\item{.data}{The number of time units}
+\item{n}{The step size of time units. For example, \code{n = 2L} is 2 time units -
+for \code{cal_isoweek$week(2L)} that would be 2 weeks (a fortnight).}
 
 \item{lat}{Numeric. Latitude in decimal degrees. Range: -90 to 90.
 Default: 0 (equator).}

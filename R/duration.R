@@ -1,20 +1,135 @@
-# #' Create a temporal durations from time units
-# #'
-# #' @description
-# #' `r lifecycle::badge("experimental")`
-# #' 
-# #' Constructs a new duration object (`mt_duration`) from a set of mixtime time 
-# #' units. This functionality is in active development and is not ready for use.
-# #'
-# #' @param ... A set of time unit objects (e.g., `tu_year(1)`, `tu_month(2)`, etc.)
-# #'
-# #' @return An object of class `mt_duration` representing the specified duration.
-# #'
-# #' @details
-# #' This is a low-level constructor function that creates duration objects.
-# #'
-# #' @keywords internal
-# #' @name duration
-# new_duration <- function(...) {
-#   vctrs::new_vctr(rlang::list2(...), class = "mt_duration")
-# }
+#' Constructor for mixtime duration vectors
+#' 
+#' @description
+#' 
+#' `r lifecycle::badge("experimental")`
+#' 
+#' Constructs a new duration object (`mt_duration`) from a set of mixtime time 
+#' units. This functionality is in active development and is not ready for use.
+#' 
+#' @inheritParams new_time
+#'
+#' @return An object of class `mt_duration` representing the specified duration.
+#'
+#' @details
+#' 
+#' This is a low-level constructor function that creates duration objects.
+new_duration <- function(x = integer(), chronon = NULL) {
+  vctrs::new_vctr(x, chronon = chronon, class = "mt_duration")
+}
+
+#' @export
+format.mt_duration <- function(x, ...) {
+  paste(vec_data(x), time_unit_full(attr(x, "chronon")))
+}
+
+#' Duration vectors
+#' 
+#' `duration()` creates a vector of durations with a specified chronon (time
+#' unit). Durations represent a fixed span of time measured in a given unit
+#' (e.g., 3 months, 5 days), without reference to a specific point in time.
+#' 
+#' @param x A numeric vector of duration magnitudes.
+#' @param chronon A time unit expression representing the chronon (unit of the
+#'   duration), evaluated in the context of `calendar`. Use unquoted expressions
+#'   like `month(1L)` or `day(1L)`. Chronons from a specific calendar can also
+#'   be used (e.g. `cal_gregorian$month(1L)`). Defaults to the time chronon of
+#'   the input `data` (`time_chronon(data)`).
+#' @param calendar Calendar system used to evaluate `chronon`. Defaults to
+#'   `time_calendar(data)` for existing time objects. Common options include
+#'   [cal_gregorian] and [cal_isoweek].
+#' 
+#' @return A `mixtime` vector containing an `mt_duration` vector.
+#' 
+#' @seealso 
+#' - [new_duration_fn()] for creating reusable duration functions
+#' - [cal_gregorian], [cal_isoweek] for calendar systems
+#' 
+#' @examples
+#' # A duration of 3 months
+#' duration(3L, cal_gregorian$month(1L))
+#' 
+#' # A vector of durations in days
+#' duration(1:7, cal_gregorian$day(1L))
+#' 
+#' @export
+duration <- function(
+  x, chronon = time_chronon(data), calendar = time_calendar(data)
+) {
+  if (!is.numeric(x)) {
+    cli::cli_abort("{.var x} must be a numeric vector.", call. = FALSE)
+  }
+
+  # Evaluate chronon and cycle with a calendar mask
+  quo_chronon <- enquo(chronon)
+  tryCatch({
+    chronon <- eval_tidy(quo_chronon, data = calendar)
+  }, error = function(e) {
+    if (inherits(calendar, "mt_calendar_fb")) {
+      chronon <<- eval_tidy(quo_chronon, data = attr(calendar, "fallback"))
+    } else {
+      cli::cli_abort(e$message, call = NULL)
+    }
+  })
+
+  if (!inherits(chronon, "mixtime::mt_unit")) {
+    cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
+  }
+  new_mixtime(new_duration(x, chronon = chronon))
+}
+
+#' Duration function factory
+#' 
+#' `new_duration_fn()` creates a duration function for a specified chronon. A
+#' chronon is the smallest indivisible time unit (e.g., days, months) that
+#' defines what the numeric magnitudes in the resulting duration vector
+#' represent.
+#' 
+#' @param chronon A bare call for a time unit object representing the chronon
+#'   (e.g., `month(1L)`, `day(1L)`).
+#' @param fallback_calendar A fallback calendar used to resolve the time units
+#'   if they don't exist in the calendar of the input data (e.g.,
+#'   `cal_gregorian`).
+#' 
+#' @return A function used to create duration vectors with a specific chronon.
+#'   The returned function accepts:
+#'   \describe{
+#'     \item{`data`}{A numeric vector of duration magnitudes.}
+#'     \item{`calendar`}{A calendar system used to evaluate `chronon`. Defaults
+#'       to `time_calendar(data)`.}
+#'     \item{`...`}{Additional arguments passed to the chronon (e.g., `tz` for
+#'       timezones).}
+#'   }
+#' 
+#' @seealso 
+#' - [duration()] for creating duration vectors directly
+#' - [cal_gregorian], [cal_isoweek] for calendar systems
+#' 
+#' @examples
+#' # Create a months duration function
+#' months <- new_duration_fn(month(1L), fallback_calendar = cal_gregorian)
+#' months(1:6)
+#' 
+#' # Create a days duration function
+#' days <- new_duration_fn(day(1L), fallback_calendar = cal_gregorian)
+#' days(1:7)
+#' 
+#' @export
+new_duration_fn <- function(chronon, fallback_calendar = cal_gregorian) {
+  chronon <- enquo(chronon)
+  force(fallback_calendar)
+  function(n) {
+    new_duration(n, chronon = chronon)
+  }
+  function(
+    data, calendar = time_calendar(data), ...
+  ) {
+    # Add tz / loc to chronon
+    chronon <- quo_add_dots(chronon, ...)
+
+    duration(
+      data, chronon = !!chronon,
+      calendar = cal_fallback(calendar, fallback_calendar)
+    )
+  }
+}

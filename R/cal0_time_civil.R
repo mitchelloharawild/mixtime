@@ -57,7 +57,6 @@ cal_time_civil_midnight <- new_calendar(
   class = "cal_time_civil_midnight"
 )
 
-
 # Time unit labels
 method(time_unit_full, cal_time_civil_midnight$day) <- function(x) "day"
 method(time_unit_abbr, cal_time_civil_midnight$day) <- function(x) "D"

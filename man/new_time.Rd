@@ -22,6 +22,8 @@ A \code{mt_time} vector representing the time points in \code{x} according to
 the specified \code{chronon} and \code{cycle}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 Creates a \code{mixtime} time vector at a specific time point, with a specified
 chronon and optional cycle. The \code{chronon} defines the smallest indivisible
 time unit for the time vector, while the \code{cycle} allows for cyclical time
