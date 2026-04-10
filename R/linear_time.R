@@ -156,7 +156,7 @@ vec_cast.double.mt_linear <- function(x, to, ...) {
 #' 
 #' @param data A vector of time points (e.g. [base::Date], [base::POSIXt])
 #' @param discrete If `TRUE`, the number of chronons since Unix epoch that
-#' `.data` falls into is returned as an integer. If `FALSE`, a fractional number
+#' `data` falls into is returned as an integer. If `FALSE`, a fractional number
 #'  of chronons is returned (analagous to time using a continuous time model).
 #' @param calendar A calendar used to evaluate the time units. Defaults to the
 #'   calendar of the input data. Common options include [cal_gregorian] and

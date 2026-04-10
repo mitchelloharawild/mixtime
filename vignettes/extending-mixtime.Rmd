@@ -50,7 +50,7 @@ In practice, most time units should inherit either:
 * `mt_tz_unit` for civil-time units whose boundaries depend on a timezone (e.g. months, days, hours, ...), or
 * `mt_loc_unit` for astronomical-time units whose boundaries depend on geographic location (e.g. solar days).
 
-All time units accept a numeric `.data` argument representing the size of the unit (e.g. `1L` for "one month"). Additional arguments needed for your time unit can be defined with S7 by:
+All time units accept a numeric `n` argument representing the size of the unit (e.g. `1L` for "one month"). Additional arguments needed for your time unit can be defined with S7 by:
 
 * inheriting properties from `mt_tz_unit` (`tz` IANA names) or `mt_loc_unit` (for `lon`, `lat`, and `alt`),
 * defining custom S7 properties with `S7::new_class(properties = ...)`.

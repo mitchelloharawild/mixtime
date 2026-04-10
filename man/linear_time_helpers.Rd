@@ -26,7 +26,7 @@ datetime(data, discrete = TRUE, calendar = time_calendar(data), ...)
 \item{data}{A vector of time points (e.g. \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXt})}
 
 \item{discrete}{If \code{TRUE}, the number of chronons since Unix epoch that
-\code{.data} falls into is returned as an integer. If \code{FALSE}, a fractional number
+\code{data} falls into is returned as an integer. If \code{FALSE}, a fractional number
 of chronons is returned (analagous to time using a continuous time model).}
 
 \item{calendar}{A calendar used to evaluate the time units. Defaults to the
