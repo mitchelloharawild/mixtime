@@ -1,5 +1,8 @@
 #' Constructor for mixtime time vectors
 #' 
+#' @description
+#' `r lifecycle::badge("stable")`
+#' 
 #' Creates a `mixtime` time vector at a specific time point, with a specified 
 #' chronon and optional cycle. The `chronon` defines the smallest indivisible
 #' time unit for the time vector, while the `cycle` allows for cyclical time 
@@ -12,6 +15,9 @@
 #' @param cycle An optional time unit object representing the cycle for cyclical
 #'   time (e.g. `cal_gregorian$week(1L)` for day-of-week). If not provided, the 
 #'   time vector will be treated as linear time.
+#' @param class An optional character vector of additional S3 classes to assign 
+#'   to the resulting time vector. This allows for further subclassing of 
+#'   `mt_time` for specific time types (e.g. linear, cyclical, durations, etc.).
 #' 
 #' @return A `mt_time` vector representing the time points in `x` according to 
 #'   the specified `chronon` and `cycle`.
@@ -37,13 +43,10 @@
 #' )
 #' 
 #' @export
-new_time <- function(x = integer(), chronon = NULL, cycle = NULL) {
+new_time <- function(x = integer(), chronon = NULL, cycle = NULL, class = NULL) {
    vctrs::new_vctr(
     x,
-    class = c(
-      if (!is.null(cycle)) "mt_cyclical" else "mt_linear",
-      "mt_time"
-    ),
+    class = c(class, "mt_time"),
     chronon = chronon,
     cycle = cycle
   )

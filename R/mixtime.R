@@ -101,7 +101,14 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
     )
   }
 
-  new_mixtime(new_time(data, chronon, cycle))
+  new_mixtime(
+    new_time(
+      data,
+      chronon,
+      cycle,
+      if (is.null(cycle)) "mt_linear" else "mt_cyclical"
+    )
+  )
 }
 
 #' Convert a time class into a mixtime

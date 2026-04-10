@@ -4,7 +4,7 @@
 \alias{new_time}
 \title{Constructor for mixtime time vectors}
 \usage{
-new_time(x = integer(), chronon = NULL, cycle = NULL)
+new_time(x = integer(), chronon = NULL, cycle = NULL, class = NULL)
 }
 \arguments{
 \item{x}{A numeric vector of time points, integers for discrete time or
@@ -16,6 +16,10 @@ unit (chronon) for the time vector (e.g. \code{cal_gregorian$day(1L)}).}
 \item{cycle}{An optional time unit object representing the cycle for cyclical
 time (e.g. \code{cal_gregorian$week(1L)} for day-of-week). If not provided, the
 time vector will be treated as linear time.}
+
+\item{class}{An optional character vector of additional S3 classes to assign
+to the resulting time vector. This allows for further subclassing of
+\code{mt_time} for specific time types (e.g. linear, cyclical, durations, etc.).}
 }
 \value{
 A \code{mt_time} vector representing the time points in \code{x} according to
