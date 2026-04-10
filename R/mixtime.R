@@ -9,7 +9,7 @@
 #' 
 #' @export
 new_mixtime <- function(x = new_time()) {
-  stopifnot(inherits(x, c("mt_time", "mt_duration")))
+  stopifnot(inherits(x, "mt_time"))
   class_mixtime(list(x))
 }
 

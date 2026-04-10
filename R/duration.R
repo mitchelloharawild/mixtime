@@ -15,7 +15,7 @@
 #' 
 #' This is a low-level constructor function that creates duration objects.
 new_duration <- function(x = integer(), chronon = NULL) {
-  vctrs::new_vctr(x, chronon = chronon, class = "mt_duration")
+  new_time(x, chronon = chronon, class = "mt_duration")
 }
 
 #' @export
