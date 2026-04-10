@@ -54,6 +54,11 @@ cal_sym454 <- new_calendar(
 )
 
 # Time unit labels
+method(time_unit_full, cal_sym454$year) <- function(x) "year"
+method(time_unit_abbr, cal_sym454$year) <- function(x) "Y"
+method(time_unit_full, cal_sym454$month) <- function(x) "month"
+method(time_unit_abbr, cal_sym454$month) <- function(x) "M"
+
 ## Default formats
 S7::method(
   chronon_format_linear,
