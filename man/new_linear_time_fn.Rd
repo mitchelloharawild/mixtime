@@ -9,7 +9,7 @@ new_linear_time_fn(chronon, default_calendar = cal_gregorian)
 \arguments{
 \item{chronon}{A bare call for a time unit object representing the chronon (e.g., \code{day(1)})}
 
-\item{fallback_calendar}{A fallback calendar used to find the time units for
+\item{default_calendar}{A default calendar used to find the time units for
 conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}
 }
 \value{
@@ -39,9 +39,5 @@ yd(Sys.Date())
 # Gregorian date time with hourly precision
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
-
-# ISO-week-date calendar
-ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)
-ywd(Sys.Date())
 
 }

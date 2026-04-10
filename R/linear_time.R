@@ -30,10 +30,6 @@
 #' ymd_h <- new_linear_time_fn(hour(1L))
 #' ymd_h(Sys.time())
 #' 
-#' # ISO-week-date calendar
-#' ywd <- new_linear_time_fn(day(1L), default_calendar = cal_isoweek)
-#' ywd(Sys.Date())
-#' 
 #' @export
 new_linear_time_fn <- function(chronon, default_calendar = cal_gregorian) {
   chronon <- rlang::new_quosure(
