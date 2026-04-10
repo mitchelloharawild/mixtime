@@ -44,7 +44,13 @@
 #' 
 #' @export
 new_time <- function(x = integer(), chronon = NULL, cycle = NULL, class = NULL) {
-   vctrs::new_vctr(
+  if (length(chronon@n) != 1L) {
+    cli::cli_abort("{.var chronon} must be a single time unit object.", call. = FALSE)
+  }
+  if (!is.null(cycle) && length(cycle@n) != 1L) {
+    cli::cli_abort("{.var cycle} must be a single time unit object.", call. = FALSE)
+  }
+  vctrs::new_vctr(
     x,
     class = c(class, "mt_time"),
     chronon = chronon,
