@@ -35,8 +35,8 @@
 #' arithmetic, understanding that months have variable lengths and handling
 #' timezone-aware conversions.
 #' 
-#' @param .data The number of time units
-#' @param tz The timezone name for the unit (valid units can be found with `[tzdb::tzdb_names()]`)
+#' @param n The step size of time units. For example, `n = 2L` is 2 time units -
+#'   for `cal_isoweek$week(2L)` that would be 2 weeks (a fortnight).
 #' 
 #' @return A time unit object of class `mt_unit`
 #' 
@@ -61,8 +61,8 @@
 mt_unit <- S7::new_class(
   "mt_unit", 
   properties = list(
-    .data = S7::new_property(
-      class = S7::new_union(S7::class_integer, S7::class_double),
+    n = S7::new_property(
+      class = S7::class_numeric,
       default = 1L
     )
   )

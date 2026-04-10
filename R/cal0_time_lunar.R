@@ -44,12 +44,12 @@ method(chronon_epoch, cal_time_lunar$month) <- function(x) 953L
 # The number of UTC seconds in a lunar (synodic) phase
 method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_lunar$phase)) <- function(x, y, at = NULL) {
   at <- approx_lunations_from_utc(at / 8)
-  (approx_utc_from_lunations(at + y@.data) - approx_utc_from_lunations(at)) / x@.data
+  (approx_utc_from_lunations(at + y@n) - approx_utc_from_lunations(at)) / x@n
 }
 
 # The number of lunar phases in a lunar (synodic) month
 method(chronon_cardinality, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(x, y, at = NULL) {
-  y@.data*8L/x@.data
+  y@n*8L/x@n
 }
 
 # The number of UTC seconds in a lunar (synodic) phase

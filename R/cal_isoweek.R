@@ -50,10 +50,10 @@ method(chronon_format_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- func
 method(chronon_format_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y) "W{cyc(week,year)}"
 
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
-  if(y@.data != 1L) {
+  if(y@n != 1L) {
     cli::cli_abort("The number of weeks in multi-year chronons is not yet supported.")
   }
-  if(x@.data != 1L) {
+  if(x@n != 1L) {
     cli::cli_abort("The number of multi-weeks in year chronons is not yet supported.")
   }
   year <- at + 1970L
@@ -62,7 +62,7 @@ method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- functio
 }
 
 method(chronon_cardinality, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y, at = NULL) {
-  y@.data*7L/x@.data
+  y@n*7L/x@n
 }
 
 method(chronon_divmod, list(cal_isoweek$day, cal_isoweek$week)) <- function(from, to, x) {
@@ -86,10 +86,10 @@ method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$day)) <- function(from
 
 method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(from, to, x) {
   # Modulo arithmetic to convert from weeks to ISO years
-  if (to@.data != 1L) {
+  if (to@n != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
-  if (from@.data != 1L) {
+  if (from@n != 1L) {
     stop("Converting from multi-week chronons to years is not yet supported", call. = FALSE)
   }
 
@@ -117,10 +117,10 @@ method(chronon_divmod, list(cal_isoweek$week, cal_isoweek$year)) <- function(fro
 }
 
 method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(from, to, x) {
-  if (to@.data != 1L) {
+  if (to@n != 1L) {
     stop("Converting to multi-year chronons from weeks is not yet supported", call. = FALSE)
   }
-  if (from@.data != 1L) {
+  if (from@n != 1L) {
     stop("Converting from multi-week chronons to years is not yet supported", call. = FALSE)
   }
   

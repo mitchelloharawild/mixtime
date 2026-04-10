@@ -71,37 +71,37 @@ method(time_unit_abbr, cal_time_solar_dusk$day) <- function(x) "D"
 # The number of UTC seconds in a sunrise-based day
 method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_sunrise$day)) <- function(x, y, at = NULL) {
   at <- approx_sunrises_from_utc(at, y@lat, y@lon, -0.833)
-  (approx_utc_from_sunrises(at + y@.data, y@lat, y@lon, -0.833) - approx_utc_from_sunrises(at, y@lat, y@lon, -0.833)) / x@.data
+  (approx_utc_from_sunrises(at + y@n, y@lat, y@lon, -0.833) - approx_utc_from_sunrises(at, y@lat, y@lon, -0.833)) / x@n
 }
 
 # The number of UTC seconds in a noon-based day
 method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_noon$day)) <- function(x, y, at = NULL) {
   at <- approx_noons_from_utc(at, y@lat, y@lon)
-  (approx_utc_from_noons(at + y@.data, y@lat, y@lon) - approx_utc_from_noons(at, y@lat, y@lon)) / x@.data
+  (approx_utc_from_noons(at + y@n, y@lat, y@lon) - approx_utc_from_noons(at, y@lat, y@lon)) / x@n
 }
 
 # The number of UTC seconds in a sunset-based day
 method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_sunset$day)) <- function(x, y, at = NULL) {
   at <- approx_sunsets_from_utc(at, y@lat, y@lon, -0.833)
-  (approx_utc_from_sunsets(at + y@.data, y@lat, y@lon, -0.833) - approx_utc_from_sunsets(at, y@lat, y@lon, -0.833)) / x@.data
+  (approx_utc_from_sunsets(at + y@n, y@lat, y@lon, -0.833) - approx_utc_from_sunsets(at, y@lat, y@lon, -0.833)) / x@n
 }
 
 # The number of UTC seconds in a midnight-based day
 method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_midnight$day)) <- function(x, y, at = NULL) {
   at <- approx_midnights_from_utc(at, y@lat, y@lon)
-  (approx_utc_from_midnights(at + y@.data, y@lat, y@lon) - approx_utc_from_midnights(at, y@lat, y@lon)) / x@.data
+  (approx_utc_from_midnights(at + y@n, y@lat, y@lon) - approx_utc_from_midnights(at, y@lat, y@lon)) / x@n
 }
 
 # The number of UTC seconds in a dawn-based day
 method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_dawn$day)) <- function(x, y, at = NULL) {
   at <- approx_dawns_from_utc(at, y@lat, y@lon, -6.0)
-  (approx_utc_from_dawns(at + y@.data, y@lat, y@lon, -6.0) - approx_utc_from_dawns(at, y@lat, y@lon, -6.0)) / x@.data
+  (approx_utc_from_dawns(at + y@n, y@lat, y@lon, -6.0) - approx_utc_from_dawns(at, y@lat, y@lon, -6.0)) / x@n
 }
 
 # The number of UTC seconds in a dusk-based day
 method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_dusk$day)) <- function(x, y, at = NULL) {
   at <- approx_dusks_from_utc(at, y@lat, y@lon, -6.0)
-  (approx_utc_from_dusks(at + y@.data, y@lat, y@lon, -6.0) - approx_utc_from_dusks(at, y@lat, y@lon, -6.0)) / x@.data
+  (approx_utc_from_dusks(at + y@n, y@lat, y@lon, -6.0) - approx_utc_from_dusks(at, y@lat, y@lon, -6.0)) / x@n
 }
 
 

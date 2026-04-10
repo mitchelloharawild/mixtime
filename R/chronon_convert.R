@@ -33,7 +33,7 @@ chronon_convert.S7_methods <- function(x, to, discrete = FALSE) S7_method_docs()
 chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
   # Convert between same time unit types
   if (identical(S7::S7_class(from), S7::S7_class(to))) {
-    x <- vec_data(x) * from@.data / to@.data
+    x <- vec_data(x) * from@n / to@n
     if (discrete) x <- as.integer(floor(x))
     return(x)
   }

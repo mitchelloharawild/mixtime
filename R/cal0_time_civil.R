@@ -1,3 +1,5 @@
+#' @param tz The timezone name for the unit (valid units can be found with `[tzdb::tzdb_names()]`)
+#' 
 #' @rdname mt_unit
 #' @export
 mt_tz_unit <- new_class(
@@ -85,7 +87,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$hour, cal_time_civil_midnight$day)
 ) <- function(x, y, at = NULL) {
-  y@.data*24L/x@.data
+  y@n*24L/x@n
 }
 
 ## AMPMs in DAYs
@@ -93,7 +95,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$ampm, cal_time_civil_midnight$day)
 ) <- function(x, y, at = NULL) {
-  y@.data*2L/x@.data
+  y@n*2L/x@n
 }
 
 ## HOURs in AMPMs
@@ -101,7 +103,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$hour, cal_time_civil_midnight$ampm)
 ) <- function(x, y, at = NULL) {
-  y@.data*12L/x@.data
+  y@n*12L/x@n
 }
 
 ## MINUTEs in HOURs
@@ -109,7 +111,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$minute, cal_time_civil_midnight$hour)
 ) <- function(x, y, at = NULL) {
-  y@.data*60L/x@.data
+  y@n*60L/x@n
 }
 
 ## SECONDs in MINUTEs
@@ -117,7 +119,7 @@ method(
   chronon_cardinality,
   list(cal_time_civil_midnight$second, cal_time_civil_midnight$minute)
 ) <- function(x, y, at = NULL) {
-  y@.data*60L/x@.data
+  y@n*60L/x@n
 }
 
 ## MILLISECONDs in SECONDs
@@ -125,7 +127,7 @@ method(
   chronon_cardinality, 
   list(cal_time_civil_midnight$millisecond, cal_time_civil_midnight$second)
 ) <- function(x, y, at = NULL) {
-  y@.data*1000L/x@.data
+  y@n*1000L/x@n
 }
 
 

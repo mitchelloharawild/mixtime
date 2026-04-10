@@ -21,7 +21,7 @@ mt_unit_display <- function(x, units, parts, ...) {
   } else if (is_mt <- S7::S7_inherits(x, mt_unit)) {
     xi <- vec_match(
       data.frame(x = vec_data(x), tu = S7_class_id(x)),
-      data.frame(x = vapply(units, function(u) u@.data, numeric(1L)), tu = vapply(units, S7_class_id, character(1L)))
+      data.frame(x = vapply(units, function(u) u@n, numeric(1L)), tu = vapply(units, S7_class_id, character(1L)))
     )
     # No matches found
     if (is.na(xi)) {
