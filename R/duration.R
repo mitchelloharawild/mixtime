@@ -133,3 +133,73 @@ new_duration_fn <- function(chronon, fallback_calendar = cal_gregorian) {
     )
   }
 }
+
+#' Duration helper functions
+#'
+#' Convenience functions for creating duration vectors of common time units.
+#' Each function wraps [new_duration_fn()] for its respective chronon.
+#'
+#' @param n A numeric vector of duration magnitudes.
+#' @param calendar A calendar system used to evaluate the chronon. Defaults to
+#'   the calendar associated with the input data `n` (via 
+#'   `time_calendar(data)`). If `n` is numeric, the default calendar is
+#'   `cal_gregorian`.
+#' @param ... Additional arguments passed to the chronon (e.g. `tz` for
+#'   timezones).
+#'
+#' @return A `mixtime` vector containing an `mt_duration` vector.
+#'
+#' @seealso
+#' - [new_duration_fn()] for creating custom duration functions
+#' - [duration()] for creating duration vectors directly
+#' - [cal_gregorian], [cal_isoweek] for calendar systems
+#'
+#' @examples
+#' years(3L)
+#' quarters(2L)
+#' months(6L)
+#' weeks(4L)
+#' days(7L)
+#' hours(12L)
+#' minutes(30L)
+#' seconds(45L)
+#' milliseconds(500L)
+#'
+#' @name duration_helpers
+NULL
+
+#' @rdname duration_helpers
+#' @export
+years <- new_duration_fn(year(1L))
+
+#' @rdname duration_helpers
+#' @export
+quarters <- new_duration_fn(quarter(1L))
+
+#' @rdname duration_helpers
+#' @export
+months <- new_duration_fn(month(1L))
+
+#' @rdname duration_helpers
+#' @export
+weeks <- new_duration_fn(week(1L), fallback_calendar = cal_isoweek)
+
+#' @rdname duration_helpers
+#' @export
+days <- new_duration_fn(day(1L))
+
+#' @rdname duration_helpers
+#' @export
+hours <- new_duration_fn(hour(1L))
+
+#' @rdname duration_helpers
+#' @export
+minutes <- new_duration_fn(minute(1L))
+
+#' @rdname duration_helpers
+#' @export
+seconds <- new_duration_fn(second(1L))
+
+#' @rdname duration_helpers
+#' @export
+milliseconds <- new_duration_fn(millisecond(1L))
