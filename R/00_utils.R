@@ -28,6 +28,7 @@ S7_method_docs <- function() {
 }
 
 check_tz_name <- function(zone) {
+  if (identical(zone, "")) return(invisible(TRUE))
   if (!zone %in% tzdb::tzdb_names()) {
     cli::cli_abort(
       c(
