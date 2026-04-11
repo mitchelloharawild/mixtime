@@ -161,26 +161,6 @@ method(vec_ptype_full, class_mixtime) <- function(x, ...) "mixtime"
 #' @export
 method(vec_ptype_abbr, class_mixtime) <- function(x, ...) "mixtime"
 
-vec_cast_to_mixtime <- function(x, to, ...) mixtime(x)
-
-vec_cast_from_mixtime <- function(x, to, ...) {
-  class(x) <- setdiff(class(x), "mixtime")
-  vec_cast(x, to, ...)
-}
-
-## Custom vec cast methods since some time classes don't have cast methods
-
-#' @method vec_cast.character mixtime::mixtime
-#' @export
-`vec_cast.character.mixtime::mixtime` <- function(x, to, ...) {
-  unvecvec(vecvec_apply(x, as.character, ...))
-}
-
-#' @method vec_cast.double mixtime::mixtime
-#' @export
-`vec_cast.double.mixtime::mixtime` <- function(x, to, ...) {
-  unvecvec(vecvec_apply(x, as.double, ...))
-}
 
 time_valid <- function(x) {
   if (is_mixtime(x)) return(TRUE)
