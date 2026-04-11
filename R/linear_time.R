@@ -297,14 +297,51 @@ vec_arith.mt_time.integer <- function(op, x, y, ...) {
 #' @export
 vec_arith.mt_time.double <- vec_arith.mt_time.integer
 
+#' @method vec_arith.mt_time mt_duration
+#' @export
+vec_arith.mt_time.mt_duration <- function(op, x, y, ...) {
+  if (!op %in% c("+", "-")) {
+    stop("Only additing and subtracting durations are supported for continuous time", call. = FALSE)
+  }
+  cardinality <- chronon_cardinality(
+    time_chronon(x), time_chronon(y),
+    at = vec_data(x)
+  )
+
+  res <- vec_arith_base(op, vec_data(x), vec_data(y) * cardinality, ...)
+  attributes(res) <- attributes(x)
+  res
+}
+#' @method vec_arith.mt_duration mt_time
+#' @export
+vec_arith.mt_duration.mt_time <- function(op, x, y, ...) {
+  if (!op %in% c("+", "-")) {
+    stop("Only additing and subtracting durations are supported for continuous time", call. = FALSE)
+  }
+  cardinality <- chronon_cardinality(
+    time_chronon(y), time_chronon(x),
+    at = vec_data(y)
+  )
+
+  res <- vec_arith_base(op, vec_data(x) * cardinality, vec_data(y), ...)
+  attributes(res) <- attributes(y)
+  res
+}
 
 #' @method vec_arith.mt_time mt_time
 #' @export
 vec_arith.mt_time.mt_time <- function(op, x, y, ...) {
-  if (!op %in% c("+", "-")) {
-    stop("Only numeric addition and subtraction supported for continuous time", call. = FALSE)
+  if (op != "-") {
+     stop("Only subtracting two time points is supported for continuous time", call. = FALSE)
   }
-  vec_arith_base(op, x, y, ...)
+  tu <- chronon_common(time_chronon(x), time_chronon(y))
+  res <- vec_arith_base(
+    op,
+    chronon_convert(x, tu, discrete = FALSE),
+    chronon_convert(y, tu, discrete = FALSE),
+    ...
+  )
+  new_duration(res, chronon = tu)
 }
 
 #' @method vec_cast.Date mt_linear

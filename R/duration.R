@@ -70,6 +70,41 @@ duration <- function(
   new_mixtime(new_duration(data, chronon = chronon))
 }
 
+#' @method vec_cast.integer mt_duration
+#' @export
+vec_cast.integer.mt_duration <- function(x, to, ...) {
+  vec_cast(vec_data(x), integer())
+}
+
+#' @method vec_cast.double mt_duration
+#' @export
+vec_cast.double.mt_duration <- function(x, to, ...) {
+  vec_cast(vec_data(x), double())
+}
+
+#' @importFrom vctrs vec_arith
+#' @method vec_arith mt_duration
+#' @export
+vec_arith.mt_duration <- function(op, x, y, ...) {
+  UseMethod("vec_arith.mt_duration", y)
+}
+
+#' @method vec_arith.mt_duration mt_duration
+#' @export
+vec_arith.mt_duration.mt_duration <- function(op, x, y, ...) {
+  if (!op %in% c("-", "+")) {
+    cli::cli_abort("Only addition and subtraction are supported for durations.", call. = FALSE)
+  }
+  tu <- chronon_common(time_chronon(x), time_chronon(y))
+  res <- vec_arith_base(
+    op,
+    chronon_convert(x, tu, discrete = FALSE),
+    chronon_convert(y, tu, discrete = FALSE),
+    ...
+  )
+  new_duration(res, chronon = tu)
+}
+
 #' Duration function factory
 #' 
 #' `new_duration_fn()` creates a duration function for a specified chronon. A

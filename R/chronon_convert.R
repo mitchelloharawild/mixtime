@@ -40,6 +40,7 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
 
   # Add default tz if not given in `to` chronon
   if (S7::prop_exists(to, "tz") && !nzchar(to@tz)){
+    if (!nzchar(from@tz)) from@tz <- "UTC"
     to@tz <- tz_name(from)
   } 
 
