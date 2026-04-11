@@ -29,7 +29,7 @@ format.mt_duration <- function(x, ...) {
 #' unit). Durations represent a fixed span of time measured in a given unit
 #' (e.g., 3 months, 5 days), without reference to a specific point in time.
 #' 
-#' @param x A numeric vector of duration magnitudes.
+#' @param data A time vector of duration magnitudes.
 #' @param chronon A time unit expression representing the chronon (unit of the
 #'   duration), evaluated in the context of `calendar`. Use unquoted expressions
 #'   like `month(1L)` or `day(1L)`. Chronons from a specific calendar can also
@@ -54,10 +54,10 @@ format.mt_duration <- function(x, ...) {
 #' 
 #' @export
 duration <- function(
-  x, chronon = time_chronon(data), calendar = time_calendar(data)
+  data, chronon = time_chronon(data), calendar = time_calendar(data)
 ) {
-  if (!is.numeric(x)) {
-    cli::cli_abort("{.var x} must be a numeric vector.", call. = FALSE)
+  if (!is.numeric(data)) {
+    cli::cli_abort("{.var data} must be a numeric vector.", call. = FALSE)
   }
 
   # Evaluate chronon and cycle with a calendar mask
@@ -67,7 +67,7 @@ duration <- function(
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
   }
-  new_mixtime(new_duration(x, chronon = chronon))
+  new_mixtime(new_duration(data, chronon = chronon))
 }
 
 #' Duration function factory
@@ -112,9 +112,6 @@ new_duration_fn <- function(chronon, default_calendar = cal_gregorian) {
     enexpr(chronon), 
     env = rlang::as_data_mask(default_calendar)
   )
-  function(n) {
-    new_duration(n, chronon = chronon)
-  }
   function(
     data, calendar = time_calendar(data), ...
   ) {
@@ -130,11 +127,7 @@ new_duration_fn <- function(chronon, default_calendar = cal_gregorian) {
 #' Convenience functions for creating duration vectors of common time units.
 #' Each function wraps [new_duration_fn()] for its respective chronon.
 #'
-#' @param n A numeric vector of duration magnitudes.
-#' @param calendar A calendar system used to evaluate the chronon. Defaults to
-#'   the calendar associated with the input data `n` (via 
-#'   `time_calendar(data)`). If `n` is numeric, the default calendar is
-#'   `cal_gregorian`.
+#' @inheritParams duration
 #' @param ... Additional arguments passed to the chronon (e.g. `tz` for
 #'   timezones).
 #'

@@ -4,10 +4,10 @@
 \alias{duration}
 \title{Duration vectors}
 \usage{
-duration(x, chronon = time_chronon(data), calendar = time_calendar(data))
+duration(data, chronon = time_chronon(data), calendar = time_calendar(data))
 }
 \arguments{
-\item{x}{A numeric vector of duration magnitudes.}
+\item{data}{A time vector of duration magnitudes.}
 
 \item{chronon}{A time unit expression representing the chronon (unit of the
 duration), evaluated in the context of \code{calendar}. Use unquoted expressions

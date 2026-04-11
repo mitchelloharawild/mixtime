@@ -32,15 +32,14 @@ seconds(data, calendar = time_calendar(data), ...)
 milliseconds(data, calendar = time_calendar(data), ...)
 }
 \arguments{
-\item{calendar}{A calendar system used to evaluate the chronon. Defaults to
-the calendar associated with the input data \code{n} (via
-\code{time_calendar(data)}). If \code{n} is numeric, the default calendar is
-\code{cal_gregorian}.}
+\item{data}{A time vector of duration magnitudes.}
+
+\item{calendar}{Calendar system used to evaluate \code{chronon}. Defaults to
+\code{time_calendar(data)} for existing time objects. Common options include
+\link{cal_gregorian} and \link{cal_isoweek}.}
 
 \item{...}{Additional arguments passed to the chronon (e.g. \code{tz} for
 timezones).}
-
-\item{n}{A numeric vector of duration magnitudes.}
 }
 \value{
 A \code{mixtime} vector containing an \code{mt_duration} vector.
