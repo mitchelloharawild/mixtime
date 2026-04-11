@@ -30,7 +30,7 @@ chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 # #' @rdname chronon_convert
 chronon_convert.S7_methods <- function(x, to, discrete = FALSE) S7_method_docs()
 
-chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
+chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   # Convert between same time unit types
   if (identical(S7::S7_class(from), S7::S7_class(to))) {
     x <- vec_data(x) * from@n / to@n
@@ -40,10 +40,15 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = tz_name(to)) {
 
   # Add default tz if not given in `to` chronon
   if (S7::prop_exists(to, "tz") && !nzchar(to@tz)){
-    if (!nzchar(from@tz)) from@tz <- "UTC"
-    to@tz <- tz_name(from)
-  } 
-
+    to@tz <- from@tz
+  }
+  if (is.null(tz)) {
+    tz <- tz_name(to)
+  }
+  if (identical(tz, "")) {
+    tz <- "UTC"
+  }
+  
   # Find path along convertable time units
   path <- S7_graph_dispatch(
     unique(c(
