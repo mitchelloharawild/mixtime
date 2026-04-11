@@ -1,6 +1,3 @@
-# TODO: Reverse `x` and `y` in the generic definition to match chronon_divmod
-# and usual reading of how many "days in month".
-
 #' Cardinality between time units
 #'
 #' This S7 generic function defines the calendrical relationships between two 
@@ -79,7 +76,6 @@ chronon_cardinality.S7_methods <- function(x, y, at = NULL) S7_method_docs()
 method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {
-    # TODO - preserve integer type if possible
     return(y@n/x@n)
   }
 
@@ -108,9 +104,9 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
     ## QUESTION: Why does this not work with `generic` instead of `chronon_cardinality`? S7 bug?
 
     result <- chronon_cardinality(path[[i]], result, at)
-    if (!is.null(at)) at <- at*result
+    if (!is.null(at)) at <- at * result
     # Class the result with the next class in the path
-    result <- attr(path[[i]], "S7_class")(result)
+    result <- S7::S7_class(path[[i]])(result)
   }
 
   result@n

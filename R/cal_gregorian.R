@@ -71,7 +71,7 @@ method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$year)) <- func
     stop("The number of days in a year requires the time context `at`.", call. = FALSE)
   }
   if(y@n != 1L) {
-    cli::cli_abort("Multi-year chronons are not yet supported for conversion to days.")
+    cli::cli_abort("The cardinality of days in multi-year chronons is not yet supported.")
   }
   (is_leap_year(1970L + as.integer(at)) + 365L)/x@n
 }
