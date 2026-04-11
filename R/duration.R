@@ -20,7 +20,10 @@ new_duration <- function(x = integer(), chronon = NULL) {
 
 #' @export
 format.mt_duration <- function(x, ...) {
-  paste(vec_data(x), time_unit_full(attr(x, "chronon")))
+  # TODO - better pluralisation
+  unit <- time_unit_full(time_chronon(x))
+  x <- vec_data(x)
+  paste0(x, " ", unit, ifelse(x == 1, "", "s"))
 }
 
 #' Duration vectors
