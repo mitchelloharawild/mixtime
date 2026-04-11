@@ -63,8 +63,17 @@ time_format_default <- function(x) {
 }
 
 time_format_impl <- function(x, format = time_format_default(x), ...) {
+  # Obtain core time information
   chronon <- time_chronon(x)
   cal <- time_calendar(chronon)
+  
+  # Extend evaluation calendar cycle calendar units
+  cycle <- time_cycle(x)
+  if (!is.null(cycle)) {
+    cycle_units <- setdiff(names(cal_cyc <- time_calendar(cycle)), names(cal))
+    cal[cycle_units] <- cal_cyc[cycle_units]
+  }
+
   x_na <- is.na(x)
   
   # Create glue evaluation environment
