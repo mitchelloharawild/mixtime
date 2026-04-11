@@ -43,7 +43,7 @@
 #' )
 #' 
 #' @export
-new_time <- function(x = integer(), chronon = NULL, cycle = NULL, class = NULL) {
+new_time <- function(x = integer(), chronon = mt_unit(1L), cycle = NULL, class = NULL) {
   if (length(chronon@n) != 1L) {
     cli::cli_abort("{.var chronon} must be a single time unit object.", call. = FALSE)
   }
