@@ -12,7 +12,7 @@
 #' - `month()`: Synodic month unit
 #' - `phase()`: Synodic phase unit
 #' 
-#' @seealso [`cal_time_civil_midnight`]
+#' @seealso [`cal_time_civil`]
 #' 
 #' @examples
 #' # Find the time of a new moon in the Gregorian calendar
@@ -42,7 +42,7 @@ method(chronon_format_cyclical, list(cal_time_lunar$phase, cal_time_lunar$month)
 method(chronon_epoch, cal_time_lunar$month) <- function(x) 953L
 
 # The number of UTC seconds in a lunar (synodic) phase
-method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_lunar$phase)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_lunar$phase)) <- function(x, y, at = NULL) {
   at <- approx_lunations_from_utc(at / 8)
   (approx_utc_from_lunations(at + y@n) - approx_utc_from_lunations(at)) / x@n
 }
@@ -53,14 +53,14 @@ method(chronon_cardinality, list(cal_time_lunar$phase, cal_time_lunar$month)) <-
 }
 
 # The number of UTC seconds in a lunar (synodic) phase
-method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_lunar$phase)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_civil$second, cal_time_lunar$phase)) <- function(from, to, x) {
   list(
     div = approx_lunations_from_utc(as.double(x)) * 8,
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_lunar$phase, cal_time_civil_midnight$second)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_lunar$phase, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_utc_from_lunations(as.double(x) / 8),
     mod = 0

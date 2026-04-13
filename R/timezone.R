@@ -52,7 +52,7 @@ method(tz_offset, class_mixtime) <- function(x, ...) {
 }
 method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_chronon(x)), ...) {
   if(tz == "UTC") return(rep(0, length(x)))
-  tu_s <- cal_time_civil_midnight$second(1L)
+  tu_s <- cal_time_civil$second(1L)
   time_s <- chronon_convert(x, tu_s)
   offset_s <- get_tz_offset(time_s, tz)
   nz_offset <- offset_s != 0
@@ -81,7 +81,7 @@ method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_
 tz_abbreviation <- function(x) {
   # TODO: Handle timezone changes within chronon using [before]/[after]
   get_tz_abbreviation(
-    chronon_convert(x, cal_time_civil_midnight$second(1L)),
+    chronon_convert(x, cal_time_civil$second(1L)),
     tz_name(x)
   )
 }

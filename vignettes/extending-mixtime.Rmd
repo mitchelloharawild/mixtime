@@ -69,7 +69,7 @@ These time units are typically exported within a calendar object (shown below) a
 
 A calendar is a named collection of time units, created with `new_calendar()`. An optional `inherit` argument pulls in all units from an existing calendar (units defined in `...` take precedence). It is useful to inherit from a base calendar that defines common time units for civil and astronomical calendars. The base calendars provided by mixtime are:
 
-* `cal_time_civil_midnight`: civil time units anchored at midnight (e.g. days, hours, minutes, seconds, ...)
+* `cal_time_civil`: civil time units anchored at midnight (e.g. days, hours, minutes, seconds, ...)
 * `cal_time_solar_***`: solar time units anchored at sunrise, noon, sunset or midnight (e.g. solar days)
 * `cal_time_lunar`: lunar time units (e.g. lunar months, lunar phases)
 
@@ -79,7 +79,7 @@ cal_symmetry454 <- new_calendar(
   month = S7::new_class("tu_symmetry454_month", parent = mt_tz_unit),
   week  = cal_isoweek$week,
   # Inherit civil-time units (day, hour, minute, second, ...)
-  inherit = cal_time_civil_midnight,
+  inherit = cal_time_civil,
   class = "cal_symmetry454"
 )
 
@@ -103,7 +103,7 @@ Two S7 generics drive all calendar calculations: `chronon_cardinality()` and `ch
 
 For a time unit to be useful in mixtime, at minimum a `chronon_cardinality()` method between itself and the next coarser unit must be defined. Time units with irregular relationships (e.g. days → months) also require `chronon_divmod()` to efficiently compute relationships between units.
 
-Defining these methods for time units between different calendars is also possible, which allows for interoperability between calendars. In most cases, calendars will share a common base calendar (e.g. `cal_time_civil_midnight`) which provides a common time unit (e.g. civil days) or methods for converting between different calendars (e.g. civil midnight to solar midnight).
+Defining these methods for time units between different calendars is also possible, which allows for interoperability between calendars. In most cases, calendars will share a common base calendar (e.g. `cal_time_civil`) which provides a common time unit (e.g. civil days) or methods for converting between different calendars (e.g. civil midnight to solar midnight).
 
 ### Cardinality {#cardinality}
 
@@ -445,7 +445,7 @@ cyclical_time(as.Date("1955-11-12"), chronon = cal_symmetry454$week(1L), cycle =
 
 # Day of week (inherited from cal_isoweek)
 day_of_week(as.Date("1955-11-12"), calendar = cal_symmetry454)
-# Day of year (inherited from cal_time_civil_midnight)
+# Day of year (inherited from cal_time_civil)
 day_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
 ```
 

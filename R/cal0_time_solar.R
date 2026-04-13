@@ -11,7 +11,7 @@
 #' 
 #' - `day()`: Day unit
 #' 
-#' @seealso [`cal_time_civil_midnight`]
+#' @seealso [`cal_time_civil`]
 #' 
 #' @examples
 #' # Find the time of sunset in the Gregorian calendar
@@ -69,120 +69,120 @@ method(time_unit_full, cal_time_solar_dusk$day) <- function(x) "dusk"
 method(time_unit_abbr, cal_time_solar_dusk$day) <- function(x) "D"
 
 # The number of UTC seconds in a sunrise-based day
-method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_sunrise$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar_sunrise$day)) <- function(x, y, at = NULL) {
   at <- approx_sunrises_from_utc(at, y@lat, y@lon, -0.833)
   (approx_utc_from_sunrises(at + y@n, y@lat, y@lon, -0.833) - approx_utc_from_sunrises(at, y@lat, y@lon, -0.833)) / x@n
 }
 
 # The number of UTC seconds in a noon-based day
-method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_noon$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar_noon$day)) <- function(x, y, at = NULL) {
   at <- approx_noons_from_utc(at, y@lat, y@lon)
   (approx_utc_from_noons(at + y@n, y@lat, y@lon) - approx_utc_from_noons(at, y@lat, y@lon)) / x@n
 }
 
 # The number of UTC seconds in a sunset-based day
-method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_sunset$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar_sunset$day)) <- function(x, y, at = NULL) {
   at <- approx_sunsets_from_utc(at, y@lat, y@lon, -0.833)
   (approx_utc_from_sunsets(at + y@n, y@lat, y@lon, -0.833) - approx_utc_from_sunsets(at, y@lat, y@lon, -0.833)) / x@n
 }
 
 # The number of UTC seconds in a midnight-based day
-method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_midnight$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar_midnight$day)) <- function(x, y, at = NULL) {
   at <- approx_midnights_from_utc(at, y@lat, y@lon)
   (approx_utc_from_midnights(at + y@n, y@lat, y@lon) - approx_utc_from_midnights(at, y@lat, y@lon)) / x@n
 }
 
 # The number of UTC seconds in a dawn-based day
-method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_dawn$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar_dawn$day)) <- function(x, y, at = NULL) {
   at <- approx_dawns_from_utc(at, y@lat, y@lon, -6.0)
   (approx_utc_from_dawns(at + y@n, y@lat, y@lon, -6.0) - approx_utc_from_dawns(at, y@lat, y@lon, -6.0)) / x@n
 }
 
 # The number of UTC seconds in a dusk-based day
-method(chronon_cardinality, list(cal_time_civil_midnight$second, cal_time_solar_dusk$day)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar_dusk$day)) <- function(x, y, at = NULL) {
   at <- approx_dusks_from_utc(at, y@lat, y@lon, -6.0)
   (approx_utc_from_dusks(at + y@n, y@lat, y@lon, -6.0) - approx_utc_from_dusks(at, y@lat, y@lon, -6.0)) / x@n
 }
 
 
-method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_sunrise$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_civil$second, cal_time_solar_sunrise$day)) <- function(from, to, x) {
   list(
     div = approx_sunrises_from_utc(as.double(x), to@lat, to@lon, -0.833),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_solar_sunrise$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_solar_sunrise$day, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_utc_from_sunrises(as.double(x), from@lat, from@lon, -0.833),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_noon$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_civil$second, cal_time_solar_noon$day)) <- function(from, to, x) {
   list(
     div = approx_noons_from_utc(as.double(x), to@lat, to@lon),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_solar_noon$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_solar_noon$day, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_utc_from_noons(as.double(x), from@lat, from@lon),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_sunset$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_civil$second, cal_time_solar_sunset$day)) <- function(from, to, x) {
   list(
     div = approx_sunsets_from_utc(as.double(x), to@lat, to@lon, -0.833),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_solar_sunset$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_solar_sunset$day, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_utc_from_sunsets(as.double(x), from@lat, from@lon, -0.833),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_midnight$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_civil$second, cal_time_solar_midnight$day)) <- function(from, to, x) {
   list(
     div = approx_midnights_from_utc(as.double(x), to@lat, to@lon),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_solar_midnight$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_solar_midnight$day, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_utc_from_midnights(as.double(x), from@lat, from@lon),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_dawn$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_civil$second, cal_time_solar_dawn$day)) <- function(from, to, x) {
   list(
     div = approx_dawns_from_utc(as.double(x), to@lat, to@lon, -6.0),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_solar_dawn$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_solar_dawn$day, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_utc_from_dawns(as.double(x), from@lat, from@lon, -6.0),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_civil_midnight$second, cal_time_solar_dusk$day)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_civil$second, cal_time_solar_dusk$day)) <- function(from, to, x) {
   list(
     div = approx_dusks_from_utc(as.double(x), to@lat, to@lon, -6.0),
     mod = 0
   )
 }
 
-method(chronon_divmod, list(cal_time_solar_dusk$day, cal_time_civil_midnight$second)) <- function(from, to, x) {
+method(chronon_divmod, list(cal_time_solar_dusk$day, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_utc_from_dusks(as.double(x), from@lat, from@lon, -6.0),
     mod = 0

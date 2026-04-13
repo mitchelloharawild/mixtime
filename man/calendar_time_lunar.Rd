@@ -31,6 +31,6 @@ datetime(t, tz = "Australia/Melbourne")
 
 }
 \seealso{
-\code{\link{cal_time_civil_midnight}}
+\code{\link{cal_time_civil}}
 }
 \keyword{datasets}

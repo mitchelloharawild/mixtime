@@ -63,7 +63,7 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
 
   # Find timezone offsets for chronon boundaries
   if (tz != "UTC") {
-    `1s` <- cal_time_civil_midnight$second(1L)
+    `1s` <- cal_time_civil$second(1L)
     xs <- chronon_convert_impl(x, from, `1s`, discrete = FALSE, tz = "UTC")
     xso <- get_tz_offset(as.double(xs), tz)
     x <- chronon_convert_impl(xs + xso, `1s`, from, discrete = FALSE, tz = "UTC")

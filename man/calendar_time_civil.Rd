@@ -3,13 +3,13 @@
 \docType{data}
 \name{calendar_time_civil}
 \alias{calendar_time_civil}
-\alias{cal_time_civil_midnight}
+\alias{cal_time_civil}
 \title{Civil time unit classes}
 \format{
-An object of class \code{cal_time_civil_midnight} (inherits from \code{mt_calendar}) of length 6.
+An object of class \code{cal_time_civil} (inherits from \code{mt_calendar}) of length 6.
 }
 \usage{
-cal_time_civil_midnight
+cal_time_civil
 }
 \value{
 A time unit object for the civil time system.
@@ -17,12 +17,12 @@ A time unit object for the civil time system.
 \description{
 Time unit constructors for the civil time system where the boundary of each
 day is at midnight on the 24 hour clock. This calendar is intended to be
-built on by other calendars (e.g. \verb{[cal_time_civil_midnight]} and \verb{[cal_isoweek]}) to
+built on by other calendars (e.g. \verb{[cal_time_civil]} and \verb{[cal_isoweek]}) to
 add common time components.  These units can be
 used with \code{\link[=linear_time]{linear_time()}} to create custom time representations.
 }
 \details{
-The following time units are available (\verb{cal_time_civil_midnight$}).
+The following time units are available (\verb{cal_time_civil$}).
 \itemize{
 \item \code{day()}: Day unit
 \item \code{hour()}: Hour unit
@@ -40,6 +40,6 @@ hms <- new_cyclical_time_fn(
 
 }
 \seealso{
-\code{\link{cal_time_civil_midnight}}, \code{\link{cal_isoweek}}
+\code{\link{cal_time_civil}}, \code{\link{cal_isoweek}}
 }
 \keyword{datasets}

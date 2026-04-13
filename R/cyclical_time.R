@@ -276,7 +276,7 @@ day_of_month <- new_cyclical_time_fn(
 time_of_day <- new_cyclical_time_fn(
   chronon = second(1L),
   cycle = day(1L),
-  default_calendar = cal_time_civil_midnight
+  default_calendar = cal_time_civil
 )
 
 #' @rdname cyclical_time_helpers
