@@ -1,9 +1,8 @@
+index_valid <- S7::new_external_generic("tsibble", "index_valid", "x")
+method(index_valid, class_mixtime) <- function(x) TRUE
 
-index_valid.mixtime <- function(x) {
-  TRUE
-}
-
-interval_pull.mixtime <- function(x) {
+interval_pull <- S7::new_external_generic("tsibble", "interval_pull", "x")
+method(interval_pull, class_mixtime) <- function(x) {
   intvls <- lapply(x@x, function(x) tsibble::interval_pull(x))
   x <- new_rcrd(
     vec_rbind(!!!lapply(intvls, new_data_frame)),
@@ -12,29 +11,14 @@ interval_pull.mixtime <- function(x) {
   )
 }
 
-index_valid.mt_linear <- function(x) TRUE
-
 interval_pull.mt_linear <- function(x) {
   chronon <- time_chronon(x)
-  tsbl_unit <- vec_match(S7_class_id(chronon), tsbl_interval_units)
 
   interval <- list(chronon@n)
-  names(interval) <- names(tsbl_interval_units)[tsbl_unit]
+  names(interval) <- time_unit_full(chronon)
 
   rlang::inject(tsibble::new_interval(!!!interval))
 }
-
-tsbl_interval_units <- c(
-  "year" = "mixtime::tu_year",
-  "quarter" = "mixtime::tu_quarter",
-  "month" = "mixtime::tu_month",
-  "week" = "mixtime::tu_week",
-  "day" = "mixtime::tu_day",
-  "hour" = "mixtime::tu_hour",
-  "minute" = "mixtime::tu_minute",
-  "second" = "mixtime::tu_second",
-  "millisecond" = "mixtime::tu_millisecond"
-)
 
 #' @export
 format.mixtime_interval <- function(x, ...) {
