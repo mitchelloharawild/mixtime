@@ -30,12 +30,16 @@ mixtime provides flexible time classes for time series analysis and forecasting 
 
 **📈 Linear Time** - Create linear time vectors with `linear_time()` or with helpers:
 
-  * `yearquarter()`, `yearmonth()`, `yearweek()`, `date()`
+  * `year()`, `yearquarter()`, `yearmonth()`, `yearweek()`, `date()`, `datetime()`
 
 **🔄 Cyclical Time** - Create cyclical time vectors with `cyclical_time()` or with helpers:
 
   * `month_of_year()`, `day_of_year()`, `day_of_month()`, `time_of_day()`, `day_of_week()`, `week_of_year()`
 
+**⏳ Time durations** - Create time duration vectors with `duration()` or with helpers:
+
+  * `years()`, `quarters()`, `months()`, `weeks()`, `days()`, `hours()`, `minutes()`, `seconds()`, `milliseconds()`
+  
 **🕰️ Time types**
 
   * Discrete and continuous time models

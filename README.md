@@ -25,13 +25,20 @@ handling temporal data at different frequencies, making it ideal for:
 **📈 Linear Time** - Create linear time vectors with `linear_time()` or
 with helpers:
 
-- `yearquarter()`, `yearmonth()`, `yearweek()`, `date()`
+- `year()`, `yearquarter()`, `yearmonth()`, `yearweek()`, `date()`,
+  `datetime()`
 
 **🔄 Cyclical Time** - Create cyclical time vectors with
 `cyclical_time()` or with helpers:
 
 - `month_of_year()`, `day_of_year()`, `day_of_month()`, `time_of_day()`,
   `day_of_week()`, `week_of_year()`
+
+**⏳ Time durations** - Create time duration vectors with `duration()`
+or with helpers:
+
+- `years()`, `quarters()`, `months()`, `weeks()`, `days()`, `hours()`,
+  `minutes()`, `seconds()`, `milliseconds()`
 
 **🕰️ Time types**
 
@@ -74,9 +81,9 @@ remotes::install_github("mitchelloharawild/mixtime")
 library(mixtime)
 #> 
 #> Attaching package: 'mixtime'
-#> The following object is masked from 'package:base':
+#> The following objects are masked from 'package:base':
 #> 
-#>     date
+#>     date, months, quarters
 demo_time <- as.POSIXct("2026-02-22 18:30:42", tz = "UTC")
 demo_date <- as.Date("2026-02-22")
 ```
@@ -106,12 +113,14 @@ cal_gregorian
 
 # A 1-month time unit
 cal_gregorian$month(1L) # (1L is integer 1)
-#> <mixtime::tu_month> int 1
+#> <mixtime::tu_month>
+#>  @ n : int 1
 #>  @ tz: chr ""
 
 # A 2-week time unit (fortnights)
 cal_isoweek$week(2L)
-#> <mixtime::tu_week> int 2
+#> <mixtime::tu_week>
+#>  @ n : int 2
 #>  @ tz: chr ""
 ```
 
@@ -244,11 +253,11 @@ a specified time unit.
 ``` r
 # Round dates to different granularities
 floor_time(demo_date, cal_gregorian$month(1L))
-#> Date of length 0
+#> [1] "2026-02-01"
 round_time(demo_date, cal_isoweek$week(1L))
-#> Date of length 0
+#> [1] "2026-02-23"
 ceiling_time(demo_date, cal_gregorian$month(1L))
-#> Date of length 0
+#> [1] "2026-03-01"
 ```
 
 ### Time Sequences
