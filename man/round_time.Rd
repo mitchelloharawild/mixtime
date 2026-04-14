@@ -7,20 +7,20 @@
 \alias{trunc_time}
 \title{Round, floor and ceiling transformations for time objects}
 \usage{
-round_time(x, unit, ...)
+round_time(x, ...)
 
-ceiling_time(x, unit, ...)
+ceiling_time(x, ...)
 
-floor_time(x, unit, ...)
+floor_time(x, ...)
 }
 \arguments{
 \item{x}{A date/time object to be rounded. Accepted types include Date,
 POSIXct, POSIXlt and other objects that inherit from POSIXt. The returned
 object will be of the same class as the input.}
 
-\item{unit}{A time unit (or object coercible to a time unit, e.g. "day").}
-
 \item{...}{Additional arguments passed to specific implementations.}
+
+\item{unit}{A time unit (or object coercible to a time unit, e.g. "day").}
 }
 \value{
 An object of the same class as x with its time components adjusted

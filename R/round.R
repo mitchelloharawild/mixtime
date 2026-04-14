@@ -30,64 +30,56 @@
 #'
 #' @seealso [base::round], [lubridate::round_date]
 #' @export
-round_time <- function(x, unit, ...) {
-  UseMethod("round_time")
-}
-#' @export
-round_time.mixtime <- function(x, unit, ...) {
+round_time <- new_generic("round_time", "x")
+method(round_time, class_mixtime) <- function(x, unit, ...) {
   vecvec::vecvec_apply(x, round_time, unit = unit, ...)
 }
 #' @export
-round_time.default <- function(x, unit, ...) {
+method(round_time, S7::class_any) <- function(x, unit, ...) {
   if (is.character(unit)) unit <- parse_time_unit(unit)
   res <- chronon_divmod(
     from = unit,
     to = time_chronon(x),
     x = round(chronon_convert(x, unit))
-  )$chronon
+  )$div
+  if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
   res
 }
 
 #' @rdname round_time
 #' @export
-ceiling_time <- function(x, unit, ...) {
-  UseMethod("ceiling_time")
-}
-#' @export
-ceiling_time.mixtime <- function(x, unit, ...) {
+ceiling_time <- new_generic("ceiling_time", "x")
+method(ceiling_time, class_mixtime) <- function(x, unit, ...) {
   vecvec::vecvec_apply(x, ceiling_time, unit = unit, ...)
 }
-#' @export
-ceiling_time.default <- function(x, unit, ...) {
+method(ceiling_time, S7::class_any) <- function(x, unit, ...) {
   if (is.character(unit)) unit <- parse_time_unit(unit)
   res <- chronon_divmod(
     from = unit,
     to = time_chronon(x),
     # Special handling of ceiling to round .0 up
     x = ceiling(floor(chronon_convert(x, unit)) + 0.5)
-  )$chronon
+  )$div
+  if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
   res
 }
 
 #' @rdname round_time
 #' @export
-floor_time <- function(x, unit, ...) {
-  UseMethod("floor_time")
-}
-#' @export
-floor_time.mixtime <- function(x, unit, ...) {
+floor_time <- new_generic("floor_time", "x")
+method(floor_time, class_mixtime) <- function(x, unit, ...) {
   vecvec::vecvec_apply(x, floor_time, unit = unit, ...)
 }
-#' @export
-floor_time.default <- function(x, unit, ...) {
+method(floor_time, S7::class_any) <- function(x, unit, ...) {
   if (is.character(unit)) unit <- parse_time_unit(unit)
   res <- chronon_divmod(
     from = unit,
     to = time_chronon(x),
     x = floor(chronon_convert(x, unit))
-  )$chronon
+  )$div
+  if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
   res
 }
