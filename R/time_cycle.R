@@ -36,6 +36,7 @@ S7::method(time_cycle, S7::new_S3_class("mt_time")) <- function(x) {
   attr(x, "cycle")
 }
 
+# {hms} time class
 S7::method(time_cycle, S7::new_S3_class("hms")) <- function(x) {
-  cal_gregorian$day(1L, tz = "UTC")
+  cal_gregorian$day(1L, tz = "")
 }
