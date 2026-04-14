@@ -47,14 +47,26 @@ S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
   cal_gregorian$second(1L, tz = tz)
 }
 
-S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {
-  cal_gregorian$month(1L, tz = "UTC")
-}
-
+# {tsibble} time classes
 S7::method(time_chronon, S7::new_S3_class("yearquarter")) <- function(x) {
-  cal_gregorian$quarter(1L, tz = "UTC")
+  cal_gregorian$quarter(1L, tz = "")
+}
+S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {
+  cal_gregorian$month(1L, tz = "")
+}
+S7::method(time_chronon, S7::new_S3_class("yearweek")) <- function(x) {
+  cal_isoweek$week(1L, tz = "")
 }
 
-S7::method(time_chronon, S7::new_S3_class("yearweek")) <- function(x) {
-  cal_isoweek$week(1L, tz = "UTC")
+# {zoo} time classes
+S7::method(time_chronon, S7::new_S3_class("yearqtr")) <- function(x) {
+  cal_isoweek$week(1L, tz = "")
+}
+S7::method(time_chronon, S7::new_S3_class("yearmon")) <- function(x) {
+  cal_isoweek$week(1L, tz = "")
+}
+
+# {hms} time class
+S7::method(time_chronon, S7::new_S3_class("hms")) <- function(x) {
+  cal_gregorian$second(1L, tz = "")
 }
