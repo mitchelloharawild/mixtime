@@ -73,7 +73,19 @@ mt_unit <- S7::new_class(
   # }
 )
 
+#' Base S7 class for mixtime vector objects
+#'
+#' `class_mixtime` is the base S7 class for all mixtime vector objects,
+#' inheriting from [vecvec::class_vecvec]. While not intended to be used
+#' directly, this S7 class is suitable to use when defining S7 methods for
+#' mixtime vectors. S3 methods can be defined using the `mixtime::mixtime` 
+#' class.
+#'
+#' @seealso [mixtime()] for creating mixtime vectors, and [new_mixtime()] for
+#' the low-level constructor function of this S7 class.
+#'
 #' @importFrom vecvec class_vecvec
+#' @export
 class_mixtime <- S7::new_class(
   "mixtime",
   parent = class_vecvec
