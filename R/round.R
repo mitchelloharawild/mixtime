@@ -31,6 +31,10 @@
 #' @seealso [base::round], [lubridate::round_date]
 #' @export
 round_time <- new_generic("round_time", "x")
+#' @rdname round_time
+#' @export
+round_time.S7_methods <- function(x, granule, ...) S7_method_docs()
+
 method(round_time, class_mixtime) <- function(x, granule, ...) {
   vecvec::vecvec_apply(x, round_time, granule = granule, ...)
 }
@@ -56,6 +60,9 @@ method(round_time, S7::class_any) <- function(x, granule, ...) {
 #' @rdname round_time
 #' @export
 ceiling_time <- new_generic("ceiling_time", "x")
+#' @rdname round_time
+#' @export
+ceiling_time.S7_methods <- function(x, granule, ...) S7_method_docs()
 method(ceiling_time, class_mixtime) <- function(x, granule, ...) {
   vecvec::vecvec_apply(x, ceiling_time, granule = granule, ...)
 }
@@ -81,6 +88,9 @@ method(ceiling_time, S7::class_any) <- function(x, granule, ...) {
 #' @rdname round_time
 #' @export
 floor_time <- new_generic("floor_time", "x")
+#' @rdname round_time
+#' @export
+floor_time.S7_methods <- function(x, granule, ...) S7_method_docs()
 method(floor_time, class_mixtime) <- function(x, granule, ...) {
   vecvec::vecvec_apply(x, floor_time, granule = granule, ...)
 }
