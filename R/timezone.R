@@ -86,10 +86,12 @@ tz_abbreviation <- function(x) {
   tz_given <- nzchar(tz)
 
   # TODO: Handle timezone changes within chronon using [before]/[after]
-  tz[tz_given] <- get_tz_abbreviation(
-    chronon_convert(x[tz_given], cal_time_civil$second(1L)),
-    tz[tz_given]
-  )
+  if (any(tz_given)) {
+    tz[tz_given] <- get_tz_abbreviation(
+      chronon_convert(x[tz_given], cal_time_civil$second(1L)),
+      tz[tz_given]
+    )
+  }
 
   tz
 }
