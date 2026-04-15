@@ -119,6 +119,16 @@ seq.mt_time <- function(
       cli::cli_abort("When {.arg by} is provided, exactly two of {.arg from}, {.arg to}, or {.arg length.out} must be specified.")
     }
 
+    # Allow duration input for by, but convert to granule
+    if (length(by) != 1L) {
+      cli::cli_abort("{.var by} must be a single time duration", call. = FALSE)
+    }
+    if (is_time_duration(by)) {
+      by_size <- as.numeric(by)
+      by <- time_chronon(by)
+      by@n <- by@n * by_size
+    }
+
     # Sequence chronon
     chronon <- time_chronon(ptype)
 

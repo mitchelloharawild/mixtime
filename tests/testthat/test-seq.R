@@ -215,3 +215,12 @@ test_that("seq.mixtime with fractional linear time", {
   expect_equal(format(result[[1]]), format(yearmonth("2020-12-01", discrete = FALSE)))
   expect_equal(format(result[[12]]), format(yearmonth("2020-01-06", discrete = FALSE)))
 })
+
+test_that("seq.mixtime with duration by", {
+  # Using a duration for by should work
+  result <- seq(date("2020-01-01"), date("2020-01-10"), by = duration(2L, day(1L)))
+  expect_s7_class(result, class_mixtime)
+  expect_length(result, 5)
+  expect_equal(format(result[[1]]), format(date("2020-01-01")))
+  expect_equal(format(result[[5]]), format(date("2020-01-09")))
+})
