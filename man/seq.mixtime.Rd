@@ -31,6 +31,7 @@
 "1 month", "1 year")
 \item A time unit object created with time unit functions (e.g., \code{cal_gregorian$year(1L)},
 \code{cal_gregorian$month(1L)}, \code{cal_gregorian$day(1L)})
+\item A time \code{\link[=duration]{duration()}} object (e.g., \code{years(1L)}, \code{months(1L)}, \code{days(1L)})
 }}
 
 \item{length.out}{Desired length of the sequence (alternative to \code{to}).}

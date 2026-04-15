@@ -12,6 +12,7 @@
 #'     "1 month", "1 year")
 #'   * A time unit object created with time unit functions (e.g., `cal_gregorian$year(1L)`,
 #'     `cal_gregorian$month(1L)`, `cal_gregorian$day(1L)`)
+#'   * A time [duration()] object (e.g., `years(1L)`, `months(1L)`, `days(1L)`)
 #' @param length.out Desired length of the sequence (alternative to `to`).
 #' @param along.with Take the length from this argument (alternative to `length.out`).
 #' @param on_invalid How to handle time points that overflow the cycle when
