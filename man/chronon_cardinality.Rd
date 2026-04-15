@@ -2,13 +2,9 @@
 % Please edit documentation in R/01_chronon_cardinality.R
 \name{chronon_cardinality}
 \alias{chronon_cardinality}
-\alias{chronon_cardinality,mixtime::mt_unit,mixtime::mt_unit-method}
 \title{Cardinality between time units}
 \usage{
 chronon_cardinality(x, y, ...)
-
-## S7 method for classes <mixtime::mt_unit>, <mixtime::mt_unit>
-chronon_cardinality(x, y, at = NULL)
 }
 \arguments{
 \item{x}{The finer time unit (e.g. \code{cal_gregorian$month(1L)})}
@@ -16,10 +12,6 @@ chronon_cardinality(x, y, at = NULL)
 \item{y}{The coarser time unit (e.g. \code{cal_gregorian$year(1L)})}
 
 \item{...}{Additional arguments for methods.}
-
-\item{at}{Optional time point for context-dependent cardinality, defined in
-terms of \code{y} (e.g., if \code{y} is \code{month()}, then \code{at} could be a
-\code{yearmonth()})}
 }
 \value{
 Numeric describing how many \code{x} time units fit into \code{y} at time \code{at}.

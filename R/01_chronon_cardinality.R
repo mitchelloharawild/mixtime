@@ -10,9 +10,9 @@
 #' @param x The finer time unit (e.g. `cal_gregorian$month(1L)`)
 #' @param y The coarser time unit (e.g. `cal_gregorian$year(1L)`)
 #' @param ... Additional arguments for methods.
-#' @param at Optional time point for context-dependent cardinality, defined in
-#' terms of `y` (e.g., if `y` is `month()`, then `at` could be a 
-#' `yearmonth()`)
+# #' @param at Optional time point for context-dependent cardinality, defined in
+# #' terms of `y` (e.g., if `y` is `month()`, then `at` could be a 
+# #' `yearmonth()`)
 #'
 #' @return Numeric describing how many `x` time units fit into `y` at time `at`.
 #' 
@@ -64,7 +64,7 @@
 #' @export
 chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
 
-#' @rdname chronon_cardinality
+# #' @rdname chronon_cardinality
 method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {

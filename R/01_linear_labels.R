@@ -5,9 +5,9 @@
 #' labels.
 #'
 #' @param granule A time unit object representing the granule (e.g., `year(1L)`)
-#' @param i Integer vector representing the position along the linear axis.
-#' @param label If `TRUE`, return labels for the positions along the linear axis. If `FALSE`, return the integer positions as character.
-#' @param abbreviate If `TRUE`, return abbreviated labels (e.g. "year" as "Y"). If `FALSE`, return full labels.
+# #' @param i Integer vector representing the position along the linear axis.
+# #' @param label If `TRUE`, return labels for the positions along the linear axis. If `FALSE`, return the integer positions as character.
+# #' @param abbreviate If `TRUE`, return abbreviated labels (e.g. "year" as "Y"). If `FALSE`, return full labels.
 #' @param ... Additional arguments for methods.
 #'
 #' @return Character vector of labels for the time point.
@@ -19,7 +19,7 @@
 #' @export
 linear_labels <- S7::new_generic("linear_labels", "granule")
 
-#' @rdname linear_labels
+# #' @rdname linear_labels
 method(linear_labels, mt_unit) <- function(granule, i, label = FALSE, abbreviate = TRUE, ...) {
   if (!label) return(as.character(i))
   # TODO - pluralise the full time unit

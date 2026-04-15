@@ -2,24 +2,14 @@
 % Please edit documentation in R/01_linear_labels.R
 \name{linear_labels}
 \alias{linear_labels}
-\alias{linear_labels,mixtime::mt_unit-method}
 \title{Friendly labels for linear relationships}
 \usage{
 linear_labels(granule, ...)
-
-## S7 method for class <mixtime::mt_unit>
-linear_labels(granule, i, label = FALSE, abbreviate = TRUE, ...)
 }
 \arguments{
 \item{granule}{A time unit object representing the granule (e.g., \code{year(1L)})}
 
 \item{...}{Additional arguments for methods.}
-
-\item{i}{Integer vector representing the position along the linear axis.}
-
-\item{label}{If \code{TRUE}, return labels for the positions along the linear axis. If \code{FALSE}, return the integer positions as character.}
-
-\item{abbreviate}{If \code{TRUE}, return abbreviated labels (e.g. "year" as "Y"). If \code{FALSE}, return full labels.}
 }
 \value{
 Character vector of labels for the time point.

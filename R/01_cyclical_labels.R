@@ -5,9 +5,6 @@
 #'
 #' @param granule A time unit object representing the granule (e.g., `month(1L)`)
 #' @param cycle A time unit object representing the cycle (e.g., `year(1L)`)
-#' @param i Integer vector representing the position within the cycle.
-#' @param label If `TRUE`, return labels for the positions within the cycle. If `FALSE`, return the integer positions as character.
-#' @param abbreviate If `TRUE`, return abbreviated labels (e.g. "Mon" for "Monday"). If `FALSE`, return full labels (e.g. "Monday").
 #' @param ... Additional arguments for methods.
 #'
 #' @return Character vector of labels for the time point within the cycle.
@@ -25,7 +22,21 @@
 #' @export
 cyclical_labels <- S7::new_generic("cyclical_labels", c("granule", "cycle"))
 
-#' @rdname cyclical_labels
+# #' Default friendly labels for cyclical relationships
+# #' 
+# #' The default method for [cyclical_labels()] simply pastes together the time unit 
+# #' label and the position within the cycle. This is a fallback method that will
+# #' be used if no more specific method is defined for the given time units.
+# #' 
+# #' @inheritParams cyclical_labels
+# #' @param i Integer vector representing the position within the cycle.
+# #' @param label If `TRUE`, return labels for the positions within the cycle. If `FALSE`, return the integer positions as character.
+# #' @param abbreviate If `TRUE`, return abbreviated labels (e.g. "Mon" for "Monday"). If `FALSE`, return full labels (e.g. "Monday").
+# #' 
+# #' @seealso [cyclical_labels()]
+# #' 
+# #' @returns A character vector of labelled units
+# #' @rdname cyclical_labels
 method(cyclical_labels, list(mt_unit, mt_unit)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE, ...) {
   if (!label) return(as.character(i))
   # TODO - pluralise the full time unit

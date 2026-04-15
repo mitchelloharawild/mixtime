@@ -2,13 +2,9 @@
 % Please edit documentation in R/01_chronon_divmod.R
 \name{chronon_divmod}
 \alias{chronon_divmod}
-\alias{chronon_divmod,mixtime::mt_unit,mixtime::mt_unit-method}
 \title{Convert between chronons of different time units}
 \usage{
 chronon_divmod(from, to, ...)
-
-## S7 method for classes <mixtime::mt_unit>, <mixtime::mt_unit>
-chronon_divmod(from, to, x)
 }
 \arguments{
 \item{from}{The time unit that \code{x} is measured in (e.g., \code{day(1L)}).}
@@ -16,8 +12,6 @@ chronon_divmod(from, to, x)
 \item{to}{The time unit to convert \code{x} into (e.g., \code{week(1L)}).}
 
 \item{...}{Additional arguments for methods.}
-
-\item{x}{An integer vector of chronons measured in the \code{from} time unit.}
 }
 \value{
 An list of two elements:

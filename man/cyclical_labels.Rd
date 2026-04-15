@@ -2,13 +2,9 @@
 % Please edit documentation in R/01_cyclical_labels.R
 \name{cyclical_labels}
 \alias{cyclical_labels}
-\alias{cyclical_labels,mixtime::mt_unit,mixtime::mt_unit-method}
 \title{Friendly labels for cyclical relationships}
 \usage{
 cyclical_labels(granule, cycle, ...)
-
-## S7 method for classes <mixtime::mt_unit>, <mixtime::mt_unit>
-cyclical_labels(granule, cycle, i, label = FALSE, abbreviate = TRUE, ...)
 }
 \arguments{
 \item{granule}{A time unit object representing the granule (e.g., \code{month(1L)})}
@@ -16,12 +12,6 @@ cyclical_labels(granule, cycle, i, label = FALSE, abbreviate = TRUE, ...)
 \item{cycle}{A time unit object representing the cycle (e.g., \code{year(1L)})}
 
 \item{...}{Additional arguments for methods.}
-
-\item{i}{Integer vector representing the position within the cycle.}
-
-\item{label}{If \code{TRUE}, return labels for the positions within the cycle. If \code{FALSE}, return the integer positions as character.}
-
-\item{abbreviate}{If \code{TRUE}, return abbreviated labels (e.g. "Mon" for "Monday"). If \code{FALSE}, return full labels (e.g. "Monday").}
 }
 \value{
 Character vector of labels for the time point within the cycle.
