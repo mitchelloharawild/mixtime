@@ -45,7 +45,7 @@ S7::method(tz_name, S7::class_any) <- function(x) {
 tz_offset <- S7::new_generic("tz_offset", "x")
 S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(time_chronon(x)), ...) get_tz_offset(x, tz)
 S7::method(tz_offset, S7::class_Date) <- function(x, ...) rep.int(0, length(x))
-method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(tz_offset)
+method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(tz_offset, numeric())
 method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_chronon(x)), ...) {
   offset_s <- rep(0L, length(x))
   if(!nzchar(tz) || tz == "UTC") return(offset_s)
