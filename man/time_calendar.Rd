@@ -7,7 +7,7 @@
 time_calendar(x, ...)
 }
 \arguments{
-\item{x}{A time object (e.g., \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXct}, \code{\link[=linear_time]{linear_time()}}, etc.)}
+\item{x}{A time object (e.g., \link[base:Date]{base::Date}, \link[base:POSIXct]{base::POSIXct}, \code{\link[=linear_time]{linear_time()}}, etc.)}
 
 \item{...}{Additional arguments for methods.}
 }

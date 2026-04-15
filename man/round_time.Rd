@@ -54,5 +54,5 @@ ceiling_time(d, granule = cal_gregorian$month(1L))
 
 }
 \seealso{
-\link[base:Round]{base::round}, \link[lubridate:round_date]{lubridate::round_date}
+\link[base:round]{base::round}, \link[lubridate:round_date]{lubridate::round_date}
 }

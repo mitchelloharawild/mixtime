@@ -23,7 +23,7 @@ date(data, discrete = TRUE, calendar = time_calendar(data), ...)
 datetime(data, discrete = TRUE, calendar = time_calendar(data), ...)
 }
 \arguments{
-\item{data}{A vector of time points (e.g. \link[base:Dates]{base::Date}, \link[base:DateTimeClasses]{base::POSIXt})}
+\item{data}{A vector of time points (e.g. \link[base:Date]{base::Date}, \link[base:POSIXt]{base::POSIXt})}
 
 \item{discrete}{If \code{TRUE}, the number of chronons since Unix epoch that
 \code{data} falls into is returned as an integer. If \code{FALSE}, a fractional number

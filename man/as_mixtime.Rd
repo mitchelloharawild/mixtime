@@ -9,7 +9,7 @@ as_mixtime(x, ...)
 \arguments{
 \item{x}{A time value to convert to a \code{mixtime}. Any time class with a defined \code{time_chronon()} method can be converted (e.g. \code{Date}, \code{POSIXct}, \code{yearmonth}, etc.).}
 
-\item{...}{Additional arguments passed to the underlying \code{\link[vctrs:vec_cast]{vctrs::vec_cast()}} method.}
+\item{...}{Additional arguments passed to the underlying \code{\link[vctrs:vec_cast]{vec_cast()}} method.}
 }
 \value{
 A \code{mixtime} object corresponding to \code{x}.
