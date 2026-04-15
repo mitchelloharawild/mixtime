@@ -26,20 +26,23 @@
 #' # Create a continuous mixtime time vector for today
 #' new_time(
 #'   as.double(Sys.Date()),
-#'   chronon = cal_gregorian$day(1L, tz = Sys.timezone())
+#'   chronon = cal_gregorian$day(1L, tz = Sys.timezone()),
+#'   class = "mt_linear"
 #' )
 #'
 #' # Create a discrete mixtime time vector for the current date and time
 #' new_time(
 #'   as.integer(Sys.time()),
-#'   chronon = cal_gregorian$second(1L, tz = Sys.timezone())
+#'   chronon = cal_gregorian$second(1L, tz = Sys.timezone()),
+#'   class = "mt_linear"
 #' )
 #' 
 #' # Create a discrete mixtime time vector for the time of day (cyclical time)
 #' new_time(
 #'   as.integer(Sys.time()), 
 #'   chronon = cal_gregorian$second(1L, tz = Sys.timezone()), 
-#'   cycle = cal_gregorian$day(1L, tz = Sys.timezone())
+#'   cycle = cal_gregorian$day(1L, tz = Sys.timezone()),
+#'   class = "mt_cyclical"
 #' )
 #' 
 #' @export
