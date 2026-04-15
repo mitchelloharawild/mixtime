@@ -96,10 +96,7 @@ method(chronon_convert, S7::new_S3_class("mt_linear")) <- function(x, to, discre
   chronon_convert_impl(vec_data(x), time_chronon(x), to, discrete)
 }
 
-method(chronon_convert, class_mixtime) <- function(x, to, discrete = FALSE, ...) {
-  res <- vecvec::vecvec_apply(x, chronon_convert, to = to, discrete = discrete)
-  vecvec::unvecvec(res)
-}
+method(chronon_convert, class_mixtime) <- vecvec::vecvec_apply_fn(chronon_convert)
 
 method(chronon_convert, S7::class_any) <- function(x, to, discrete = FALSE, ...) {
   chronon_convert_impl(as.numeric(x), time_chronon(x), to, discrete)
