@@ -185,10 +185,16 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
     MoreArgs = NULL
   )
 
-  # Insert time labels into format string
+  # Insert time labels into format string parts
   if (any(fmt_parts)) {
     fmt[fmt_parts] <- unsplit(Filter(length, parts), lengths(fmt[fmt_parts]))
   }
+
+  # Handle format parts which include NA values (e.g. timezones)
+  if (any(x_na) && any(fmt_inc_na <- lengths(fmt) == length(x))) {
+    fmt[fmt_inc_na] <- lapply(fmt[fmt_inc_na], function(x) x[!x_na])
+  }
+
   out <- character(length(x))
   out[!x_na] <- rlang::exec(paste0, !!!fmt)
   out[x_na] <- "NA"
