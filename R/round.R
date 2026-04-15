@@ -4,8 +4,8 @@
 #' such as second, minute, hour, or day. These functions preserve the input 
 #' time class, as rounded by the attributes of the `granule`.
 #'
-#' @name round_time
-#' @aliases round_time floor_time ceiling_time trunc_time
+#' @name time_round
+#' @aliases time_round time_floor time_ceiling trunc_time
 #'
 #' @param x A date/time object to be rounded. Accepted types include Date,
 #'   POSIXct, POSIXlt and other objects that inherit from POSIXt. The returned
@@ -19,22 +19,22 @@
 #' @examples
 #' # Round POSIXct to the nearest minute (preserving tz)
 #' t <- as.POSIXct("2020-01-01 12:34:56", tz = "UTC")
-#' round_time(t, granule = cal_gregorian$minute(1L))
+#' time_round(t, granule = cal_gregorian$minute(1L))
 #'
 #' # Floor to the nearest hour
-#' floor_time(t, granule = cal_gregorian$hour(1L))
+#' time_floor(t, granule = cal_gregorian$hour(1L))
 #'
 #' # Ceiling a Date (treated as midnight-of-day rounding)
 #' d <- as.Date("2020-01-01")
-#' ceiling_time(d, granule = cal_gregorian$month(1L))
+#' time_ceiling(d, granule = cal_gregorian$month(1L))
 #'
 #' @seealso [base::round], [lubridate::round_date]
 #' @export
-round_time <- new_generic("round_time", "x", function(x, granule, ...) {
+time_round <- new_generic("time_round", "x", function(x, granule, ...) {
   S7::S7_dispatch()
 })
-method(round_time, class_mixtime) <- vecvec::vecvec_apply_fn(round_time)
-method(round_time, S7::class_any) <- function(x, granule, ...) {
+method(time_round, class_mixtime) <- vecvec::vecvec_apply_fn(time_round)
+method(time_round, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
   if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
@@ -52,13 +52,13 @@ method(round_time, S7::class_any) <- function(x, granule, ...) {
   res
 }
 
-#' @rdname round_time
+#' @rdname time_round
 #' @export
-ceiling_time <- new_generic("ceiling_time", "x", function(x, granule, ...) {
+time_ceiling <- new_generic("time_ceiling", "x", function(x, granule, ...) {
   S7::S7_dispatch()
 })
-method(ceiling_time, class_mixtime) <- vecvec::vecvec_apply_fn(ceiling_time)
-method(ceiling_time, S7::class_any) <- function(x, granule, ...) {
+method(time_ceiling, class_mixtime) <- vecvec::vecvec_apply_fn(time_ceiling)
+method(time_ceiling, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
   if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
@@ -77,13 +77,13 @@ method(ceiling_time, S7::class_any) <- function(x, granule, ...) {
   res
 }
 
-#' @rdname round_time
+#' @rdname time_round
 #' @export
-floor_time <- new_generic("floor_time", "x", function(x, granule, ...) {
+time_floor <- new_generic("time_floor", "x", function(x, granule, ...) {
   S7::S7_dispatch()
 })
-method(floor_time, class_mixtime) <- vecvec::vecvec_apply_fn(floor_time)
-method(floor_time, S7::class_any) <- function(x, granule, ...) {
+method(time_floor, class_mixtime) <- vecvec::vecvec_apply_fn(time_floor)
+method(time_floor, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
   if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {

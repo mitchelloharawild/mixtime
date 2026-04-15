@@ -55,7 +55,7 @@ mixtime provides flexible time classes for time series analysis and forecasting 
 
 **🧮 Temporal Operations**
 
-  * Rounding: `floor_time()`, `round_time()`, `ceiling_time()`
+  * Rounding: `time_floor()`, `time_round()`, `time_ceiling()`
   * Sequencing: `seq()` for linear and cyclical time points
 
 ## Installation
@@ -176,9 +176,9 @@ Linear time points can be adjusted to the floor, ceiling, or rounded to a specif
 
 ```{r manipulation}
 # Round dates to different granularities
-floor_time(demo_date, cal_gregorian$month(1L))
-round_time(demo_date, cal_isoweek$week(1L))
-ceiling_time(demo_date, cal_gregorian$month(1L))
+time_floor(demo_date, cal_gregorian$month(1L))
+time_round(demo_date, cal_isoweek$week(1L))
+time_ceiling(demo_date, cal_gregorian$month(1L))
 ```
 
 ### Time Sequences

@@ -56,7 +56,7 @@ or with helpers:
 
 **🧮 Temporal Operations**
 
-- Rounding: `floor_time()`, `round_time()`, `ceiling_time()`
+- Rounding: `time_floor()`, `time_round()`, `time_ceiling()`
 - Sequencing: `seq()` for linear and cyclical time points
 
 ## Installation
@@ -252,11 +252,11 @@ a specified time unit.
 
 ``` r
 # Round dates to different granularities
-floor_time(demo_date, cal_gregorian$month(1L))
+time_floor(demo_date, cal_gregorian$month(1L))
 #> [1] "2026-02-01"
-round_time(demo_date, cal_isoweek$week(1L))
+time_round(demo_date, cal_isoweek$week(1L))
 #> [1] "2026-02-23"
-ceiling_time(demo_date, cal_gregorian$month(1L))
+time_ceiling(demo_date, cal_gregorian$month(1L))
 #> [1] "2026-03-01"
 ```
 
