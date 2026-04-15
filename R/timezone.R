@@ -56,7 +56,7 @@ method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_
 
   tu_s <- cal_time_civil$second(1L)
   time_s <- chronon_convert(x[has_tz], tu_s)
-  offset_s[has_tz] <- get_tz_offset(time_s, tz[has_tz])
+  offset_s[has_tz] <- get_tz_offset(as.double(time_s), tz[has_tz])
   nz_offset <- offset_s != 0
   if(!any(nz_offset)) return(rep(0, length(x)))
   offset_s[nz_offset] <- offset_s[nz_offset]*chronon_cardinality(
