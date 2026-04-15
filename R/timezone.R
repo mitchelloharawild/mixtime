@@ -26,7 +26,7 @@ S7::method(tz_name, S7::class_POSIXt) <- function(x) {
   rep_len(tz_name(time_chronon(x)), length(x))
 }
 S7::method(tz_name, S7::class_any) <- function(x) {
-  rep_len("UTC", length(x))
+  rep_len("", length(x))
 }
 
 #' Get timezone offset
@@ -51,10 +51,12 @@ method(tz_offset, class_mixtime) <- function(x, ...) {
   )
 }
 method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_chronon(x)), ...) {
-  if(tz == "UTC") return(rep(0, length(x)))
+  offset_s <- rep(0L, length(x))
+  has_tz <- nzchar(tz) && tz != "UTC"
+
   tu_s <- cal_time_civil$second(1L)
-  time_s <- chronon_convert(x, tu_s)
-  offset_s <- get_tz_offset(time_s, tz)
+  time_s <- chronon_convert(x[has_tz], tu_s)
+  offset_s[has_tz] <- get_tz_offset(time_s, tz[has_tz])
   nz_offset <- offset_s != 0
   if(!any(nz_offset)) return(rep(0, length(x)))
   offset_s[nz_offset] <- offset_s[nz_offset]*chronon_cardinality(
@@ -79,11 +81,17 @@ method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_
 #'
 #' @export
 tz_abbreviation <- function(x) {
+  tz <- tz_name(x)
+  # If tz is empty, then the object has a naive local timezone
+  tz_given <- nzchar(tz)
+
   # TODO: Handle timezone changes within chronon using [before]/[after]
-  get_tz_abbreviation(
-    chronon_convert(x, cal_time_civil$second(1L)),
-    tz_name(x)
+  tz[tz_given] <- get_tz_abbreviation(
+    chronon_convert(x[tz_given], cal_time_civil$second(1L)),
+    tz[tz_given]
   )
+
+  tz
 }
 
 #' Get timezone transitions
