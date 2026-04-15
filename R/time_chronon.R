@@ -34,17 +34,11 @@ S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
-  cal_gregorian$day(1L, tz = "UTC")
+  cal_gregorian$day(1L, tz = "")
 }
 
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
-  tz <- attr(x, "tzone")
-  if (!is.null(tz)) {
-    tz <- if (nzchar(tz)) tz else Sys.timezone()
-  } else {
-    tz <- "UTC"
-  }
-  cal_gregorian$second(1L, tz = tz)
+  cal_gregorian$second(1L, tz = attr(x, "tzone") %||% "")
 }
 
 # {tsibble} time classes

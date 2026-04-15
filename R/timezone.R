@@ -23,7 +23,7 @@ S7::method(tz_name, S7::new_S3_class("mt_time")) <- function(x) {
 S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
 
 S7::method(tz_name, S7::class_POSIXt) <- function(x) {
-  rep_len(tz_name(time_chronon(x)), length(x))
+  rep_len(attr(x, "tzone") %||% "", length(x))
 }
 S7::method(tz_name, S7::class_any) <- function(x) {
   rep_len("", length(x))
