@@ -129,25 +129,6 @@ linear_time <- function(
   mixtime(data, chronon = chronon, discrete = discrete)
 }
 
-#' @method vec_cast.character mt_linear
-#' @export
-vec_cast.character.mt_linear <- function(x, to, ...) {
-  time_format_impl(x)
-}
-
-#' @method vec_cast.integer mt_linear
-#' @export
-vec_cast.integer.mt_linear <- function(x, to, ...) {
-  vec_cast(vec_data(x), integer())
-}
-
-#' @method vec_cast.double mt_linear
-#' @export
-vec_cast.double.mt_linear <- function(x, to, ...) {
-  vec_cast(vec_data(x), double())
-}
-
-
 #' Linear time helper functions
 #' 
 #' Convenience functions for creating common linear time representations. These
