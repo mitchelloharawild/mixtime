@@ -2,12 +2,13 @@
 % Please edit documentation in R/01_linear_labels.R
 \name{linear_labels}
 \alias{linear_labels}
-\alias{linear_labels.S7_methods}
+\alias{linear_labels,mixtime::mt_unit-method}
 \title{Friendly labels for linear relationships}
 \usage{
 linear_labels(granule, ...)
 
-linear_labels.S7_methods(granule, i)
+## S7 method for class <mixtime::mt_unit>
+linear_labels(granule, i, label = FALSE, abbreviate = TRUE, ...)
 }
 \arguments{
 \item{granule}{A time unit object representing the granule (e.g., \code{year(1L)})}

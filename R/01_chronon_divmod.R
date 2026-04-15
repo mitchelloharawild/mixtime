@@ -27,9 +27,6 @@
 chronon_divmod <- S7::new_generic("chronon_divmod", c("from", "to"))
 
 #' @rdname chronon_divmod
-chronon_divmod.S7_methods <- function(from, to, x) S7_method_docs()
-
-#' @export
 S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # No casting needed for identical time units
   if (identical(S7::S7_class(from), S7::S7_class(to))) {

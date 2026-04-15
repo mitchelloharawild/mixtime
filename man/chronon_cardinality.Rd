@@ -2,12 +2,13 @@
 % Please edit documentation in R/01_chronon_cardinality.R
 \name{chronon_cardinality}
 \alias{chronon_cardinality}
-\alias{chronon_cardinality.S7_methods}
+\alias{chronon_cardinality,mixtime::mt_unit,mixtime::mt_unit-method}
 \title{Cardinality between time units}
 \usage{
 chronon_cardinality(x, y, ...)
 
-chronon_cardinality.S7_methods(x, y, at = NULL)
+## S7 method for classes <mixtime::mt_unit>, <mixtime::mt_unit>
+chronon_cardinality(x, y, at = NULL)
 }
 \arguments{
 \item{x}{The finer time unit (e.g. \code{cal_gregorian$month(1L)})}

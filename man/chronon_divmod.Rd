@@ -2,12 +2,13 @@
 % Please edit documentation in R/01_chronon_divmod.R
 \name{chronon_divmod}
 \alias{chronon_divmod}
-\alias{chronon_divmod.S7_methods}
+\alias{chronon_divmod,mixtime::mt_unit,mixtime::mt_unit-method}
 \title{Convert between chronons of different time units}
 \usage{
 chronon_divmod(from, to, ...)
 
-chronon_divmod.S7_methods(from, to, x)
+## S7 method for classes <mixtime::mt_unit>, <mixtime::mt_unit>
+chronon_divmod(from, to, x)
 }
 \arguments{
 \item{from}{The time unit that \code{x} is measured in (e.g., \code{day(1L)}).}

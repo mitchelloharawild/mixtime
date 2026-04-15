@@ -5,22 +5,37 @@
 \alias{floor_time}
 \alias{ceiling_time}
 \alias{trunc_time}
-\alias{round_time.S7_methods}
-\alias{ceiling_time.S7_methods}
-\alias{floor_time.S7_methods}
+\alias{round_time,mixtime::mixtime-method}
+\alias{round_time,structure(list(), class = "S7_any")-method}
+\alias{ceiling_time,mixtime::mixtime-method}
+\alias{ceiling_time,structure(list(), class = "S7_any")-method}
+\alias{floor_time,mixtime::mixtime-method}
+\alias{floor_time,structure(list(), class = "S7_any")-method}
 \title{Round, floor and ceiling transformations for time objects}
 \usage{
 round_time(x, ...)
 
-round_time.S7_methods(x, granule, ...)
+## S7 method for class <mixtime::mixtime>
+round_time(x, ...)
+
+## S7 method for class <structure(list(), class = "S7_any")>
+round_time(x, granule, ...)
 
 ceiling_time(x, ...)
 
-ceiling_time.S7_methods(x, granule, ...)
+## S7 method for class <mixtime::mixtime>
+ceiling_time(x, ...)
+
+## S7 method for class <structure(list(), class = "S7_any")>
+ceiling_time(x, granule, ...)
 
 floor_time(x, ...)
 
-floor_time.S7_methods(x, granule, ...)
+## S7 method for class <mixtime::mixtime>
+floor_time(x, ...)
+
+## S7 method for class <structure(list(), class = "S7_any")>
+floor_time(x, granule, ...)
 }
 \arguments{
 \item{x}{A date/time object to be rounded. Accepted types include Date,

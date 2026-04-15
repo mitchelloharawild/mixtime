@@ -27,9 +27,6 @@
 #' @keywords internal
 chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 
-# #' @rdname chronon_convert
-chronon_convert.S7_methods <- function(x, to, discrete = FALSE) S7_method_docs()
-
 chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   # Convert between same time unit types
   if (identical(S7::S7_class(from), S7::S7_class(to))) {

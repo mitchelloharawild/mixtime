@@ -65,14 +65,6 @@
 chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
 
 #' @rdname chronon_cardinality
-chronon_cardinality.S7_methods <- function(x, y, at = NULL) S7_method_docs()
-
-#' Default method for time unit ratio comparison
-#' 
-#' When no specific method is defined, attempts to find the inverse ratio
-#' by swapping the arguments and taking the reciprocal.
-#' 
-#' @noRd
 method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {

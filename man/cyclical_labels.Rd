@@ -2,12 +2,13 @@
 % Please edit documentation in R/01_cyclical_labels.R
 \name{cyclical_labels}
 \alias{cyclical_labels}
-\alias{cyclical_labels.S7_methods}
+\alias{cyclical_labels,mixtime::mt_unit,mixtime::mt_unit-method}
 \title{Friendly labels for cyclical relationships}
 \usage{
 cyclical_labels(granule, cycle, ...)
 
-cyclical_labels.S7_methods(granule, cycle, i)
+## S7 method for classes <mixtime::mt_unit>, <mixtime::mt_unit>
+cyclical_labels(granule, cycle, i, label = FALSE, abbreviate = TRUE, ...)
 }
 \arguments{
 \item{granule}{A time unit object representing the granule (e.g., \code{month(1L)})}

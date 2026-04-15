@@ -32,13 +32,8 @@
 #' @export
 round_time <- new_generic("round_time", "x")
 #' @rdname round_time
-#' @export
-round_time.S7_methods <- function(x, granule, ...) S7_method_docs()
-
-method(round_time, class_mixtime) <- function(x, granule, ...) {
-  vecvec::vecvec_apply(x, round_time, granule = granule, ...)
-}
-#' @export
+method(round_time, class_mixtime) <- vecvec::vecvec_apply_fn(round_time)
+#' @rdname round_time
 method(round_time, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
   if (S7::S7_inherits(x, mt_unit)) granule <- duration(1L, granule)
@@ -61,11 +56,8 @@ method(round_time, S7::class_any) <- function(x, granule, ...) {
 #' @export
 ceiling_time <- new_generic("ceiling_time", "x")
 #' @rdname round_time
-#' @export
-ceiling_time.S7_methods <- function(x, granule, ...) S7_method_docs()
-method(ceiling_time, class_mixtime) <- function(x, granule, ...) {
-  vecvec::vecvec_apply(x, ceiling_time, granule = granule, ...)
-}
+method(ceiling_time, class_mixtime) <- vecvec::vecvec_apply_fn(ceiling_time)
+#' @rdname round_time
 method(ceiling_time, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
   if (S7::S7_inherits(x, mt_unit)) granule <- duration(1L, granule)
@@ -89,11 +81,8 @@ method(ceiling_time, S7::class_any) <- function(x, granule, ...) {
 #' @export
 floor_time <- new_generic("floor_time", "x")
 #' @rdname round_time
-#' @export
-floor_time.S7_methods <- function(x, granule, ...) S7_method_docs()
-method(floor_time, class_mixtime) <- function(x, granule, ...) {
-  vecvec::vecvec_apply(x, floor_time, granule = granule, ...)
-}
+method(floor_time, class_mixtime) <- vecvec::vecvec_apply_fn(floor_time)
+#' @rdname round_time
 method(floor_time, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
   if (S7::S7_inherits(x, mt_unit)) granule <- duration(1L, granule)
