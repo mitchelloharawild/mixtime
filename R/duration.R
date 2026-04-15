@@ -108,6 +108,26 @@ vec_arith.mt_duration.mt_duration <- function(op, x, y, ...) {
   new_duration(res, chronon = tu)
 }
 
+#' @method vec_arith.mt_duration numeric
+#' @export
+vec_arith.mt_duration.numeric <- function(op, x, y, ...) {
+  if (!op %in% c("+", "-")) {
+    stop("Only numeric addition and subtraction supported for time durations", call. = FALSE)
+  }
+  res <- vec_arith_base(op, x, y, ...)
+  vec_restore(res, x)
+}
+
+#' @method vec_arith.numeric mt_duration
+#' @export
+vec_arith.numeric.mt_duration <- function(op, x, y, ...) {
+  if (!op %in% c("+", "-")) {
+    stop("Only numeric addition and subtraction supported for time durations", call. = FALSE)
+  }
+  res <- vec_arith_base(op, x, y, ...)
+  vec_restore(res, y)
+}
+
 #' Duration function factory
 #' 
 #' `new_duration_fn()` creates a duration function for a specified chronon. A
