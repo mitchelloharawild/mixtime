@@ -6,6 +6,15 @@
 \usage{
 class_mixtime(x = list(), i = seq_len(sum(lengths(x))))
 }
+\arguments{
+\item{x}{A list of \code{"mt_time"} vectors, see \code{\link[=new_time]{new_time()}} for details.}
+
+\item{i}{A vector of integers specifying the location of each element in \code{x}
+as if they were combined in order. The values in \code{i} must be between 1 and
+the total number of elements across all vectors in \code{x}, and can contain
+duplicates. If not provided, it defaults to a sequence from 1 to the total
+number of elements across all vectors in \code{x}.}
+}
 \description{
 \code{class_mixtime} is the base S7 class for all mixtime vector objects,
 inheriting from \link[vecvec:class_vecvec]{vecvec::class_vecvec}. While not intended to be used

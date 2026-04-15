@@ -80,6 +80,9 @@ mt_unit <- S7::new_class(
 #' directly, this S7 class is suitable to use when defining S7 methods for
 #' mixtime vectors. S3 methods can be defined using the `mixtime::mixtime` 
 #' class.
+#' 
+#' @param x A list of `"mt_time"` vectors, see [new_time()] for details.
+#' @inheritParams vecvec::class_vecvec
 #'
 #' @seealso [mixtime()] for creating mixtime vectors, and [new_mixtime()] for
 #' the low-level constructor function of this S7 class.
