@@ -38,3 +38,13 @@ vec_cast.mt_linear.double <- function(x, to, ...) {
   attributes(x) <- attributes(to)
   x
 }
+
+#' @method vec_restore mt_linear
+#' @export
+vec_restore.mt_linear <- function(x, to, ..., x_arg, to_arg) {
+  if (!is.numeric(x)) {
+    cli::cli_abort("{.var x} must be a numeric vector.", call. = FALSE)
+  }
+  attributes(x) <- attributes(to)
+  x
+}
