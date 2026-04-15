@@ -40,7 +40,7 @@ S7::method(tz_name, S7::class_any) <- function(x) {
 #' @export
 #'
 #' @examples
-#' tz_offset(Sys.time())
+#' tz_offset(as.POSIXct(Sys.time(), tz = Sys.timezone()))
 #' tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 tz_offset <- S7::new_generic("tz_offset", "x")
 S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(time_chronon(x)), ...) get_tz_offset(x, tz)

@@ -18,6 +18,6 @@ A numeric vector of offsets from UTC in the same chronon (e.g. seconds for POSIX
 Returns the UTC offset for a given datetime in its specified timezone.
 }
 \examples{
-tz_offset(Sys.time())
+tz_offset(as.POSIXct(Sys.time(), tz = Sys.timezone()))
 tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 }
