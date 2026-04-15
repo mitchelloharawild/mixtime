@@ -140,7 +140,7 @@ cyclical_time <- function(
   })
 
   # Make numeric data input 1-indexed
-  if (is.numeric(data)) data <- data - 1L
+  # if (is.numeric(data)) data <- data - 1L
   # TODO - numeric data should default to origin-less cyclical time
 
 
