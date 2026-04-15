@@ -18,6 +18,10 @@ cyclical_labels(granule, cycle, i, label = FALSE, abbreviate = TRUE, ...)
 \item{...}{Additional arguments for methods.}
 
 \item{i}{Integer vector representing the position within the cycle.}
+
+\item{label}{If \code{TRUE}, return labels for the positions within the cycle. If \code{FALSE}, return the integer positions as character.}
+
+\item{abbreviate}{If \code{TRUE}, return abbreviated labels (e.g. "Mon" for "Monday"). If \code{FALSE}, return full labels (e.g. "Monday").}
 }
 \value{
 Character vector of labels for the time point within the cycle.

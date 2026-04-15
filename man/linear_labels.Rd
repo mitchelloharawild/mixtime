@@ -16,6 +16,10 @@ linear_labels(granule, i, label = FALSE, abbreviate = TRUE, ...)
 \item{...}{Additional arguments for methods.}
 
 \item{i}{Integer vector representing the position along the linear axis.}
+
+\item{label}{If \code{TRUE}, return labels for the positions along the linear axis. If \code{FALSE}, return the integer positions as character.}
+
+\item{abbreviate}{If \code{TRUE}, return abbreviated labels (e.g. "year" as "Y"). If \code{FALSE}, return full labels.}
 }
 \value{
 Character vector of labels for the time point.

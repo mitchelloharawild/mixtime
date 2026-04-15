@@ -6,6 +6,8 @@
 #' @param granule A time unit object representing the granule (e.g., `month(1L)`)
 #' @param cycle A time unit object representing the cycle (e.g., `year(1L)`)
 #' @param i Integer vector representing the position within the cycle.
+#' @param label If `TRUE`, return labels for the positions within the cycle. If `FALSE`, return the integer positions as character.
+#' @param abbreviate If `TRUE`, return abbreviated labels (e.g. "Mon" for "Monday"). If `FALSE`, return full labels (e.g. "Monday").
 #' @param ... Additional arguments for methods.
 #'
 #' @return Character vector of labels for the time point within the cycle.
