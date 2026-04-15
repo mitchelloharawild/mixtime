@@ -52,7 +52,7 @@ method(tz_offset, class_mixtime) <- function(x, ...) {
 }
 method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_chronon(x)), ...) {
   offset_s <- rep(0L, length(x))
-  has_tz <- nzchar(tz) && tz != "UTC"
+  has_tz <- which(nzchar(tz) && tz != "UTC")
 
   tu_s <- cal_time_civil$second(1L)
   time_s <- chronon_convert(x[has_tz], tu_s)
