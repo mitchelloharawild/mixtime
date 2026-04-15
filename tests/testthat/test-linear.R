@@ -79,3 +79,10 @@ test_that("linear_time() preserves instant across timezone conversions", {
     "2020-06-15 PDT"  # Original day in Pacific
   )
 })
+
+test_that("linear_time() with mixtime inputs", {
+  expect_equal(
+    year(yearquarter(1L)),
+    year(1970L)
+  )
+})
