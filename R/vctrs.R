@@ -1,3 +1,47 @@
+# ----------------------------------------------------------------
+# class_mixtime methods
+# ----------------------------------------------------------------
+
+#' @export
+method(vec_ptype_full, class_mixtime) <- function(x, ...) "mixtime"
+
+#' @export
+method(vec_ptype_abbr, class_mixtime) <- function(x, ...) "mixtime"
+
+
+time_valid <- function(x) {
+  if (is_mixtime(x)) return(TRUE)
+  !inherits(try(time_chronon(x), silent = TRUE), "try-error")
+}
+
+#' @method vec_ptype2 mixtime::mixtime
+#' @export
+`vec_ptype2.mixtime::mixtime` <- function(x, y, ...) {
+  x_is_time <- time_valid(x)
+  y_is_time <- time_valid(y)
+
+  if (!(x_is_time && y_is_time) && !(is.numeric(x) || is.numeric(y))) {
+    vctrs::stop_incompatible_type(x, y, x_arg = "", y_arg = "")
+  }
+  new_mixtime()
+}
+
+#' @importFrom vctrs vec_proxy_order
+method(vec_proxy_order, class_mixtime) <- function(x, ...) {
+  if (length(x@x) > 1L) {
+    # Convert all time values to a common chronon
+    chronons <- lapply(x@x, time_chronon)
+    chronon_type <- chronon_common(!!!chronons)
+
+    x@x <- lapply(x@x, function(v) {
+      if (is.integer(v)) v <- v + 0.5
+      chronon_convert(v, chronon_type)
+    })
+  }
+  vec_proxy_order(vecvec::unvecvec(x))
+}
+
+#' @importFrom vctrs vec_proxy_equal
 method(vec_proxy_equal, class_mixtime) <- function(x, ...) {
   data_frame(
     x = as.integer(x),
