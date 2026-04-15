@@ -196,7 +196,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   }
 
   out <- character(length(x))
-  out[!x_na] <- rlang::exec(paste0, !!!fmt)
+  out[!x_na] <- trimws(rlang::exec(paste0, !!!fmt))
   out[x_na] <- "NA"
   out
 }
