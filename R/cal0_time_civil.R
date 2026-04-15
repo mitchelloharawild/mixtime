@@ -14,7 +14,7 @@ mt_tz_unit <- new_class(
 
 # Default formats
 method(chronon_format_attr, mt_tz_unit) <- function(x) {
-  if (x@tz != "UTC") " {tz(.time)}" else ""
+  if (nzchar(x@tz) && x@tz != "UTC") " {tz(.time)}" else ""
 }
 
 #' Civil time unit classes
