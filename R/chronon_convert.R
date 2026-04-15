@@ -72,12 +72,13 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
 
   # Convert chronons along the path
+  not_na <- !is.na(x)
   for (i in seq(2, length.out = length(path)-1)) {
-    res <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], x)
-    x <- res$div
+    res <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], x[not_na])
+    x[not_na] <- res$div
     nz_mod <- res$mod != 0
     part <- chronon_cardinality(path[[i-1L]], path[[i]], floor(res$div[nz_mod]))
-    x[nz_mod] <- x[nz_mod] + res$mod[nz_mod]/part
+    x[not_na][nz_mod] <- x[not_na][nz_mod] + res$mod[nz_mod]/part
   }
 
   # Convert back to UTC time internally
