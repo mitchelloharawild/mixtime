@@ -6,6 +6,7 @@
 #' type of time represented by each element.
 #'
 #' @param x A time object (typically a `mixtime` vector).
+#' @param ... Additional arguments for methods.
 #' 
 #' @return A logical vector the same length as `x`.
 #' 

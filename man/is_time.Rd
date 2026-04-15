@@ -15,6 +15,8 @@ is_time_duration(x, ...)
 }
 \arguments{
 \item{x}{A time object (typically a \code{mixtime} vector).}
+
+\item{...}{Additional arguments for methods.}
 }
 \value{
 A logical vector the same length as \code{x}.
