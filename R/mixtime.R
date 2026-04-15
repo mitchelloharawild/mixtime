@@ -76,7 +76,8 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
 
   # Parse text data
   if (is.character(data)) {
-    data <- as.POSIXct(data, tz = tz_name(chronon))
+    tz <- tz_name(chronon)
+    data <- as.POSIXct(data, tz = if(nzchar(tz)) tz else "UTC")
   }
   
   # Apply origin offset for numeric data
