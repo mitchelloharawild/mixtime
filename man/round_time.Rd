@@ -5,36 +5,12 @@
 \alias{floor_time}
 \alias{ceiling_time}
 \alias{trunc_time}
-\alias{round_time,mixtime::mixtime-method}
-\alias{round_time,structure(list(), class = "S7_any")-method}
-\alias{ceiling_time,mixtime::mixtime-method}
-\alias{ceiling_time,structure(list(), class = "S7_any")-method}
-\alias{floor_time,mixtime::mixtime-method}
-\alias{floor_time,structure(list(), class = "S7_any")-method}
 \title{Round, floor and ceiling transformations for time objects}
 \usage{
-round_time(x, ...)
-
-## S7 method for class <mixtime::mixtime>
-round_time(x, ...)
-
-## S7 method for class <structure(list(), class = "S7_any")>
 round_time(x, granule, ...)
 
-ceiling_time(x, ...)
-
-## S7 method for class <mixtime::mixtime>
-ceiling_time(x, ...)
-
-## S7 method for class <structure(list(), class = "S7_any")>
 ceiling_time(x, granule, ...)
 
-floor_time(x, ...)
-
-## S7 method for class <mixtime::mixtime>
-floor_time(x, ...)
-
-## S7 method for class <structure(list(), class = "S7_any")>
 floor_time(x, granule, ...)
 }
 \arguments{
@@ -42,9 +18,9 @@ floor_time(x, granule, ...)
 POSIXct, POSIXlt and other objects that inherit from POSIXt. The returned
 object will be of the same class as the input.}
 
-\item{...}{Additional arguments passed to specific implementations.}
-
 \item{granule}{A time granule (or object coercible to a time granule, e.g. "day").}
+
+\item{...}{Additional arguments passed to specific implementations.}
 }
 \value{
 An object of the same class as x with its time components adjusted

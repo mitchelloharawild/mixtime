@@ -30,13 +30,13 @@
 #'
 #' @seealso [base::round], [lubridate::round_date]
 #' @export
-round_time <- new_generic("round_time", "x")
-#' @rdname round_time
+round_time <- new_generic("round_time", "x", function(x, granule, ...) {
+  S7::S7_dispatch()
+})
 method(round_time, class_mixtime) <- vecvec::vecvec_apply_fn(round_time)
-#' @rdname round_time
 method(round_time, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
-  if (S7::S7_inherits(x, mt_unit)) granule <- duration(1L, granule)
+  if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
@@ -54,13 +54,13 @@ method(round_time, S7::class_any) <- function(x, granule, ...) {
 
 #' @rdname round_time
 #' @export
-ceiling_time <- new_generic("ceiling_time", "x")
-#' @rdname round_time
+ceiling_time <- new_generic("ceiling_time", "x", function(x, granule, ...) {
+  S7::S7_dispatch()
+})
 method(ceiling_time, class_mixtime) <- vecvec::vecvec_apply_fn(ceiling_time)
-#' @rdname round_time
 method(ceiling_time, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
-  if (S7::S7_inherits(x, mt_unit)) granule <- duration(1L, granule)
+  if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
@@ -79,13 +79,13 @@ method(ceiling_time, S7::class_any) <- function(x, granule, ...) {
 
 #' @rdname round_time
 #' @export
-floor_time <- new_generic("floor_time", "x")
-#' @rdname round_time
+floor_time <- new_generic("floor_time", "x", function(x, granule, ...) {
+  S7::S7_dispatch()
+})
 method(floor_time, class_mixtime) <- vecvec::vecvec_apply_fn(floor_time)
-#' @rdname round_time
 method(floor_time, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
-  if (S7::S7_inherits(x, mt_unit)) granule <- duration(1L, granule)
+  if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
