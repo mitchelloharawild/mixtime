@@ -49,11 +49,9 @@ vec_ptype2.mt_linear.mt_linear <- function(x, y, ..., x_arg, y_arg) {
 
 #' @export
 vec_cast.mt_linear.mt_linear <- function(x, to, ..., x_arg, to_arg) {
-  new_time(
-    chronon_convert(x, time_chronon(to), discrete = is.integer(to)),
-    chronon = chronon_common(time_chronon(x), time_chronon(to)),
-    class = "mt_linear"
-  )
+  x <- chronon_convert(x, time_chronon(to), discrete = is.integer(to))
+  attributes(x) <- attributes(to)
+  x
 }
 
 #' @method vec_restore mt_linear
@@ -65,3 +63,32 @@ vec_restore.mt_linear <- function(x, to, ..., x_arg, to_arg) {
   attributes(x) <- attributes(to)
   x
 }
+
+# ----------------------------------------------------------------
+# mt_duration methods
+# ----------------------------------------------------------------
+
+#' @export
+vec_cast.mt_duration.double <- vec_cast.mt_linear.double
+
+#' @export
+vec_cast.mt_duration.integer <- vec_cast.mt_linear.integer
+
+#' @export
+vec_cast.mt_duration.mt_duration <- function(x, to, ..., x_arg, to_arg) {
+  x <- as.numeric(x) * chronon_cardinality(time_chronon(to), time_chronon(x))
+  attributes(x) <- attributes(to)
+  x
+}
+
+#' @export
+vec_ptype2.mt_duration.mt_duration <- function(x, y, ..., x_arg, y_arg) {
+  new_time(
+    chronon = chronon_common(time_chronon(x), time_chronon(y)),
+    class = "mt_duration"
+  )
+}
+
+#' @method vec_restore mt_duration
+#' @export
+vec_restore.mt_duration <- vec_restore.mt_linear
