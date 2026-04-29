@@ -136,3 +136,62 @@ vec_ptype2.mt_duration.mt_duration <- function(x, y, ..., x_arg, y_arg) {
 #' @method vec_restore mt_duration
 #' @export
 vec_restore.mt_duration <- vec_restore.mt_linear
+
+# ----------------------------------------------------------------
+# mt_cyclical methods
+# ----------------------------------------------------------------
+
+#' @method vec_cast.character mt_cyclical
+#' @export
+vec_cast.character.mt_cyclical <- function(x, to, ...) {
+  time_format_impl(x)
+}
+
+#' @method vec_cast.integer mt_cyclical
+#' @export
+vec_cast.integer.mt_cyclical <- function(x, to, ...) {
+  vec_cast(vec_data(x), integer())
+}
+
+#' @method vec_cast.double mt_cyclical
+#' @export
+vec_cast.double.mt_cyclical <- function(x, to, ...) {
+  vec_cast(vec_data(x), double())
+}
+
+#' @export
+vec_cast.mt_cyclical.integer <- function(x, to, ...) {
+  attributes(x) <- attributes(to)
+  x
+}
+
+#' @export
+vec_cast.mt_cyclical.double <- function(x, to, ...) {
+  attributes(x) <- attributes(to)
+  x
+}
+
+#' @export
+vec_ptype2.mt_cyclical.mt_cyclical <- function(x, y, ..., x_arg, y_arg) {
+  new_time(
+    chronon = chronon_common(time_chronon(x), time_chronon(y)),
+    class = "mt_cyclical"
+  )
+}
+
+#' @export
+vec_cast.mt_cyclical.mt_cyclical <- function(x, to, ..., x_arg, to_arg) {
+  x <- chronon_convert(x, time_chronon(to), discrete = is.integer(to))
+  attributes(x) <- attributes(to)
+  x
+}
+
+#' @method vec_restore mt_cyclical
+#' @export
+vec_restore.mt_cyclical <- function(x, to, ..., x_arg, to_arg) {
+  if (!is.numeric(x)) {
+    cli::cli_abort("{.var x} must be a numeric vector.", call. = FALSE)
+  }
+  attributes(x) <- attributes(to)
+  x
+}
