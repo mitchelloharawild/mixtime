@@ -29,5 +29,5 @@ Character vector of labels for the time point.
 ``` r
 # Labels for years on a linear axis
 with(cal_gregorian, linear_labels(year(1L), 2020:2025))
-#> [1] "2020" "2021" "2022" "2023" "2024" "2025"
+#> [1] 2020 2021 2022 2023 2024 2025
 ```

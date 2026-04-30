@@ -114,7 +114,7 @@ yearweek(Sys.time(), discrete = TRUE)
 #> [1] 2026 W18
 yearweek(Sys.time(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 W18 50.5%
+#> [1] 2026 W18 50.6%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -133,5 +133,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 12:54:30
+#> [1] 12:56:51
 ```
