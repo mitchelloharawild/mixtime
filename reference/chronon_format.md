@@ -1,8 +1,11 @@
 # Default formatting strings for chronons
 
 Provides default linear time formatting strings for a given chronon
-(time unit). The format strings use placeholders like `{year}`,
-`{month}`, `{day}`, etc., that can be interpolated with actual values.
+(finest time granule). The format strings use placeholders like
+`{lin(year(1L))}`, `{cyc(month(1L), year(1L)}` and
+`{cyc(day(1L), month(1L)}`, which are evaluated in the context of the
+data's
+[`time_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_calendar.md).
 
 ## Usage
 
@@ -16,13 +19,13 @@ chronon_format_cyclical(x, y, ...)
 
 - x:
 
-  A chronon (time unit) object.
+  A time granule for the chronon.
 
 - cal:
 
-  The calendar of the chronon, used to disambiguate format strings for
-  time units that are shared across calendars (e.g. `cal_gregorian$day`
-  and `cal_isoweek$day`).
+  The calendar of the chronon, used to disambiguate suitable format
+  strings for time units that are shared across calendars (e.g.
+  `cal_gregorian$day` and `cal_isoweek$day`).
 
 - ...:
 
@@ -30,7 +33,7 @@ chronon_format_cyclical(x, y, ...)
 
 - y:
 
-  A chronon (time unit) for the cycle size.
+  A time granule for the cycle
 
 ## Value
 

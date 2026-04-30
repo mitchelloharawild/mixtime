@@ -63,7 +63,7 @@ is typically created with S7 using:
 
 
 <dl><dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>The step size of time units. For example, <code>n = 2L</code> is 2 time units -
+<dd><p>The step size of time granule. For example, <code>n = 2L</code> is 2 time units -
 for <code>cal_isoweek$week(2L)</code> that would be 2 weeks (a fortnight).</p></dd>
 
 
@@ -88,7 +88,7 @@ Default: 0 (sea level).</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A time unit object of class <code>mt_unit</code></p>
+    <p>A time granule object of class <code>mt_unit</code></p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -107,12 +107,12 @@ constructor functions accessible via <code>$</code> notation (e.g., <code>calend
 
 
 <p>Time units enable calendar arithmetic through two key generic methods
-that should be implemented for custom time units:</p><ul><li><p><code>chronon_cardinality(x, y, at)</code> - Returns the number of <code>x</code> units
-that fit within one <code>y</code> unit. This can be a fixed value (e.g.,
+that should be implemented for custom time units:</p><ul><li><p><code>chronon_cardinality(x, y, at)</code> - Returns the number of <code>x</code> granule
+that fit within one <code>y</code> granule This can be a fixed value (e.g.,
 7 days per week) or variable based on <code>at</code> (e.g., 28-31 days per month).</p></li>
-<li><p><code>chronon_divmod(x, from, to)</code> - Converts time unit <code>x</code> from units of
-<code>from</code> to units of <code>to</code>, returning a list with <code>div</code> (the quotient)
-and <code>mod</code>. This enables conversions between units that have
+<li><p><code>chronon_divmod(x, from, to)</code> - Converts time point <code>x</code> from granules of
+<code>from</code> to granules of <code>to</code>, returning a list with <code>div</code> (the quotient)
+and <code>mod</code>. This enables conversions between granules that have
 variable cardinality (e.g., the date 2020-03-23 to the month 2020-03).
 All conversions should be based on chronons since epoch (1970-01-01),
 in the UTC time zone.</p></li>

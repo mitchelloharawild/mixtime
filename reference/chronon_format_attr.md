@@ -1,7 +1,7 @@
 # Default formatting strings for chronon attributes
 
 Provides suffixes for default formatting strings for a given chronon
-(time unit). This provides useful information such as timezones or
+(time granule). This provides useful information such as timezones or
 locations in the string.
 
 ## Usage
@@ -14,7 +14,7 @@ chronon_format_attr(x, ...)
 
 - x:
 
-  A chronon (time unit) object.
+  A chronon (time granule) object.
 
 - ...:
 

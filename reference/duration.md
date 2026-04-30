@@ -1,9 +1,9 @@
 # Duration vectors
 
-`duration()` creates a vector of durations with a specified chronon
-(time unit). Durations represent a fixed span of time measured in a
-given unit (e.g., 3 months, 5 days), without reference to a specific
-point in time.
+`duration()` creates a vector of durations with a specified chronon.
+Durations represent a fixed span of time measured in a given time
+granule (e.g., 3 months, 5 days), without reference to a specific point
+in time.
 
 ## Usage
 
@@ -19,11 +19,11 @@ duration(data, chronon = time_chronon(data), calendar = time_calendar(data))
 
 - chronon:
 
-  A time unit expression representing the chronon (unit of the
-  duration), evaluated in the context of `calendar`. Use unquoted
-  expressions like `month(1L)` or `day(1L)`. Chronons from a specific
-  calendar can also be used (e.g. `cal_gregorian$month(1L)`). Defaults
-  to the time chronon of the input `data` (`time_chronon(data)`).
+  A time granule expression representing the chronon, evaluated in the
+  context of `calendar`. Use unquoted expressions like `month(1L)` or
+  `day(1L)`. Chronons from a specific calendar can also be used (e.g.
+  `cal_gregorian$month(1L)`). Defaults to the time chronon of the input
+  `data` (`time_chronon(data)`).
 
 - calendar:
 

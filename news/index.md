@@ -20,7 +20,7 @@ granularity data.
 
 - [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)
   creates linear time vectors with a user-specified chronon (smallest
-  indivisible time unit), supporting both discrete (integer) and
+  indivisible time granule), supporting both discrete (integer) and
   continuous (fractional) time models.
 - Convenience functions for common temporal granularities:
   [`year()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
@@ -61,13 +61,14 @@ granularity data.
 - [`seq()`](https://rdrr.io/r/base/seq.html) methods for `mixtime` and
   `mt_time` objects support integer, string (e.g. `"1 month"`), and time
   unit `by` arguments, as well as `length.out` and `along.with`.
-  Overflow behaviour when step units differ from sequence units can be
-  controlled with `on_invalid = "nearest"` (default) or `"overflow"`.
+  Overflow behaviour when step granules differ from sequence granules
+  can be controlled with `on_invalid = "nearest"` (default) or
+  `"overflow"`.
 
 #### Rounding
 
 - `round_time()`, `floor_time()`, and `ceiling_time()` round time
-  objects to a specified time unit, preserving the input class and
+  objects to a specified time granule, preserving the input class and
   timezone.
 
 #### Formatting
@@ -76,9 +77,9 @@ granularity data.
   `mixtime` objects. The format strings use glue-like
   [`{}`](https://rdrr.io/r/base/Paren.html) substitutions with the
   helper functions `lin(x)` and `cyc(x, y)` to position linear and
-  cyclical time components in a string. `x` and `y` are time units from
-  a calendar, which can be used to create general purpose mixed-calendar
-  time formats.
+  cyclical time components in a string. `x` and `y` are time granules
+  from a calendar, which can be used to create general purpose
+  mixed-calendar time formats.
 
 #### Timezone support
 
@@ -125,12 +126,13 @@ granularity data.
 - Calendar arithmetic with:
 
   - [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
-    performs division-with-remainder arithmetic between time units
-    (e.g. days to months), enabling cross-unit calendrical arithmetic.
+    performs division-with-remainder arithmetic between time granules
+    (e.g. 1 day to 1 month), enabling cross-granule calendrical
+    arithmetic.
   - [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
-    returns the number of smaller units contained in a larger unit
-    (e.g. days in a month), with context-dependent results for
-    variable-length units.
+    returns the number of smaller granules contained in a coarser
+    granule (e.g. days in 1 month), with context-dependent results for
+    variable-length granules.
   - [`chronon_epoch()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_epoch.md)
     returns the epoch offset for a given time unit.
 
@@ -139,7 +141,7 @@ granularity data.
   - [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
     and
     [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
-    for time unit text
+    for time unit text.
   - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
     and
     [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
@@ -147,7 +149,7 @@ granularity data.
   - [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
     and
     [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
-    for default formatting strings
+    for default formatting strings.
   - [`chronon_format_attr()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format_attr.md)
     for appending attribute information (e.g. timezones)
 

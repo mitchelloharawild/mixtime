@@ -36,23 +36,23 @@ cyclical_time(
 
 - chronon:
 
-  A time unit representing the chronon (smallest indivisible time unit),
-  evaluated in the context of `calendar`. Use unquoted expressions like
-  `day(1L)` or `month(1L)`. Chronons from a specific calendar can also
-  be used (e.g. `cal_isoweek$day(1L)`).
+  A time granule representing the chronon (finest indivisible time
+  granule), evaluated in the context of `calendar`. Use unquoted
+  expressions like `day(1L)` or `month(1L)`. Chronons from a specific
+  calendar can also be used (e.g. `cal_isoweek$day(1L)`).
 
 - cycle:
 
-  A time unit representing the cycle (larger time unit that defines the
-  period), evaluated in the context of `calendar`. Use unquoted
-  expressions like `week(1L)` or `year(1L)`. The time units should be
-  ordered from coarsest (e.g. year) to finest (e.g second).
+  A time granule representing the cycle (coarser time granule that
+  defines the period), evaluated in the context of `calendar`. Use
+  unquoted expressions like `week(1L)` or `year(1L)`.
 
 - discrete:
 
   Logical. If `TRUE` (default), returns integer positions within the
   cycle (discrete time model). If `FALSE`, returns fractional positions
-  allowing representation of partial time units (continuous time model).
+  allowing representation of fractional time chronons (continuous time
+  model).
 
 - calendar:
 
@@ -114,7 +114,7 @@ yearweek(Sys.time(), discrete = TRUE)
 #> [1] 2026 W18
 yearweek(Sys.time(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 W18 51.9%
+#> [1] 2026 W18 52.4%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -133,5 +133,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 15:12:01
+#> [1] 16:03:56
 ```

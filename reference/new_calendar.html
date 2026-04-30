@@ -84,8 +84,9 @@ named list containing the specified time unit classes.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Time units are typically S7 class definitions that inherit from <code>mt_unit</code>
-for standard units or <code>mt_tz_unit</code> for timezone-aware units. The calendar
+    <p>Time units are typically S7 class definitions that inherit from <code><a href="mt_unit.html">mt_unit</a></code>
+for standard units, <code><a href="mt_unit.html">mt_tz_unit</a></code> for timezone-aware units (civil time), or
+<code><a href="mt_unit.html">mt_loc_unit</a></code> for location-aware units (astronomical time). The calendar
 object provides a namespace for accessing these unit constructors and
 defines the relationships between them for calendar arithmetic.</p>
     </div>
@@ -97,15 +98,23 @@ defines the relationships between them for calendar arithmetic.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a simple calendar with year and month units</span></span></span>
+<span class="r-in"><span><span class="co"># (inheriting from civil time units for day, hour, minute, second, ...)</span></span></span>
 <span class="r-in"><span><span class="va">cal_simple</span> <span class="op">&lt;-</span> <span class="fu">new_calendar</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  year <span class="op">=</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"tu_year"</span>, parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  month <span class="op">=</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"tu_month"</span>, parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  inherit <span class="op">=</span> <span class="va">cal_time_civil</span>,</span></span>
 <span class="r-in"><span>  class <span class="op">=</span> <span class="st">"cal_simple"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Access unit constructors from the calendar</span></span></span>
-<span class="r-in"><span><span class="va">year_unit</span> <span class="op">&lt;-</span> <span class="va">cal_simple</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">month_unit</span> <span class="op">&lt;-</span> <span class="va">cal_simple</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Create time granules from the calendar</span></span></span>
+<span class="r-in"><span><span class="va">cal_simple</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;tu_year&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ n : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr ""</span>
+<span class="r-in"><span><span class="va">cal_simple</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;tu_month&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ n : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr ""</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

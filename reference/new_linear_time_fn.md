@@ -1,7 +1,7 @@
 # Linear time function factory
 
 `new_linear_time_fn()` creates a linear time function for a specified
-chronon. A chronon is the smallest indivisible time unit (e.g., days,
+chronon. A chronon is the smallest indivisible time granule (e.g., days,
 hours).
 
 ## Usage
@@ -14,13 +14,14 @@ new_linear_time_fn(chronon, default_calendar = cal_gregorian)
 
 - chronon:
 
-  A bare call for a time unit object representing the chronon (e.g.,
+  A bare call for a time granule object representing the chronon (e.g.,
   `day(1)`)
 
 - default_calendar:
 
   A default calendar used to find the time units for conversion if they
-  don't exist in the calendar of the input data (e.g., `cal_isoweek`)
+  don't exist in the calendar of the input data (e.g., `cal_isoweek` for
+  week chronons to work with gregorian calendar inputs).
 
 ## Value
 
@@ -69,5 +70,5 @@ yd(Sys.Date())
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-04-30 15h
+#> [1] 2026-04-30 16h
 ```

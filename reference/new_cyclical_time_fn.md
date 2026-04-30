@@ -1,11 +1,11 @@
 # Cyclical time function factory
 
 `new_cyclical_time_fn()` creates a cyclical time function for a
-specified chronon and cycle. The cycle is the larger time unit that
+specified chronon and cycle. The cycle is the larger time granule that
 defines the time period over which the chronon loops (e.g., a week). The
-chronon is the smaller time unit that iterates within each cycle (e.g.,
-a day). Combined, these two units form a cyclical time point (e.g., day
-of the week).
+chronon is the smaller time granule that iterates within each cycle
+(e.g., a day). Combined, these two granules form a cyclical time
+relationship (e.g., day of the week).
 
 ## Usage
 
@@ -17,11 +17,11 @@ new_cyclical_time_fn(chronon, cycle, default_calendar = cal_gregorian)
 
 - chronon:
 
-  A time unit object representing the chronon (e.g., `day(1L)`)
+  A time granule object representing the chronon (e.g., `day(1L)`)
 
 - cycle:
 
-  A time unit object representing the cycle (e.g., `week(1L)`)
+  A time granule object representing the cycle (e.g., `week(1L)`)
 
 - default_calendar:
 

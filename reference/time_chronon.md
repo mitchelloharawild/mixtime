@@ -1,7 +1,7 @@
 # Obtain the chronon of a time object
 
-This S7 generic function extracts the chronon (the smallest time unit)
-from a time object, such as continuous time or cyclical time
+This S7 generic function extracts the chronon (the smallest time
+granule) from a time object, such as continuous time or cyclical time
 representations.
 
 ## Usage
@@ -25,7 +25,7 @@ time_chronon(x, ...)
 
 ## Value
 
-A time unit object representing the chronon (e.g.,
+A time granule object representing the chronon (e.g.,
 `cal_gregorian$day(1L)`)
 
 ## Examples

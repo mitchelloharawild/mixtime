@@ -4,8 +4,8 @@
 
 Creates a `mixtime` time vector at a specific time point, with a
 specified chronon and optional cycle. The `chronon` defines the smallest
-indivisible time unit for the time vector, while the `cycle` allows for
-cyclical time representations (e.g. day-of-week, month-of-year).
+indivisible time granule for the time vector, while the `cycle` allows
+for cyclical time representations (e.g. day-of-week, month-of-year).
 
 ## Usage
 
@@ -22,14 +22,14 @@ new_time(x = integer(), chronon = mt_unit(1L), cycle = NULL, class = NULL)
 
 - chronon:
 
-  A time unit object representing the smallest indivisible time unit
-  (chronon) for the time vector (e.g. `cal_gregorian$day(1L)`).
+  A time granule object representing the smallest indivisible time
+  granule (chronon) for the time vector (e.g. `cal_gregorian$day(1L)`).
 
 - cycle:
 
-  An optional time unit object representing the cycle for cyclical time
-  (e.g. `cal_gregorian$week(1L)` for day-of-week). If not provided, the
-  time vector will be treated as linear time.
+  An optional time granule object representing the cycle for cyclical
+  time (e.g. `cal_gregorian$week(1L)` for day-of-week). If not provided,
+  the time vector will be treated as linear time.
 
 - class:
 
@@ -62,7 +62,7 @@ new_time(
   class = "mt_linear"
 )
 #> <mt_linear[1]>
-#> [1] 2026-04-30 15:12:07
+#> [1] 2026-04-30 16:04:02
 
 # Create a discrete mixtime time vector for the time of day (cyclical time)
 new_time(
@@ -72,5 +72,5 @@ new_time(
   class = "mt_cyclical"
 )
 #> <mt_cyclical[1]>
-#> [1] 15:12:07
+#> [1] 16:04:02
 ```

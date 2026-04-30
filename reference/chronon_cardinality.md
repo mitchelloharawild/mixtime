@@ -1,4 +1,4 @@
-# Cardinality between time units
+# Cardinality between time granules
 
 This S7 generic function defines the calendrical relationships between
 two chronons, and is one of the building block for defining calendars in
@@ -17,11 +17,11 @@ chronon_cardinality(x, y, ...)
 
 - x:
 
-  The finer time unit (e.g. `cal_gregorian$month(1L)`)
+  The finer time granule (e.g. `cal_gregorian$month(1L)`)
 
 - y:
 
-  The coarser time unit (e.g. `cal_gregorian$year(1L)`)
+  The coarser time granule (e.g. `cal_gregorian$year(1L)`)
 
 - ...:
 
@@ -29,7 +29,7 @@ chronon_cardinality(x, y, ...)
 
 ## Value
 
-Numeric describing how many `x` time units fit into `y` at time `at`.
+Numeric describing how many `x` time granules fit into `y` at time `at`.
 
 ## Details
 

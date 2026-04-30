@@ -1,7 +1,7 @@
 # Friendly labels for cyclical relationships
 
 This S7 generic function provides the labels for cyclical relationships
-between time units. These functions should return locale specific
+between time granules. These functions should return locale specific
 labels.
 
 ## Usage
@@ -14,11 +14,11 @@ cyclical_labels(granule, cycle, ...)
 
 - granule:
 
-  A time unit object representing the granule (e.g., `month(1L)`)
+  A time granule object representing the granule (e.g., `month(1L)`)
 
 - cycle:
 
-  A time unit object representing the cycle (e.g., `year(1L)`)
+  A time granule object representing the cycle (e.g., `year(1L)`)
 
 - ...:
 

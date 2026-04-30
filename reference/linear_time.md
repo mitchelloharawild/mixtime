@@ -1,7 +1,7 @@
 # Linear time points
 
 `linear_time()` creates a vector of linear time points with a specified
-chronon (smallest time unit). This function is useful for creating
+chronon (smallest time granule). This function is useful for creating
 custom time representations that aren't covered by the convenience
 functions like
 [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
@@ -35,17 +35,19 @@ linear_time(
 
 - chronon:
 
-  A time unit expression representing the chronon (smallest indivisible
-  time unit), evaluated in the context of `calendar`. Use unquoted
-  expressions like `month(1L)` or `hour(1L)`. Chronons from a specific
-  calendar can also be used (e.g. `cal_isoweek$week(1L)`). Defaults to
-  the time chronon of the input `data` (`time_chronon(data)`).
+  A time granule expression representing the chronon (smallest
+  indivisible time granule), evaluated in the context of `calendar`. Use
+  unquoted expressions like `month(1L)` or `hour(1L)`. Chronons from a
+  specific calendar can also be used (e.g. `cal_isoweek$week(1L)`).
+  Defaults to the time chronon of the input `data`
+  (`time_chronon(data)`).
 
 - discrete:
 
   Logical. If `TRUE` (default), returns integer chronons since Unix
   epoch (discrete time model). If `FALSE`, returns fractional chronons
-  allowing representation of partial time units (continuous time model).
+  allowing representation of fractional time granules (continuous time
+  model).
 
 - calendar:
 
@@ -86,7 +88,7 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-04-30 15h
+#> [1] 2026-04-30 16h
 
 # Monthly time
 linear_time(
@@ -102,7 +104,7 @@ linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 #> [1] 2026-04-30
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-04-30 63.3%
+#> [1] 2026-04-30 66.9%
 
 # ISO week calendar with week-day structure
 linear_time(

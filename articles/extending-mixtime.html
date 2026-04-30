@@ -340,7 +340,7 @@ leap years in every 293-year period.</p>
 <span></span>
 <span>    <span class="va">nweeks</span><span class="op">[</span><span class="va">contains_dec</span><span class="op">[</span><span class="va">is_leap_year</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">nweeks</span><span class="op">[</span><span class="va">contains_dec</span><span class="op">[</span><span class="va">is_leap_year</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1L</span></span>
 <span></span>
-<span>    <span class="co"># Scale by the number of weeks in the week time unit</span></span>
+<span>    <span class="co"># Scale by the number of weeks in the n-week time granule</span></span>
 <span>    <span class="va">nweeks</span> <span class="op">/</span> <span class="va">x</span><span class="op">@</span><span class="va">n</span></span>
 <span>  <span class="op">}</span></span>
 <span></span>
@@ -392,14 +392,14 @@ the relationship.</p>
 <h3 id="divmod">Divmod<a class="anchor" aria-label="anchor" href="#divmod"></a>
 </h3>
 <p>The divmod operation is a combined division and modulus that converts
-between time units and is defined with <code><a href="../reference/chronon_divmod.html">chronon_divmod()</a></code>
+between time granules and is defined with <code><a href="../reference/chronon_divmod.html">chronon_divmod()</a></code>
 methods. These methods are required to efficiently convert between units
 with irregular relationships, such as days → months. For regular
 relationships (e.g. days → weeks) the divmod is automatically derived
 from <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> methods alone.</p>
 <p><code>chronon_divmod(from, to, x)</code> converts times
-<code>x</code> in the <code>from</code> units into time points in
-<code>to</code> units. For example, the date “1970-02-15” is day 45
+<code>x</code> in the <code>from</code> granules into time points in
+<code>to</code> granules. For example, the date “1970-02-15” is day 45
 since epoch (<code>x = 45</code> and
 <code>from = cal_gregorian$day(1L)</code>), converted to months
 (<code>to = cal_gregorian$month(1L)</code>) gives 1 month and 14 days
@@ -415,7 +415,7 @@ since epoch (<code>x = 45</code> and
 <ul>
 <li>
 <code>div</code> - the quotient (chronons in <code>to</code>
-units)</li>
+granules)</li>
 <li>
 <code>mod</code> - the remainder (leftover <code>from</code>
 chronons)</li>
@@ -438,7 +438,7 @@ cycle.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_divmod</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span>, <span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># Most of this code works on 1-week units</span></span>
+<span>    <span class="co"># Most of this code works on 1-week granules</span></span>
 <span>    <span class="va">week_size</span> <span class="op">&lt;-</span> <span class="va">from</span><span class="op">@</span><span class="va">n</span></span>
 <span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">*</span> <span class="va">week_size</span>  <span class="co"># convert n-weeks to 1-weeks</span></span>
 <span></span>
@@ -477,7 +477,7 @@ cycle.</p>
 <span>    <span class="co"># Offset x to align with the nearest 293-year cycle boundary before the epoch.</span></span>
 <span>    <span class="co"># There are 349 leap years between year 1-W1 and the 1970-W1 epoch, and the</span></span>
 <span>    <span class="co"># nearest cycle start is (1969*52 + 349) %% (293*52 + 52) = 11009 weeks before epoch.</span></span>
-<span>    <span class="va">x_cyc</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">11009L</span> <span class="op">+</span> <span class="va">week_size</span>  <span class="co"># right align multi-week units</span></span>
+<span>    <span class="va">x_cyc</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">11009L</span> <span class="op">+</span> <span class="va">week_size</span>  <span class="co"># right align multi-week granules</span></span>
 <span>    <span class="va">n_leaps</span> <span class="op">&lt;-</span> <span class="fu">leaps_symmetry454</span><span class="op">(</span><span class="va">x_cyc</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># Regularise x to have exactly 52 weeks per year by subtracting leap weeks.</span></span>
@@ -549,7 +549,7 @@ account for any leap weeks that were removed during regularisation.</p>
 <code><a href="../reference/chronon_divmod.html">chronon_divmod()</a></code> methods are further complicated by the
 generality of converting between n-unit time granules (e.g. converting
 from 1 week to 2 month chronons). If this generality is not needed, your
-method can raise an error when the time unit is not size 1
+method can raise an error when the time granule is not size 1
 (e.g. <code>if (to@n != 1L) stop("...")</code>).</p>
 <p>The inverse relationship must also be defined to convert from months
 → weeks. When converting from coarser → finer units, integer values for
@@ -658,10 +658,10 @@ label methods as described in the next section.</p>
 </h3>
 <p>The time label functions describe how each granule of time
 (e.g. years, months, weeks) is displayed. There are two types of labels
-to consider: linear time labels are for continuous time units (usually
-the coarsest time unit, years), and cyclical time labels are for time
-units that nest (cycle over) another granule (e.g. months within a year,
-days within a week).</p>
+to consider: linear time labels are for continuous time granules
+(usually the coarsest time unit, years), and cyclical time labels are
+for time granules that nest (cycle over) another granule (e.g. months
+within a year, days within a week).</p>
 <p>The <code><a href="../reference/linear_labels.html">linear_labels()</a></code> and <code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code>
 methods should return character vectors of the same length as the input
 time indices <code>i</code>.</p>
@@ -702,7 +702,7 @@ time format methods below to make these labels more readable.</p>
 <div class="section level4">
 <h4 id="cyclical-time-labels-cyclical_labels">Cyclical time labels: <code>cyclical_labels()</code><a class="anchor" aria-label="anchor" href="#cyclical-time-labels-cyclical_labels"></a>
 </h4>
-<p>It is common to need custom labels for cyclical time units, since
+<p>It is common to need custom labels for cyclical time granules, since
 cyclical time points often have familiar labels (e.g. Jan, Feb, … for
 months in years) or are 1-indexed (e.g. 1, 2, … for days in a month).
 The default method for <code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code> simply uses the
@@ -784,24 +784,26 @@ the corresponding time points.</p>
 strings:</p>
 <ul>
 <li>
-<code>lin(&lt;time unit&gt;)</code> - Granule labels for linear time
-units, usually the largest granule (e.g. <code>lin(year(1L))</code>).
-These labels are produced by <code><a href="../reference/linear_labels.html">linear_labels()</a></code>.</li>
+<code>lin(&lt;time granule&gt;)</code> - Granule labels for linear
+time grnaules, usually the largest granule
+(e.g. <code>lin(year(1L))</code>). These labels are produced by
+<code><a href="../reference/linear_labels.html">linear_labels()</a></code>.</li>
 <li>
-<code>cyc(&lt;time unit&gt;, &lt;cycle unit&gt;)</code> - Granule
-labels for cyclical time units, where the labels are relative to the
-cycle (e.g. <code>cyc(month(1L), year(1L))</code> is the month within
-the year). These labels are produced by
+<code>cyc(&lt;time granule&gt;, &lt;cycle granule&gt;)</code> -
+Granule labels for cyclical time granules, where the labels are relative
+to the cycle (e.g. <code>cyc(month(1L), year(1L))</code> is the month
+within the year). These labels are produced by
 <code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code>.</li>
 </ul>
-<p>The <code>&lt;time unit&gt;</code> and
-<code>&lt;cycle unit&gt;</code> placeholders in the format string must
-evaluate to a time unit of a calendar. For convenience, unevaluated
-named time units (e.g. <code>lin(year)</code>) default to a size 1 time
-unit (e.g. <code>lin(year(1L))</code>), and the calendar is inferred
-from the time vector being formatted. It is also possible to explicitly
-specify the calendar (e.g. <code>lin(cal_symmetry454$year(1L))</code>),
-which allows time formats to use granules from different calendars.</p>
+<p>The <code>&lt;time granule&gt;</code> and
+<code>&lt;cycle granule&gt;</code> placeholders in the format string
+must evaluate to a time granule from a calendar time unit. For
+convenience, using time units (e.g. <code>lin(year)</code>) default to a
+size 1 time granule (e.g. <code>lin(year(1L))</code>), and the calendar
+is inferred from the time vector being formatted. It is also possible to
+explicitly specify the calendar
+(e.g. <code>lin(cal_symmetry454$year(1L))</code>), which allows time
+formats to use granules from different calendars.</p>
 <div class="section level4">
 <h4 id="linear-time-formats-chronon_format_linear">Linear time formats: <code>chronon_format_linear()</code><a class="anchor" aria-label="anchor" href="#linear-time-formats-chronon_format_linear"></a>
 </h4>

@@ -17,7 +17,7 @@ time_unit_abbr(x, ...)
 
 - x:
 
-  A time unit object (e.g., `cal_gregorian$month(1L)`)
+  A time granule object (e.g., `cal_gregorian$month(1L)`)
 
 - ...:
 

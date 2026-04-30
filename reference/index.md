@@ -155,8 +155,8 @@ boundaries defined by lunar events.
 
 ## Time Attributes
 
-Functions for working with attributes of time units, such as timezones
-or locations.
+Functions for working with attributes of time granules, such as
+timezones or locations.
 
 ### Timezones
 
@@ -232,9 +232,9 @@ units and calendars.
 ### Calendar arithmetic
 
 - [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
-  : Cardinality between time units
+  : Cardinality between time granules
 - [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
-  : Convert between chronons of different time units
+  : Convert between chronons of different time granules
 - [`chronon_epoch()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_epoch.md)
   : Epoch offset for chronons
 - [`circsum()`](https://pkg.mitchelloharawild.com/mixtime/reference/circsum.md)

@@ -1,11 +1,12 @@
-# Convert between chronons of different time units
+# Convert between chronons of different time granules
 
 This function converts between chronons measured in different time
-units. It is used internally for converting between different continuous
-time types, and is particularly useful for efficiently converting
-between irregular time units. The default method uses
+granules. It is used internally for converting between different
+continuous time types, and is particularly useful for efficiently
+converting between irregular time granules. The default method uses
 [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
-to cast between time units, which is efficient for regular time units.
+to cast between time granules, which is efficient for regular time
+granules.
 
 ## Usage
 
@@ -17,11 +18,11 @@ chronon_divmod(from, to, ...)
 
 - from:
 
-  The time unit that `x` is measured in (e.g., `day(1L)`).
+  The time granule that `x` is measured in (e.g., `day(1L)`).
 
 - to:
 
-  The time unit to convert `x` into (e.g., `week(1L)`).
+  The time granule to convert `x` into (e.g., `week(1L)`).
 
 - ...:
 
@@ -31,10 +32,10 @@ chronon_divmod(from, to, ...)
 
 An list of two elements:
 
-- `div`: integer vector of chronons measured in the `to` time unit.
+- `div`: integer vector of chronons measured in the `to` time granule.
 
-- `mod`: integer vector of the remainder (in `from` time unit) after
-  converting to the `to` time unit.
+- `mod`: integer vector of the remainder (in `from` time granule) after
+  converting to the `to` time granule.
 
 ## Examples
 

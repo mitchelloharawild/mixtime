@@ -73,23 +73,22 @@ like <code><a href="cyclical_time_helpers.html">day_of_week()</a></code> or <cod
 
 
 <dt id="arg-chronon">chronon<a class="anchor" aria-label="anchor" href="#arg-chronon"></a></dt>
-<dd><p>A time unit representing the chronon (smallest
-indivisible time unit), evaluated in the context of <code>calendar</code>. Use
+<dd><p>A time granule representing the chronon (finest
+indivisible time granule), evaluated in the context of <code>calendar</code>. Use
 unquoted expressions like <code>day(1L)</code> or <code>month(1L)</code>. Chronons from a
 specific calendar can also be used (e.g. <code>cal_isoweek$day(1L)</code>).</p></dd>
 
 
 <dt id="arg-cycle">cycle<a class="anchor" aria-label="anchor" href="#arg-cycle"></a></dt>
-<dd><p>A time unit representing the cycle (larger time unit
+<dd><p>A time granule representing the cycle (coarser time granule
 that defines the period), evaluated in the context of <code>calendar</code>. Use
-unquoted expressions like <code>week(1L)</code> or <code>year(1L)</code>. The
-time units should be ordered from coarsest (e.g. year) to finest (e.g second).</p></dd>
+unquoted expressions like <code>week(1L)</code> or <code>year(1L)</code>.</p></dd>
 
 
 <dt id="arg-discrete">discrete<a class="anchor" aria-label="anchor" href="#arg-discrete"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), returns integer positions within
 the cycle (discrete time model). If <code>FALSE</code>, returns fractional positions
-allowing representation of partial time units (continuous time model).</p></dd>
+allowing representation of fractional time chronons (continuous time model).</p></dd>
 
 
 <dt id="arg-calendar">calendar<a class="anchor" aria-label="anchor" href="#arg-calendar"></a></dt>
@@ -140,7 +139,7 @@ include <a href="calendar_gregorian.html">cal_gregorian</a> and <a href="calenda
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 W18</span>
 <span class="r-in"><span><span class="fu"><a href="linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 W18 51.9%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 W18 52.4%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Day of month with Gregorian calendar</span></span></span>
 <span class="r-in"><span><span class="fu">cyclical_time</span><span class="op">(</span></span></span>
@@ -159,7 +158,7 @@ include <a href="calendar_gregorian.html">cal_gregorian</a> and <a href="calenda
 <span class="r-in"><span>  cycle <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 15:12:01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16:03:56</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

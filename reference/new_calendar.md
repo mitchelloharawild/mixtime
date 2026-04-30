@@ -40,10 +40,14 @@ named list containing the specified time unit classes.
 ## Details
 
 Time units are typically S7 class definitions that inherit from
-`mt_unit` for standard units or `mt_tz_unit` for timezone-aware units.
-The calendar object provides a namespace for accessing these unit
-constructors and defines the relationships between them for calendar
-arithmetic.
+[`mt_unit`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
+for standard units,
+[`mt_tz_unit`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
+for timezone-aware units (civil time), or
+[`mt_loc_unit`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
+for location-aware units (astronomical time). The calendar object
+provides a namespace for accessing these unit constructors and defines
+the relationships between them for calendar arithmetic.
 
 ## See also
 
@@ -54,13 +58,21 @@ arithmetic.
 
 ``` r
 # Create a simple calendar with year and month units
+# (inheriting from civil time units for day, hour, minute, second, ...)
 cal_simple <- new_calendar(
   year = S7::new_class("tu_year", parent = mt_tz_unit),
   month = S7::new_class("tu_month", parent = mt_tz_unit),
+  inherit = cal_time_civil,
   class = "cal_simple"
 )
 
-# Access unit constructors from the calendar
-year_unit <- cal_simple$year(1L)
-month_unit <- cal_simple$month(1L)
+# Create time granules from the calendar
+cal_simple$year(1L)
+#> <tu_year>
+#>  @ n : int 1
+#>  @ tz: chr ""
+cal_simple$month(1L)
+#> <tu_month>
+#>  @ n : int 1
+#>  @ tz: chr ""
 ```

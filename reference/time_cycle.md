@@ -1,6 +1,6 @@
 # Obtain the cycle of a time object
 
-This S7 generic function extracts the cycle (the cyclical time unit)
+This S7 generic function extracts the cycle (the cyclical time granule)
 from a time object, such as cyclical time representations.
 
 ## Usage
@@ -24,8 +24,8 @@ time_cycle(x, ...)
 
 ## Value
 
-A time unit object representing the cycle, or `NULL` if the object has
-no cyclical component.
+A time granule object representing the cycle, or `NULL` if the object
+has no cyclical component.
 
 ## Examples
 

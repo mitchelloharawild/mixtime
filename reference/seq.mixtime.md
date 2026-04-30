@@ -40,12 +40,12 @@ seq(
 
   Increment of the sequence. Can be:
 
-  - An integer for the number of time units
+  - A numeric for the number of time chronons
 
   - A character string specifying the interval (e.g., "1 day", "2
     weeks", "1 month", "1 year")
 
-  - A time unit object created with time unit functions (e.g.,
+  - A time granule object created with time unit functions (e.g.,
     `cal_gregorian$year(1L)`, `cal_gregorian$month(1L)`,
     `cal_gregorian$day(1L)`)
 
@@ -64,8 +64,8 @@ seq(
 - on_invalid:
 
   How to handle time points that overflow the cycle when using a `by`
-  argument with different time units than the sequence type. Options
-  are:
+  argument with different time granule than the sequence chronon.
+  Options are:
 
   - `"nearest"` (default): Adjust overflowing time points to the nearest
     valid time point within the cycle
@@ -117,7 +117,7 @@ seq(date("2020-01-01"), length.out = 10, by = "2 weeks")
 #>  [1] 2020-01-01 2020-01-15 2020-01-29 2020-02-12 2020-02-26 2020-03-11
 #>  [7] 2020-03-25 2020-04-08 2020-04-22 2020-05-06
 
-# Linear time sequences with time units
+# Linear time sequences incrementing by time granules
 seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$month(2L))
 #> <mixtime[6]>
 #> [1] 2020 Jan 2020 Mar 2020 May 2020 Jul 2020 Sep 2020 Nov

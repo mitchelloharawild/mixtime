@@ -282,7 +282,7 @@ S7::method(chronon_cardinality, list(cal_symmetry454$week, cal_symmetry454$month
 
     nweeks[contains_dec[is_leap_year]] <- nweeks[contains_dec[is_leap_year]] + 1L
 
-    # Scale by the number of weeks in the week time unit
+    # Scale by the number of weeks in the n-week time granule
     nweeks / x@n
   }
 
@@ -342,7 +342,7 @@ chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$week(2L), at = 0:
 ### Divmod
 
 The divmod operation is a combined division and modulus that converts
-between time units and is defined with
+between time granules and is defined with
 [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
 methods. These methods are required to efficiently convert between units
 with irregular relationships, such as days → months. For regular
@@ -351,8 +351,8 @@ from
 [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
 methods alone.
 
-`chronon_divmod(from, to, x)` converts times `x` in the `from` units
-into time points in `to` units. For example, the date “1970-02-15” is
+`chronon_divmod(from, to, x)` converts times `x` in the `from` granules
+into time points in `to` granules. For example, the date “1970-02-15” is
 day 45 since epoch (`x = 45` and `from = cal_gregorian$day(1L)`),
 converted to months (`to = cal_gregorian$month(1L)`) gives 1 month and
 14 days (div = 1, mod = 14).
@@ -371,7 +371,7 @@ Methods for
 [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
 return a list with:
 
-- `div` - the quotient (chronons in `to` units)
+- `div` - the quotient (chronons in `to` granules)
 - `mod` - the remainder (leftover `from` chronons)
 
 Note that all time values are zero-indexed, so `$div = 0` is January
@@ -394,7 +394,7 @@ leap weeks have occurred before any given week number in a cycle.
 
 S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(from, to, x) {
-    # Most of this code works on 1-week units
+    # Most of this code works on 1-week granules
     week_size <- from@n
     x <- x * week_size  # convert n-weeks to 1-weeks
 
@@ -433,7 +433,7 @@ S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
     # Offset x to align with the nearest 293-year cycle boundary before the epoch.
     # There are 349 leap years between year 1-W1 and the 1970-W1 epoch, and the
     # nearest cycle start is (1969*52 + 349) %% (293*52 + 52) = 11009 weeks before epoch.
-    x_cyc <- x + 11009L + week_size  # right align multi-week units
+    x_cyc <- x + 11009L + week_size  # right align multi-week granules
     n_leaps <- leaps_symmetry454(x_cyc)
 
     # Regularise x to have exactly 52 weeks per year by subtracting leap weeks.
@@ -512,7 +512,7 @@ While most of this complication relates to the leap week pattern,
 methods are further complicated by the generality of converting between
 n-unit time granules (e.g. converting from 1 week to 2 month chronons).
 If this generality is not needed, your method can raise an error when
-the time unit is not size 1 (e.g. `if (to@n != 1L) stop("...")`).
+the time granule is not size 1 (e.g. `if (to@n != 1L) stop("...")`).
 
 The inverse relationship must also be defined to convert from months →
 weeks. When converting from coarser → finer units, integer values for
@@ -644,10 +644,10 @@ label methods as described in the next section.
 
 The time label functions describe how each granule of time (e.g. years,
 months, weeks) is displayed. There are two types of labels to consider:
-linear time labels are for continuous time units (usually the coarsest
-time unit, years), and cyclical time labels are for time units that nest
-(cycle over) another granule (e.g. months within a year, days within a
-week).
+linear time labels are for continuous time granules (usually the
+coarsest time unit, years), and cyclical time labels are for time
+granules that nest (cycle over) another granule (e.g. months within a
+year, days within a week).
 
 The
 [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
@@ -696,7 +696,7 @@ format methods below to make these labels more readable.
 
 #### Cyclical time labels: `cyclical_labels()`
 
-It is common to need custom labels for cyclical time units, since
+It is common to need custom labels for cyclical time granules, since
 cyclical time points often have familiar labels (e.g. Jan, Feb, … for
 months in years) or are 1-indexed (e.g. 1, 2, … for days in a month).
 The default method for
@@ -790,22 +790,23 @@ granule labels for the corresponding time points.
 There are two types of granule labels useful for these time format
 strings:
 
-- `lin(<time unit>)` - Granule labels for linear time units, usually the
-  largest granule (e.g. `lin(year(1L))`). These labels are produced by
+- `lin(<time granule>)` - Granule labels for linear time grnaules,
+  usually the largest granule (e.g. `lin(year(1L))`). These labels are
+  produced by
   [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md).
-- `cyc(<time unit>, <cycle unit>)` - Granule labels for cyclical time
-  units, where the labels are relative to the cycle
+- `cyc(<time granule>, <cycle granule>)` - Granule labels for cyclical
+  time granules, where the labels are relative to the cycle
   (e.g. `cyc(month(1L), year(1L))` is the month within the year). These
   labels are produced by
   [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md).
 
-The `<time unit>` and `<cycle unit>` placeholders in the format string
-must evaluate to a time unit of a calendar. For convenience, unevaluated
-named time units (e.g. `lin(year)`) default to a size 1 time unit
-(e.g. `lin(year(1L))`), and the calendar is inferred from the time
-vector being formatted. It is also possible to explicitly specify the
-calendar (e.g. `lin(cal_symmetry454$year(1L))`), which allows time
-formats to use granules from different calendars.
+The `<time granule>` and `<cycle granule>` placeholders in the format
+string must evaluate to a time granule from a calendar time unit. For
+convenience, using time units (e.g. `lin(year)`) default to a size 1
+time granule (e.g. `lin(year(1L))`), and the calendar is inferred from
+the time vector being formatted. It is also possible to explicitly
+specify the calendar (e.g. `lin(cal_symmetry454$year(1L))`), which
+allows time formats to use granules from different calendars.
 
 #### Linear time formats: `chronon_format_linear()`
 

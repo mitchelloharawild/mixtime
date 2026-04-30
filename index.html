@@ -16,8 +16,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Mixed Temporal Vectors and Operations">
-<meta name="description" content="Flexible time classes for time series analysis and forecasting with mixed temporal granularities. Supports linear and cyclical time representations in discrete and continuous forms, with timezone support, across multiple calendar systems including Gregorian and ISO week date calendars. Time points are stored numerically relative to a chronon; an atomic time unit defined by a calendar. Calendrical arithmetic enables conversion between time units (e.g. days to months) and calendar systems. Multi-unit arithmetic allows for temporal analysis with other granules of common calendars (e.g. fortnights are 2-week units). Time vectors of different granularities (e.g. monthly and quarterly) can be combined in a single vector, making mixtime ideal for data that changes observation frequency over time or requires temporal reconciliation across scales. The package is extensible, allowing users to define custom calendars that build upon civil and astronomical time systems.">
-<meta property="og:description" content="Flexible time classes for time series analysis and forecasting with mixed temporal granularities. Supports linear and cyclical time representations in discrete and continuous forms, with timezone support, across multiple calendar systems including Gregorian and ISO week date calendars. Time points are stored numerically relative to a chronon; an atomic time unit defined by a calendar. Calendrical arithmetic enables conversion between time units (e.g. days to months) and calendar systems. Multi-unit arithmetic allows for temporal analysis with other granules of common calendars (e.g. fortnights are 2-week units). Time vectors of different granularities (e.g. monthly and quarterly) can be combined in a single vector, making mixtime ideal for data that changes observation frequency over time or requires temporal reconciliation across scales. The package is extensible, allowing users to define custom calendars that build upon civil and astronomical time systems.">
+<meta name="description" content="Flexible time classes for time series analysis and forecasting with mixed temporal granularities. Supports linear and cyclical time representations in discrete and continuous forms, with timezone support, across multiple calendar systems including Gregorian and ISO week date calendars. Time points are stored numerically relative to a chronon; an atomic time granule defined by time units of a calendar. Calendrical arithmetic enables conversion between time granules (e.g. days to months) and calendar systems. Multi-unit arithmetic allows for temporal analysis with other granules of common calendars (e.g. fortnights are 2-week units). Time vectors of different granularities (e.g. monthly and quarterly) can be combined in a single vector, making mixtime ideal for data that changes observation frequency over time or requires temporal reconciliation across scales. The package is extensible, allowing users to define custom calendars that build upon civil and astronomical time systems.">
+<meta property="og:description" content="Flexible time classes for time series analysis and forecasting with mixed temporal granularities. Supports linear and cyclical time representations in discrete and continuous forms, with timezone support, across multiple calendar systems including Gregorian and ISO week date calendars. Time points are stored numerically relative to a chronon; an atomic time granule defined by time units of a calendar. Calendrical arithmetic enables conversion between time granules (e.g. days to months) and calendar systems. Multi-unit arithmetic allows for temporal analysis with other granules of common calendars (e.g. fortnights are 2-week units). Time vectors of different granularities (e.g. monthly and quarterly) can be combined in a single vector, making mixtime ideal for data that changes observation frequency over time or requires temporal reconciliation across scales. The package is extensible, allowing users to define custom calendars that build upon civil and astronomical time systems.">
 <meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg">
 </head>
 <body>
@@ -144,7 +144,7 @@
 <div class="section level3">
 <h3 id="calendars-and-time-units">Calendars and time units<a class="anchor" aria-label="anchor" href="#calendars-and-time-units"></a>
 </h3>
-<p>Calendars have a <code>cal_*</code> prefix, which contain a set of time units that can be accessed with <code>&lt;cal&gt;$&lt;unit&gt;</code>.</p>
+<p>Calendars have a <code>cal_*</code> prefix, which contain a set of time units that can be accessed with <code>&lt;cal&gt;$&lt;unit&gt;</code>. Using time units as functions produces time granules.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The Gregorian calendar</span></span>
 <span><span class="va">cal_gregorian</span></span>
@@ -160,13 +160,13 @@
 <span><span class="co">#&gt;   - second</span></span>
 <span><span class="co">#&gt;   - millisecond</span></span>
 <span></span>
-<span><span class="co"># A 1-month time unit</span></span>
+<span><span class="co"># A 1-month time granule</span></span>
 <span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span> <span class="co"># (1L is integer 1)</span></span>
 <span><span class="co">#&gt; &lt;mixtime::tu_month&gt;</span></span>
 <span><span class="co">#&gt;  @ n : int 1</span></span>
 <span><span class="co">#&gt;  @ tz: chr ""</span></span>
 <span></span>
-<span><span class="co"># A 2-week time unit (fortnights)</span></span>
+<span><span class="co"># A 2-week time granule (fortnights)</span></span>
 <span><span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime::tu_week&gt;</span></span>
 <span><span class="co">#&gt;  @ n : int 2</span></span>
@@ -175,7 +175,7 @@
 <div class="section level3">
 <h3 id="linear-time">Linear Time<a class="anchor" aria-label="anchor" href="#linear-time"></a>
 </h3>
-<p>A linear time vector uses time units to define the resolution of time points, known as a <code>chronon</code> (the smallest unit of time). When the input time has a different resolution than the <code>chronon</code>, it will be automatically converted.</p>
+<p>A linear time vector uses time granules to define the resolution of time points, known as a <code>chronon</code> (the smallest granules of time). When the input time has a different resolution than the <code>chronon</code>, it will be automatically converted.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/linear_time.html">linear_time</a></span><span class="op">(</span><span class="va">demo_date</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
@@ -215,7 +215,7 @@
 <div class="section level3">
 <h3 id="cyclical-time">Cyclical Time<a class="anchor" aria-label="anchor" href="#cyclical-time"></a>
 </h3>
-<p>A cyclical time vector is defined by two calendar time units: a <code>chronon</code> (the smaller unit of time) and a <code>cycle</code> (the larger unit that the <code>chronon</code> loops over).</p>
+<p>A cyclical time vector is defined by two time granules: a <code>chronon</code> (the smaller granule of time) and a <code>cycle</code> (the larger granule that the <code>chronon</code> loops over).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The `calendar` argument provides a masking scope to `chronon` and `cycle`</span></span>
 <span><span class="fu"><a href="reference/cyclical_time.html">cyclical_time</a></span><span class="op">(</span><span class="va">demo_date</span>, chronon <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, cycle <span class="op">=</span> <span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span>
@@ -271,7 +271,7 @@
 <div class="section level3">
 <h3 id="temporal-manipulation">Temporal Manipulation<a class="anchor" aria-label="anchor" href="#temporal-manipulation"></a>
 </h3>
-<p>Linear time points can be adjusted to the floor, ceiling, or rounded to a specified time unit.</p>
+<p>Linear time points can be adjusted to the floor, ceiling, or rounded to a specified time granule.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Round dates to different granularities</span></span>
 <span><span class="fu"><a href="reference/time_round.html">time_floor</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
@@ -284,15 +284,15 @@
 <div class="section level3">
 <h3 id="time-sequences">Time Sequences<a class="anchor" aria-label="anchor" href="#time-sequences"></a>
 </h3>
-<p>The <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code> function creates sequences of time points iterating by a given time unit.</p>
+<p>The <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code> function creates sequences of time points iterating by a given time granule.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Integer increments (advances by chronon's natural unit)</span></span>
+<code class="sourceCode R"><span><span class="co"># Integer increments (advances by chronon's natural granule)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1L</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[10]&gt;</span></span>
 <span><span class="co">#&gt;  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep</span></span>
 <span><span class="co">#&gt;  [9] 2026 Oct 2026 Nov</span></span>
 <span></span>
-<span><span class="co"># Calendar time units allow sequencing by other units</span></span>
+<span><span class="co"># Time can be sequenced by different granules than the chronon</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[8]&gt;</span></span>
 <span><span class="co">#&gt; [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22</span></span>

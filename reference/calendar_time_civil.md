@@ -16,7 +16,7 @@ cal_time_civil
 
 ## Value
 
-A time unit object for the civil time system.
+A time granule object for the civil time system.
 
 ## Details
 
@@ -40,7 +40,7 @@ The following time units are available (`cal_time_civil$`).
 ## Examples
 
 ``` r
-# Create a custom time representation using Gregorian units
+# Create a custom time representation using civil time granules
 hms <- new_cyclical_time_fn(
   chronon = second(1L),
   cycle = hour(1L)
