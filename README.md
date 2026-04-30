@@ -52,6 +52,7 @@ or with helpers:
 
 - `cal_gregorian` - Gregorian dates (e.g. 2026-02-17)
 - `cal_isoweek` - ISO week dates (e.g. 2026-W8-Tue)
+- `cal_sym454` - Symmetry454 dates (e.g. 2026-Feb-W4-Tue)
 - More calendars coming, including custom censored calendars
 
 **🧮 Temporal Operations**
