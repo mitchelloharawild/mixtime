@@ -1,23 +1,3 @@
-#' Constructor for mixtime duration vectors
-#' 
-#' @description
-#' 
-#' `r lifecycle::badge("experimental")`
-#' 
-#' Constructs a new duration object (`mt_duration`) from a set of mixtime time 
-#' units. This functionality is in active development and is not ready for use.
-#' 
-#' @inheritParams new_time
-#'
-#' @return An object of class `mt_duration` representing the specified duration.
-#'
-#' @details
-#' 
-#' This is a low-level constructor function that creates duration objects.
-new_duration <- function(x = integer(), chronon = NULL) {
-  new_time(x, chronon = chronon, class = "mt_duration")
-}
-
 #' @export
 format.mt_duration <- function(x, ...) {
   # TODO - better pluralisation
@@ -70,7 +50,7 @@ duration <- function(
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
   }
-  new_mixtime(new_duration(data, chronon = chronon))
+  new_mixtime(new_time(data, chronon = chronon, class = "mt_duration"))
 }
 
 #' @method vec_cast.integer mt_duration
@@ -105,7 +85,7 @@ vec_arith.mt_duration.mt_duration <- function(op, x, y, ...) {
     chronon_convert(y, tu, discrete = FALSE),
     ...
   )
-  new_duration(res, chronon = tu)
+  new_time(res, chronon = tu, class = "mt_duration")
 }
 
 #' @method vec_arith.mt_duration numeric

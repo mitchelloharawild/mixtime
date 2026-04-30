@@ -327,7 +327,7 @@ vec_arith.mt_time.mt_time <- function(op, x, y, ...) {
     chronon_convert(y, tu, discrete = FALSE),
     ...
   )
-  new_duration(res, chronon = tu)
+  new_time(res, chronon = tu, class = "mt_duration")
 }
 
 #' @method vec_cast.Date mt_linear
