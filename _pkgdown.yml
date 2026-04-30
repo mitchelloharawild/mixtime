@@ -13,7 +13,7 @@ authors:
 
 reference:
 - title: "Linear Time Representations"
-  desc: "Functions to create and work with linear time representations"
+  desc: "Functions to create and work with linear time"
 - subtitle: "Linear Time Vectors"
   desc: "The general function for creating linear time representations"
   contents:
@@ -29,7 +29,7 @@ reference:
   - datetime
 
 - title: "Cyclical Time Representations"
-  desc: "Functions to create and work with cyclical time representations"
+  desc: "Functions to create and work with cyclical time"
 - subtitle: "Cyclical Time Vectors"
   desc: "The general function for creating cyclical time representations"
   contents:
@@ -43,13 +43,32 @@ reference:
   - week_of_year
   - day_of_week
 
+- title: "Time Duration Representations"
+  desc: "Functions to create and work with time durations"
+- subtitle: "Cyclical Time Vectors"
+  desc: "The general function for creating time durations"
+  contents:
+  - duration
+- subtitle: "Cyclical Time Helpers"
+  desc: "Convenience functions for common time durations"
+  contents:
+  - years
+  - quarters
+  - months
+  - weeks
+  - days
+  - hours
+  - minutes
+  - seconds
+  - milliseconds
+
 - title: "Time Manipulation"
   desc: "Functions for manipulating and transforming time objects."
   contents:
-  - seq.mixtime
-  - round_time
-  - floor_time
-  - ceiling_time
+  - starts_with("seq")
+  - time_round
+  - time_floor
+  - time_ceiling
 
 - title: "Calendar Systems"
   desc: "Calendar systems are composed of their associated time units. These define how time is divided and measured in different calendar systems."
@@ -106,9 +125,11 @@ reference:
   contents:
   - mixtime
   - new_mixtime
+  - class_mixtime
   - new_time
   - as_mixtime
   - is_mixtime
+  - is_time
 - subtitle: "Mixtime Accessors"
   desc: "Functions for accessing the components of mixtime objects."
   contents:
@@ -143,3 +164,4 @@ reference:
   contents:
   - new_cyclical_time_fn
   - new_linear_time_fn
+  - new_duration_fn
