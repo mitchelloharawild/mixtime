@@ -45,8 +45,15 @@ method(time_round, S7::class_any) <- function(x, granule, ...) {
   res <- chronon_divmod(
     from = chronon,
     to = time_chronon(x),
-    x = round(chronon_convert(x, chronon))
+    x = round(chronon_convert(x + tz_offset(x), chronon))
   )$div
+  
+  attributes(res) <- attributes(x)
+  res <- res - (tzo <- tz_offset(res))
+  # Second pass of tz offset for DST changes within the day
+  # TODO - ideally this is more directly handled in chronon_convert or similar
+  res <- res - (tz_offset(res) - tzo)
+
   if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
   res
@@ -70,8 +77,15 @@ method(time_ceiling, S7::class_any) <- function(x, granule, ...) {
     from = chronon,
     to = time_chronon(x),
     # Special handling of ceiling to round .0 up
-    x = ceiling(floor(chronon_convert(x, chronon)) + 0.5)
+    x = ceiling(floor(chronon_convert(x + tz_offset(x), chronon)) + 0.5)
   )$div
+
+  attributes(res) <- attributes(x)
+  res <- res - (tzo <- tz_offset(res))
+  # Second pass of tz offset for DST changes within the day
+  # TODO - ideally this is more directly handled in chronon_convert or similar
+  res <- res - (tz_offset(res) - tzo)
+
   if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
   res
@@ -91,11 +105,24 @@ method(time_floor, S7::class_any) <- function(x, granule, ...) {
   }
   chronon <- time_chronon(granule)
   chronon@n <- chronon@n * as.numeric(granule)
+
   res <- chronon_divmod(
     from = chronon,
     to = time_chronon(x),
-    x = floor(chronon_convert(x, chronon))
+    x = floor(chronon_convert(x + tz_offset(x), chronon))
   )$div
+  # res <- chronon_convert_impl(
+  #   floor(chronon_convert(x, chronon)),
+  #   from = chronon, to = time_chronon(x),
+  #   discrete = is.integer(x)
+  # )
+
+  attributes(res) <- attributes(x)
+  res <- res - (tzo <- tz_offset(res))
+  # Second pass of tz offset for DST changes within the day
+  # TODO - ideally this is more directly handled in chronon_convert or similar
+  res <- res - (tz_offset(res) - tzo)
+
   if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
   res

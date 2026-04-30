@@ -133,24 +133,19 @@ test_that("time_floor/time_ceiling/time_round handle vectorised hourly linear_ti
 
 
 test_that("time_floor/time_ceiling/time_round handle vectorised hourly linear_time with timezones", {
-  h_vec <- linear_time(c(440557:440581), cal_gregorian$hour(1L, tz = "Australia/Melbourne"))
-  h_vec
+  melb_hr <- cal_gregorian$hour(1L, tz = "Australia/Melbourne")
+  
+  # Time points across the 2020 DST change (+11 -> +10)
+  h_vec <- linear_time(c(440557:440581), melb_hr)
   res_floor   <- time_floor(h_vec,   granule = cal_gregorian$day(1L))
   res_ceiling <- time_ceiling(h_vec, granule = cal_gregorian$day(1L))
   res_round   <- time_round(h_vec,   granule = cal_gregorian$day(1L))
 
-  expect_equal(res_floor[1],   linear_time(12L, cal_gregorian$hour(1L)))
-  expect_equal(res_floor[2],   linear_time(12L, cal_gregorian$hour(1L)))
-  expect_true(is.na(res_floor[3]))
-
-  expect_equal(res_ceiling[1], linear_time(18L, cal_gregorian$hour(1L)))
-  expect_equal(res_ceiling[2], linear_time(18L, cal_gregorian$hour(1L)))
-  expect_true(is.na(res_ceiling[3]))
-
-  expect_equal(res_round[1],   linear_time(12L, cal_gregorian$hour(1L)))  # 13 → 12
-  expect_equal(res_round[2],   linear_time(18L, cal_gregorian$hour(1L)))  # 16 → 18
-  expect_true(is.na(res_round[3]))
+  expect_equal(res_floor,   linear_time(rep(440557, 25), melb_hr))
+  expect_equal(res_ceiling,   linear_time(rep(440582, 25), melb_hr))
+  expect_equal(res_round,   linear_time(c(rep(440557, 13), rep(440582, 12)), melb_hr))
 })
+
 test_that("time_round/time_floor/time_ceiling work for POSIXct with tz preservation", {
   t <- as.POSIXct("2020-01-01 12:34:56", tz = "UTC")
 
