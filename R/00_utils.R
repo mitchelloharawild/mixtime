@@ -84,3 +84,10 @@ quo_add_dots <- function(quo, ...){
     as.call(c(as.list(expr), list2(...)))
   )
 }
+
+# Similar to S7::new_S3_class to define S4 methods without depending on packages
+new_S4_class <- function(className, package) {
+  methods::newClassRepresentation(
+    className = className, package = package
+  )
+}

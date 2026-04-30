@@ -66,7 +66,7 @@ S7::method(time_chronon, S7::new_S3_class("hms")) <- function(x) {
 }
 
 # {lubridate::Period} time class
-S7::method(time_chronon, getClass("Period")) <- function(x) {
+S7::method(time_chronon, new_S4_class("Period", package = "lubridate")) <- function(x) {
   components <- c(second = `attributes<-`(x, NULL), attributes(unclass(x)))
   has_component <- vapply(components, `!=`, logical(1L), 0L)
   if (sum(has_component) != 1L) {
