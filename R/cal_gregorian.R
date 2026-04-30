@@ -233,6 +233,12 @@ method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(
   )
 }
 
+## Time labels
+### Linear labels for eras
+S7::method(linear_labels, cal_gregorian$year) <- function(granule, i, ...) {
+  ifelse(i <= 0L, paste0(-i + 1L, "BC"), i)
+}
+
 ### Cyclical labels for Gregorian time units
 method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(granule, cycle, i) {
   # Quarters count with 1-indexing
