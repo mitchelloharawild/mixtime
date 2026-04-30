@@ -31,23 +31,28 @@ A time unit object representing the chronon (e.g.,
 ## Examples
 
 ``` r
+
 # The chronon of a Date object is 1 day
 time_chronon(Sys.Date())
-#> <mixtime::tu_day> int 1
-#>  @ tz: chr "UTC"
+#> <mixtime::tu_day>
+#>  @ n : int 1
+#>  @ tz: chr ""
 
 # The chronon of a POSIXct object is 1 second
 time_chronon(Sys.time())
-#> <mixtime::tu_second> int 1
-#>  @ tz: chr "UTC"
+#> <mixtime::tu_second>
+#>  @ n : int 1
+#>  @ tz: chr ""
 
 # The chronon of a continuous time year and month is 1 month
 time_chronon(yearmonth(Sys.Date()))
-#> <mixtime::tu_month> int 1
-#>  @ tz: chr "UTC"
+#> <mixtime::tu_month>
+#>  @ n : int 1
+#>  @ tz: chr ""
 
 # The common chronon of a mixed time object is the finest chronon
 time_chronon(c(yearmonth(Sys.Date()), Sys.Date()))
-#> <mixtime::tu_day> int 1
+#> <mixtime::tu_day>
+#>  @ n : int 1
 #>  @ tz: chr ""
 ```

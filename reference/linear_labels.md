@@ -8,8 +8,6 @@ labels.
 
 ``` r
 linear_labels(granule, ...)
-
-linear_labels.S7_methods(granule, i)
 ```
 
 ## Arguments
@@ -21,10 +19,6 @@ linear_labels.S7_methods(granule, i)
 - ...:
 
   Additional arguments for methods.
-
-- i:
-
-  Integer vector representing the position along the linear axis.
 
 ## Value
 

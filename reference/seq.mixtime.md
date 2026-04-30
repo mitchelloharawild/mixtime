@@ -7,7 +7,7 @@ week, month of year).
 ## Usage
 
 ``` r
-# S3 method for class 'mixtime'
+# S3 method for class '`mixtime::mixtime`'
 seq(...)
 
 # S3 method for class 'mt_time'
@@ -48,6 +48,10 @@ seq(
   - A time unit object created with time unit functions (e.g.,
     `cal_gregorian$year(1L)`, `cal_gregorian$month(1L)`,
     `cal_gregorian$day(1L)`)
+
+  - A time
+    [`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
+    object (e.g., `years(1L)`, `months(1L)`, `days(1L)`)
 
 - length.out:
 
@@ -143,9 +147,9 @@ seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 # Cyclical time sequences
 seq(month_of_year(0L), month_of_year(11L))
 #> <mixtime[12]>
-#>  [1] Dec Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov
+#>  [1] Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
 # seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
 seq(day_of_week(0L), day_of_week(6L), by = 1)
 #> <mixtime[7]>
-#> [1] Wed Thu Fri Sat Sun Mon Tue
+#> [1] Thu Fri Sat Sun Mon Tue Wed
 ```

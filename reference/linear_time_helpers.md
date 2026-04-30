@@ -30,7 +30,7 @@ datetime(data, discrete = TRUE, calendar = time_calendar(data), ...)
 
 - discrete:
 
-  If `TRUE`, the number of chronons since Unix epoch that `.data` falls
+  If `TRUE`, the number of chronons since Unix epoch that `data` falls
   into is returned as an integer. If `FALSE`, a fractional number of
   chronons is returned (analagous to time using a continuous time
   model).
@@ -109,13 +109,14 @@ granules.
 ## Examples
 
 ``` r
+
 # Gregorian year
 year(Sys.Date())
 #> <mixtime[1]>
 #> [1] 2026
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 26.6%
+#> [1] 2026 32.6%
 
 # ISO week-based year
 year(yearweek(Sys.Date()))
@@ -128,7 +129,7 @@ yearquarter(Sys.Date())
 #> [1] 2026 Q2
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 Q2 6.3%
+#> [1] 2026 Q2 30.4%
 
 # Year-month
 yearmonth(Sys.Date())
@@ -136,12 +137,12 @@ yearmonth(Sys.Date())
 #> [1] 2026 Apr
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 Apr 23.3%
+#> [1] 2026 Apr 96.7%
 
 # Year-week (ISO 8601)
 yearweek(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 W15
+#> [1] 2026 W18
 yearweek(0:52)
 #> <mixtime[53]>
 #>  [1] 1970 W01 1970 W02 1970 W03 1970 W04 1970 W05 1970 W06 1970 W07 1970 W08

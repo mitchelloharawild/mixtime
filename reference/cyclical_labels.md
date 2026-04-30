@@ -8,8 +8,6 @@ labels.
 
 ``` r
 cyclical_labels(granule, cycle, ...)
-
-cyclical_labels.S7_methods(granule, cycle, i)
 ```
 
 ## Arguments
@@ -25,10 +23,6 @@ cyclical_labels.S7_methods(granule, cycle, i)
 - ...:
 
   Additional arguments for methods.
-
-- i:
-
-  Integer vector representing the position within the cycle.
 
 ## Value
 

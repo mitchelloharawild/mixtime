@@ -16,10 +16,12 @@ handling temporal data at different frequencies, making it ideal for:
 [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.md)
 or with helpers:
 
-- [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+- [`year()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
   [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
   [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
-  [`date()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  [`date()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`datetime()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
 
 **🔄 Cyclical Time** - Create cyclical time vectors with
 [`cyclical_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time.md)
@@ -31,6 +33,20 @@ or with helpers:
   [`time_of_day()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
   [`day_of_week()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md),
   [`week_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
+
+**⏳ Time durations** - Create time duration vectors with
+[`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
+or with helpers:
+
+- [`years()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`quarters()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`months()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`weeks()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`days()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`hours()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`minutes()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`seconds()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
+  [`milliseconds()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
 
 **🕰️ Time types**
 
@@ -49,9 +65,9 @@ or with helpers:
 **🧮 Temporal Operations**
 
 - Rounding:
-  [`floor_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
-  [`round_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
-  [`ceiling_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
+  [`time_floor()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md),
+  [`time_round()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md),
+  [`time_ceiling()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md)
 - Sequencing: [`seq()`](https://rdrr.io/r/base/seq.html) for linear and
   cyclical time points
 
@@ -60,6 +76,7 @@ or with helpers:
 The mixtime package can be installed from CRAN with:
 
 ``` r
+
 install.packages("mixtime")
 ```
 
@@ -67,6 +84,7 @@ The development version can be installed from
 [GitHub](https://github.com/mitchelloharawild/mixtime) with:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("mitchelloharawild/mixtime")
 ```
@@ -74,12 +92,13 @@ remotes::install_github("mitchelloharawild/mixtime")
 ## Usage
 
 ``` r
+
 library(mixtime)
 #> 
 #> Attaching package: 'mixtime'
-#> The following object is masked from 'package:base':
+#> The following objects are masked from 'package:base':
 #> 
-#>     date
+#>     date, months, quarters
 demo_time <- as.POSIXct("2026-02-22 18:30:42", tz = "UTC")
 demo_date <- as.Date("2026-02-22")
 ```
@@ -93,6 +112,7 @@ Calendars have a `cal_*` prefix, which contain a set of time units that
 can be accessed with `<cal>$<unit>`.
 
 ``` r
+
 # The Gregorian calendar
 cal_gregorian
 #> <cal_gregorian>
@@ -109,12 +129,14 @@ cal_gregorian
 
 # A 1-month time unit
 cal_gregorian$month(1L) # (1L is integer 1)
-#> <mixtime::tu_month> int 1
+#> <mixtime::tu_month>
+#>  @ n : int 1
 #>  @ tz: chr ""
 
 # A 2-week time unit (fortnights)
 cal_isoweek$week(2L)
-#> <mixtime::tu_week> int 2
+#> <mixtime::tu_week>
+#>  @ n : int 2
 #>  @ tz: chr ""
 ```
 
@@ -126,6 +148,7 @@ time has a different resolution than the `chronon`, it will be
 automatically converted.
 
 ``` r
+
 linear_time(demo_date, chronon = cal_gregorian$month(1L))
 #> <mixtime[1]>
 #> [1] 2026 Feb
@@ -136,6 +159,7 @@ continuous time models (double-based values) can be used with
 `discrete = FALSE` to allow fractional chronons.
 
 ``` r
+
 # February 22nd is 75% through the month (in non-leap years)
 linear_time(demo_date, chronon = cal_gregorian$month(1L), discrete = FALSE)
 #> <mixtime[1]>
@@ -146,6 +170,7 @@ Linear time helper functions are available to quickly create common time
 points.
 
 ``` r
+
 # Create time vectors at different granularities
 yearquarter(demo_date) + 0:7
 #> <mixtime[8]>
@@ -167,6 +192,7 @@ The mixtime package allows time of different granulities to be combined
 in a single vector.
 
 ``` r
+
 c(
   year(demo_date), yearquarter(demo_date), 
   yearmonth(demo_date), yearweek(demo_date)
@@ -182,6 +208,7 @@ A cyclical time vector is defined by two calendar time units: a
 the `chronon` loops over).
 
 ``` r
+
 # The `calendar` argument provides a masking scope to `chronon` and `cycle`
 cyclical_time(demo_date, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
 #> <mixtime[1]>
@@ -191,6 +218,7 @@ cyclical_time(demo_date, chronon = day(1L), cycle = week(1L), calendar = cal_iso
 There are several cyclical time helper functions for convenience.
 
 ``` r
+
 # Extract cyclical components
 month_of_year(demo_date)
 #> <mixtime[1]>
@@ -214,6 +242,7 @@ All linear and cyclical time vectors support timezones via the `tz`
 argument.
 
 ``` r
+
 demo_time
 #> [1] "2026-02-22 18:30:42 UTC"
 # Same day (Sunday) in LA
@@ -245,13 +274,14 @@ Linear time points can be adjusted to the floor, ceiling, or rounded to
 a specified time unit.
 
 ``` r
+
 # Round dates to different granularities
-floor_time(demo_date, cal_gregorian$month(1L))
-#> Date of length 0
-round_time(demo_date, cal_isoweek$week(1L))
-#> Date of length 0
-ceiling_time(demo_date, cal_gregorian$month(1L))
-#> Date of length 0
+time_floor(demo_date, cal_gregorian$month(1L))
+#> [1] "2026-02-01"
+time_round(demo_date, cal_isoweek$week(1L))
+#> [1] "2026-02-23"
+time_ceiling(demo_date, cal_gregorian$month(1L))
+#> [1] "2026-03-01"
 ```
 
 ### Time Sequences
@@ -260,6 +290,7 @@ The [`seq()`](https://rdrr.io/r/base/seq.html) function creates
 sequences of time points iterating by a given time unit.
 
 ``` r
+
 # Integer increments (advances by chronon's natural unit)
 seq(yearmonth(demo_date), by = 1L, length.out = 10)
 #> <mixtime[10]>

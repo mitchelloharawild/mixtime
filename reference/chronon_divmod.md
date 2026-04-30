@@ -11,8 +11,6 @@ to cast between time units, which is efficient for regular time units.
 
 ``` r
 chronon_divmod(from, to, ...)
-
-chronon_divmod.S7_methods(from, to, x)
 ```
 
 ## Arguments
@@ -28,10 +26,6 @@ chronon_divmod.S7_methods(from, to, x)
 - ...:
 
   Additional arguments for methods.
-
-- x:
-
-  An integer vector of chronons measured in the `from` time unit.
 
 ## Value
 

@@ -29,3 +29,8 @@ Useful links:
 
 **Maintainer**: Mitchell O'Hara-Wild <mail@mitchelloharawild.com>
 ([ORCID](https://orcid.org/0000-0001-6729-7695))
+
+Authors:
+
+- Mitchell O'Hara-Wild <mail@mitchelloharawild.com>
+  ([ORCID](https://orcid.org/0000-0001-6729-7695))

@@ -45,7 +45,7 @@ chronon. A chronon is the smallest indivisible time unit (e.g., days, hours).</p
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="va">chronon</span>, fallback_calendar <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="va">chronon</span>, default_calendar <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,8 +56,8 @@ chronon. A chronon is the smallest indivisible time unit (e.g., days, hours).</p
 <dd><p>A bare call for a time unit object representing the chronon (e.g., <code>day(1)</code>)</p></dd>
 
 
-<dt id="arg-fallback-calendar">fallback_calendar<a class="anchor" aria-label="anchor" href="#arg-fallback-calendar"></a></dt>
-<dd><p>A fallback calendar used to find the time units for
+<dt id="arg-default-calendar">default_calendar<a class="anchor" aria-label="anchor" href="#arg-default-calendar"></a></dt>
+<dd><p>A default calendar used to find the time units for
 conversion if they don't exist in the calendar of the input data (e.g., <code>cal_isoweek</code>)</p></dd>
 
 </dl></div>
@@ -102,19 +102,13 @@ conversion if they don't exist in the calendar of the input data (e.g., <code>ca
 <span class="r-in"><span><span class="va">yd</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">yd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-30</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gregorian date time with hourly precision</span></span></span>
 <span class="r-in"><span><span class="va">ymd_h</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">hour</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ymd_h</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08 03h</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># ISO-week-date calendar</span></span></span>
-<span class="r-in"><span><span class="va">ywd</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, fallback_calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">ywd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-04-30 12h</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

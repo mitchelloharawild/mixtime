@@ -30,12 +30,14 @@ no cyclical component.
 ## Examples
 
 ``` r
+
 # Non-cyclical objects return NULL
 time_cycle(Sys.Date())
 #> NULL
 
 # The cycle of a cyclical time object
 time_cycle(month_of_year(Sys.Date()))
-#> <mixtime::tu_year> int 1
-#>  @ tz: chr "UTC"
+#> <mixtime::tu_year>
+#>  @ n : int 1
+#>  @ tz: chr ""
 ```

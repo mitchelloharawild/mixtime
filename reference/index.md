@@ -2,7 +2,7 @@
 
 ## Linear Time Representations
 
-Functions to create and work with linear time representations
+Functions to create and work with linear time
 
 ### Linear Time Vectors
 
@@ -25,7 +25,7 @@ Convenience functions for common linear time representations
 
 ## Cyclical Time Representations
 
-Functions to create and work with cyclical time representations
+Functions to create and work with cyclical time
 
 ### Cyclical Time Vectors
 
@@ -46,16 +46,42 @@ Convenience functions for common cyclical time representations
   [`week_of_year()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md)
   : Cyclical time helpers
 
+## Time Duration Representations
+
+Functions to create and work with time durations
+
+### Cyclical Time Vectors
+
+The general function for creating time durations
+
+- [`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
+  : Duration vectors
+
+### Cyclical Time Helpers
+
+Convenience functions for common time durations
+
+- [`years()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`quarters()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`months()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`weeks()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`days()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`hours()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`minutes()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`seconds()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  [`milliseconds()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
+  : Duration helper functions
+
 ## Time Manipulation
 
 Functions for manipulating and transforming time objects.
 
-- [`seq(`*`<mixtime>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
+- [`seq(`*`<mixtime::mixtime>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
   [`seq(`*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
   : Generate sequences of mixtime values
-- [`round_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
-  [`ceiling_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
-  [`floor_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
+- [`time_round()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md)
+  [`time_ceiling()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md)
+  [`time_floor()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md)
   : Round, floor and ceiling transformations for time objects
 
 ## Calendar Systems
@@ -103,7 +129,7 @@ create custom time representations.
 The civil time system where each day begins at midnight on the 24-hour
 clock in a specific time zone.
 
-- [`cal_time_civil_midnight`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_civil.md)
+- [`cal_time_civil`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_civil.md)
   : Civil time unit classes
 
 ### Solar Time Systems
@@ -164,12 +190,18 @@ multiple time granularities.
   : Create a mixtime vector
 - [`new_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_mixtime.md)
   : Constructor for mixtime vectors
+- [`class_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/class_mixtime.md)
+  : Base S7 class for mixtime vector objects
 - [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
-  : Constructor for mixtime time vectors
+  **\[stable\]** : Constructor for mixtime time vectors
 - [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
   : Convert a time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_mixtime.md)
   : Check if an object is a mixtime
+- [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
+  [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
+  [`is_time_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
+  : Check the time type of values
 
 ### Mixtime Accessors
 
@@ -200,10 +232,8 @@ units and calendars.
 ### Calendar arithmetic
 
 - [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
-  [`chronon_cardinality.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
   : Cardinality between time units
 - [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
-  [`chronon_divmod.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
   : Convert between chronons of different time units
 - [`chronon_epoch()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_epoch.md)
   : Epoch offset for chronons
@@ -216,10 +246,8 @@ units and calendars.
   [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   : Time units as a string
 - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
-  [`linear_labels.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
   : Friendly labels for linear relationships
 - [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
-  [`cyclical_labels.S7_methods()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
   : Friendly labels for cyclical relationships
 - [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
   [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
@@ -233,3 +261,5 @@ units and calendars.
   : Cyclical time function factory
 - [`new_linear_time_fn()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_linear_time_fn.md)
   : Linear time function factory
+- [`new_duration_fn()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_duration_fn.md)
+  : Duration function factory

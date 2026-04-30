@@ -7,18 +7,19 @@ S7 using: `S7::new_class("tu_***", parent = mt_tz_unit)`
 ## Usage
 
 ``` r
-mt_unit(.data = 1L)
+mt_unit(n = 1L)
 
-mt_loc_unit(.data = 1L, lat = 0, lon = 0, alt = 0)
+mt_loc_unit(n = 1L, lat = 0, lon = 0, alt = 0)
 
-mt_tz_unit(.data = 1L, tz = "")
+mt_tz_unit(n = 1L, tz = "")
 ```
 
 ## Arguments
 
-- .data:
+- n:
 
-  The number of time units
+  The step size of time units. For example, `n = 2L` is 2 time units -
+  for `cal_isoweek$week(2L)` that would be 2 weeks (a fortnight).
 
 - lat:
 
@@ -97,8 +98,10 @@ my_calendar <- new_calendar(
 
 # Access unit constructors from the calendar
 my_calendar$day(1L)
-#> <tu_my_day> int 1
+#> <tu_my_day>
+#>  @ n: int 1
 my_calendar$month(3L, tz = "America/New_York")
-#> <tu_my_month> int 3
+#> <tu_my_month>
+#>  @ n : int 3
 #>  @ tz: chr "America/New_York"
 ```

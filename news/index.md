@@ -66,12 +66,9 @@ granularity data.
 
 #### Rounding
 
-- [`round_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
-  [`floor_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md),
-  and
-  [`ceiling_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/round_time.md)
-  round time objects to a specified time unit, preserving the input
-  class and timezone.
+- `round_time()`, `floor_time()`, and `ceiling_time()` round time
+  objects to a specified time unit, preserving the input class and
+  timezone.
 
 #### Formatting
 

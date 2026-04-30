@@ -11,8 +11,6 @@ can be provided with `at`.
 
 ``` r
 chronon_cardinality(x, y, ...)
-
-chronon_cardinality.S7_methods(x, y, at = NULL)
 ```
 
 ## Arguments
@@ -28,12 +26,6 @@ chronon_cardinality.S7_methods(x, y, at = NULL)
 - ...:
 
   Additional arguments for methods.
-
-- at:
-
-  Optional time point for context-dependent cardinality, defined in
-  terms of `y` (e.g., if `y` is `month()`, then `at` could be a
-  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md))
 
 ## Value
 
@@ -73,14 +65,23 @@ with(cal_gregorian, chronon_cardinality(month(2L), year(3L)))
 #> [1] 18
 
 # There are 365 days in 2025 (a common year)
-with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2025-01-01"))))
+chronon_cardinality(
+  cal_gregorian$day(1L), cal_gregorian$year(1L),
+  at = year(as.Date("2025-01-01"))
+)
 #> [1] 365
 
 # There are 366 days in 2024 (a leap year)
-with(cal_gregorian, chronon_cardinality(day(1L), year(1L), at = year(as.Date("2024-01-01"))))
-#> [1] 365
+chronon_cardinality(
+  cal_gregorian$day(1L), cal_gregorian$year(1L), 
+  at = mixtime::year(as.Date("2024-01-01"))
+)
+#> [1] 366
 
 # There are 29 days in February 2024 (a leap year)
-with(cal_gregorian, chronon_cardinality(day(1L), month(1L), at = yearmonth(as.Date("2024-02-01"))))
+chronon_cardinality(
+  cal_gregorian$day(1L), cal_gregorian$month(1L), 
+  at = yearmonth(as.Date("2024-02-01"))
+)
 #> [1] 29
 ```

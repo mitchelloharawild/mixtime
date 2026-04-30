@@ -79,7 +79,7 @@ For example, to create a representation for day of the month:
 
     day_of_month <- new_cyclical_time_fn(
       chronon = day(1L), cycle = month(1L),
-      fallback_calendar = cal_gregorian
+      default_calendar = cal_gregorian
     )
 
 ## See also
@@ -92,15 +92,16 @@ for creating cyclical time helper functions
 ## Examples
 
 ``` r
+
 month_of_year(Sys.Date())
 #> <mixtime[1]>
 #> [1] Apr
 day_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] D98
+#> [1] D120
 day_of_week(Sys.Date())
 #> <mixtime[1]>
-#> [1] Wed
+#> [1] Thu
 day_of_week(as.Date("2025-12-15") + 0:6)
 #> <mixtime[7]>
 #> [1] Mon Tue Wed Thu Fri Sat Sun

@@ -1,0 +1,39 @@
+# Base S7 class for mixtime vector objects
+
+`class_mixtime` is the base S7 class for all mixtime vector objects,
+inheriting from
+[vecvec::class_vecvec](https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html).
+While not intended to be used directly, this S7 class is suitable to use
+when defining S7 methods for mixtime vectors. S3 methods can be defined
+using the
+[`mixtime::mixtime`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+class.
+
+## Usage
+
+``` r
+class_mixtime(x = list(), i = seq_len(sum(lengths(x))))
+```
+
+## Arguments
+
+- x:
+
+  A list of `"mt_time"` vectors, see
+  [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
+  for details.
+
+- i:
+
+  A vector of integers specifying the location of each element in `x` as
+  if they were combined in order. The values in `i` must be between 1
+  and the total number of elements across all vectors in `x`, and can
+  contain duplicates. If not provided, it defaults to a sequence from 1
+  to the total number of elements across all vectors in `x`.
+
+## See also
+
+[`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+for creating mixtime vectors, and
+[`new_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_mixtime.md)
+for the low-level constructor function of this S7 class.

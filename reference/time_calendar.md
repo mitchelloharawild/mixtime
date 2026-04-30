@@ -30,6 +30,7 @@ A calendar object (e.g., `cal_gregorian`, `cal_isoweek`)
 ## Examples
 
 ``` r
+
 # The calendar of a Date object is the Gregorian calendar
 time_calendar(Sys.Date())
 #> <cal_gregorian>
@@ -73,7 +74,7 @@ time_calendar(yearweek(Sys.Date()))
 
 # A mixed time object returns a list of calendars
 time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
-#> <cal_time_civil_midnight>
+#> <cal_time_civil>
 #> Time units:
 #>   - day
 #>   - ampm

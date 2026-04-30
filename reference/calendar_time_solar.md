@@ -24,16 +24,6 @@ cal_time_solar_dusk
 
 A location-based calendar containing solar time units.
 
-An object of class `mt_calendar` of length 1.
-
-An object of class `mt_calendar` of length 1.
-
-An object of class `mt_calendar` of length 1.
-
-An object of class `mt_calendar` of length 1.
-
-An object of class `mt_calendar` of length 1.
-
 ## Details
 
 The following time units are available in the solar calendar systems.
@@ -42,7 +32,7 @@ The following time units are available in the solar calendar systems.
 
 ## See also
 
-[`cal_time_civil_midnight`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_civil.md)
+[`cal_time_civil`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_civil.md)
 
 ## Examples
 
@@ -51,5 +41,5 @@ The following time units are available in the solar calendar systems.
 t <- linear_time(Sys.Date(), cal_time_solar_sunset$day(1L, lat = -37.8136, lon = 144.9631))
 datetime(t, tz = "Australia/Melbourne")
 #> <mixtime[1]>
-#> [1] 2026-04-07 18:04:49 AEST
+#> [1] 2026-04-29 17:35:25 AEST
 ```

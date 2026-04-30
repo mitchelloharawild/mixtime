@@ -7,7 +7,7 @@ hours).
 ## Usage
 
 ``` r
-new_linear_time_fn(chronon, fallback_calendar = cal_gregorian)
+new_linear_time_fn(chronon, default_calendar = cal_gregorian)
 ```
 
 ## Arguments
@@ -17,9 +17,9 @@ new_linear_time_fn(chronon, fallback_calendar = cal_gregorian)
   A bare call for a time unit object representing the chronon (e.g.,
   `day(1)`)
 
-- fallback_calendar:
+- default_calendar:
 
-  A fallback calendar used to find the time units for conversion if they
+  A default calendar used to find the time units for conversion if they
   don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 
 ## Value
@@ -29,6 +29,7 @@ A function used to create linear time points with a specific chronon.
 ## Examples
 
 ``` r
+
 # NOTE: These examples need updating to define default granules/format strings.
 
 # A year-month time representation with months as the chronon
@@ -62,17 +63,11 @@ yqm(Sys.Date())
 yd <- new_linear_time_fn(day(1L))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-04-08
+#> [1] 2026-04-30
 
 # Gregorian date time with hourly precision
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-04-08 03h
-
-# ISO-week-date calendar
-ywd <- new_linear_time_fn(day(1L), fallback_calendar = cal_isoweek)
-ywd(Sys.Date())
-#> <mixtime[1]>
-#> [1] 2026-04-08
+#> [1] 2026-04-30 12h
 ```

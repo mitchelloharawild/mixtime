@@ -54,7 +54,7 @@ units form a cyclical time point (e.g., day of the week).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="va">chronon</span>, <span class="va">cycle</span>, fallback_calendar <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="va">chronon</span>, <span class="va">cycle</span>, default_calendar <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -69,8 +69,8 @@ units form a cyclical time point (e.g., day of the week).</p>
 <dd><p>A time unit object representing the cycle (e.g., <code>week(1L)</code>)</p></dd>
 
 
-<dt id="arg-fallback-calendar">fallback_calendar<a class="anchor" aria-label="anchor" href="#arg-fallback-calendar"></a></dt>
-<dd><p>A fallback calendar used to find the time units for
+<dt id="arg-default-calendar">default_calendar<a class="anchor" aria-label="anchor" href="#arg-default-calendar"></a></dt>
+<dd><p>A default calendar used to find the time units for
 conversion if they don't exist in the calendar of the input data (e.g., <code>cal_isoweek</code>)</p></dd>
 
 </dl></div>
@@ -82,10 +82,10 @@ conversion if they don't exist in the calendar of the input data (e.g., <code>ca
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">day_of_week</span> <span class="op">&lt;-</span> <span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, fallback_calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">day_of_week</span> <span class="op">&lt;-</span> <span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, default_calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Wed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Thu</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">month_of_year</span> <span class="op">&lt;-</span> <span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>

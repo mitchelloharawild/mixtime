@@ -25,7 +25,7 @@ as_mixtime(x, ...)
 - ...:
 
   Additional arguments passed to the underlying
-  [`vctrs::vec_cast()`](https://vctrs.r-lib.org/reference/vec_cast.html)
+  [`vec_cast()`](https://vctrs.r-lib.org/reference/vec_cast.html)
   method.
 
 ## Value
@@ -44,8 +44,8 @@ for testing if an object is a `mixtime`.
 ``` r
 as_mixtime(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-04-08
+#> [1] 2026-04-30
 as_mixtime(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-04-08 03:06:05
+#> [1] 2026-04-30 12:54:26
 ```

@@ -26,7 +26,7 @@ for POSIXt, days for dates, etc.)
 ## Examples
 
 ``` r
-tz_offset(Sys.time())
+tz_offset(as.POSIXct(Sys.time(), tz = Sys.timezone()))
 #> [1] 0
 tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 #> [1] -14400

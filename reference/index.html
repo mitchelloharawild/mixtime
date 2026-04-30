@@ -37,7 +37,7 @@
     <div class="section level2">
       <h2 id="linear-time-representations">Linear Time Representations<a class="anchor" aria-label="anchor" href="#linear-time-representations"></a></h2>
 
-      <div class="section-desc"><p>Functions to create and work with linear time representations</p></div>
+      <div class="section-desc"><p>Functions to create and work with linear time</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -74,7 +74,7 @@
       </dl></div><div class="section level2">
       <h2 id="cyclical-time-representations">Cyclical Time Representations<a class="anchor" aria-label="anchor" href="#cyclical-time-representations"></a></h2>
 
-      <div class="section-desc"><p>Functions to create and work with cyclical time representations</p></div>
+      <div class="section-desc"><p>Functions to create and work with cyclical time</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -109,6 +109,43 @@
         </dt>
         <dd>Cyclical time helpers</dd>
       </dl></div><div class="section level2">
+      <h2 id="time-duration-representations">Time Duration Representations<a class="anchor" aria-label="anchor" href="#time-duration-representations"></a></h2>
+
+      <div class="section-desc"><p>Functions to create and work with time durations</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+      <h3 id="cyclical-time-vectors-1">Cyclical Time Vectors<a class="anchor" aria-label="anchor" href="#cyclical-time-vectors-1"></a></h3>
+      <div class="section-desc"><p>The general function for creating time durations</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="duration.html">duration()</a></code>
+
+        </dt>
+        <dd>Duration vectors</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="cyclical-time-helpers-1">Cyclical Time Helpers<a class="anchor" aria-label="anchor" href="#cyclical-time-helpers-1"></a></h3>
+      <div class="section-desc"><p>Convenience functions for common time durations</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="duration_helpers.html">years()</a></code> <code><a href="duration_helpers.html">quarters()</a></code> <code><a href="duration_helpers.html">months()</a></code> <code><a href="duration_helpers.html">weeks()</a></code> <code><a href="duration_helpers.html">days()</a></code> <code><a href="duration_helpers.html">hours()</a></code> <code><a href="duration_helpers.html">minutes()</a></code> <code><a href="duration_helpers.html">seconds()</a></code> <code><a href="duration_helpers.html">milliseconds()</a></code>
+
+        </dt>
+        <dd>Duration helper functions</dd>
+      </dl></div><div class="section level2">
       <h2 id="time-manipulation">Time Manipulation<a class="anchor" aria-label="anchor" href="#time-manipulation"></a></h2>
 
       <div class="section-desc"><p>Functions for manipulating and transforming time objects.</p></div>
@@ -120,14 +157,14 @@
 
       <dl><dt>
 
-          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mt_time&gt;</i>)</a></code>
+          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime::mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mt_time&gt;</i>)</a></code>
 
         </dt>
         <dd>Generate sequences of mixtime values</dd>
 
         <dt>
 
-          <code><a href="round_time.html">round_time()</a></code> <code><a href="round_time.html">ceiling_time()</a></code> <code><a href="round_time.html">floor_time()</a></code>
+          <code><a href="time_round.html">time_round()</a></code> <code><a href="time_round.html">time_ceiling()</a></code> <code><a href="time_round.html">time_floor()</a></code>
 
         </dt>
         <dd>Round, floor and ceiling transformations for time objects</dd>
@@ -217,7 +254,7 @@
 
       <dl><dt>
 
-          <code><a href="calendar_time_civil.html">cal_time_civil_midnight</a></code>
+          <code><a href="calendar_time_civil.html">cal_time_civil</a></code>
 
         </dt>
         <dd>Civil time unit classes</dd>
@@ -337,8 +374,15 @@
 
         <dt>
 
-          <code><a href="new_time.html">new_time()</a></code>
+          <code><a href="class_mixtime.html">class_mixtime()</a></code>
 
+        </dt>
+        <dd>Base S7 class for mixtime vector objects</dd>
+
+        <dt>
+
+          <code><a href="new_time.html">new_time()</a></code>
+          <span class="badge lifecycle lifecycle-stable">stable</span>
         </dt>
         <dd>Constructor for mixtime time vectors</dd>
 
@@ -355,6 +399,13 @@
 
         </dt>
         <dd>Check if an object is a mixtime</dd>
+
+        <dt>
+
+          <code><a href="is_time.html">is_time_linear()</a></code> <code><a href="is_time.html">is_time_cyclical()</a></code> <code><a href="is_time.html">is_time_duration()</a></code>
+
+        </dt>
+        <dd>Check the time type of values</dd>
       </dl></div><div class="section level2">
 
       <h3 id="mixtime-accessors">Mixtime Accessors<a class="anchor" aria-label="anchor" href="#mixtime-accessors"></a></h3>
@@ -425,14 +476,14 @@
 
       <dl><dt>
 
-          <code><a href="chronon_cardinality.html">chronon_cardinality()</a></code> <code><a href="chronon_cardinality.html">chronon_cardinality.S7_methods()</a></code>
+          <code><a href="chronon_cardinality.html">chronon_cardinality()</a></code>
 
         </dt>
         <dd>Cardinality between time units</dd>
 
         <dt>
 
-          <code><a href="chronon_divmod.html">chronon_divmod()</a></code> <code><a href="chronon_divmod.html">chronon_divmod.S7_methods()</a></code>
+          <code><a href="chronon_divmod.html">chronon_divmod()</a></code>
 
         </dt>
         <dd>Convert between chronons of different time units</dd>
@@ -469,14 +520,14 @@
 
         <dt>
 
-          <code><a href="linear_labels.html">linear_labels()</a></code> <code><a href="linear_labels.html">linear_labels.S7_methods()</a></code>
+          <code><a href="linear_labels.html">linear_labels()</a></code>
 
         </dt>
         <dd>Friendly labels for linear relationships</dd>
 
         <dt>
 
-          <code><a href="cyclical_labels.html">cyclical_labels()</a></code> <code><a href="cyclical_labels.html">cyclical_labels.S7_methods()</a></code>
+          <code><a href="cyclical_labels.html">cyclical_labels()</a></code>
 
         </dt>
         <dd>Friendly labels for cyclical relationships</dd>
@@ -517,6 +568,13 @@
 
         </dt>
         <dd>Linear time function factory</dd>
+
+        <dt>
+
+          <code><a href="new_duration_fn.html">new_duration_fn()</a></code>
+
+        </dt>
+        <dd>Duration function factory</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

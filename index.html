@@ -78,13 +78,19 @@
 <p><strong>📈 Linear Time</strong> - Create linear time vectors with <code><a href="reference/linear_time.html">linear_time()</a></code> or with helpers:</p>
 <ul>
 <li>
-<code><a href="reference/linear_time_helpers.html">yearquarter()</a></code>, <code><a href="reference/linear_time_helpers.html">yearmonth()</a></code>, <code><a href="reference/linear_time_helpers.html">yearweek()</a></code>, <code><a href="reference/linear_time_helpers.html">date()</a></code>
+<code><a href="reference/linear_time_helpers.html">year()</a></code>, <code><a href="reference/linear_time_helpers.html">yearquarter()</a></code>, <code><a href="reference/linear_time_helpers.html">yearmonth()</a></code>, <code><a href="reference/linear_time_helpers.html">yearweek()</a></code>, <code><a href="reference/linear_time_helpers.html">date()</a></code>, <code><a href="reference/linear_time_helpers.html">datetime()</a></code>
 </li>
 </ul>
 <p><strong>🔄 Cyclical Time</strong> - Create cyclical time vectors with <code><a href="reference/cyclical_time.html">cyclical_time()</a></code> or with helpers:</p>
 <ul>
 <li>
 <code><a href="reference/cyclical_time_helpers.html">month_of_year()</a></code>, <code><a href="reference/cyclical_time_helpers.html">day_of_year()</a></code>, <code><a href="reference/cyclical_time_helpers.html">day_of_month()</a></code>, <code><a href="reference/cyclical_time_helpers.html">time_of_day()</a></code>, <code><a href="reference/cyclical_time_helpers.html">day_of_week()</a></code>, <code><a href="reference/cyclical_time_helpers.html">week_of_year()</a></code>
+</li>
+</ul>
+<p><strong>⏳ Time durations</strong> - Create time duration vectors with <code><a href="reference/duration.html">duration()</a></code> or with helpers:</p>
+<ul>
+<li>
+<code><a href="reference/duration_helpers.html">years()</a></code>, <code><a href="reference/duration_helpers.html">quarters()</a></code>, <code><a href="reference/duration_helpers.html">months()</a></code>, <code><a href="reference/duration_helpers.html">weeks()</a></code>, <code><a href="reference/duration_helpers.html">days()</a></code>, <code><a href="reference/duration_helpers.html">hours()</a></code>, <code><a href="reference/duration_helpers.html">minutes()</a></code>, <code><a href="reference/duration_helpers.html">seconds()</a></code>, <code><a href="reference/duration_helpers.html">milliseconds()</a></code>
 </li>
 </ul>
 <p><strong>🕰️ Time types</strong></p>
@@ -104,7 +110,7 @@
 </ul>
 <p><strong>🧮 Temporal Operations</strong></p>
 <ul>
-<li>Rounding: <code><a href="reference/round_time.html">floor_time()</a></code>, <code><a href="reference/round_time.html">round_time()</a></code>, <code><a href="reference/round_time.html">ceiling_time()</a></code>
+<li>Rounding: <code><a href="reference/time_round.html">time_floor()</a></code>, <code><a href="reference/time_round.html">time_round()</a></code>, <code><a href="reference/time_round.html">time_ceiling()</a></code>
 </li>
 <li>Sequencing: <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code> for linear and cyclical time points</li>
 </ul>
@@ -127,9 +133,9 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/mixtime/">mixtime</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'mixtime'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     date</span></span>
+<span><span class="co">#&gt;     date, months, quarters</span></span>
 <span><span class="va">demo_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2026-02-22 18:30:42"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span>
 <span><span class="va">demo_date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2026-02-22"</span><span class="op">)</span></span></code></pre></div>
 <p>The mixtime package is designed around the time units of calendars. These time units are used to create and manipulate time vectors.</p>
@@ -154,12 +160,14 @@
 <span></span>
 <span><span class="co"># A 1-month time unit</span></span>
 <span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span> <span class="co"># (1L is integer 1)</span></span>
-<span><span class="co">#&gt; &lt;mixtime::tu_month&gt; int 1</span></span>
+<span><span class="co">#&gt; &lt;mixtime::tu_month&gt;</span></span>
+<span><span class="co">#&gt;  @ n : int 1</span></span>
 <span><span class="co">#&gt;  @ tz: chr ""</span></span>
 <span></span>
 <span><span class="co"># A 2-week time unit (fortnights)</span></span>
 <span><span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;mixtime::tu_week&gt; int 2</span></span>
+<span><span class="co">#&gt; &lt;mixtime::tu_week&gt;</span></span>
+<span><span class="co">#&gt;  @ n : int 2</span></span>
 <span><span class="co">#&gt;  @ tz: chr ""</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -264,12 +272,12 @@
 <p>Linear time points can be adjusted to the floor, ceiling, or rounded to a specified time unit.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Round dates to different granularities</span></span>
-<span><span class="fu"><a href="reference/round_time.html">floor_time</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Date of length 0</span></span>
-<span><span class="fu"><a href="reference/round_time.html">round_time</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Date of length 0</span></span>
-<span><span class="fu"><a href="reference/round_time.html">ceiling_time</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Date of length 0</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/time_round.html">time_floor</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2026-02-01"</span></span>
+<span><span class="fu"><a href="reference/time_round.html">time_round</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2026-02-23"</span></span>
+<span><span class="fu"><a href="reference/time_round.html">time_ceiling</a></span><span class="op">(</span><span class="va">demo_date</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2026-03-01"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="time-sequences">Time Sequences<a class="anchor" aria-label="anchor" href="#time-sequences"></a>

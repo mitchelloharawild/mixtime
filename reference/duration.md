@@ -1,27 +1,62 @@
-# Create a temporal durations from time units
+# Duration vectors
 
-**\[experimental\]**
-
-Constructs a new duration object (`mt_duration`) from a set of mixtime
-time units. This functionality is in active development and is not ready
-for use.
+`duration()` creates a vector of durations with a specified chronon
+(time unit). Durations represent a fixed span of time measured in a
+given unit (e.g., 3 months, 5 days), without reference to a specific
+point in time.
 
 ## Usage
 
 ``` r
-new_duration(...)
+duration(data, chronon = time_chronon(data), calendar = time_calendar(data))
 ```
 
 ## Arguments
 
-- ...:
+- data:
 
-  A set of time unit objects (e.g., `tu_year(1)`, `tu_month(2)`, etc.)
+  A time vector of duration magnitudes.
+
+- chronon:
+
+  A time unit expression representing the chronon (unit of the
+  duration), evaluated in the context of `calendar`. Use unquoted
+  expressions like `month(1L)` or `day(1L)`. Chronons from a specific
+  calendar can also be used (e.g. `cal_gregorian$month(1L)`). Defaults
+  to the time chronon of the input `data` (`time_chronon(data)`).
+
+- calendar:
+
+  Calendar system used to evaluate `chronon`. Defaults to
+  `time_calendar(data)` for existing time objects. Common options
+  include
+  [cal_gregorian](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_gregorian.md)
+  and
+  [cal_isoweek](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_isoweek.md).
 
 ## Value
 
-An object of class `mt_duration` representing the specified duration.
+A `mixtime` vector containing an `mt_duration` vector.
 
-## Details
+## See also
 
-This is a low-level constructor function that creates duration objects.
+- [`new_duration_fn()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_duration_fn.md)
+  for creating reusable duration functions
+
+- [cal_gregorian](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_gregorian.md),
+  [cal_isoweek](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_isoweek.md)
+  for calendar systems
+
+## Examples
+
+``` r
+# A duration of 3 months
+duration(3L, cal_gregorian$month(1L))
+#> <mixtime[1]>
+#> [1] 3 months
+
+# A vector of durations in days
+duration(1:7, cal_gregorian$day(1L))
+#> <mixtime[7]>
+#> [1] 1 day  2 days 3 days 4 days 5 days 6 days 7 days
+```

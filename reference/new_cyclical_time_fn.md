@@ -10,7 +10,7 @@ of the week).
 ## Usage
 
 ``` r
-new_cyclical_time_fn(chronon, cycle, fallback_calendar = cal_gregorian)
+new_cyclical_time_fn(chronon, cycle, default_calendar = cal_gregorian)
 ```
 
 ## Arguments
@@ -23,9 +23,9 @@ new_cyclical_time_fn(chronon, cycle, fallback_calendar = cal_gregorian)
 
   A time unit object representing the cycle (e.g., `week(1L)`)
 
-- fallback_calendar:
+- default_calendar:
 
-  A fallback calendar used to find the time units for conversion if they
+  A default calendar used to find the time units for conversion if they
   don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 
 ## Value
@@ -36,10 +36,11 @@ and cycle.
 ## Examples
 
 ``` r
-day_of_week <- new_cyclical_time_fn(day(1L), week(1L), fallback_calendar = cal_isoweek)
+
+day_of_week <- new_cyclical_time_fn(day(1L), week(1L), default_calendar = cal_isoweek)
 day_of_week(Sys.Date())
 #> <mixtime[1]>
-#> [1] Wed
+#> [1] Thu
 
 month_of_year <- new_cyclical_time_fn(month(1L), year(1L))
 month_of_year(Sys.Date())
