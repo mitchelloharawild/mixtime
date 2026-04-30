@@ -2,31 +2,31 @@
 % Please edit documentation in R/01_chronon_divmod.R
 \name{chronon_divmod}
 \alias{chronon_divmod}
-\title{Convert between chronons of different time units}
+\title{Convert between chronons of different time granules}
 \usage{
 chronon_divmod(from, to, ...)
 }
 \arguments{
-\item{from}{The time unit that \code{x} is measured in (e.g., \code{day(1L)}).}
+\item{from}{The time granule that \code{x} is measured in (e.g., \code{day(1L)}).}
 
-\item{to}{The time unit to convert \code{x} into (e.g., \code{week(1L)}).}
+\item{to}{The time granule to convert \code{x} into (e.g., \code{week(1L)}).}
 
 \item{...}{Additional arguments for methods.}
 }
 \value{
 An list of two elements:
 \itemize{
-\item \code{div}: integer vector of chronons measured in the \code{to} time unit.
-\item \code{mod}: integer vector of the remainder (in \code{from} time unit) after
-converting to the \code{to} time unit.
+\item \code{div}: integer vector of chronons measured in the \code{to} time granule.
+\item \code{mod}: integer vector of the remainder (in \code{from} time granule) after
+converting to the \code{to} time granule.
 }
 }
 \description{
-This function converts between chronons measured in different time units. It
-is used internally for converting between different continuous time types,
+This function converts between chronons measured in different time granules.
+It is used internally for converting between different continuous time types,
 and is particularly useful for efficiently converting between irregular time
-units. The default method uses \code{chronon_cardinality()} to cast between time
-units, which is efficient for regular time units.
+granules. The default method uses \code{chronon_cardinality()} to cast between
+time granules, which is efficient for regular time granules.
 }
 \examples{
 # Convert day 16 after epoch (1970-01-01) into weeks since epoch (and remainder days)

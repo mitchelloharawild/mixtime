@@ -8,7 +8,7 @@
 cal_time_civil
 }
 \value{
-A time unit object for the civil time system.
+A time granule object for the civil time system.
 }
 \description{
 Time unit constructors for the civil time system where the boundary of each
@@ -28,7 +28,7 @@ The following time units are available (\verb{cal_time_civil$}).
 }
 }
 \examples{
-# Create a custom time representation using Gregorian units
+# Create a custom time representation using civil time granules
 hms <- new_cyclical_time_fn(
   chronon = second(1L),
   cycle = hour(1L)

@@ -1,10 +1,10 @@
 #' Friendly labels for cyclical relationships
 #'
 #' This S7 generic function provides the labels for cyclical relationships 
-#' between time units. These functions should return locale specific labels.
+#' between time granules. These functions should return locale specific labels.
 #'
-#' @param granule A time unit object representing the granule (e.g., `month(1L)`)
-#' @param cycle A time unit object representing the cycle (e.g., `year(1L)`)
+#' @param granule A time granule object representing the granule (e.g., `month(1L)`)
+#' @param cycle A time granule object representing the cycle (e.g., `year(1L)`)
 #' @param ... Additional arguments for methods.
 #'
 #' @return Character vector of labels for the time point within the cycle.
@@ -35,7 +35,7 @@ cyclical_labels <- S7::new_generic("cyclical_labels", c("granule", "cycle"))
 # #' 
 # #' @seealso [cyclical_labels()]
 # #' 
-# #' @returns A character vector of labelled units
+# #' @returns A character vector of labelled granules
 # #' @rdname cyclical_labels
 method(cyclical_labels, list(mt_unit, mt_unit)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE, ...) {
   if (!label) return(as.character(i))

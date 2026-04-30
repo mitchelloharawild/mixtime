@@ -1,4 +1,4 @@
-# TODO: rename to granules() or time_granules()
+# TODO: rename to components() or time_components()
 # The user-facing variant should accept a list/expression of lin() and cyc() similar to the format strings.
 
 # Compute numeric time parts from a time object
@@ -9,10 +9,10 @@
 # along the divmod path where `$mod` results form the required cyclical parts.
 #
 # @param x A `mt_time` object (an uni-typed mixtime vector)
-# @param linear A list of time units representing linear (non-repeating)
+# @param linear A list of time granules representing linear (non-repeating)
 #   components, e.g. `list(cal_gregorian$year(1L))`.
 # @param cyclical A list of cyclical component specifications, where each
-#   element is a list of two time units `list(from, to)` (chronon and cycle),
+#   element is a list of two time granules `list(from, to)` (chronon and cycle),
 #   e.g. `list(list(cal_gregorian$month(1L), cal_gregorian$year(1L)))` for
 #   month-of-year.
 #

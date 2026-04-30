@@ -7,7 +7,7 @@
 chronon_format_attr(x, ...)
 }
 \arguments{
-\item{x}{A chronon (time unit) object.}
+\item{x}{A chronon (time granule) object.}
 
 \item{...}{Additional arguments for methods.}
 }
@@ -15,6 +15,6 @@ chronon_format_attr(x, ...)
 A character string containing the default format suffix for the chronon.
 }
 \description{
-Provides suffixes for default formatting strings for a given chronon (time unit).
+Provides suffixes for default formatting strings for a given chronon (time granule).
 This provides useful information such as timezones or locations in the string.
 }

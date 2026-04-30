@@ -7,9 +7,9 @@
 cyclical_labels(granule, cycle, ...)
 }
 \arguments{
-\item{granule}{A time unit object representing the granule (e.g., \code{month(1L)})}
+\item{granule}{A time granule object representing the granule (e.g., \code{month(1L)})}
 
-\item{cycle}{A time unit object representing the cycle (e.g., \code{year(1L)})}
+\item{cycle}{A time granule object representing the cycle (e.g., \code{year(1L)})}
 
 \item{...}{Additional arguments for methods.}
 }
@@ -18,7 +18,7 @@ Character vector of labels for the time point within the cycle.
 }
 \description{
 This S7 generic function provides the labels for cyclical relationships
-between time units. These functions should return locale specific labels.
+between time granules. These functions should return locale specific labels.
 }
 \examples{
 # Labels for months in a year

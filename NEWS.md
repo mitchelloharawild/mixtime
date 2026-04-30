@@ -15,7 +15,7 @@ data.
 ### Linear time
 
 * `linear_time()` creates linear time vectors with a user-specified chronon
-  (smallest indivisible time unit), supporting both discrete (integer) and
+  (smallest indivisible time granule), supporting both discrete (integer) and
   continuous (fractional) time models.
 * Convenience functions for common temporal granularities: `year()`,
   `yearquarter()`, `yearmonth()`, `yearweek()`, `date()`, and `datetime()`.
@@ -43,22 +43,22 @@ data.
 
 * `seq()` methods for `mixtime` and `mt_time` objects support integer, string
   (e.g. `"1 month"`), and time unit `by` arguments, as well as `length.out`
-  and `along.with`. Overflow behaviour when step units differ from sequence
-  units can be controlled with `on_invalid = "nearest"` (default) or
+  and `along.with`. Overflow behaviour when step granules differ from sequence
+  granules can be controlled with `on_invalid = "nearest"` (default) or
   `"overflow"`.
 
 ### Rounding
 
 * `round_time()`, `floor_time()`, and `ceiling_time()` round time objects to a
-  specified time unit, preserving the input class and timezone.
+  specified time granule, preserving the input class and timezone.
 
 ### Formatting
 
 * A mixed-calendar general purpose formatting system is provided for `mixtime`
   objects. The format strings use glue-like `{}` substitutions with the helper
   functions `lin(x)` and `cyc(x, y)` to position linear and cyclical time
-  components in a string. `x` and `y` are time units from a calendar, which can
-  be used to create general purpose mixed-calendar time formats.
+  components in a string. `x` and `y` are time granules from a calendar, which 
+  can be used to create general purpose mixed-calendar time formats.
 
 ### Timezone support
 
@@ -89,19 +89,20 @@ data.
 * Calendar arithmetic with:
 
   * `chronon_divmod()` performs division-with-remainder arithmetic between time
-    units (e.g. days to months), enabling cross-unit calendrical arithmetic.
-  * `chronon_cardinality()` returns the number of smaller units contained in a
-    larger unit (e.g. days in a month), with context-dependent results for
-    variable-length units.
+    granules (e.g. 1 day to 1 month), enabling cross-granule calendrical 
+    arithmetic.
+  * `chronon_cardinality()` returns the number of smaller granules contained in 
+    a coarser granule (e.g. days in 1 month), with context-dependent results for
+    variable-length granules.
   * `chronon_epoch()` returns the epoch offset for a given time unit.
 
 * Displaying time with:
 
-  * `time_unit_abbr()` and `time_unit_full()` for time unit text
+  * `time_unit_abbr()` and `time_unit_full()` for time unit text.
   * `linear_labels()` and `cyclical_labels()` for time labels (e.g. Jan, Feb,
      ... for months of year).
   * `chronon_format_linear()` and `chronon_format_cyclical()` for default
-    formatting strings
+    formatting strings.
   * `chronon_format_attr()` for appending attribute information (e.g. timezones)
 
 ### Vignettes

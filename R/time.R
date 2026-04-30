@@ -5,14 +5,14 @@
 #' 
 #' Creates a `mixtime` time vector at a specific time point, with a specified 
 #' chronon and optional cycle. The `chronon` defines the smallest indivisible
-#' time unit for the time vector, while the `cycle` allows for cyclical time 
+#' time granule for the time vector, while the `cycle` allows for cyclical time 
 #' representations (e.g. day-of-week, month-of-year). 
 #' 
 #' @param x A numeric vector of time points, integers for discrete time or 
 #'   doubles for continuous time. 
-#' @param chronon A time unit object representing the smallest indivisible time
-#'   unit (chronon) for the time vector (e.g. `cal_gregorian$day(1L)`). 
-#' @param cycle An optional time unit object representing the cycle for cyclical
+#' @param chronon A time granule object representing the smallest indivisible time
+#'   granule (chronon) for the time vector (e.g. `cal_gregorian$day(1L)`). 
+#' @param cycle An optional time granule object representing the cycle for cyclical
 #'   time (e.g. `cal_gregorian$week(1L)` for day-of-week). If not provided, the 
 #'   time vector will be treated as linear time.
 #' @param class An optional character vector of additional S3 classes to assign 
@@ -48,10 +48,10 @@
 #' @export
 new_time <- function(x = integer(), chronon = mt_unit(1L), cycle = NULL, class = NULL) {
   if (length(chronon@n) != 1L) {
-    cli::cli_abort("{.var chronon} must be a single time unit object.", call. = FALSE)
+    cli::cli_abort("{.var chronon} must be a single time granule object.", call. = FALSE)
   }
   if (!is.null(cycle) && length(cycle@n) != 1L) {
-    cli::cli_abort("{.var cycle} must be a single time unit object.", call. = FALSE)
+    cli::cli_abort("{.var cycle} must be a single time granule object.", call. = FALSE)
   }
   vctrs::new_vctr(
     x,

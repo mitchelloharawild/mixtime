@@ -112,7 +112,7 @@ method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$month)) <- fun
   md/x@n
 }
 
-### Chronon casting between Gregorian time units
+### Chronon casting between Gregorian time granules
 method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function(from, to, x) {
   # Modulo arithmetic to convert from days to months
   # if (chronon_cardinality(cal_gregorian$month(1L), to) != 1L) {
@@ -239,7 +239,7 @@ S7::method(linear_labels, cal_gregorian$year) <- function(granule, i, ...) {
   ifelse(i <= 0L, paste0(-i + 1L, "BC"), i)
 }
 
-### Cyclical labels for Gregorian time units
+### Cyclical labels for Gregorian time granules
 method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(granule, cycle, i) {
   # Quarters count with 1-indexing
   as.character(i + 1L)

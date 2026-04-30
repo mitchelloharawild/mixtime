@@ -10,22 +10,24 @@ chronon_format_linear(x, cal = time_calendar(x), ...)
 chronon_format_cyclical(x, y, ...)
 }
 \arguments{
-\item{x}{A chronon (time unit) object.}
+\item{x}{A time granule for the chronon.}
 
-\item{cal}{The calendar of the chronon, used to disambiguate format strings for
-time units that are shared across calendars (e.g. \code{cal_gregorian$day} and \code{cal_isoweek$day}).}
+\item{cal}{The calendar of the chronon, used to disambiguate suitable format
+strings for time units that are shared across calendars (e.g.
+\code{cal_gregorian$day} and \code{cal_isoweek$day}).}
 
 \item{...}{Additional arguments for methods.}
 
-\item{y}{A chronon (time unit) for the cycle size.}
+\item{y}{A time granule for the cycle}
 }
 \value{
 A character string containing the default format template for the chronon.
 }
 \description{
-Provides default linear time formatting strings for a given chronon (time unit).
-The format strings use placeholders like \code{{year}}, \code{{month}}, \code{{day}}, etc.,
-that can be interpolated with actual values.
+Provides default linear time formatting strings for a given chronon (finest
+time granule). The format strings use placeholders like \code{{lin(year(1L))}},
+\verb{\{cyc(month(1L), year(1L)\}} and \verb{\{cyc(day(1L), month(1L)\}}, which are
+evaluated in the context of the data's \code{\link[=time_calendar]{time_calendar()}}.
 }
 \examples{
 chronon_format_linear(cal_gregorian$year(1L))

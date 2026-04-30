@@ -3,7 +3,7 @@
 #' This utility function takes a set of chronons and identifies a common chronon
 #' of the finest granularity that can represent all input chronons without loss 
 #' of information. This is useful for operations that require a shared time 
-#' unit, such as combining or comparing different time measured at different
+#' granule, such as combining or comparing different time measured at different
 #' precisions.
 #' 
 #' @param ... A set of chronons to find a common chronon for.
@@ -13,7 +13,7 @@
 #' `.ptype` cannot represent all input chronons without loss of information,
 #' an error is raised.
 #' 
-#' @return A time unit object representing the common chronon.
+#' @return A time granule object representing the common chronon.
 #' 
 #' @examples
 #' 

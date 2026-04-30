@@ -1,13 +1,13 @@
 #' Cyclical time function factory
 #' 
 #' `new_cyclical_time_fn()` creates a cyclical time function for a specified
-#' chronon and cycle. The cycle is the larger time unit that defines the time 
+#' chronon and cycle. The cycle is the larger time granule that defines the time 
 #' period over which the chronon loops (e.g., a week). The chronon is the smaller 
-#' time unit that iterates within each cycle (e.g., a day). Combined, these two
-#' units form a cyclical time point (e.g., day of the week).
+#' time granule that iterates within each cycle (e.g., a day). Combined, these two
+#' granules form a cyclical time relationship (e.g., day of the week).
 #' 
-#' @param chronon A time unit object representing the chronon (e.g., `day(1L)`)
-#' @param cycle A time unit object representing the cycle (e.g., `week(1L)`)
+#' @param chronon A time granule object representing the chronon (e.g., `day(1L)`)
+#' @param cycle A time granule object representing the cycle (e.g., `week(1L)`)
 #' @param default_calendar A default calendar used to find the time units for 
 #'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
 #' 
@@ -57,17 +57,16 @@ new_cyclical_time_fn <- function(chronon, cycle, default_calendar = cal_gregoria
 #'   - Character strings (parsed as dates/times)
 #'   - Date or POSIXct objects
 #'   - Other time objects
-#' @param chronon A time unit representing the chronon (smallest 
-#'   indivisible time unit), evaluated in the context of `calendar`. Use 
+#' @param chronon A time granule representing the chronon (finest 
+#'   indivisible time granule), evaluated in the context of `calendar`. Use 
 #'   unquoted expressions like `day(1L)` or `month(1L)`. Chronons from a
 #'   specific calendar can also be used (e.g. `cal_isoweek$day(1L)`).
-#' @param cycle A time unit representing the cycle (larger time unit
+#' @param cycle A time granule representing the cycle (coarser time granule
 #'   that defines the period), evaluated in the context of `calendar`. Use
-#'   unquoted expressions like `week(1L)` or `year(1L)`. The
-#'   time units should be ordered from coarsest (e.g. year) to finest (e.g second).
+#'   unquoted expressions like `week(1L)` or `year(1L)`.
 #' @param discrete Logical. If `TRUE` (default), returns integer positions within
 #'   the cycle (discrete time model). If `FALSE`, returns fractional positions 
-#'   allowing representation of partial time units (continuous time model).
+#'   allowing representation of fractional time chronons (continuous time model).
 #' @param calendar Calendar system used to evaluate `chronon` and `cycle`.
 #'   Defaults to `time_calendar(data)` for existing time objects. Common options
 #'   include [cal_gregorian] and [cal_isoweek].

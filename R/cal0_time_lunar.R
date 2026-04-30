@@ -27,7 +27,7 @@ cal_time_lunar <- new_calendar(
   phase = S7::new_class("tu_lunar_phase", parent = mt_loc_unit)
 )
 
-# Time unit labels
+# Time granule labels
 method(time_unit_full, cal_time_lunar$month) <- function(x) "synodic month"
 method(time_unit_abbr, cal_time_lunar$month) <- function(x) "LM"
 method(time_unit_full, cal_time_lunar$phase) <- function(x) "synodic phase"

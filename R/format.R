@@ -27,8 +27,7 @@ mt_unit_display <- function(x, units, parts, ...) {
     if (is.na(xi)) {
       cli::cli_abort(
         c(
-          "The calendar time unit of {x} {time_unit_full(x)}{cli::qty(x)}{?s} could not be found.",
-          i =  "All format time units need to be included as granules for {.code linear_time()}"
+          "The calendar time unit of {x} {time_unit_full(x)}{cli::qty(x)}{?s} could not be found."
         ),
         call = NULL
       )
@@ -139,7 +138,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
 
     cli::cli_abort(
       c(
-        "Bare time unit tokens are not supported in format strings.",
+        "Bare time granule tokens are not currently supported in format strings.",
         i = "Use {.fn lin} for linear (coarsest) units, e.g. {.code {paste0('{lin(', names(cal)[tu_i[1]], ')}')}}}",
         i = "Use {.fn cyc} for cyclical units, e.g. {.code {paste0('{cyc(', names(cal)[tu_i[1]], ', <coarser_unit>)}')}}"
       ),

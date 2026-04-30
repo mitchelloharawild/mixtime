@@ -12,12 +12,12 @@ time_cycle(x, ...)
 \item{...}{Additional arguments for methods.}
 }
 \value{
-A time unit object representing the cycle, or \code{NULL} if the object
+A time granule object representing the cycle, or \code{NULL} if the object
 has no cyclical component.
 }
 \description{
-This S7 generic function extracts the cycle (the cyclical time unit) from a
-time object, such as cyclical time representations.
+This S7 generic function extracts the cycle (the cyclical time granule) from
+a time object, such as cyclical time representations.
 }
 \examples{
 

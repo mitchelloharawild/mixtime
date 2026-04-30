@@ -1,7 +1,7 @@
 #' Convert between chronons
 #'
 #' @param x A linear time object (of class `mt_linear`)
-#' @param to The target chronon to convert to (a time unit object)
+#' @param to The target chronon to convert to (a time granule object)
 #' @param discrete If `TRUE`, the number of target chronons since Unix epoch 
 #' @param ... Additional arguments for methods.
 #' that `x` falls into is returned as an integer. If `FALSE`, a fractional 
@@ -28,7 +28,7 @@
 chronon_convert <- S7::new_generic("chronon_cardinality", "x")
 
 chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
-  # Convert between same time unit types
+  # Convert between identical time units
   if (identical(S7::S7_class(from), S7::S7_class(to))) {
     x <- vec_data(x) * from@n / to@n
     if (discrete) x <- as.integer(floor(x))

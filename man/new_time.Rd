@@ -10,10 +10,10 @@ new_time(x = integer(), chronon = mt_unit(1L), cycle = NULL, class = NULL)
 \item{x}{A numeric vector of time points, integers for discrete time or
 doubles for continuous time.}
 
-\item{chronon}{A time unit object representing the smallest indivisible time
-unit (chronon) for the time vector (e.g. \code{cal_gregorian$day(1L)}).}
+\item{chronon}{A time granule object representing the smallest indivisible time
+granule (chronon) for the time vector (e.g. \code{cal_gregorian$day(1L)}).}
 
-\item{cycle}{An optional time unit object representing the cycle for cyclical
+\item{cycle}{An optional time granule object representing the cycle for cyclical
 time (e.g. \code{cal_gregorian$week(1L)} for day-of-week). If not provided, the
 time vector will be treated as linear time.}
 
@@ -30,7 +30,7 @@ the specified \code{chronon} and \code{cycle}.
 
 Creates a \code{mixtime} time vector at a specific time point, with a specified
 chronon and optional cycle. The \code{chronon} defines the smallest indivisible
-time unit for the time vector, while the \code{cycle} allows for cyclical time
+time granule for the time vector, while the \code{cycle} allows for cyclical time
 representations (e.g. day-of-week, month-of-year).
 }
 \examples{

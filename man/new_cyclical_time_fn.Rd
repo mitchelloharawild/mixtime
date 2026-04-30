@@ -7,9 +7,9 @@
 new_cyclical_time_fn(chronon, cycle, default_calendar = cal_gregorian)
 }
 \arguments{
-\item{chronon}{A time unit object representing the chronon (e.g., \code{day(1L)})}
+\item{chronon}{A time granule object representing the chronon (e.g., \code{day(1L)})}
 
-\item{cycle}{A time unit object representing the cycle (e.g., \code{week(1L)})}
+\item{cycle}{A time granule object representing the cycle (e.g., \code{week(1L)})}
 
 \item{default_calendar}{A default calendar used to find the time units for
 conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}
@@ -19,10 +19,10 @@ A function used to create cyclical time points with a specific chronon and cycle
 }
 \description{
 \code{new_cyclical_time_fn()} creates a cyclical time function for a specified
-chronon and cycle. The cycle is the larger time unit that defines the time
+chronon and cycle. The cycle is the larger time granule that defines the time
 period over which the chronon loops (e.g., a week). The chronon is the smaller
-time unit that iterates within each cycle (e.g., a day). Combined, these two
-units form a cyclical time point (e.g., day of the week).
+time granule that iterates within each cycle (e.g., a day). Combined, these two
+granules form a cyclical time relationship (e.g., day of the week).
 }
 \examples{
 

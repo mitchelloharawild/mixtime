@@ -2,19 +2,19 @@
 % Please edit documentation in R/01_chronon_cardinality.R
 \name{chronon_cardinality}
 \alias{chronon_cardinality}
-\title{Cardinality between time units}
+\title{Cardinality between time granules}
 \usage{
 chronon_cardinality(x, y, ...)
 }
 \arguments{
-\item{x}{The finer time unit (e.g. \code{cal_gregorian$month(1L)})}
+\item{x}{The finer time granule (e.g. \code{cal_gregorian$month(1L)})}
 
-\item{y}{The coarser time unit (e.g. \code{cal_gregorian$year(1L)})}
+\item{y}{The coarser time granule (e.g. \code{cal_gregorian$year(1L)})}
 
 \item{...}{Additional arguments for methods.}
 }
 \value{
-Numeric describing how many \code{x} time units fit into \code{y} at time \code{at}.
+Numeric describing how many \code{x} time granules fit into \code{y} at time \code{at}.
 }
 \description{
 This S7 generic function defines the calendrical relationships between two

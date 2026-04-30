@@ -15,9 +15,9 @@ mixtime(
 \item{data}{A vector of time values. This can be a character vector (e.g. "2024-01-01"),
 a numeric vector (e.g. seconds since epoch), or a time class (e.g. Date, POSIXct, yearmonth, etc.).}
 
-\item{chronon}{A time unit object representing the smallest indivisible time unit (chronon) for the mixtime. This is used to interpret the numeric values in \code{data} and to define the time resolution of the mixtime. If not provided, it will be inferred from \code{data}.}
+\item{chronon}{A time granule object representing the smallest indivisible time granule (chronon) for the mixtime. This is used to interpret the numeric values in \code{data} and to define the time resolution of the mixtime. If not provided, it will be inferred from \code{data}.}
 
-\item{cycle}{An optional time unit object representing the cycle for cyclical time. This is used to define the repeating cycle for cyclical time representations (e.g. day-of-week, month-of-year). If not provided, the mixtime will be treated as linear time.}
+\item{cycle}{An optional time granule object representing the cycle for cyclical time. This is used to define the repeating cycle for cyclical time representations (e.g. day-of-week, month-of-year). If not provided, the mixtime will be treated as linear time.}
 
 \item{discrete}{A logical indicating whether the time values should be treated as discrete (integer) or continuous (fractional). This affects how numeric values are interpreted and how time arithmetic is performed. The default is \code{TRUE} (discrete).}
 }
@@ -35,7 +35,7 @@ mixtime(Sys.Date())
 # Create a mixtime for the current date and time
 mixtime(Sys.time())
 
-# Convert time from tsibble units to mixtime
+# Convert time from tsibble classes to mixtime
 mixtime(tsibble::yearmonth("2024 Jan"))
 
 # Create a mixtime for the time of day (cyclical time)

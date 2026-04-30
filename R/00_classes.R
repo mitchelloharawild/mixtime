@@ -20,13 +20,13 @@
 #' Time units enable calendar arithmetic through two key generic methods
 #' that should be implemented for custom time units:
 #' 
-#' * `chronon_cardinality(x, y, at)` - Returns the number of `x` units
-#'   that fit within one `y` unit. This can be a fixed value (e.g.,
+#' * `chronon_cardinality(x, y, at)` - Returns the number of `x` granule
+#'   that fit within one `y` granule This can be a fixed value (e.g.,
 #'   7 days per week) or variable based on `at` (e.g., 28-31 days per month).
 #'   
-#' * `chronon_divmod(x, from, to)` - Converts time unit `x` from units of
-#'   `from` to units of `to`, returning a list with `div` (the quotient)
-#'   and `mod`. This enables conversions between units that have
+#' * `chronon_divmod(x, from, to)` - Converts time point `x` from granules of
+#'   `from` to granules of `to`, returning a list with `div` (the quotient)
+#'   and `mod`. This enables conversions between granules that have
 #'   variable cardinality (e.g., the date 2020-03-23 to the month 2020-03).
 #'   All conversions should be based on chronons since epoch (1970-01-01),
 #'   in the UTC time zone.
@@ -35,10 +35,10 @@
 #' arithmetic, understanding that months have variable lengths and handling
 #' timezone-aware conversions.
 #' 
-#' @param n The step size of time units. For example, `n = 2L` is 2 time units -
+#' @param n The step size of time granule. For example, `n = 2L` is 2 time units -
 #'   for `cal_isoweek$week(2L)` that would be 2 weeks (a fortnight).
 #' 
-#' @return A time unit object of class `mt_unit`
+#' @return A time granule object of class `mt_unit`
 #' 
 #' @seealso [new_calendar()] for creating calendars from time units
 #' 

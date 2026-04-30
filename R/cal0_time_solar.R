@@ -54,7 +54,7 @@ cal_time_solar_dusk <- new_calendar(
   day = S7::new_class("tu_day_dusk", parent = mt_loc_unit),
 )
 
-# Time unit labels
+# Time granule labels
 method(time_unit_full, cal_time_solar_sunrise$day) <- function(x) "sunrise"
 method(time_unit_abbr, cal_time_solar_sunrise$day) <- function(x) "D"
 method(time_unit_full, cal_time_solar_noon$day) <- function(x) "noon"

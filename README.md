@@ -95,7 +95,8 @@ These time units are used to create and manipulate time vectors.
 ### Calendars and time units
 
 Calendars have a `cal_*` prefix, which contain a set of time units that
-can be accessed with `<cal>$<unit>`.
+can be accessed with `<cal>$<unit>`. Using time units as functions
+produces time granules.
 
 ``` r
 # The Gregorian calendar
@@ -112,13 +113,13 @@ cal_gregorian
 #>   - second
 #>   - millisecond
 
-# A 1-month time unit
+# A 1-month time granule
 cal_gregorian$month(1L) # (1L is integer 1)
 #> <mixtime::tu_month>
 #>  @ n : int 1
 #>  @ tz: chr ""
 
-# A 2-week time unit (fortnights)
+# A 2-week time granule (fortnights)
 cal_isoweek$week(2L)
 #> <mixtime::tu_week>
 #>  @ n : int 2
@@ -127,9 +128,9 @@ cal_isoweek$week(2L)
 
 ### Linear Time
 
-A linear time vector uses time units to define the resolution of time
-points, known as a `chronon` (the smallest unit of time). When the input
-time has a different resolution than the `chronon`, it will be
+A linear time vector uses time granules to define the resolution of time
+points, known as a `chronon` (the smallest granules of time). When the
+input time has a different resolution than the `chronon`, it will be
 automatically converted.
 
 ``` r
@@ -184,9 +185,9 @@ c(
 
 ### Cyclical Time
 
-A cyclical time vector is defined by two calendar time units: a
-`chronon` (the smaller unit of time) and a `cycle` (the larger unit that
-the `chronon` loops over).
+A cyclical time vector is defined by two time granules: a `chronon` (the
+smaller granule of time) and a `cycle` (the larger granule that the
+`chronon` loops over).
 
 ``` r
 # The `calendar` argument provides a masking scope to `chronon` and `cycle`
@@ -249,7 +250,7 @@ day_of_week(demo_time, tz = "Australia/Melbourne")
 ### Temporal Manipulation
 
 Linear time points can be adjusted to the floor, ceiling, or rounded to
-a specified time unit.
+a specified time granule.
 
 ``` r
 # Round dates to different granularities
@@ -264,16 +265,16 @@ time_ceiling(demo_date, cal_gregorian$month(1L))
 ### Time Sequences
 
 The `seq()` function creates sequences of time points iterating by a
-given time unit.
+given time granule.
 
 ``` r
-# Integer increments (advances by chronon's natural unit)
+# Integer increments (advances by chronon's natural granule)
 seq(yearmonth(demo_date), by = 1L, length.out = 10)
 #> <mixtime[10]>
 #>  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep
 #>  [9] 2026 Oct 2026 Nov
 
-# Calendar time units allow sequencing by other units
+# Time can be sequenced by different granules than the chronon
 seq(date(demo_date), by = cal_gregorian$month(1L), length.out = 8)
 #> <mixtime[8]>
 #> [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22

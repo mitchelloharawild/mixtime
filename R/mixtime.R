@@ -20,8 +20,8 @@ new_mixtime <- function(x = new_time()) {
 #'
 #' @param data A vector of time values. This can be a character vector (e.g. "2024-01-01"),
 #'  a numeric vector (e.g. seconds since epoch), or a time class (e.g. Date, POSIXct, yearmonth, etc.).
-#' @param chronon A time unit object representing the smallest indivisible time unit (chronon) for the mixtime. This is used to interpret the numeric values in `data` and to define the time resolution of the mixtime. If not provided, it will be inferred from `data`.
-#' @param cycle An optional time unit object representing the cycle for cyclical time. This is used to define the repeating cycle for cyclical time representations (e.g. day-of-week, month-of-year). If not provided, the mixtime will be treated as linear time.
+#' @param chronon A time granule object representing the smallest indivisible time granule (chronon) for the mixtime. This is used to interpret the numeric values in `data` and to define the time resolution of the mixtime. If not provided, it will be inferred from `data`.
+#' @param cycle An optional time granule object representing the cycle for cyclical time. This is used to define the repeating cycle for cyclical time representations (e.g. day-of-week, month-of-year). If not provided, the mixtime will be treated as linear time.
 #' @param discrete A logical indicating whether the time values should be treated as discrete (integer) or continuous (fractional). This affects how numeric values are interpreted and how time arithmetic is performed. The default is `TRUE` (discrete).
 #' 
 #' @return A `mixtime` object representing the time values in `data` according to the specified `chronon` and `cycle`.
@@ -33,7 +33,7 @@ new_mixtime <- function(x = new_time()) {
 #' # Create a mixtime for the current date and time
 #' mixtime(Sys.time())
 #' 
-#' # Convert time from tsibble units to mixtime
+#' # Convert time from tsibble classes to mixtime
 #' mixtime(tsibble::yearmonth("2024 Jan"))
 #' 
 #' # Create a mixtime for the time of day (cyclical time)
@@ -85,12 +85,12 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
     data <- data - epoch
   }
 
-  # Validate time units
+  # Validate time granules
   if (!inherits(chronon, "mixtime::mt_unit")) {
-    cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
+    cli::cli_abort("{.var chronon} must be a time granule object.", call. = FALSE)
   }
   if (!is.null(cycle) && !inherits(cycle, "mixtime::mt_unit")) {
-    cli::cli_abort("{.var cycle} must be a time unit object.", call. = FALSE)
+    cli::cli_abort("{.var cycle} must be a time granule object.", call. = FALSE)
   }
 
   # Cast from Date, POSIXct, etc.

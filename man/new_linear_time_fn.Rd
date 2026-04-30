@@ -7,17 +7,19 @@
 new_linear_time_fn(chronon, default_calendar = cal_gregorian)
 }
 \arguments{
-\item{chronon}{A bare call for a time unit object representing the chronon (e.g., \code{day(1)})}
+\item{chronon}{A bare call for a time granule object representing the chronon
+(e.g., \code{day(1)})}
 
 \item{default_calendar}{A default calendar used to find the time units for
-conversion if they don't exist in the calendar of the input data (e.g., \code{cal_isoweek})}
+conversion if they don't exist in the calendar of the input data (e.g.,
+\code{cal_isoweek} for week chronons to work with gregorian calendar inputs).}
 }
 \value{
 A function used to create linear time points with a specific chronon.
 }
 \description{
 \code{new_linear_time_fn()} creates a linear time function for a specified
-chronon. A chronon is the smallest indivisible time unit (e.g., days, hours).
+chronon. A chronon is the smallest indivisible time granule (e.g., days, hours).
 }
 \examples{
 

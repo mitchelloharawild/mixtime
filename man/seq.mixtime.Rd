@@ -26,10 +26,10 @@
 
 \item{by}{Increment of the sequence. Can be:
 \itemize{
-\item An integer for the number of time units
+\item A numeric for the number of time chronons
 \item A character string specifying the interval (e.g., "1 day", "2 weeks",
 "1 month", "1 year")
-\item A time unit object created with time unit functions (e.g., \code{cal_gregorian$year(1L)},
+\item A time granule object created with time unit functions (e.g., \code{cal_gregorian$year(1L)},
 \code{cal_gregorian$month(1L)}, \code{cal_gregorian$day(1L)})
 \item A time \code{\link[=duration]{duration()}} object (e.g., \code{years(1L)}, \code{months(1L)}, \code{days(1L)})
 }}
@@ -39,7 +39,7 @@
 \item{along.with}{Take the length from this argument (alternative to \code{length.out}).}
 
 \item{on_invalid}{How to handle time points that overflow the cycle when
-using a \code{by} argument with different time units than the sequence type.
+using a \code{by} argument with different time granule than the sequence chronon.
 Options are:
 \itemize{
 \item \code{"nearest"} (default): Adjust overflowing time points to the nearest
@@ -79,7 +79,7 @@ seq(date("2020-01-01"), date("2020-12-31"), by = "1 month")
 seq(yearmonth("2020-01-01"), yearmonth("2025-01-01"), by = "1 year")
 seq(date("2020-01-01"), length.out = 10, by = "2 weeks")
 
-# Linear time sequences with time units
+# Linear time sequences incrementing by time granules
 seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$month(2L))
 seq(date("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))
 seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))

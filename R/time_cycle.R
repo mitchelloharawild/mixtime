@@ -1,12 +1,12 @@
 #' Obtain the cycle of a time object
 #' 
-#' This S7 generic function extracts the cycle (the cyclical time unit) from a
-#' time object, such as cyclical time representations.
+#' This S7 generic function extracts the cycle (the cyclical time granule) from
+#' a time object, such as cyclical time representations.
 #' 
 #' @param x A time object (e.g., [base::Date], [base::POSIXct], [linear_time()], etc.)
 #' @param ... Additional arguments for methods.
 #' 
-#' @return A time unit object representing the cycle, or `NULL` if the object
+#' @return A time granule object representing the cycle, or `NULL` if the object
 #'   has no cyclical component.
 #' 
 #' @examples

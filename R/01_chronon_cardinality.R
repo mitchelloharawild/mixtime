@@ -1,4 +1,4 @@
-#' Cardinality between time units
+#' Cardinality between time granules
 #'
 #' This S7 generic function defines the calendrical relationships between two 
 #' chronons, and is one of the building block for defining calendars in mixtime.
@@ -7,14 +7,14 @@
 #' and so an optional time point defined in terms of `y` chronons can be
 #' provided with `at`.
 #' 
-#' @param x The finer time unit (e.g. `cal_gregorian$month(1L)`)
-#' @param y The coarser time unit (e.g. `cal_gregorian$year(1L)`)
+#' @param x The finer time granule (e.g. `cal_gregorian$month(1L)`)
+#' @param y The coarser time granule (e.g. `cal_gregorian$year(1L)`)
 #' @param ... Additional arguments for methods.
 # #' @param at Optional time point for context-dependent cardinality, defined in
 # #' terms of `y` (e.g., if `y` is `month()`, then `at` could be a 
 # #' `yearmonth()`)
 #'
-#' @return Numeric describing how many `x` time units fit into `y` at time `at`.
+#' @return Numeric describing how many `x` time granules fit into `y` at time `at`.
 #' 
 #' @details
 #' 

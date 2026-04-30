@@ -9,11 +9,11 @@ duration(data, chronon = time_chronon(data), calendar = time_calendar(data))
 \arguments{
 \item{data}{A time vector of duration magnitudes.}
 
-\item{chronon}{A time unit expression representing the chronon (unit of the
-duration), evaluated in the context of \code{calendar}. Use unquoted expressions
-like \code{month(1L)} or \code{day(1L)}. Chronons from a specific calendar can also
-be used (e.g. \code{cal_gregorian$month(1L)}). Defaults to the time chronon of
-the input \code{data} (\code{time_chronon(data)}).}
+\item{chronon}{A time granule expression representing the chronon, evaluated
+in the context of \code{calendar}. Use unquoted expressions like \code{month(1L)} or
+\code{day(1L)}. Chronons from a specific calendar can also be used (e.g.
+\code{cal_gregorian$month(1L)}). Defaults to the time chronon of the input
+\code{data} (\code{time_chronon(data)}).}
 
 \item{calendar}{Calendar system used to evaluate \code{chronon}. Defaults to
 \code{time_calendar(data)} for existing time objects. Common options include
@@ -23,8 +23,8 @@ the input \code{data} (\code{time_chronon(data)}).}
 A \code{mixtime} vector containing an \code{mt_duration} vector.
 }
 \description{
-\code{duration()} creates a vector of durations with a specified chronon (time
-unit). Durations represent a fixed span of time measured in a given unit
+\code{duration()} creates a vector of durations with a specified chronon.
+Durations represent a fixed span of time measured in a given time granule
 (e.g., 3 months, 5 days), without reference to a specific point in time.
 }
 \examples{

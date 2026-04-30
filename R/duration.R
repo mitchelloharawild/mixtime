@@ -8,16 +8,16 @@ format.mt_duration <- function(x, ...) {
 
 #' Duration vectors
 #' 
-#' `duration()` creates a vector of durations with a specified chronon (time
-#' unit). Durations represent a fixed span of time measured in a given unit
+#' `duration()` creates a vector of durations with a specified chronon.
+#' Durations represent a fixed span of time measured in a given time granule
 #' (e.g., 3 months, 5 days), without reference to a specific point in time.
 #' 
 #' @param data A time vector of duration magnitudes.
-#' @param chronon A time unit expression representing the chronon (unit of the
-#'   duration), evaluated in the context of `calendar`. Use unquoted expressions
-#'   like `month(1L)` or `day(1L)`. Chronons from a specific calendar can also
-#'   be used (e.g. `cal_gregorian$month(1L)`). Defaults to the time chronon of
-#'   the input `data` (`time_chronon(data)`).
+#' @param chronon A time granule expression representing the chronon, evaluated
+#'  in the context of `calendar`. Use unquoted expressions like `month(1L)` or
+#'  `day(1L)`. Chronons from a specific calendar can also be used (e.g. 
+#'  `cal_gregorian$month(1L)`). Defaults to the time chronon of the input
+#'  `data` (`time_chronon(data)`).
 #' @param calendar Calendar system used to evaluate `chronon`. Defaults to
 #'   `time_calendar(data)` for existing time objects. Common options include
 #'   [cal_gregorian] and [cal_isoweek].
@@ -48,7 +48,7 @@ duration <- function(
   chronon <- eval_tidy(quo_chronon, data = calendar, env = emptyenv())
 
   if (!inherits(chronon, "mixtime::mt_unit")) {
-    cli::cli_abort("{.var chronon} must be a time unit object.", call. = FALSE)
+    cli::cli_abort("{.var chronon} must be a time granule object.", call. = FALSE)
   }
   new_mixtime(new_time(data, chronon = chronon, class = "mt_duration"))
 }

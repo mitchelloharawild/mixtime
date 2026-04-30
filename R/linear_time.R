@@ -1,11 +1,13 @@
 #' Linear time function factory
 #' 
 #' `new_linear_time_fn()` creates a linear time function for a specified
-#' chronon. A chronon is the smallest indivisible time unit (e.g., days, hours).
+#' chronon. A chronon is the smallest indivisible time granule (e.g., days, hours).
 #' 
-#' @param chronon A bare call for a time unit object representing the chronon (e.g., `day(1)`)
+#' @param chronon A bare call for a time granule object representing the chronon
+#'   (e.g., `day(1)`)
 #' @param default_calendar A default calendar used to find the time units for 
-#'   conversion if they don't exist in the calendar of the input data (e.g., `cal_isoweek`)
+#'   conversion if they don't exist in the calendar of the input data (e.g., 
+#'   `cal_isoweek` for week chronons to work with gregorian calendar inputs).
 #' 
 #' @return A function used to create linear time points with a specific chronon.
 #' 
@@ -52,7 +54,7 @@ new_linear_time_fn <- function(chronon, default_calendar = cal_gregorian) {
 #' Linear time points
 #' 
 #' `linear_time()` creates a vector of linear time points with a specified
-#' chronon (smallest time unit). This function is useful for creating custom
+#' chronon (smallest time granule). This function is useful for creating custom
 #' time representations that aren't covered by the convenience functions like
 #' [yearmonth()] or [yearweek()].
 #' 
@@ -61,14 +63,14 @@ new_linear_time_fn <- function(chronon, default_calendar = cal_gregorian) {
 #'   - Character strings (parsed as dates/times)
 #'   - Date or POSIXct objects
 #'   - Other time objects
-#' @param chronon A time unit expression representing the chronon (smallest 
-#'   indivisible time unit), evaluated in the context of `calendar`. Use 
+#' @param chronon A time granule expression representing the chronon (smallest 
+#'   indivisible time granule), evaluated in the context of `calendar`. Use 
 #'   unquoted expressions like `month(1L)` or `hour(1L)`. Chronons from a
 #'   specific calendar can also be used (e.g. `cal_isoweek$week(1L)`).
 #'   Defaults to the time chronon of the input `data` (`time_chronon(data)`).
 #' @param discrete Logical. If `TRUE` (default), returns integer chronons since
 #'   Unix epoch (discrete time model). If `FALSE`, returns fractional chronons 
-#'   allowing representation of partial time units (continuous time model).
+#'   allowing representation of fractional time granules (continuous time model).
 #' @param calendar Calendar system used to evaluate `chronon` and `granules`.
 #'   Defaults to `time_calendar(data)` for existing time objects. Common options
 #'   include [cal_gregorian] and [cal_isoweek].

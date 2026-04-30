@@ -21,19 +21,18 @@ cyclical_time(
 \item Other time objects
 }}
 
-\item{chronon}{A time unit representing the chronon (smallest
-indivisible time unit), evaluated in the context of \code{calendar}. Use
+\item{chronon}{A time granule representing the chronon (finest
+indivisible time granule), evaluated in the context of \code{calendar}. Use
 unquoted expressions like \code{day(1L)} or \code{month(1L)}. Chronons from a
 specific calendar can also be used (e.g. \code{cal_isoweek$day(1L)}).}
 
-\item{cycle}{A time unit representing the cycle (larger time unit
+\item{cycle}{A time granule representing the cycle (coarser time granule
 that defines the period), evaluated in the context of \code{calendar}. Use
-unquoted expressions like \code{week(1L)} or \code{year(1L)}. The
-time units should be ordered from coarsest (e.g. year) to finest (e.g second).}
+unquoted expressions like \code{week(1L)} or \code{year(1L)}.}
 
 \item{discrete}{Logical. If \code{TRUE} (default), returns integer positions within
 the cycle (discrete time model). If \code{FALSE}, returns fractional positions
-allowing representation of partial time units (continuous time model).}
+allowing representation of fractional time chronons (continuous time model).}
 
 \item{calendar}{Calendar system used to evaluate \code{chronon} and \code{cycle}.
 Defaults to \code{time_calendar(data)} for existing time objects. Common options

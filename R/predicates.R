@@ -35,4 +35,5 @@ method(is_time_cyclical, S7::new_S3_class("mt_cyclical")) <- function(x) rep.int
 is_time_duration <- S7::new_generic("is_time_duration", "x")
 method(is_time_duration, class_mixtime) <- vecvec::vecvec_apply_fn(is_time_duration, logical())
 method(is_time_duration, class_any) <- function(x) rep.int(FALSE, length(x))
+method(is_time_duration, new_S4_class("Period", package = "lubridate")) <- function(x) rep.int(TRUE, length(x))
 method(is_time_duration, S7::new_S3_class("mt_duration")) <- function(x) rep.int(TRUE, length(x))

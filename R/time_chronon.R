@@ -1,12 +1,12 @@
 #' Obtain the chronon of a time object
 #' 
-#' This S7 generic function extracts the chronon (the smallest time unit) from a
+#' This S7 generic function extracts the chronon (the smallest time granule) from a
 #' time object, such as continuous time or cyclical time representations.
 #' 
 #' @param x A time object (e.g., [base::Date], [base::POSIXct], [linear_time()], etc.)
 #' @param ... Additional arguments for methods.
 #' 
-#' @return A time unit object representing the chronon (e.g., `cal_gregorian$day(1L)`)
+#' @return A time granule object representing the chronon (e.g., `cal_gregorian$day(1L)`)
 #' 
 #' @examples
 #' 
@@ -67,8 +67,8 @@ S7::method(time_chronon, S7::new_S3_class("hms")) <- function(x) {
 
 # {lubridate::Period} time class
 S7::method(time_chronon, new_S4_class("Period", package = "lubridate")) <- function(x) {
-  components <- c(second = `attributes<-`(x, NULL), attributes(unclass(x)))
-  has_component <- vapply(components, `!=`, logical(1L), 0L)
+  components <- c(second = list(`attributes<-`(x, NULL)), attributes(unclass(x)))
+  has_component <- vapply(components, function(x) sum(x) != 0L, logical(1L))
   if (sum(has_component) != 1L) {
     cli::cli_abort("Support for {.fn lubridate::period} data in mixtime is limited to single unit periods.")
   }

@@ -12,10 +12,10 @@ time_chronon(x, ...)
 \item{...}{Additional arguments for methods.}
 }
 \value{
-A time unit object representing the chronon (e.g., \code{cal_gregorian$day(1L)})
+A time granule object representing the chronon (e.g., \code{cal_gregorian$day(1L)})
 }
 \description{
-This S7 generic function extracts the chronon (the smallest time unit) from a
+This S7 generic function extracts the chronon (the smallest time granule) from a
 time object, such as continuous time or cyclical time representations.
 }
 \examples{

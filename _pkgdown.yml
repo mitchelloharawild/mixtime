@@ -105,7 +105,7 @@ reference:
   - calendar_time_lunar
 
 - title: "Time Attributes"
-  desc: "Functions for working with attributes of time units, such as timezones or locations."
+  desc: "Functions for working with attributes of time granules, such as timezones or locations."
 - subtitle: "Timezones"
   desc: "Functions for working with timezones and timezone information"
   contents:

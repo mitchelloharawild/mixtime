@@ -20,15 +20,15 @@ linear_time(
 \item Other time objects
 }}
 
-\item{chronon}{A time unit expression representing the chronon (smallest
-indivisible time unit), evaluated in the context of \code{calendar}. Use
+\item{chronon}{A time granule expression representing the chronon (smallest
+indivisible time granule), evaluated in the context of \code{calendar}. Use
 unquoted expressions like \code{month(1L)} or \code{hour(1L)}. Chronons from a
 specific calendar can also be used (e.g. \code{cal_isoweek$week(1L)}).
 Defaults to the time chronon of the input \code{data} (\code{time_chronon(data)}).}
 
 \item{discrete}{Logical. If \code{TRUE} (default), returns integer chronons since
 Unix epoch (discrete time model). If \code{FALSE}, returns fractional chronons
-allowing representation of partial time units (continuous time model).}
+allowing representation of fractional time granules (continuous time model).}
 
 \item{calendar}{Calendar system used to evaluate \code{chronon} and \code{granules}.
 Defaults to \code{time_calendar(data)} for existing time objects. Common options
@@ -39,7 +39,7 @@ A \code{mixtime} time vector containing an \code{mt_linear} vector.
 }
 \description{
 \code{linear_time()} creates a vector of linear time points with a specified
-chronon (smallest time unit). This function is useful for creating custom
+chronon (smallest time granule). This function is useful for creating custom
 time representations that aren't covered by the convenience functions like
 \code{\link[=yearmonth]{yearmonth()}} or \code{\link[=yearweek]{yearweek()}}.
 }

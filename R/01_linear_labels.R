@@ -1,10 +1,10 @@
 #' Friendly labels for linear relationships
 #'
 #' This S7 generic function provides the labels for linear (non-repeating)
-#' positions of a time unit. These functions should return locale specific
+#' positions of a time granule. These functions should return locale specific
 #' labels.
 #'
-#' @param granule A time unit object representing the granule (e.g., `year(1L)`)
+#' @param granule A time granule object representing the granule (e.g., `year(1L)`)
 # #' @param i Integer vector representing the position along the linear axis.
 # #' @param label If `TRUE`, return labels for the positions along the linear axis. If `FALSE`, return the integer positions as character.
 # #' @param abbreviate If `TRUE`, return abbreviated labels (e.g. "year" as "Y"). If `FALSE`, return full labels.

@@ -1,20 +1,20 @@
-#' Convert between chronons of different time units
+#' Convert between chronons of different time granules
 #' 
-#' This function converts between chronons measured in different time units. It
-#' is used internally for converting between different continuous time types,
+#' This function converts between chronons measured in different time granules.
+#' It is used internally for converting between different continuous time types,
 #' and is particularly useful for efficiently converting between irregular time
-#' units. The default method uses `chronon_cardinality()` to cast between time
-#' units, which is efficient for regular time units.
+#' granules. The default method uses `chronon_cardinality()` to cast between 
+#' time granules, which is efficient for regular time granules.
 #' 
-#' @param from The time unit that `x` is measured in (e.g., `day(1L)`).
-#' @param to The time unit to convert `x` into (e.g., `week(1L)`).
-# #' @param x An integer vector of chronons measured in the `from` time unit.
+#' @param from The time granule that `x` is measured in (e.g., `day(1L)`).
+#' @param to The time granule to convert `x` into (e.g., `week(1L)`).
+# #' @param x An integer vector of chronons measured in the `from` time granule.
 #' @param ... Additional arguments for methods.
 #' 
 #' @return An list of two elements:
-#' - `div`: integer vector of chronons measured in the `to` time unit.
-#' - `mod`: integer vector of the remainder (in `from` time unit) after
-#'  converting to the `to` time unit.
+#' - `div`: integer vector of chronons measured in the `to` time granule.
+#' - `mod`: integer vector of the remainder (in `from` time granule) after
+#'  converting to the `to` time granule.
 #' 
 #' @examples
 #' # Convert day 16 after epoch (1970-01-01) into weeks since epoch (and remainder days)
@@ -28,7 +28,7 @@ chronon_divmod <- S7::new_generic("chronon_divmod", c("from", "to"))
 
 # #' @rdname chronon_divmod
 S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
-  # No casting needed for identical time units
+  # No casting needed for identical time granules
   if (identical(S7::S7_class(from), S7::S7_class(to))) {
     divisor <- to@n / from@n
     return(
@@ -40,7 +40,7 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   }
 
   # Apply graph dispatch to find shortest path between from and to using
-  # divmod conversions between time units (e.g. day -> month)
+  # divmod conversions between time granules (e.g. day -> month)
   path <- S7_graph_dispatch(
     unique(c(
       # Chronon divmod should be directional
@@ -89,7 +89,7 @@ chronon_divmod_dispatch <- function(from, to, x) {
   }
 }
 
-## Fallback to chronon_cardinality for regular time units
+## Fallback to chronon_cardinality for regular time granules
 chronon_divmod_regular <- function(from, to, x) {
   divisor <- chronon_cardinality(from, to)
   list(

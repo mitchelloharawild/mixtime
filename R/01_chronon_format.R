@@ -1,14 +1,16 @@
 
 #' Default formatting strings for chronons
 #'
-#' Provides default linear time formatting strings for a given chronon (time unit).
-#' The format strings use placeholders like `{year}`, `{month}`, `{day}`, etc.,
-#' that can be interpolated with actual values.
-#'
-#' @param x A chronon (time unit) object.
-#' @param y A chronon (time unit) for the cycle size.
-#' @param cal The calendar of the chronon, used to disambiguate format strings for 
-#'   time units that are shared across calendars (e.g. `cal_gregorian$day` and `cal_isoweek$day`).
+#' Provides default linear time formatting strings for a given chronon (finest 
+#' time granule). The format strings use placeholders like `{lin(year(1L))}`,
+#' `{cyc(month(1L), year(1L)}` and `{cyc(day(1L), month(1L)}`, which are
+#' evaluated in the context of the data's [`time_calendar()`].
+#' 
+#' @param x A time granule for the chronon.
+#' @param y A time granule for the cycle
+#' @param cal The calendar of the chronon, used to disambiguate suitable format 
+#'   strings for time units that are shared across calendars (e.g. 
+#'   `cal_gregorian$day` and `cal_isoweek$day`).
 #' @param ... Additional arguments for methods.
 #'
 #' @return A character string containing the default format template for the chronon.
@@ -49,10 +51,10 @@ method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
 
 #' Default formatting strings for chronon attributes
 #' 
-#' Provides suffixes for default formatting strings for a given chronon (time unit).
+#' Provides suffixes for default formatting strings for a given chronon (time granule).
 #' This provides useful information such as timezones or locations in the string.
 #' 
-#' @param x A chronon (time unit) object.
+#' @param x A chronon (time granule) object.
 #' @param ... Additional arguments for methods.
 #'
 #' @return A character string containing the default format suffix for the chronon.

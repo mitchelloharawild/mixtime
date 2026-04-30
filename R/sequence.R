@@ -7,16 +7,16 @@
 #' @param from Starting value of the sequence.
 #' @param to End value of the sequence (if provided).
 #' @param by Increment of the sequence. Can be:
-#'   * An integer for the number of time units
+#'   * A numeric for the number of time chronons
 #'   * A character string specifying the interval (e.g., "1 day", "2 weeks", 
 #'     "1 month", "1 year")
-#'   * A time unit object created with time unit functions (e.g., `cal_gregorian$year(1L)`,
+#'   * A time granule object created with time unit functions (e.g., `cal_gregorian$year(1L)`,
 #'     `cal_gregorian$month(1L)`, `cal_gregorian$day(1L)`)
 #'   * A time [duration()] object (e.g., `years(1L)`, `months(1L)`, `days(1L)`)
 #' @param length.out Desired length of the sequence (alternative to `to`).
 #' @param along.with Take the length from this argument (alternative to `length.out`).
 #' @param on_invalid How to handle time points that overflow the cycle when
-#'   using a `by` argument with different time units than the sequence type.
+#'   using a `by` argument with different time granule than the sequence chronon.
 #'   Options are:
 #'   * `"nearest"` (default): Adjust overflowing time points to the nearest 
 #'     valid time point within the cycle
@@ -49,7 +49,7 @@
 #' seq(yearmonth("2020-01-01"), yearmonth("2025-01-01"), by = "1 year")
 #' seq(date("2020-01-01"), length.out = 10, by = "2 weeks")
 #' 
-#' # Linear time sequences with time units
+#' # Linear time sequences incrementing by time granules
 #' seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$month(2L))
 #' seq(date("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))
 #' seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))

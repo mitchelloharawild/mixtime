@@ -25,7 +25,7 @@ method(chronon_format_attr, mt_tz_unit) <- function(x) {
 #' add common time components.  These units can be
 #' used with [linear_time()] to create custom time representations.
 #'
-#' @return A time unit object for the civil time system.
+#' @return A time granule object for the civil time system.
 #' 
 #' @details
 #' The following time units are available (`cal_time_civil$`).
@@ -39,7 +39,7 @@ method(chronon_format_attr, mt_tz_unit) <- function(x) {
 #' @seealso [`cal_time_civil`], [`cal_isoweek`]
 #' 
 #' @examples
-#' # Create a custom time representation using Gregorian units
+#' # Create a custom time representation using civil time granules
 #' hms <- new_cyclical_time_fn(
 #'   chronon = second(1L),
 #'   cycle = hour(1L)

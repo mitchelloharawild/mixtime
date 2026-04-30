@@ -14,7 +14,7 @@ mt_loc_unit(n = 1L, lat = 0, lon = 0, alt = 0)
 mt_tz_unit(n = 1L, tz = "")
 }
 \arguments{
-\item{n}{The step size of time units. For example, \code{n = 2L} is 2 time units -
+\item{n}{The step size of time granule. For example, \code{n = 2L} is 2 time units -
 for \code{cal_isoweek$week(2L)} that would be 2 weeks (a fortnight).}
 
 \item{lat}{Numeric. Latitude in decimal degrees. Range: -90 to 90.
@@ -29,7 +29,7 @@ Default: 0 (sea level).}
 \item{tz}{The timezone name for the unit (valid units can be found with \verb{[tzdb::tzdb_names()]})}
 }
 \value{
-A time unit object of class \code{mt_unit}
+A time granule object of class \code{mt_unit}
 }
 \description{
 This class is the primative class for time units, and should
@@ -54,12 +54,12 @@ constructor functions accessible via \code{$} notation (e.g., \code{calendar$day
 Time units enable calendar arithmetic through two key generic methods
 that should be implemented for custom time units:
 \itemize{
-\item \code{chronon_cardinality(x, y, at)} - Returns the number of \code{x} units
-that fit within one \code{y} unit. This can be a fixed value (e.g.,
+\item \code{chronon_cardinality(x, y, at)} - Returns the number of \code{x} granule
+that fit within one \code{y} granule This can be a fixed value (e.g.,
 7 days per week) or variable based on \code{at} (e.g., 28-31 days per month).
-\item \code{chronon_divmod(x, from, to)} - Converts time unit \code{x} from units of
-\code{from} to units of \code{to}, returning a list with \code{div} (the quotient)
-and \code{mod}. This enables conversions between units that have
+\item \code{chronon_divmod(x, from, to)} - Converts time point \code{x} from granules of
+\code{from} to granules of \code{to}, returning a list with \code{div} (the quotient)
+and \code{mod}. This enables conversions between granules that have
 variable cardinality (e.g., the date 2020-03-23 to the month 2020-03).
 All conversions should be based on chronons since epoch (1970-01-01),
 in the UTC time zone.
