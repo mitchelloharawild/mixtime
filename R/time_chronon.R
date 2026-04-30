@@ -64,3 +64,21 @@ S7::method(time_chronon, S7::new_S3_class("yearmon")) <- function(x) {
 S7::method(time_chronon, S7::new_S3_class("hms")) <- function(x) {
   cal_gregorian$second(1L, tz = "")
 }
+
+# {lubridate::Period} time class
+S7::method(time_chronon, getClass("Period")) <- function(x) {
+  components <- c(second = `attributes<-`(x, NULL), attributes(unclass(x)))
+  has_component <- vapply(components, `!=`, logical(1L), 0L)
+  if (sum(has_component) != 1L) {
+    cli::cli_abort("Support for {.fn lubridate::period} data in mixtime is limited to single unit periods.")
+  }
+  switch(
+    names(components)[has_component],
+    year = cal_gregorian$year(1L),
+    month = cal_gregorian$month(1L),
+    day = cal_gregorian$day(1L),
+    hour = cal_gregorian$hour(1L),
+    minute = cal_gregorian$minute(1L),
+    second = cal_gregorian$second(1L)
+  )
+}
