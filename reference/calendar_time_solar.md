@@ -41,5 +41,5 @@ The following time units are available in the solar calendar systems.
 t <- linear_time(Sys.Date(), cal_time_solar_sunset$day(1L, lat = -37.8136, lon = 144.9631))
 datetime(t, tz = "Australia/Melbourne")
 #> <mixtime[1]>
-#> [1] 2026-04-29 17:35:25 AEST
+#> [1] 2026-05-04 17:29:48 AEST
 ```

@@ -37,7 +37,7 @@ A function used to create linear time points with a specific chronon.
 ym <- new_linear_time_fn(month(1L))
 ym(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 Apr
+#> [1] 2026 May
 
 # A year-quarter-month time representation with months as the chronon
 yqm <- new_linear_time_fn(month(1L))
@@ -58,17 +58,17 @@ yqm(1:100)
 #>  [97] 1978 Feb 1978 Mar 1978 Apr 1978 May
 yqm(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 Apr
+#> [1] 2026 May
 
 # A year-day time representation with days as the chronon
 yd <- new_linear_time_fn(day(1L))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-04-30
+#> [1] 2026-05-05
 
 # Gregorian date time with hourly precision
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-04-30 16h
+#> [1] 2026-05-05 11h
 ```
