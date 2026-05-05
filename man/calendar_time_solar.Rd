@@ -2,38 +2,66 @@
 % Please edit documentation in R/cal0_time_solar.R
 \name{calendar_time_solar}
 \alias{calendar_time_solar}
-\alias{cal_time_solar_sunset}
-\alias{cal_time_solar_sunrise}
-\alias{cal_time_solar_noon}
-\alias{cal_time_solar_midnight}
-\alias{cal_time_solar_dawn}
-\alias{cal_time_solar_dusk}
-\title{Solar time unit classes}
+\alias{cal_time_solar}
+\title{Solar time}
 \format{
 A location-based calendar containing solar time units.
 }
 \usage{
-cal_time_solar_sunset
-
-cal_time_solar_sunrise
-
-cal_time_solar_noon
-
-cal_time_solar_midnight
-
-cal_time_solar_dawn
-
-cal_time_solar_dusk
+cal_time_solar
 }
 \description{
-Time unit constructors for the solar time system where the boundary of each
-day is at sunrise, sunset, or noon. This calendar is intended to be
-built on by other calendars to add common time components.
+This time calendar contains solar time units, where the boundary of each day
+is at apparent solar midnight. Solar events define the \code{ampm} (midnight and
+noon) and \code{illumination} (dawn, sunrise, sunset, dusk) units.
 }
 \details{
 The following time units are available in the solar calendar systems.
 \itemize{
 \item \code{day()}: Day unit
+\item \code{ampm()}: Half-day units (AM = before solar noon, PM = after solar noon)
+\item \code{hour()}: Hour units within the solar day
+\item \code{minute()}: Minute units within the solar hour
+\item \code{second()}: Second units within the solar minute
+\item \code{degree()}: Solar angle units within the day
+\item \code{arcminute()}: Arcminute units within the solar degree
+\item \code{arcsecond()}: Arcsecond units within the solar arcminute
+\item \code{illumination()}: Illumination phases (night, astronomical/nautical/civil dawn, day, civil/nautical/astronomical dusk)
+}
+\subsection{AM/PM half-days}{
+
+The \code{ampm} unit divides each solar day into two halves between solar noon and
+solar midnight:\tabular{lll}{
+   Half \tab Period \tab Description \cr
+   AM \tab Solar midnight to noon \tab Morning half; before solar transit \cr
+   PM \tab Solar noon to midnight \tab Afternoon half; after solar transit \cr
+}
+
+}
+
+\subsection{Solar clock units}{
+
+Phases describe the illumination state of the sky and correspond to standard
+twilight definitions used in astronomy and navigation. Each phase is bounded
+by a pair of solar altitude thresholds:\tabular{lll}{
+   Phase \tab Solar altitude range \tab Description \cr
+   Night \tab < −18° \tab Sky fully dark; from last dusk to first dawn (spans noon) \cr
+   Astronomical dawn \tab −18° to −12° \tab Astronomical twilight before sunrise; faint objects obscured \cr
+   Nautical dawn \tab −12° to −6° \tab Nautical twilight before sunrise; horizon visible at sea \cr
+   Civil dawn \tab −6° to −0.833° \tab Civil twilight before sunrise; sky brightening in the east \cr
+   Day \tab > −0.833° \tab Sun above the horizon; spans solar noon \cr
+   Civil dusk \tab −0.833° to −6° \tab Civil twilight after sunset; sky fading in the west \cr
+   Nautical dusk \tab −6° to −12° \tab Nautical twilight after sunset; horizon visible at sea \cr
+   Astronomical dusk \tab −12° to −18° \tab Astronomical twilight after sunset; faint objects obscured \cr
+}
+
+
+The −0.833° threshold for sunrise and sunset accounts for the mean angular
+radius of the solar disc (0.267°) plus the standard atmospheric refraction
+at the horizon (0.566°). Noon and midnight are derived from the equation of
+time rather than a fixed altitude. Locations that experience polar day or
+polar night (civil days where sunrise does not occur) are not currently
+supported, it is recommended to use an alternative reference location.
 }
 }
 \examples{

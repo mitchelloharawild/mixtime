@@ -20,52 +20,28 @@ approx_utc_from_lunar_phase <- function(lunation_counts) {
   .Call(`_mixtime_approx_utc_from_lunar_phase`, lunation_counts)
 }
 
-approx_sunrises_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_sunrises_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
+approx_solar_days_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_solar_days_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
 }
 
-approx_utc_from_sunrises <- function(sunrise_counts, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_utc_from_sunrises`, sunrise_counts, lat_deg, lon_deg, alt_deg)
+approx_utc_from_solar_days <- function(solar_day_counts, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_utc_from_solar_days`, solar_day_counts, lat_deg, lon_deg, alt_deg)
 }
 
-approx_sunsets_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_sunsets_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
+approx_solar_phase_utc <- function(phase_counts, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_solar_phase_utc`, phase_counts, lat_deg, lon_deg, alt_deg)
 }
 
-approx_utc_from_sunsets <- function(sunset_counts, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_utc_from_sunsets`, sunset_counts, lat_deg, lon_deg, alt_deg)
+approx_solar_ampm_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_solar_ampm_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
 }
 
-approx_noons_from_utc <- function(unix_times, lat_deg, lon_deg) {
-  .Call(`_mixtime_approx_noons_from_utc`, unix_times, lat_deg, lon_deg)
+approx_utc_from_solar_ampm <- function(ampm_counts, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_utc_from_solar_ampm`, ampm_counts, lat_deg, lon_deg, alt_deg)
 }
 
-approx_utc_from_noons <- function(noon_counts, lat_deg, lon_deg) {
-  .Call(`_mixtime_approx_utc_from_noons`, noon_counts, lat_deg, lon_deg)
-}
-
-approx_midnights_from_utc <- function(unix_times, lat_deg, lon_deg) {
-  .Call(`_mixtime_approx_midnights_from_utc`, unix_times, lat_deg, lon_deg)
-}
-
-approx_utc_from_midnights <- function(midnight_counts, lat_deg, lon_deg) {
-  .Call(`_mixtime_approx_utc_from_midnights`, midnight_counts, lat_deg, lon_deg)
-}
-
-approx_dawns_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_dawns_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
-}
-
-approx_utc_from_dawns <- function(dawn_counts, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_utc_from_dawns`, dawn_counts, lat_deg, lon_deg, alt_deg)
-}
-
-approx_dusks_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_dusks_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
-}
-
-approx_utc_from_dusks <- function(dusk_counts, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_utc_from_dusks`, dusk_counts, lat_deg, lon_deg, alt_deg)
+approx_solar_phase_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_solar_phase_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
 }
 
 get_tz_offset <- function(posixct, zone) {
