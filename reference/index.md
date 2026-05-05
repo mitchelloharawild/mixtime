@@ -137,13 +137,8 @@ clock in a specific time zone.
 Solar time systems where day boundaries are defined by solar events
 (sunrise, noon, or sunset) at specific geographic locations.
 
-- [`cal_time_solar_sunset`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
-  [`cal_time_solar_sunrise`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
-  [`cal_time_solar_noon`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
-  [`cal_time_solar_midnight`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
-  [`cal_time_solar_dawn`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
-  [`cal_time_solar_dusk`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
-  : Solar time unit classes
+- [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+  : Solar time
 
 ### Lunar Time System
 
