@@ -202,7 +202,15 @@ method(chronon_divmod, list(cal_time_solar$ampm, cal_time_civil$second)) <- func
 ## Time labels
 ### Linear labels for solar days (re-use Gregorian dates)
 S7::method(linear_labels, cal_time_solar$day) <- function(granule, i, ...) {
-  format(.Date(i*granule@n))
+  # The solar day index is keyed to the UTC calendar day in which solar midnight
+  # falls. For locations where solar midnight occurs before 00:00 UTC (e.g. UTC+
+  # timezones), the index is one less than the civil date of the solar day.
+  # Converting via solar noon (midpoint of the day) gives the correct civil date.
+  solar_noon_utc <- approx_utc_from_solar_days(
+    as.double(i * granule@n) + 0.5,
+    granule@lat, granule@lon, granule@alt
+  )
+  format(.Date(floor(solar_noon_utc / 86400)))
 }
 
 ### Cyclical labels for solar time granules
