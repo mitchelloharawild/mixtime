@@ -67,9 +67,25 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   }
 
   path[[1]] <- from
+  prop_from <- S7::prop_names(from)
   path[[length(path)]] <- to
-  # Initialise intermediate classes with 1L
-  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
+  prop_to <- S7::prop_names(to)
+  # Initialise intermediate classes with 1L and adjacent properties
+  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(tu){
+    S7::S7_inherits(tu, S7::S7_class(from))
+    prop_tu <- names(tu@properties)
+    prop <- if (identical(prop_tu, prop_to)) {
+      S7::props(to)
+    } else if (identical(prop_tu, prop_from)) {
+      S7::props(from)
+    } else {
+      list()
+    }
+
+    # Intermediates use unit size 1L
+    prop$n <- 1L
+    do.call(tu, prop)
+  })
 
   # Convert chronons along the path
   not_na <- !is.na(x)
