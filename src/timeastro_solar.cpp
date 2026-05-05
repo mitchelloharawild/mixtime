@@ -246,57 +246,45 @@ static doubles utc_from_solar_days_impl(doubles solar_day_counts,
 // ============================================================================
 // Solar phase boundary helper
 //
-// Computes one phase boundary from pre-built SolarGeometry objects, avoiding
-// redundant solar-position calculations when called in a loop.
+// Returns the UTC Unix timestamp of illumination phase boundary b for the
+// solar day whose geometry spans [midnight_d, midnight_d1).
 //
-// Boundaries (b = 0..8) tile the solar day exactly from midnight to midnight:
-//   0 = midnight(d)          (solar anti-transit, start of solar day d)
-//   1 = astro_dawn_start     (altitude -18 deg, morning)
-//   2 = nautical_dawn_start  (altitude -12 deg, morning)
-//   3 = civil_dawn_start     (altitude -6 deg,  morning)
-//   4 = sunrise              (altitude -0.833 deg, morning; start of Day)
-//   5 = sunset               (altitude -0.833 deg, evening; end of Day)
-//   6 = civil_dusk_end       (altitude -6 deg,  evening)
-//   7 = nautical_dusk_end    (altitude -12 deg, evening)
-//   8 = astro_dusk_end       (altitude -18 deg, evening) = midnight(d+1)
+// Boundaries b = 0..7 are the eight twilight/horizon events, in order:
+//   0 = astro dawn    (alt = -18 deg, morning)
+//   1 = nautical dawn (alt = -12 deg, morning)
+//   2 = civil dawn    (alt =  -6 deg, morning)
+//   3 = sunrise       (alt = -0.833 deg, morning)
+//   4 = sunset        (alt = -0.833 deg, evening)
+//   5 = civil dusk    (alt =  -6 deg, evening)
+//   6 = nautical dusk (alt = -12 deg, evening)
+//   7 = astro dusk    (alt = -18 deg, evening)
 //
-// b = 9 is the solar noon boundary, used only by the ampm functions
-// (approx_solar_ampm_from_utc / approx_utc_from_solar_ampm).  It does not
-// correspond to a phase boundary in the 0-based phase-index scheme.
+// Phase p spans boundary p to boundary (p+1) % 8, wrapping across midnight.
+// Night (phase 7) spans astro dusk to the next day's astro dawn.
+// Returns NaN for polar conditions where the event does not occur.
 //
 // alt_deg: observer elevation correction added to each altitude threshold.
 // ============================================================================
 
 static double solar_phase_boundary_from_geom(const SolarGeometry& today,
                                               const SolarGeometry& next,
-                                              double midnight_d,
-                                              double midnight_d1,
                                               int b, double alt_deg) {
-  if (b == 0) return midnight_d;
-  if (b == 8) return midnight_d1;
-
-  if (b == 9) {
-    // Solar noon: pick whichever UTC day's noon falls in [midnight_d, midnight_d1).
-    double t = today.noon_unix();
-    if (!std::isnan(t) && t < midnight_d) t = next.noon_unix();
-    if (!std::isnan(t) && (t < midnight_d || t >= midnight_d1))
-      t = std::numeric_limits<double>::quiet_NaN();
-    return t;
-  }
-
   static constexpr double thresholds[] = {
-    0.0,     // b=0 unused
-    -18.0,   // b=1 astro dawn start
-    -12.0,   // b=2 nautical dawn start
-    -6.0,    // b=3 civil dawn start
-    -0.833,  // b=4 sunrise
-    -0.833,  // b=5 sunset
-    -6.0,    // b=6 civil dusk end
-    -12.0,   // b=7 nautical dusk end
+    -18.0,    // b=0 astro dawn
+    -12.0,    // b=1 nautical dawn
+    -6.0,     // b=2 civil dawn
+    -0.833,   // b=3 sunrise
+    -0.833,   // b=4 sunset
+    -6.0,     // b=5 civil dusk
+    -12.0,    // b=6 nautical dusk
+    -18.0,    // b=7 astro dusk
   };
 
-  bool   morning = (b <= 4);
+  bool   morning = (b <= 3);
   double alt     = thresholds[b] + alt_deg;
+
+  double midnight_d  = today.midnight_unix();
+  double midnight_d1 = next.midnight_unix();
 
   double t = today.event_unix(alt, morning);
 
@@ -337,23 +325,11 @@ doubles approx_utc_from_solar_days(doubles solar_day_counts,
 
 // Continuous solar phase counts -> UTC Unix timestamps.
 //
-// Each phase count encodes both the solar day and the illumination phase:
-//   phase_count = solar_day_index * 8 + phase_index
+// Each phase count encodes solar_day_index * 8 + phase_index, and the
+// fractional part interpolates linearly within that phase.
 //
-// Phase indices (0-based), tiling midnight-to-midnight within each solar day:
-//   0 = night        (midnight -> astro dawn start, alt < -18 deg)
-//   1 = astro dawn   (-18 -> -12 deg, morning)
-//   2 = nautical dawn(-12 -> -6 deg, morning)
-//   3 = civil dawn   (-6 -> -0.833 deg, morning)
-//   4 = day          (sunrise -> sunset, Sun above horizon; spans noon)
-//   5 = civil dusk   (-0.833 -> -6 deg, evening)
-//   6 = nautical dusk(-6 -> -12 deg, evening)
-//   7 = astro dusk   (-12 -> midnight, alt < -18 deg)
-//
-// Night is a single phase from astro dusk end (=midnight) to astro dawn start.
-// Day is a single phase from sunrise to sunset; noon is not a phase boundary.
-//
-// Fractional phase counts interpolate linearly between adjacent phase boundaries.
+// Phase p spans boundary p to boundary (p+1) % 8.  Phase 7 (night) wraps
+// across solar midnight: t0 = astro dusk of day d, t1 = astro dawn of day d+1.
 [[cpp11::register]]
 doubles approx_solar_phase_utc(doubles phase_counts,
                                 double lat_deg, double lon_deg,
@@ -369,36 +345,36 @@ doubles approx_solar_phase_utc(doubles phase_counts,
     double pf_floor  = std::floor(pc);
     double alpha     = pc - pf_floor; // fractional part [0, 1)
 
-    // Decompose into solar day index and phase index
     double d         = std::floor(pf_floor / 8.0);
     int    phase_idx = (int)std::fmod(pf_floor, 8.0);
-    if (phase_idx < 0) { phase_idx += 8; d -= 1.0; } // handle negative inputs
+    if (phase_idx < 0) { phase_idx += 8; d -= 1.0; }
 
-    // Pre-build geometry for this solar day (shared between t0 and t1 lookups)
     const SolarGeometry& today = cache.get(d);
     if (!today.valid) { result[i] = NA_REAL; continue; }
     const SolarGeometry& next = cache.get(d + 1.0);
     if (!next.valid) { result[i] = NA_REAL; continue; }
-    double midnight_d  = today.midnight_unix();
-    double midnight_d1 = next.midnight_unix();
-
-    double t0 = solar_phase_boundary_from_geom(today, next, midnight_d, midnight_d1,
-                                                phase_idx, alt_deg);
+    // t0: start of this phase (boundary phase_idx of day d)
+    double t0 = solar_phase_boundary_from_geom(today, next, phase_idx, alt_deg);
     if (std::isnan(t0)) { result[i] = NA_REAL; continue; }
 
-    if (alpha == 0.0) {
-      result[i] = t0;
-      continue;
-    }
+    if (alpha == 0.0) { result[i] = t0; continue; }
 
-    double t1 = solar_phase_boundary_from_geom(today, next, midnight_d, midnight_d1,
-                                                phase_idx + 1, alt_deg);
+    // t1: end of this phase.  Phase 7 (night) wraps: t1 = astro dawn of d+1.
+    double t1;
+    if (phase_idx == 7) {
+      const SolarGeometry& next2 = cache.get(d + 2.0);
+      if (!next2.valid) { result[i] = NA_REAL; continue; }
+      t1 = solar_phase_boundary_from_geom(next, next2, 0, alt_deg);
+    } else {
+      t1 = solar_phase_boundary_from_geom(today, next, phase_idx + 1, alt_deg);
+    }
     if (std::isnan(t1)) { result[i] = NA_REAL; continue; }
 
     result[i] = t0 + alpha * (t1 - t0);
   }
   return result;
 }
+
 
 // ============================================================================
 // Exported R functions — solar ampm (noon/midnight-based)
@@ -483,52 +459,40 @@ doubles approx_utc_from_solar_ampm(doubles ampm_counts,
 
 // UTC Unix timestamps -> continuous solar phase counts.
 //
-// The integer part encodes solar_day_index * 8 + phase_index, and the
+// The integer part encodes solar_day_index * 8 + phase_index (0..7), and the
 // fractional part is the proportion of the current illumination phase elapsed.
-// Returns NA for polar day/night conditions where a boundary is undefined.
+// Phase 7 (night) spans astro dusk of day d to astro dawn of day d+1.
+// Returns NA for polar conditions where a boundary is undefined.
 
-// State bundle for the per-solar-day boundary cache used in approx_solar_phase_from_utc.
+// Cached boundaries for one solar day, used by approx_solar_phase_from_utc.
 struct PhaseBoundaryCache {
-  double midnight_d   = 0;
-  double midnight_d1  = 0;
-  double rb[9]        = {};
-  int    rk[9]        = {};
-  int    nr           = 0;
-  bool   valid        = false;
+  double sd          = 0;      // solar day index this cache is valid for
+  double b[8]        = {};     // boundaries 0..7 for day sd
+  double dawn_next   = 0;      // boundary 0 (astro dawn) of day sd+1
+  bool   valid       = false;
 };
 
 // Recompute phase boundaries for solar day `sd` into `out`.
-// Returns false (and leaves out.valid = false) on any geometry failure.
 static bool recompute_phase_boundaries(double sd, double alt_deg,
                                         SolarGeometryCache& cache,
                                         PhaseBoundaryCache& out) {
   out.valid = false;
+  out.sd    = sd;
 
   const SolarGeometry& today = cache.get(sd);
   const SolarGeometry& next  = cache.get(sd + 1.0);
   if (!today.valid || !next.valid) return false;
 
-  out.midnight_d  = today.midnight_unix();
-  out.midnight_d1 = next.midnight_unix();
+  for (int k = 0; k < 8; k++)
+    out.b[k] = solar_phase_boundary_from_geom(today, next, k, alt_deg);
 
-  double b[9];
-  for (int k = 0; k < 9; k++) {
-    b[k] = solar_phase_boundary_from_geom(today, next,
-                                           out.midnight_d, out.midnight_d1,
-                                           k, alt_deg);
-  }
+  // Astro dawn of the next solar day (end of night phase 7).
+  const SolarGeometry& next2 = cache.get(sd + 2.0);
+  if (!next2.valid) return false;
+  out.dawn_next = solar_phase_boundary_from_geom(next, next2, 0, alt_deg);
 
-  if (std::isnan(b[0]) || std::isnan(b[8])) return false;
-
-  // Compact: drop NaN entries, retain original boundary indices in rk[].
-  out.nr = 0;
-  for (int k = 0; k <= 8; k++) {
-    if (!std::isnan(b[k])) {
-      out.rb[out.nr] = b[k];
-      out.rk[out.nr] = k;
-      out.nr++;
-    }
-  }
+  // Require at minimum that astro dawn (b=0) and astro dusk (b=7) are defined.
+  if (std::isnan(out.b[0]) || std::isnan(out.b[7])) return false;
 
   out.valid = true;
   return true;
@@ -549,28 +513,39 @@ doubles approx_solar_phase_from_utc(doubles unix_times,
     double ut = unix_times[i];
     if (std::isnan(ut)) { result[i] = NA_REAL; continue; }
 
-    double sd = solar_day_index_from_utc(ut, cache);
-    if (std::isnan(sd)) { result[i] = NA_REAL; continue; }
+    // All 8 boundaries of solar day d fall within the UTC day floor(ut/86400),
+    // except the post-midnight portion of night (phase 7) which belongs to
+    // solar day d-1 but occurs in UTC day d.  Try both UTC days.
+    double sd = std::floor(ut / 86400.0);
 
-    if (sd != last_sd) {
-      last_sd = sd;
-      recompute_phase_boundaries(sd, alt_deg, cache, pcache);
-    }
-
-    if (!pcache.valid) { result[i] = NA_REAL; continue; }
-
-    // Find the interval [rb[j], rb[j+1]) that contains ut and interpolate.
     result[i] = NA_REAL;
-    for (int j = 0; j < pcache.nr - 1; j++) {
-      double lo   = pcache.rb[j];
-      double hi   = pcache.rb[j + 1];
-      bool   last = (j == pcache.nr - 2);
-      if (ut >= lo && (ut < hi || (last && ut == hi))) {
-        double frac = (hi > lo) ? (ut - lo) / (hi - lo) : 0.0;
-        result[i] = sd * 8.0 + (double)pcache.rk[j] + frac;
-        break;
+
+    for (int attempt = 0; attempt <= 1 && std::isnan(result[i]); attempt++, sd -= 1.0) {
+      if (sd != last_sd) {
+        last_sd = sd;
+        recompute_phase_boundaries(sd, alt_deg, cache, pcache);
       }
+      if (!pcache.valid) continue;
+
+      // Phases 0..6: each spans [b[p], b[p+1]).
+      for (int p = 0; p <= 6; p++) {
+        double lo = pcache.b[p];
+        double hi = pcache.b[p + 1];
+        if (std::isnan(lo) || std::isnan(hi)) continue;
+        if (ut >= lo && ut < hi) {
+          result[i] = sd * 8.0 + p + (ut - lo) / (hi - lo);
+          break;
+        }
+      }
+      if (!std::isnan(result[i])) continue;
+
+      // Phase 7 (night): spans [b[7], dawn_next) straddling solar midnight.
+      double lo7 = pcache.b[7];
+      double hi7 = pcache.dawn_next;
+      if (!std::isnan(lo7) && !std::isnan(hi7) && ut >= lo7 && ut < hi7)
+        result[i] = sd * 8.0 + 7.0 + (ut - lo7) / (hi7 - lo7);
     }
   }
   return result;
 }
+
