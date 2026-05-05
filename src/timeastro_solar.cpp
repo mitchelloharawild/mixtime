@@ -283,22 +283,25 @@ static double solar_phase_boundary_from_geom(const SolarGeometry& today,
   bool   morning = (b <= 3);
   double alt     = thresholds[b] + alt_deg;
 
-  double midnight_d  = today.midnight_unix();
-  double midnight_d1 = next.midnight_unix();
+  // All solar events fall within 12 hours of solar noon, so use a
+  // [noon - 12h, noon + 12h) window rather than a midnight window.
+  // This is correct for any UTC offset without needing midnight_unix().
+  double noon     = today.noon_unix();
+  double window_lo = noon - 12.0 * 3600.0;
+  double window_hi = noon + 12.0 * 3600.0;
 
   double t = today.event_unix(alt, morning);
 
-  // Handle UTC-day wraparound
-  if (!std::isnan(t) && t < midnight_d)
+  // Handle UTC-day wraparound (noon near UTC midnight)
+  if (!std::isnan(t) && t < window_lo)
     t = next.event_unix(alt, morning);
 
   // Clamp out-of-range (polar day/night)
-  if (!std::isnan(t) && (t < midnight_d || t >= midnight_d1))
+  if (!std::isnan(t) && (t < window_lo || t >= window_hi))
     t = std::numeric_limits<double>::quiet_NaN();
 
   return t;
 }
-
 
 
 // ============================================================================
