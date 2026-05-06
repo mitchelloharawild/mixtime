@@ -77,7 +77,8 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   
   # Create glue evaluation environment
   as_tu <- function(x) {
-    if (S7::S7_inherits(x, mt_unit)) x else x(1L)
+    if (!S7::S7_inherits(x, mt_unit)) x <- x(1L)
+    granule_inherit_props(x, chronon)
   }
   env <- rlang::new_environment(
     data = c(

@@ -21,12 +21,11 @@ S7::method(tz_name, S7::new_S3_class("mt_time")) <- function(x) {
   rep_len(tz_name(time_chronon(x)), length(x))
 }
 S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
-
 S7::method(tz_name, S7::class_POSIXt) <- function(x) {
-  rep_len(attr(x, "tzone") %||% "", length(x))
+  rep_len(attr(x, "tzone") %||% NA_character_, length(x))
 }
 S7::method(tz_name, S7::class_any) <- function(x) {
-  rep_len("", length(x))
+  rep_len(NA_character_, length(x))
 }
 
 #' Get timezone offset
@@ -48,7 +47,9 @@ S7::method(tz_offset, S7::class_Date) <- function(x, ...) rep.int(0, length(x))
 method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(tz_offset, numeric())
 method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_chronon(x)), ...) {
   offset_s <- rep(0L, length(x))
-  if(!nzchar(tz) || tz == "UTC") return(offset_s)
+
+  # Naive and UTC time has no time zone offsets
+  if(is.na(tz) || tz == "UTC") return(offset_s)
 
   tu_s <- cal_time_civil$second(1L)
   time_s <- chronon_convert(x, tu_s)
@@ -79,7 +80,7 @@ method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_
 tz_abbreviation <- function(x) {
   tz <- tz_name(x)
   # If tz is empty, then the object has a naive local timezone
-  tz_given <- nzchar(tz)
+  tz_given <- !is.na(tz)
 
   # TODO: Handle timezone changes within chronon using [before]/[after]
   if (any(tz_given)) {

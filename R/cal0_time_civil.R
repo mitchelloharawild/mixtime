@@ -1,3 +1,5 @@
+naive_tz <- naive(NA_character_)
+
 #' @param tz The timezone name for the unit (valid units can be found with `[tzdb::tzdb_names()]`)
 #' 
 #' @rdname mt_unit
@@ -5,16 +7,19 @@
 mt_tz_unit <- new_class(
   "mt_tz_unit", 
   parent = mt_unit,
-  properties = list(tz = new_property(S7::class_character, default = "")),
+  properties = list(tz = new_property(S7::class_character, default = naive_tz)),
+  constructor = function (n = 1L, tz = naive_tz) {
+    S7::new_object(mt_unit(n = n), tz = tz)
+  },
   validator = function(self) {
-    if (nzchar(self@tz)) check_tz_name(self@tz)
+    if (!is.na(self@tz)) check_tz_name(self@tz)
     NULL
   }
 )
 
 # Default formats
 method(chronon_format_attr, mt_tz_unit) <- function(x) {
-  if (nzchar(x@tz) && x@tz != "UTC") " {tz(.time)}" else ""
+  if (!is.na(x@tz) && x@tz != "UTC") " {tz(.time)}" else ""
 }
 
 #' Civil time unit classes

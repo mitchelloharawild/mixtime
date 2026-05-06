@@ -9,19 +9,19 @@
 \usage{
 mt_unit(n = 1L)
 
-mt_loc_unit(n = 1L, lat = 0, lon = 0, alt = 0)
+mt_loc_unit(n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0))
 
-mt_tz_unit(n = 1L, tz = "")
+mt_tz_unit(n = 1L, tz = naive_tz)
 }
 \arguments{
 \item{n}{The step size of time granule. For example, \code{n = 2L} is 2 time units -
 for \code{cal_isoweek$week(2L)} that would be 2 weeks (a fortnight).}
 
 \item{lat}{Numeric. Latitude in decimal degrees. Range: -90 to 90.
-Default: 0 (equator).}
+Default: naive location (astronomical calculations require \code{lat}).}
 
 \item{lon}{Numeric. Longitude in decimal degrees. Range: -180 to 180.
-Default: 0 (Prime Meridian).}
+Default: naive location (astronomical calculations require \code{lon}).}
 
 \item{alt}{Numeric. Altitude in meters above sea level.
 Default: 0 (sea level).}

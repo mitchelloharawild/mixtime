@@ -34,35 +34,36 @@ S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
-  cal_gregorian$day(1L, tz = "")
+  # Date is a 1-day naive chronon
+  cal_gregorian$day(1L)
 }
 
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
-  cal_gregorian$second(1L, tz = attr(x, "tzone") %||% "")
+  cal_gregorian$second(1L, tz = attr(x, "tzone") %||% naive_tz)
 }
 
 # {tsibble} time classes
 S7::method(time_chronon, S7::new_S3_class("yearquarter")) <- function(x) {
-  cal_gregorian$quarter(1L, tz = "")
+  cal_gregorian$quarter(1L)
 }
 S7::method(time_chronon, S7::new_S3_class("yearmonth")) <- function(x) {
-  cal_gregorian$month(1L, tz = "")
+  cal_gregorian$month(1L)
 }
 S7::method(time_chronon, S7::new_S3_class("yearweek")) <- function(x) {
-  cal_isoweek$week(1L, tz = "")
+  cal_isoweek$week(1L)
 }
 
 # {zoo} time classes
 S7::method(time_chronon, S7::new_S3_class("yearqtr")) <- function(x) {
-  cal_isoweek$week(1L, tz = "")
+  cal_isoweek$week(1L)
 }
 S7::method(time_chronon, S7::new_S3_class("yearmon")) <- function(x) {
-  cal_isoweek$week(1L, tz = "")
+  cal_isoweek$week(1L)
 }
 
 # {hms} time class
 S7::method(time_chronon, S7::new_S3_class("hms")) <- function(x) {
-  cal_gregorian$second(1L, tz = "")
+  cal_gregorian$second(1L)
 }
 
 # {lubridate::Period} time class

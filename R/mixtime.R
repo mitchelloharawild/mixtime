@@ -65,19 +65,20 @@ new_mixtime <- function(x = new_time()) {
 #' @export
 mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data), discrete = TRUE) {
   # Add default tz if not given in chronon or cycle
-  if (S7::prop_exists(chronon, "tz") && !nzchar(chronon@tz)){
+  if (S7::prop_exists(chronon, "tz") && is.na(chronon@tz)){
     # TODO - handle case where data has multiple timezones
     # Requires splitting up data into groups with the same timezone
-    chronon@tz <- tz_name(data[1L])
+    tz <- tz_name(data[1L])
+    chronon@tz <- if (identical(tz, "")) naive_tz else tz
   }
-  if (!is.null(cycle) && S7::prop_exists(cycle, "tz") && !nzchar(cycle@tz)){
+  if (!is.null(cycle) && S7::prop_exists(cycle, "tz") && is.na(cycle@tz)){
     cycle@tz <- chronon@tz
   }
 
   # Parse text data
   if (is.character(data)) {
     tz <- tz_name(chronon)
-    data <- as.POSIXct(data, tz = if(nzchar(tz)) tz else "UTC")
+    data <- as.POSIXct(data, tz = if(is.na(tz)) "UTC" else tz)
   }
   
   # Apply origin offset for numeric data

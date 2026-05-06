@@ -1,5 +1,8 @@
 check_tz_name <- function(zone) {
-  if (identical(zone, "")) return(invisible(TRUE))
+  # Naive time zone
+  if (is.na(zone)) return(invisible(TRUE))
+  
+  # Specified time zone
   if (!zone %in% tzdb::tzdb_names()) {
     cli::cli_abort(
       c(

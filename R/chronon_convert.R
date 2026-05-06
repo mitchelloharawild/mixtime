@@ -36,13 +36,14 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   }
 
   # Add default tz if not given in `to` chronon
-  if (S7::prop_exists(to, "tz") && !nzchar(to@tz)){
-    to@tz <- if (S7::prop_exists(from, "tz")) from@tz else ""
+  if (S7::prop_exists(to, "tz") && is.na(to@tz)){
+    to@tz <- if (S7::prop_exists(from, "tz")) from@tz else NA_character_
   }
   if (is.null(tz)) {
     tz <- tz_name(to)
   }
-  if (identical(tz, "")) {
+  if (is.na(tz)) {
+    # UTC is a suitable proxy for naive time zones
     tz <- "UTC"
   }
   
