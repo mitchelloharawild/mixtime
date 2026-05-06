@@ -39,5 +39,5 @@ time_cycle(Sys.Date())
 time_cycle(month_of_year(Sys.Date()))
 #> <mixtime::tu_year>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 ```

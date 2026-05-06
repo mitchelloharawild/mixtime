@@ -28,7 +28,7 @@ A character vector representing the timezone of each time point (e.g.,
 
 ``` r
 tz_name(Sys.time())
-#> [1] ""
+#> [1] NA
 tz_name(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 #> [1] "America/New_York"
 ```

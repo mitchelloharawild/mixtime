@@ -36,23 +36,23 @@ A time granule object representing the chronon (e.g.,
 time_chronon(Sys.Date())
 #> <mixtime::tu_day>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 
 # The chronon of a POSIXct object is 1 second
 time_chronon(Sys.time())
 #> <mixtime::tu_second>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 
 # The chronon of a continuous time year and month is 1 month
 time_chronon(yearmonth(Sys.Date()))
 #> <mixtime::tu_month>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 
 # The common chronon of a mixed time object is the finest chronon
 time_chronon(c(yearmonth(Sys.Date()), Sys.Date()))
 #> <mixtime::tu_day>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 ```

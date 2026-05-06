@@ -165,7 +165,7 @@ Unit constructors are now accessible via `$`:
 cal_symmetry454$year(1L)
 #> <tu_symmetry454_year>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 cal_symmetry454$month(1L, tz = "UTC")
 #> <tu_symmetry454_month>
 #>  @ n : int 1

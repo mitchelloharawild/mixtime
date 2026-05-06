@@ -70,5 +70,5 @@ yd(Sys.Date())
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-05-06 08h
+#> [1] 2026-05-06 13h
 ```

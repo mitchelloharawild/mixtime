@@ -88,5 +88,8 @@ alternative reference location.
 t <- linear_time(Sys.Date(), cal_time_solar_sunset$day(1L, lat = -37.8136, lon = 144.9631))
 #> Error: object 'cal_time_solar_sunset' not found
 datetime(t, tz = "Australia/Melbourne")
-#> Error: Can't find method for `time_chronon(<closure>)`.
+#> Error in S7_graph_dispatch(unique(c(method_signatures(chronon_divmod),     method_signatures(chronon_cardinality))), from, to): There is no path of registered calendar arithmetic methods between the
+#> classes mixtime::mt_unit and mixtime::tu_second.
+#> ℹ Have you registered calendar arithmetic S7 methods connecting these classes?
+#> → See the `vignette(mixtime::extending-mixtime)` vignette for more details.
 ```

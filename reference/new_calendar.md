@@ -70,9 +70,9 @@ cal_simple <- new_calendar(
 cal_simple$year(1L)
 #> <tu_year>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 cal_simple$month(1L)
 #> <tu_month>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 ```

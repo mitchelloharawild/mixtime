@@ -9,9 +9,14 @@ S7 using: `S7::new_class("tu_***", parent = mt_tz_unit)`
 ``` r
 mt_unit(n = 1L)
 
-mt_loc_unit(n = 1L, lat = 0, lon = 0, alt = 0)
+mt_loc_unit(
+  n = 1L,
+  lat = structure(NA_real_, class = "mt_naive"),
+  lon = structure(NA_real_, class = "mt_naive"),
+  alt = structure(0, class = "mt_naive")
+)
 
-mt_tz_unit(n = 1L, tz = "")
+mt_tz_unit(n = 1L, tz = structure(NA_character_, class = "mt_naive"))
 ```
 
 ## Arguments
@@ -23,13 +28,13 @@ mt_tz_unit(n = 1L, tz = "")
 
 - lat:
 
-  Numeric. Latitude in decimal degrees. Range: -90 to 90. Default: 0
-  (equator).
+  Numeric. Latitude in decimal degrees. Range: -90 to 90. Default: naive
+  location (astronomical calculations require `lat`).
 
 - lon:
 
-  Numeric. Longitude in decimal degrees. Range: -180 to 180. Default: 0
-  (Prime Meridian).
+  Numeric. Longitude in decimal degrees. Range: -180 to 180. Default:
+  naive location (astronomical calculations require `lon`).
 
 - alt:
 
