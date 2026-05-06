@@ -100,8 +100,8 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
         lat <- chronon@lat
         lon <- chronon@lon
         alt <- chronon@alt
-        lat_str <- sprintf("%.4f%s", abs(lat), if (lat >= 0) "N" else "S")
-        lon_str <- sprintf("%.4f%s", abs(lon), if (lon >= 0) "E" else "W")
+        lat_str <- sprintf("%.2f%s", abs(lat), if (lat >= 0) "N" else "S")
+        lon_str <- sprintf("%.2f%s", abs(lon), if (lon >= 0) "E" else "W")
         if (alt != 0) {
           paste0(lat_str, " ", lon_str, " ", sprintf("%.0fm", alt))
         } else {
