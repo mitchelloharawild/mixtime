@@ -209,8 +209,13 @@ static doubles solar_days_from_utc_impl(doubles unix_times,
     SolarDayBounds bounds(day_utc, cache);
     if (!bounds.valid) { result[i] = NA_REAL; continue; }
 
-    result[i] = day_utc + (ut - bounds.midnight_d)
-                        / (bounds.midnight_d1 - bounds.midnight_d);
+    // Align the integer part with the local calendar date: round the solar
+    // midnight to the nearest UTC day.  For eastern locations (e.g. Melbourne)
+    // midnight can fall >12 h into a UTC day, making the rounded day one
+    // higher than the floor'd UTC day — giving the correct local date.
+    double day_display = std::round(bounds.midnight_d / 86400.0);
+    result[i] = day_display + (ut - bounds.midnight_d)
+                            / (bounds.midnight_d1 - bounds.midnight_d);
   }
   return result;
 }
@@ -229,7 +234,20 @@ static doubles utc_from_solar_days_impl(doubles solar_day_counts,
 
     double complete = std::floor(count);
     double fraction = count - complete;
-    double day_utc  = complete;
+
+    // The integer part is now a rounded display day (see solar_days_from_utc_impl).
+    // Recover the UTC cache key: find d in {complete-1, complete, complete+1}
+    // such that round(midnight(d) / 86400) == complete.
+    double day_utc = std::numeric_limits<double>::quiet_NaN();
+    for (double d : {complete - 1.0, complete, complete + 1.0}) {
+      const SolarGeometry& sg = cache.get(d);
+      if (!sg.valid) continue;
+      if (std::round(sg.midnight_unix() / 86400.0) == complete) {
+        day_utc = d;
+        break;
+      }
+    }
+    if (std::isnan(day_utc)) { result[i] = NA_REAL; continue; }
 
     const SolarGeometry& today = cache.get(day_utc);
     const SolarGeometry& next  = cache.get(day_utc + 1.0);
