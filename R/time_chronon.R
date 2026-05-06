@@ -33,6 +33,8 @@ S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {
   attr(x, "chronon")
 }
 
+S7::method(time_chronon, class_any) <- function(x) mt_unit()
+
 S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
   # Date is a 1-day naive chronon
   cal_gregorian$day(1L)
