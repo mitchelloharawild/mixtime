@@ -52,12 +52,13 @@ time_format_default <- function(x) {
   } else {
     chronon_format_cyclical(chronon, cycle)
   }
-
+  
+  # Add fractional
+  if (is.double(x)) fmt <- paste(fmt, "{frac(.time)}")
+  
   # Add format attributes (e.g. tz or location)
   fmt <- paste0(fmt, chronon_format_attr(chronon))
 
-  # Add fractional
-  if (is.double(x)) fmt <- paste(fmt, "{frac(.time)}")
   fmt
 }
 
