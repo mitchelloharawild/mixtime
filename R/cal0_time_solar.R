@@ -85,7 +85,7 @@ method(time_unit_abbr, cal_time_solar$minute) <- function(x) "m"
 method(time_unit_full, cal_time_solar$second) <- function(x) "second"
 method(time_unit_abbr, cal_time_solar$second) <- function(x) "s"
 method(time_unit_full, cal_time_solar$degree) <- function(x) "degree"
-method(time_unit_abbr, cal_time_solar$degree) <- function(x) "°"
+method(time_unit_abbr, cal_time_solar$degree) <- function(x) "\u00b0"
 method(time_unit_full, cal_time_solar$arcminute) <- function(x) "arcminute"
 method(time_unit_abbr, cal_time_solar$arcminute) <- function(x) "'"
 method(time_unit_full, cal_time_solar$arcsecond) <- function(x) "arcsecond"
@@ -99,9 +99,9 @@ method(chronon_format_linear, list(cal_time_solar$ampm, class_any)) <- function(
 method(chronon_format_linear, list(cal_time_solar$hour, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour,day)}h")
 method(chronon_format_linear, list(cal_time_solar$minute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour,day)}:{cyc(minute,hour)}")
 method(chronon_format_linear, list(cal_time_solar$second, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour,day)}:{cyc(minute,hour)}:{cyc(second,minute)}")
-method(chronon_format_linear, list(cal_time_solar$degree, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}°")
-method(chronon_format_linear, list(cal_time_solar$arcminute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}°{cyc(arcminute,degree)}'")
-method(chronon_format_linear, list(cal_time_solar$arcsecond, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}°{cyc(arcminute,degree)}'{cyc(arcsecond,arcminute)}\"")
+method(chronon_format_linear, list(cal_time_solar$degree, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0")
+method(chronon_format_linear, list(cal_time_solar$arcminute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'")
+method(chronon_format_linear, list(cal_time_solar$arcsecond, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'{cyc(arcsecond,arcminute)}\"")
 method(chronon_format_linear, list(cal_time_solar$illumination, class_any)) <- function(x, cal) "{lin(day)} {cyc(illumination,day)}"
 
 # 8 illumination phases per solar day (night, 3 x dawn, day, 3 x dusk)
