@@ -29,3 +29,8 @@ mt_loc_unit <- S7::new_class(
     NULL
   }
 )
+
+# Default formats
+method(chronon_format_attr, mt_loc_unit) <- function(x) {
+  if (!is.naive(x@lat) && !is.naive(x@lon)) " [{loc(.time)}]" else ""
+}
