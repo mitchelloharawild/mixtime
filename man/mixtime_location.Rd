@@ -27,7 +27,7 @@ Generic function to extract the location from objects that have location informa
 \examples{
 t <- linear_time(
   1:3, 
-  cal_time_solar_sunset$day(1L, lat = -37.8136, lon = 144.9631)
+  cal_time_solar$day(1L, lat = -37.8136, lon = 144.9631)
 )
 
 loc_longitude(t)

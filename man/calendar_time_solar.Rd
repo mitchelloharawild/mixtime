@@ -65,9 +65,8 @@ supported, it is recommended to use an alternative reference location.
 }
 }
 \examples{
-# Find the time of sunset in the Gregorian calendar
-t <- linear_time(Sys.Date(), cal_time_solar_sunset$day(1L, lat = -37.8136, lon = 144.9631))
-datetime(t, tz = "Australia/Melbourne")
+# Find the current solar time in Melbourne
+datetime(Sys.time(), calendar = cal_time_solar, lat = -37.8136, lon = 144.9631)
 
 }
 \seealso{
