@@ -73,20 +73,6 @@ noon) and <code>illumination</code> (dawn, sunrise, sunset, dusk) units.</p>
 <p>The <code>ampm</code> unit divides each solar day into two halves between solar noon and
 solar midnight:</p><table class="table table"><tr><td>Half</td><td>Period</td><td>Description</td></tr><tr><td>AM</td><td>Solar midnight to noon</td><td>Morning half; before solar transit</td></tr><tr><td>PM</td><td>Solar noon to midnight</td><td>Afternoon half; after solar transit</td></tr></table></div>
 
-<div class="section">
-<h3 id="solar-clock-units">Solar clock units<a class="anchor" aria-label="anchor" href="#solar-clock-units"></a></h3>
-
-
-<p>Phases describe the illumination state of the sky and correspond to standard
-twilight definitions used in astronomy and navigation. Each phase is bounded
-by a pair of solar altitude thresholds:</p><table class="table table"><tr><td>Phase</td><td>Solar altitude range</td><td>Description</td></tr><tr><td>Night</td><td>&lt; -18°</td><td>Sky fully dark; from last dusk to first dawn (spans noon)</td></tr><tr><td>Astronomical dawn</td><td>-18° to -12°</td><td>Astronomical twilight before sunrise; faint objects obscured</td></tr><tr><td>Nautical dawn</td><td>-12° to -6°</td><td>Nautical twilight before sunrise; horizon visible at sea</td></tr><tr><td>Civil dawn</td><td>-6° to -0.833°</td><td>Civil twilight before sunrise; sky brightening in the east</td></tr><tr><td>Day</td><td>&gt; -0.833°</td><td>Sun above the horizon; spans solar noon</td></tr><tr><td>Civil dusk</td><td>-0.833° to -6°</td><td>Civil twilight after sunset; sky fading in the west</td></tr><tr><td>Nautical dusk</td><td>-6° to -12°</td><td>Nautical twilight after sunset; horizon visible at sea</td></tr><tr><td>Astronomical dusk</td><td>-12° to -18°</td><td>Astronomical twilight after sunset; faint objects obscured</td></tr></table><p>The -0.833° threshold for sunrise and sunset accounts for the mean angular
-radius of the solar disc (0.267°) plus the standard atmospheric refraction
-at the horizon (0.566°). Noon and midnight are derived from the equation of
-time rather than a fixed altitude. Locations that experience polar day or
-polar night (civil days where sunrise does not occur) are not currently
-supported, it is recommended to use an alternative reference location.</p>
-</div>
-
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -98,7 +84,7 @@ supported, it is recommended to use an alternative reference location.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Find the current solar time in Melbourne</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="linear_time_helpers.html">datetime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_time_solar</span>, lat <span class="op">=</span> <span class="op">-</span><span class="fl">37.8136</span>, lon <span class="op">=</span> <span class="fl">144.9631</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 01:41:41 [37.81S 144.96E]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 02:13:44 [37.81S 144.96E]</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
