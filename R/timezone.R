@@ -46,20 +46,25 @@ S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(time_chronon
 S7::method(tz_offset, S7::class_Date) <- function(x, ...) rep.int(0, length(x))
 method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(tz_offset, numeric())
 method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(time_chronon(x)), ...) {
+  tz_offset_impl(as.numeric(x), time_chronon(x), tz)
+}
+
+tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
   offset_s <- rep(0L, length(x))
 
   # Naive and UTC time has no time zone offsets
   if(is.na(tz) || tz == "UTC") return(offset_s)
 
   tu_s <- cal_time_civil$second(1L)
-  time_s <- chronon_convert(x, tu_s)
+  time_s <- chronon_convert_impl(x, chronon, tu_s, FALSE, "UTC")
   offset_s <- get_tz_offset(as.double(time_s), tz)
   nz_offset <- offset_s != 0
   if(!any(nz_offset)) return(rep(0, length(x)))
   offset_s[nz_offset] <- offset_s[nz_offset]*chronon_cardinality(
-    time_chronon(x), tu_s, time_s[nz_offset]
+    chronon, tu_s, time_s[nz_offset]
   )
   offset_s
+
 }
 
 #' Get timezone abbreviation

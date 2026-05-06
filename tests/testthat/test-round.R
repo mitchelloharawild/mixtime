@@ -141,9 +141,9 @@ test_that("time_floor/time_ceiling/time_round handle vectorised hourly linear_ti
   res_ceiling <- time_ceiling(h_vec, granule = cal_gregorian$day(1L))
   res_round   <- time_round(h_vec,   granule = cal_gregorian$day(1L))
 
-  expect_equal(res_floor,   linear_time(rep(440557, 25), melb_hr))
-  expect_equal(res_ceiling,   linear_time(rep(440582, 25), melb_hr))
-  expect_equal(res_round,   linear_time(c(rep(440557, 13), rep(440582, 12)), melb_hr))
+  expect_equal(res_floor,   linear_time(rep(440557L, 25), melb_hr))
+  expect_equal(res_ceiling,   linear_time(rep(440582L, 25), melb_hr))
+  expect_equal(res_round,   linear_time(c(rep(440557L, 13), rep(440582L, 12)), melb_hr))
 })
 
 test_that("time_round/time_floor/time_ceiling work for POSIXct with tz preservation", {
@@ -231,3 +231,136 @@ test_that("time_floor/time_ceiling work for Date", {
   expect_s3_class(res_floor, "Date")
 })
 
+# ...existing code...
+
+# ── datetime: civil (Gregorian + timezone) ────────────────────────────────────
+
+test_that("time_floor/time_ceiling/time_round work for civil datetime rounded to day", {
+  # 2020-06-21 10:30:00 UTC = 2020-06-21 20:30:00 AEST (UTC+10, no DST)
+  t_utc <- as.POSIXct("2020-06-21 10:30:00", tz = "UTC")
+  now_civ <- datetime(t_utc, tz = "Australia/Melbourne")
+
+  fl_exp <- datetime(as.POSIXct("2020-06-21 00:00:00", tz = "Australia/Melbourne"),
+                     tz = "Australia/Melbourne")
+  cl_exp <- datetime(as.POSIXct("2020-06-22 00:00:00", tz = "Australia/Melbourne"),
+                     tz = "Australia/Melbourne")
+
+  expect_equal(time_floor(now_civ,   granule = cal_gregorian$day(1L)), fl_exp)
+  expect_equal(time_ceiling(now_civ, granule = cal_gregorian$day(1L)), cl_exp)
+  # 20:30 is past 12:00 midpoint → rounds up to next day
+  expect_equal(time_round(now_civ,   granule = cal_gregorian$day(1L)), cl_exp)
+})
+
+test_that("time_floor/time_ceiling/time_round work for civil datetime rounded to hour", {
+  # 2020-06-21 20:30:00 AEST → floor to 20:00, ceiling to 21:00, round to 20:00 (:30 = half)
+  t_utc  <- as.POSIXct("2020-06-21 10:30:00", tz = "UTC")
+  now_civ <- datetime(t_utc, tz = "Australia/Melbourne")
+
+  fl_exp <- datetime(as.POSIXct("2020-06-21 20:00:00", tz = "Australia/Melbourne"),
+                     tz = "Australia/Melbourne")
+  cl_exp <- datetime(as.POSIXct("2020-06-21 21:00:00", tz = "Australia/Melbourne"),
+                     tz = "Australia/Melbourne")
+
+  expect_equal(time_floor(now_civ,   granule = cal_gregorian$hour(1L)), fl_exp)
+  expect_equal(time_ceiling(now_civ, granule = cal_gregorian$hour(1L)), cl_exp)
+  # :30 is at the midpoint — convention rounds to even (floor) → 20:00
+  expect_equal(time_round(now_civ,   granule = cal_gregorian$hour(1L)), fl_exp)
+})
+
+test_that("time_floor/time_ceiling/time_round work for civil datetime early in the day", {
+  # 2020-06-22 02:15:00 AEST → rounds DOWN to 2020-06-22 00:00 (< 12h into day)
+  t_utc   <- as.POSIXct("2020-06-21 16:15:00", tz = "UTC")
+  now_early <- datetime(t_utc, tz = "Australia/Melbourne")
+
+  fl_exp <- datetime(as.POSIXct("2020-06-22 00:00:00", tz = "Australia/Melbourne"),
+                     tz = "Australia/Melbourne")
+  cl_exp <- datetime(as.POSIXct("2020-06-23 00:00:00", tz = "Australia/Melbourne"),
+                     tz = "Australia/Melbourne")
+
+  expect_equal(time_floor(now_early,   granule = cal_gregorian$day(1L)), fl_exp)
+  expect_equal(time_ceiling(now_early, granule = cal_gregorian$day(1L)), cl_exp)
+  # 02:15 is less than 12h past midnight → rounds DOWN
+  expect_equal(time_round(now_early,   granule = cal_gregorian$day(1L)), fl_exp)
+})
+
+# ── datetime: solar (apparent-solar-day calendar) ─────────────────────────────
+
+test_that("time_floor/time_ceiling/time_round work for solar datetime rounded to solar day", {
+  # 2020-06-21 10:30:00 UTC ≈ 2020-06-21 20:07:58 solar Melbourne
+  # (solar midnight for that day ≈ 2020-06-20 14:22 UTC)
+  lat <- -37.8136; lon <- 144.9631
+  t_utc   <- as.POSIXct("2020-06-21 10:30:00", tz = "UTC")
+  now_sol <- datetime(t_utc, calendar = cal_time_solar, lat = lat, lon = lon)
+
+  fl_exp  <- time_floor(now_sol,   cal_time_solar$day(1L))  # 2020-06-21 solar midnight
+  cl_exp  <- time_ceiling(now_sol, cal_time_solar$day(1L))  # 2020-06-22 solar midnight
+
+  expect_equal(time_floor(now_sol,   granule = cal_time_solar$day(1L)), fl_exp)
+  expect_equal(time_ceiling(now_sol, granule = cal_time_solar$day(1L)), cl_exp)
+  # 20:07 solar is past the 12:00 midpoint → rounds up to next solar day
+  expect_equal(time_round(now_sol,   granule = cal_time_solar$day(1L)), cl_exp)
+})
+
+test_that("time_floor/time_ceiling/time_round work for solar datetime rounded to solar hour", {
+  # 2020-06-21 20:07:58 solar → floor 20:00, ceiling 21:00, round 20:00 (7 min < 30)
+  lat <- -37.8136; lon <- 144.9631
+  t_utc   <- as.POSIXct("2020-06-21 10:30:00", tz = "UTC")
+  now_sol <- datetime(t_utc, calendar = cal_time_solar, lat = lat, lon = lon)
+
+  fl_exp <- time_floor(now_sol,   cal_time_solar$hour(1L))  # 20:00 solar
+  cl_exp <- time_ceiling(now_sol, cal_time_solar$hour(1L))  # 21:00 solar
+
+  expect_equal(time_floor(now_sol,   granule = cal_time_solar$hour(1L)), fl_exp)
+  expect_equal(time_ceiling(now_sol, granule = cal_time_solar$hour(1L)), cl_exp)
+  # :07 is well before the half-hour midpoint → rounds DOWN to 20:00
+  expect_equal(time_round(now_sol,   granule = cal_time_solar$hour(1L)), fl_exp)
+})
+
+test_that("time_floor/time_ceiling/time_round work for solar datetime early in solar day", {
+  # ~00:38 solar time (40 min after solar midnight) → rounds DOWN to same solar day
+  lat <- -37.8136; lon <- 144.9631
+  t_utc      <- as.POSIXct("2020-06-20 15:00:00", tz = "UTC")
+  now_sol_early <- datetime(t_utc, calendar = cal_time_solar, lat = lat, lon = lon)
+
+  fl_exp <- time_floor(now_sol_early,   cal_time_solar$day(1L))
+  cl_exp <- time_ceiling(now_sol_early, cal_time_solar$day(1L))
+
+  expect_equal(time_floor(now_sol_early,   granule = cal_time_solar$day(1L)), fl_exp)
+  expect_equal(time_ceiling(now_sol_early, granule = cal_time_solar$day(1L)), cl_exp)
+  # 00:38 is well before the 12h midpoint → round goes DOWN to same solar midnight
+  expect_equal(time_round(now_sol_early,   granule = cal_time_solar$day(1L)), fl_exp)
+})
+
+# ── Cross-calendar rounding ───────────────────────────────────────────────────
+
+test_that("civil datetime can be rounded using a solar day granule", {
+  # Floor a civil (AEST) datetime to the solar day boundary for Melbourne.
+  # The solar midnight is slightly offset from civil midnight.
+  lat <- -37.8136; lon <- 144.9631
+  t_utc   <- as.POSIXct("2020-06-21 10:30:00", tz = "UTC")
+  now_civ <- datetime(t_utc, tz = "Australia/Melbourne")
+
+  fl_exp <- time_floor(now_civ,   cal_time_solar$day(1L, lat = lat, lon = lon))
+  cl_exp <- time_ceiling(now_civ, cal_time_solar$day(1L, lat = lat, lon = lon))
+
+  expect_equal(time_floor(now_civ,   granule = cal_time_solar$day(1L, lat = lat, lon = lon)), fl_exp)
+  expect_equal(time_ceiling(now_civ, granule = cal_time_solar$day(1L, lat = lat, lon = lon)), cl_exp)
+  # 20:30 AEST is past the midpoint of the solar day → rounds up to next solar midnight
+  expect_equal(time_round(now_civ, granule = cal_time_solar$day(1L, lat = lat, lon = lon)), cl_exp)
+})
+
+test_that("solar datetime can be rounded using a civil day granule", {
+  # Floor a solar datetime to the civil midnight boundary (Melbourne tz).
+  # Result is expressed in solar time but snaps to civil midnight.
+  lat <- -37.8136; lon <- 144.9631
+  t_utc   <- as.POSIXct("2020-06-21 10:30:00", tz = "UTC")
+  now_sol <- datetime(t_utc, calendar = cal_time_solar, lat = lat, lon = lon)
+
+  fl_exp <- time_floor(now_sol,   cal_gregorian$day(1L, tz = "Australia/Melbourne"))
+  cl_exp <- time_ceiling(now_sol, cal_gregorian$day(1L, tz = "Australia/Melbourne"))
+
+  expect_equal(time_floor(now_sol,   granule = cal_gregorian$day(1L, tz = "Australia/Melbourne")), fl_exp)
+  expect_equal(time_ceiling(now_sol, granule = cal_gregorian$day(1L, tz = "Australia/Melbourne")), cl_exp)
+  # 20:07 solar is past the civil-midnight midpoint (expressed in solar) → rounds up
+  expect_equal(time_round(now_sol, granule = cal_gregorian$day(1L, tz = "Australia/Melbourne")), cl_exp)
+})

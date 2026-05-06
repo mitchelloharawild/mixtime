@@ -40,19 +40,31 @@ method(time_round, S7::class_any) <- function(x, granule, ...) {
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
-  chronon <- time_chronon(granule)
-  chronon@n <- chronon@n * as.numeric(granule)
-  res <- chronon_divmod(
-    from = chronon,
-    to = time_chronon(x),
-    x = round(chronon_convert(x + tz_offset(x), chronon))
-  )$div
+  by <- time_chronon(granule)
+  by@n <- by@n * as.numeric(granule)
   
-  attributes(res) <- attributes(x)
-  res <- res - (tzo <- tz_offset(res))
+  # Inherit non-naive attributes from chronon
+  by <- granule_inherit_props(by, chronon <- time_chronon(x))
+
+  # Convert time into the granule chronon
+  res <- chronon_convert(x, by)
+  # Apply timezone offsets (UTC -> tz)
+  res <- res + tz_offset_impl(res, by)
+  # Round time
+  res <- round(res)
+  
+  # Undo timezone offsets (tz -> UTC)
   # Second pass of tz offset for DST changes within the day
   # TODO - ideally this is more directly handled in chronon_convert or similar
-  res <- res - (tz_offset(res) - tzo)
+  res <- res - tz_offset_impl(res - tz_offset_impl(res, by), by)
+
+  # Convert back to original chronon (includes tz -> UTC)
+  res <- chronon_convert_impl(
+    res,
+    from = by, to = chronon,
+    discrete = FALSE,
+    tz = "UTC"
+  )
 
   if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
@@ -71,20 +83,31 @@ method(time_ceiling, S7::class_any) <- function(x, granule, ...) {
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
-  chronon <- time_chronon(granule)
-  chronon@n <- chronon@n * as.numeric(granule)
-  res <- chronon_divmod(
-    from = chronon,
-    to = time_chronon(x),
-    # Special handling of ceiling to round .0 up
-    x = ceiling(floor(chronon_convert(x + tz_offset(x), chronon)) + 0.5)
-  )$div
+  by <- time_chronon(granule)
+  by@n <- by@n * as.numeric(granule)
+  
+  # Inherit non-naive attributes from chronon
+  by <- granule_inherit_props(by, chronon <- time_chronon(x))
 
-  attributes(res) <- attributes(x)
-  res <- res - (tzo <- tz_offset(res))
+  # Convert time into the granule chronon
+  res <- chronon_convert(x, by)
+  # Apply timezone offsets (UTC -> tz)
+  res <- res + tz_offset_impl(res, by)
+  # Ceiling time (floor + 0.5 to round .0 up)
+  res <- ceiling(floor(res) + 0.5)
+  
+  # Undo timezone offsets (tz -> UTC)
   # Second pass of tz offset for DST changes within the day
   # TODO - ideally this is more directly handled in chronon_convert or similar
-  res <- res - (tz_offset(res) - tzo)
+  res <- res - tz_offset_impl(res - tz_offset_impl(res, by), by)
+
+  # Convert back to original chronon (includes tz -> UTC)
+  res <- chronon_convert_impl(
+    res,
+    from = by, to = chronon,
+    discrete = FALSE,
+    tz = "UTC"
+  )
 
   if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)
@@ -103,25 +126,31 @@ method(time_floor, S7::class_any) <- function(x, granule, ...) {
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
-  chronon <- time_chronon(granule)
-  chronon@n <- chronon@n * as.numeric(granule)
+  by <- time_chronon(granule)
+  by@n <- by@n * as.numeric(granule)
+  
+  # Inherit non-naive attributes from chronon
+  by <- granule_inherit_props(by, chronon <- time_chronon(x))
 
-  res <- chronon_divmod(
-    from = chronon,
-    to = time_chronon(x),
-    x = floor(chronon_convert(x + tz_offset(x), chronon))
-  )$div
-  # res <- chronon_convert_impl(
-  #   floor(chronon_convert(x, chronon)),
-  #   from = chronon, to = time_chronon(x),
-  #   discrete = is.integer(x)
-  # )
-
-  attributes(res) <- attributes(x)
-  res <- res - (tzo <- tz_offset(res))
+  # Convert time into the granule chronon
+  res <- chronon_convert(x, by)
+  # Apply timezone offsets (UTC -> tz)
+  res <- res + tz_offset_impl(res, by)
+  # Floor time
+  res <- floor(res)
+  
+  # Undo timezone offsets (tz -> UTC)
   # Second pass of tz offset for DST changes within the day
   # TODO - ideally this is more directly handled in chronon_convert or similar
-  res <- res - (tz_offset(res) - tzo)
+  res <- res - tz_offset_impl(res - tz_offset_impl(res, by), by)
+
+  # Convert back to original chronon (includes tz -> UTC)
+  res <- chronon_convert_impl(
+    res,
+    from = by, to = chronon,
+    discrete = FALSE,
+    tz = "UTC"
+  )
 
   if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)

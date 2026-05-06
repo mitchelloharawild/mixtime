@@ -573,18 +573,19 @@ test_that("Night phase spans midnight correctly", {
 })
 
 # ---------------------------------------------------------------------------
-# Round-trip: UTC → phase count → UTC
+# Round-trip: UTC → illumination mixtime → UTC
 #
 # Take a known UTC POSIXct at roughly the midpoint of each phase, convert to
-# a continuous phase count via approx_solar_phase_from_utc, then back to UTC
-# via approx_solar_phase_utc, and verify the result matches the input within
-# tolerance. Tests Melbourne date1 and Munich date1 across all 8 phases.
+# a continuous illumination mixtime via linear_time(..., discrete = FALSE),
+# then back to UTC via as.POSIXct(), and verify the result matches the input
+# within tolerance. Tests Melbourne, Munich, and Honolulu across all 8 phases.
 # ---------------------------------------------------------------------------
 test_that("Round-trip UTC → phase count → UTC", {
   lat <- -37.8136; lon <- 144.9631
+  mel <- cal_time_solar$illumination(1L, lat = lat, lon = lon)
 
   # Phase midpoints: local Melbourne time (AEDT) for solar day date1
-  midpoints_utc <- as.numeric(as.POSIXct(c(
+  midpoints_utc <- as.POSIXct(c(
     "2026-02-26 05:52:00",  # p=0 midpoint: between astro dawn and nautical dawn
     "2026-02-26 06:21:00",  # p=1 midpoint: between nautical dawn and civil dawn
     "2026-02-26 06:47:00",  # p=2 midpoint: between civil dawn and sunrise
@@ -593,17 +594,18 @@ test_that("Round-trip UTC → phase count → UTC", {
     "2026-02-26 20:44:00",  # p=5 midpoint: between civil dusk and nautical dusk
     "2026-02-26 21:13:00",  # p=6 midpoint: between nautical dusk and astro dusk
     "2026-02-27 01:33:00"   # p=7 midpoint: solar midnight (middle of night)
-  ), tz = "Australia/Melbourne"))
+  ), tz = "Australia/Melbourne")
 
-  phase <- approx_solar_phase_from_utc(midpoints_utc, lat_deg = lat, lon_deg = lon, alt_deg = 0)
-  recovered <- approx_solar_phase_utc(phase, lat_deg = lat, lon_deg = lon, alt_deg = 0)
-  expect_equal(recovered, midpoints_utc, tolerance = 120)
+  illumination <- linear_time(midpoints_utc, mel, discrete = FALSE)
+  recovered <- as.POSIXct(illumination)
+  expect_equal_time(recovered, midpoints_utc)
 
 
   lat <- 48.133; lon <- 11.583
+  muc <- cal_time_solar$illumination(1L, lat = lat, lon = lon)
 
   # Phase midpoints: local Munich time (CET) for solar day date1
-  midpoints_utc <- as.numeric(as.POSIXct(c(
+  midpoints_utc <- as.POSIXct(c(
     "2026-02-26 05:38:00",  # p=0 midpoint: between astro dawn and nautical dawn
     "2026-02-26 06:13:00",  # p=1 midpoint: between nautical dawn and civil dawn
     "2026-02-26 06:44:00",  # p=2 midpoint: between civil dawn and sunrise
@@ -612,17 +614,18 @@ test_that("Round-trip UTC → phase count → UTC", {
     "2026-02-26 18:39:00",  # p=5 midpoint: between civil dusk and nautical dusk
     "2026-02-26 19:16:00",  # p=6 midpoint: between nautical dusk and astro dusk
     "2026-02-27 00:26:00"   # p=7 midpoint: solar midnight (middle of night)
-  ), tz = "Europe/Berlin"))
+  ), tz = "Europe/Berlin")
 
-  phase <- approx_solar_phase_from_utc(midpoints_utc, lat_deg = lat, lon_deg = lon, alt_deg = 0)
-  recovered <- approx_solar_phase_utc(phase, lat_deg = lat, lon_deg = lon, alt_deg = 0)
-  expect_equal(recovered, midpoints_utc, tolerance = 120)
+  illumination <- linear_time(midpoints_utc, muc, discrete = FALSE)
+  recovered <- as.POSIXct(illumination)
+  expect_equal_time(recovered, midpoints_utc)
 
 
   lat <- 21.3069; lon <- -157.8583
+  hni <- cal_time_solar$illumination(1L, lat = lat, lon = lon)
 
   # Phase midpoints: local Honolulu time (HST) for solar day date1
-  midpoints_utc <- as.numeric(as.POSIXct(c(
+  midpoints_utc <- as.POSIXct(c(
     "2026-02-26 05:53:00",  # p=0 midpoint: between astro dawn and nautical dawn
     "2026-02-26 06:19:00",  # p=1 midpoint: between nautical dawn and civil dawn
     "2026-02-26 06:43:00",  # p=2 midpoint: between civil dawn and sunrise
@@ -631,11 +634,11 @@ test_that("Round-trip UTC → phase count → UTC", {
     "2026-02-26 19:10:00",  # p=5 midpoint: between civil dusk and nautical dusk
     "2026-02-26 19:36:00",  # p=6 midpoint: between nautical dusk and astro dusk
     "2026-02-27 00:44:00"   # p=7 midpoint: solar midnight (middle of night)
-  ), tz = "Pacific/Honolulu"))
+  ), tz = "Pacific/Honolulu")
 
-  phase <- approx_solar_phase_from_utc(midpoints_utc, lat_deg = lat, lon_deg = lon, alt_deg = 0)
-  recovered <- approx_solar_phase_utc(phase, lat_deg = lat, lon_deg = lon, alt_deg = 0)
-  expect_equal(recovered, midpoints_utc, tolerance = 120)
+  illumination <- linear_time(midpoints_utc, hni, discrete = FALSE)
+  recovered <- as.POSIXct(illumination)
+  expect_equal_time(recovered, midpoints_utc)
 })
 
 # ---------------------------------------------------------------------------
