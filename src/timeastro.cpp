@@ -28,7 +28,7 @@ double sun_mean_anomaly(double T) {
   return M;
 }
 
-// Equation of center (true anomaly − mean anomaly), degrees
+// Equation of center (true anomaly - mean anomaly), degrees
 double sun_equation_of_center(double M_deg, double T) {
   double M = M_deg * DEG2RAD;
   return (1.914602 + T * (-0.004817 - T * 0.000014)) * std::sin(M)
@@ -53,7 +53,7 @@ double sun_declination(double lambda_deg, double T) {
   return std::asin(std::sin(epsilon) * std::sin(lambda)) * RAD2DEG;
 }
 
-// Equation of time (apparent − mean solar time), minutes
+// Equation of time (apparent - mean solar time), minutes
 double equation_of_time(double L0, double M_deg, double T) {
   double e       = 0.016708634 + T * (-0.000042037 - T * 0.0000001267);
   double epsilon = (23.43929111 - T * 0.0130042) * DEG2RAD;

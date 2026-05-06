@@ -54,7 +54,7 @@ inline constexpr double MEAN_OBLIQUITY_J2000_DEG = 23.43928; // mean obliquity a
 // Mean anomaly of the Sun, degrees [0, 360)
 [[nodiscard]] double sun_mean_anomaly(double T);
 
-// Equation of center (true anomaly − mean anomaly), degrees
+// Equation of center (true anomaly - mean anomaly), degrees
 [[nodiscard]] double sun_equation_of_center(double M_deg, double T);
 
 // Sun's ecliptic longitude (L0 + equation of center), degrees [0, 360)
@@ -64,7 +64,7 @@ inline constexpr double MEAN_OBLIQUITY_J2000_DEG = 23.43928; // mean obliquity a
 // degrees [-23.44, +23.44]
 [[nodiscard]] double sun_declination(double lambda_deg, double T);
 
-// Equation of time (apparent − mean solar time), minutes
+// Equation of time (apparent - mean solar time), minutes
 [[nodiscard]] double equation_of_time(double L0, double M_deg, double T);
 
 // Sun's apparent longitude from T (used by lunar elongation)

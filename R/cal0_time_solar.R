@@ -37,16 +37,16 @@
 #' 
 #' | Phase              | Solar altitude range  | Description                                                 |
 #' |--------------------|-----------------------|-------------------------------------------------------------|
-#' | Night              | < −18°                | Sky fully dark; from last dusk to first dawn (spans noon)   |
-#' | Astronomical dawn  | −18° to −12°          | Astronomical twilight before sunrise; faint objects obscured|
-#' | Nautical dawn      | −12° to −6°           | Nautical twilight before sunrise; horizon visible at sea    |
-#' | Civil dawn         | −6° to −0.833°        | Civil twilight before sunrise; sky brightening in the east  |
-#' | Day                | > −0.833°             | Sun above the horizon; spans solar noon                     |
-#' | Civil dusk         | −0.833° to −6°        | Civil twilight after sunset; sky fading in the west         |
-#' | Nautical dusk      | −6° to −12°           | Nautical twilight after sunset; horizon visible at sea      |
-#' | Astronomical dusk  | −12° to −18°          | Astronomical twilight after sunset; faint objects obscured  |
+#' | Night              | < -18°                | Sky fully dark; from last dusk to first dawn (spans noon)   |
+#' | Astronomical dawn  | -18° to -12°          | Astronomical twilight before sunrise; faint objects obscured|
+#' | Nautical dawn      | -12° to -6°           | Nautical twilight before sunrise; horizon visible at sea    |
+#' | Civil dawn         | -6° to -0.833°        | Civil twilight before sunrise; sky brightening in the east  |
+#' | Day                | > -0.833°             | Sun above the horizon; spans solar noon                     |
+#' | Civil dusk         | -0.833° to -6°        | Civil twilight after sunset; sky fading in the west         |
+#' | Nautical dusk      | -6° to -12°           | Nautical twilight after sunset; horizon visible at sea      |
+#' | Astronomical dusk  | -12° to -18°          | Astronomical twilight after sunset; faint objects obscured  |
 #' 
-#' The −0.833° threshold for sunrise and sunset accounts for the mean angular
+#' The -0.833° threshold for sunrise and sunset accounts for the mean angular
 #' radius of the solar disc (0.267°) plus the standard atmospheric refraction
 #' at the horizon (0.566°). Noon and midnight are derived from the equation of
 #' time rather than a fixed altitude. Locations that experience polar day or

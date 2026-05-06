@@ -7,14 +7,14 @@ expect_equal_time <- function(object, expected, tolerance = 120, ...) {
 # ---------------------------------------------------------------------------
 # Phase boundary index (new altitude-event scheme):
 #
-#  p=0  b=0  astro dawn    −18° morning  (astro twilight begins, night ends)
-#  p=1  b=1  nautical dawn −12° morning
-#  p=2  b=2  civil dawn    −6°  morning
-#  p=3  b=3  sunrise       −0.833° morning (day begins)
-#  p=4  b=4  sunset        −0.833° evening (day ends)
-#  p=5  b=5  civil dusk    −6°  evening
-#  p=6  b=6  nautical dusk −12° evening
-#  p=7  b=7  astro dusk    −18° evening  (night begins)
+#  p=0  b=0  astro dawn    -18° morning  (astro twilight begins, night ends)
+#  p=1  b=1  nautical dawn -12° morning
+#  p=2  b=2  civil dawn    -6°  morning
+#  p=3  b=3  sunrise       -0.833° morning (day begins)
+#  p=4  b=4  sunset        -0.833° evening (day ends)
+#  p=5  b=5  civil dusk    -6°  evening
+#  p=6  b=6  nautical dusk -12° evening
+#  p=7  b=7  astro dusk    -18° evening  (night begins)
 #
 #  Night (p=7) straddles solar midnight: astro dusk to next day's astro dawn.
 #  Phase count for UTC day d, phase p: d * 8L + p
@@ -29,42 +29,42 @@ expect_equal_time <- function(object, expected, tolerance = 120, ...) {
 test_that("All 8 phase boundaries correct: Melbourne, 2026-02-26", {
   mel <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
 
-  # p=0: astronomical dawn (sun crosses −18° ascending)
+  # p=0: astronomical dawn (sun crosses -18° ascending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 0L, mel)),
     as.POSIXct("2026-02-26 05:37:00", tz = "Australia/Melbourne")
   )
-  # p=1: nautical dawn (sun crosses −12° ascending)
+  # p=1: nautical dawn (sun crosses -12° ascending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 1L, mel)),
     as.POSIXct("2026-02-26 06:07:00", tz = "Australia/Melbourne")
   )
-  # p=2: civil dawn (sun crosses −6° ascending)
+  # p=2: civil dawn (sun crosses -6° ascending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 2L, mel)),
     as.POSIXct("2026-02-26 06:34:00", tz = "Australia/Melbourne")
   )
-  # p=3: sunrise (sun crosses −0.833° ascending)
+  # p=3: sunrise (sun crosses -0.833° ascending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 3L, mel)),
     as.POSIXct("2026-02-26 07:01:00", tz = "Australia/Melbourne")
   )
-  # p=4: sunset (sun crosses −0.833° descending)
+  # p=4: sunset (sun crosses -0.833° descending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 4L, mel)),
     as.POSIXct("2026-02-26 20:04:00", tz = "Australia/Melbourne")
   )
-  # p=5: civil dusk (sun crosses −6° descending)
+  # p=5: civil dusk (sun crosses -6° descending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 5L, mel)),
     as.POSIXct("2026-02-26 20:31:00", tz = "Australia/Melbourne")
   )
-  # p=6: nautical dusk (sun crosses −12° descending)
+  # p=6: nautical dusk (sun crosses -12° descending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 6L, mel)),
     as.POSIXct("2026-02-26 20:58:00", tz = "Australia/Melbourne")
   )
-  # p=7: astronomical dusk / night begins (sun crosses −18° descending)
+  # p=7: astronomical dusk / night begins (sun crosses -18° descending)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 7L, mel)),
     as.POSIXct("2026-02-26 21:28:00", tz = "Australia/Melbourne")
@@ -377,11 +377,11 @@ test_that("Solar noon calculations", {
 
 # ---------------------------------------------------------------------------
 # Solar astronomical dawn calculations (replaces "Solar midnight calculations")
-# p=0 is the astro-dawn boundary (sun crosses −18° ascending). For Melbourne
+# p=0 is the astro-dawn boundary (sun crosses -18° ascending). For Melbourne
 # (UTC+11) this falls on UTC day d-1 even though the local date is day d.
 # ---------------------------------------------------------------------------
 test_that("Solar astronomical dawn calculations", {
-  # Astro dawn = illumination phase 0 (sun crosses −18° ascending)
+  # Astro dawn = illumination phase 0 (sun crosses -18° ascending)
   mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 0L, mel_illumination)),
@@ -405,10 +405,10 @@ test_that("Solar astronomical dawn calculations", {
 
 # ---------------------------------------------------------------------------
 # Solar dawn calculations (civil twilight)
-# p=2: sun crosses −6° ascending. Old tests used +3L (off-by-one), fixed here.
+# p=2: sun crosses -6° ascending. Old tests used +3L (off-by-one), fixed here.
 # ---------------------------------------------------------------------------
 test_that("Solar dawn calculations (civil twilight)", {
-  # Civil dawn = illumination phase 2 (sun crosses −6° ascending)
+  # Civil dawn = illumination phase 2 (sun crosses -6° ascending)
   mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 2L, mel_illumination)),
@@ -432,10 +432,10 @@ test_that("Solar dawn calculations (civil twilight)", {
 
 # ---------------------------------------------------------------------------
 # Solar sunrise calculations
-# p=3: sun crosses −0.833° ascending. Old tests used +4L, fixed here.
+# p=3: sun crosses -0.833° ascending. Old tests used +4L, fixed here.
 # ---------------------------------------------------------------------------
 test_that("Solar sunrise calculations", {
-  # Sunrise = illumination phase 3 (sun crosses −0.833° ascending)
+  # Sunrise = illumination phase 3 (sun crosses -0.833° ascending)
   mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 3L, mel_illumination)),
@@ -459,10 +459,10 @@ test_that("Solar sunrise calculations", {
 
 # ---------------------------------------------------------------------------
 # Solar sunset calculations
-# p=4: sun crosses −0.833° descending. Old tests used +5L, fixed here.
+# p=4: sun crosses -0.833° descending. Old tests used +5L, fixed here.
 # ---------------------------------------------------------------------------
 test_that("Solar sunset calculations", {
-  # Sunset = illumination phase 4 (sun crosses −0.833° descending)
+  # Sunset = illumination phase 4 (sun crosses -0.833° descending)
   mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 4L, mel_illumination)),
@@ -486,10 +486,10 @@ test_that("Solar sunset calculations", {
 
 # ---------------------------------------------------------------------------
 # Solar dusk calculations (civil twilight)
-# p=5: sun crosses −6° descending. Old tests used +6L, fixed here.
+# p=5: sun crosses -6° descending. Old tests used +6L, fixed here.
 # ---------------------------------------------------------------------------
 test_that("Solar dusk calculations (civil twilight)", {
-  # Civil dusk = illumination phase 5 (sun crosses −6° descending)
+  # Civil dusk = illumination phase 5 (sun crosses -6° descending)
   mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 5L, mel_illumination)),
