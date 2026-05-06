@@ -141,6 +141,7 @@ reference:
   desc: "These low-level functions define the relationships and labels between time units. Adding S7 methods for them allow the creation of custom time units and calendars."
 - subtitle: "Time units and calendars"
   contents:
+  - new_time_unit
   - new_calendar
   - mt_unit
   - mt_tz_unit

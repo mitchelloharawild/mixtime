@@ -94,3 +94,13 @@ new_S4_class <- function(className, package) {
     className = className, package = package
   )
 }
+
+# From S7:::topNamespaceName, required for new_time_unit wrapper
+# Wrapper is required to patch https://github.com/RConsortium/S7/issues/609
+topNamespaceName <- function (env = parent.frame()) {
+  env <- topenv(env)
+  if (!isNamespace(env)) {
+    return()
+  }
+  as.character(getNamespaceName(env))
+}

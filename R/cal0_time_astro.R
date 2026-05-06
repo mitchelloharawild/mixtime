@@ -22,9 +22,9 @@ mt_loc_unit <- S7::new_class(
     lon = S7::new_property(S7::class_numeric, default = naive_loc),
     alt = S7::new_property(S7::class_numeric, default = naive(0))
   ),
-  # constructor = function (n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0)) {
-  #   S7::new_object(mt_unit(n = n), lat = lat, lon = lon, alt = alt)
-  # },
+  constructor = function (n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0)) {
+    S7::new_object(mt_unit(n = n), lat = lat, lon = lon, alt = alt)
+  },
   validator = function(self) {
     NULL
   }

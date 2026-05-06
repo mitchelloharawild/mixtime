@@ -29,8 +29,8 @@
 #' # Create a simple calendar with year and month units
 #' # (inheriting from civil time units for day, hour, minute, second, ...)
 #' cal_simple <- new_calendar(
-#'   year = S7::new_class("tu_year", parent = mt_tz_unit),
-#'   month = S7::new_class("tu_month", parent = mt_tz_unit),
+#'   year = new_time_unit("tu_year", parent = mt_tz_unit),
+#'   month = new_time_unit("tu_month", parent = mt_tz_unit),
 #'   inherit = cal_time_civil,
 #'   class = "cal_simple"
 #' )

@@ -9,14 +9,9 @@
 \usage{
 mt_unit(n = 1L)
 
-mt_loc_unit(
-  n = 1L,
-  lat = structure(NA_real_, class = "mt_naive"),
-  lon = structure(NA_real_, class = "mt_naive"),
-  alt = structure(0, class = "mt_naive")
-)
+mt_loc_unit(n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0))
 
-mt_tz_unit(n = 1L, tz = structure(NA_character_, class = "mt_naive"))
+mt_tz_unit(n = 1L, tz = naive_tz)
 }
 \arguments{
 \item{n}{The step size of time granule. For example, \code{n = 2L} is 2 time units -
