@@ -326,22 +326,29 @@ static double solar_phase_boundary_from_geom(const SolarGeometry& today,
 // Exported R functions — solar
 // ============================================================================
 
-// UTC Unix timestamps -> continuous solar day count (midnight-based).
-// Integer part = number of solar midnights elapsed since J2000.
-// Fractional part = proportion of current solar day elapsed [0, 1).
+// UTC Unix timestamps -> continuous solar second count (0 = solar midnight).
 [[cpp11::register]]
-doubles approx_solar_days_from_utc(doubles unix_times,
-                                    double lat_deg, double lon_deg,
-                                    double alt_deg = 0.0) {
-  return solar_days_from_utc_impl(unix_times, lat_deg, lon_deg, alt_deg);
+doubles approx_solar_seconds_from_utc(doubles unix_times,
+                                       double lat_deg, double lon_deg,
+                                       double alt_deg = 0.0) {
+  doubles days = solar_days_from_utc_impl(unix_times, lat_deg, lon_deg, alt_deg);
+  writable::doubles result(days.size());
+  for (int i = 0; i < days.size(); i++) {
+    result[i] = std::isnan(days[i]) ? NA_REAL : days[i] * 86400.0;
+  }
+  return result;
 }
 
-// Continuous solar day counts -> UTC Unix timestamps.
+// Continuous solar second counts -> UTC Unix timestamps.
 [[cpp11::register]]
-doubles approx_utc_from_solar_days(doubles solar_day_counts,
-                                    double lat_deg, double lon_deg,
-                                    double alt_deg = 0.0) {
-  return utc_from_solar_days_impl(solar_day_counts, lat_deg, lon_deg, alt_deg);
+doubles approx_utc_from_solar_seconds(doubles solar_second_counts,
+                                       double lat_deg, double lon_deg,
+                                       double alt_deg = 0.0) {
+  writable::doubles days(solar_second_counts.size());
+  for (int i = 0; i < solar_second_counts.size(); i++) {
+    days[i] = std::isnan(solar_second_counts[i]) ? NA_REAL : solar_second_counts[i] / 86400.0;
+  }
+  return utc_from_solar_days_impl(days, lat_deg, lon_deg, alt_deg);
 }
 
 // Continuous solar phase counts -> UTC Unix timestamps.
@@ -396,87 +403,6 @@ doubles approx_solar_phase_utc(doubles phase_counts,
   return result;
 }
 
-
-// ============================================================================
-// Exported R functions — solar ampm (noon/midnight-based)
-// ============================================================================
-
-// UTC Unix timestamps -> continuous ampm count (solar_day * 2 + half + frac).
-//
-//   half = 0 (AM): solar midnight -> solar noon
-//   half = 1 (PM): solar noon    -> solar midnight
-//
-// Noon is computed directly from the equation of time via SolarGeometry::noon_unix().
-// Midnight is the solar anti-transit (SolarGeometry::midnight_unix()).
-[[cpp11::register]]
-doubles approx_solar_ampm_from_utc(doubles unix_times,
-                                    double lat_deg, double lon_deg,
-                                    double alt_deg = 0.0) {
-  int n = unix_times.size();
-  writable::doubles result(n);
-  SolarGeometryCache cache(lat_deg, lon_deg);
-
-  for (int i = 0; i < n; i++) {
-    double ut = unix_times[i];
-    if (std::isnan(ut)) { result[i] = NA_REAL; continue; }
-
-    double d = solar_day_index_from_utc(ut, cache);
-    if (std::isnan(d)) { result[i] = NA_REAL; continue; }
-
-    SolarDayBounds bounds(d, cache);
-    if (!bounds.valid) { result[i] = NA_REAL; continue; }
-    double midnight_d  = bounds.midnight_d;
-    double noon_d      = bounds.noon_d;
-    double midnight_d1 = bounds.midnight_d1;
-
-    double ampm_count;
-    if (ut < noon_d) {
-      ampm_count = d * 2.0 + (ut - midnight_d) / (noon_d - midnight_d);
-    } else {
-      ampm_count = d * 2.0 + 1.0 + (ut - noon_d) / (midnight_d1 - noon_d);
-    }
-    result[i] = ampm_count;
-  }
-  return result;
-}
-
-// Continuous ampm counts -> UTC Unix timestamps.
-//
-// Noon is reconstructed directly from SolarGeometry::noon_unix() (equation of time).
-[[cpp11::register]]
-doubles approx_utc_from_solar_ampm(doubles ampm_counts,
-                                    double lat_deg, double lon_deg,
-                                    double alt_deg = 0.0) {
-  int n = ampm_counts.size();
-  writable::doubles result(n);
-  SolarGeometryCache cache(lat_deg, lon_deg);
-
-  for (int i = 0; i < n; i++) {
-    double ac = ampm_counts[i];
-    if (std::isnan(ac)) { result[i] = NA_REAL; continue; }
-
-    double pf   = std::floor(ac);
-    double frac = ac - pf;
-    int    half = (int)std::fmod(pf, 2.0);
-    if (half < 0) half += 2;
-    double d    = (pf - half) / 2.0;
-
-    SolarDayBounds bounds(d, cache);
-    if (!bounds.valid) { result[i] = NA_REAL; continue; }
-    double midnight_d  = bounds.midnight_d;
-    double noon_d      = bounds.noon_d;
-    double midnight_d1 = bounds.midnight_d1;
-
-    double ut;
-    if (half == 0) {
-      ut = midnight_d + frac * (noon_d - midnight_d);
-    } else {
-      ut = noon_d + frac * (midnight_d1 - noon_d);
-    }
-    result[i] = ut;
-  }
-  return result;
-}
 
 // UTC Unix timestamps -> continuous solar phase counts.
 //

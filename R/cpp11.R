@@ -20,24 +20,16 @@ approx_utc_from_lunar_phase <- function(lunation_counts) {
   .Call(`_mixtime_approx_utc_from_lunar_phase`, lunation_counts)
 }
 
-approx_solar_days_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_solar_days_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
+approx_solar_seconds_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_solar_seconds_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
 }
 
-approx_utc_from_solar_days <- function(solar_day_counts, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_utc_from_solar_days`, solar_day_counts, lat_deg, lon_deg, alt_deg)
+approx_utc_from_solar_seconds <- function(solar_second_counts, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_utc_from_solar_seconds`, solar_second_counts, lat_deg, lon_deg, alt_deg)
 }
 
 approx_solar_phase_utc <- function(phase_counts, lat_deg, lon_deg, alt_deg) {
   .Call(`_mixtime_approx_solar_phase_utc`, phase_counts, lat_deg, lon_deg, alt_deg)
-}
-
-approx_solar_ampm_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_solar_ampm_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
-}
-
-approx_utc_from_solar_ampm <- function(ampm_counts, lat_deg, lon_deg, alt_deg) {
-  .Call(`_mixtime_approx_utc_from_solar_ampm`, ampm_counts, lat_deg, lon_deg, alt_deg)
 }
 
 approx_solar_phase_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {

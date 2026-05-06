@@ -140,25 +140,25 @@ method(chronon_cardinality, list(cal_time_solar$arcsecond, cal_time_solar$arcmin
   y@n * 60L / x@n
 }
 
-# The number of UTC seconds in a solar day (midnight-to-midnight)
-method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar$day)) <- function(x, y, at = NULL) {
-  at_sd <- approx_solar_days_from_utc(at, y@lat, y@lon, y@alt)
-  (approx_utc_from_solar_days(at_sd + y@n, y@lat, y@lon, y@alt) -
-     approx_utc_from_solar_days(at_sd, y@lat, y@lon, y@alt)) / x@n
+# The number of UTC seconds in a solar second
+method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar$second)) <- function(x, y, at = NULL) {
+  at_ss <- approx_solar_seconds_from_utc(at, y@lat, y@lon, y@alt)
+  (approx_utc_from_solar_seconds(at_ss + y@n, y@lat, y@lon, y@alt) -
+     approx_utc_from_solar_seconds(at_ss, y@lat, y@lon, y@alt)) / x@n
 }
 
-# Convert UTC seconds → solar day count (day boundary = solar midnight)
-method(chronon_divmod, list(cal_time_civil$second, cal_time_solar$day)) <- function(from, to, x) {
+# Convert UTC seconds → continuous solar second count
+method(chronon_divmod, list(cal_time_civil$second, cal_time_solar$second)) <- function(from, to, x) {
   list(
-    div = approx_solar_days_from_utc(as.double(x), to@lat, to@lon, to@alt),
+    div = approx_solar_seconds_from_utc(as.double(x), to@lat, to@lon, to@alt) / to@n,
     mod = 0
   )
 }
 
-# Convert solar day count → UTC seconds
-method(chronon_divmod, list(cal_time_solar$day, cal_time_civil$second)) <- function(from, to, x) {
+# Convert solar second count → UTC seconds
+method(chronon_divmod, list(cal_time_solar$second, cal_time_civil$second)) <- function(from, to, x) {
   list(
-    div = approx_utc_from_solar_days(as.double(x), from@lat, from@lon, from@alt),
+    div = approx_utc_from_solar_seconds(as.double(x) * from@n, from@lat, from@lon, from@alt) / to@n,
     mod = 0
   )
 }
@@ -167,7 +167,7 @@ method(chronon_divmod, list(cal_time_solar$day, cal_time_civil$second)) <- funct
 # Delegates entirely to C++ which handles midnight boundaries and NaN phases.
 method(chronon_divmod, list(cal_time_civil$second, cal_time_solar$illumination)) <- function(from, to, x) {
   list(
-    div = approx_solar_phase_from_utc(as.double(x), to@lat, to@lon, to@alt),
+    div = approx_solar_phase_from_utc(as.double(x) * from@n, to@lat, to@lon, to@alt) / to@n,
     mod = 0
   )
 }
@@ -177,24 +177,6 @@ method(chronon_divmod, list(cal_time_civil$second, cal_time_solar$illumination))
 method(chronon_divmod, list(cal_time_solar$illumination, cal_time_civil$second)) <- function(from, to, x) {
   list(
     div = approx_solar_phase_utc(as.double(x), from@lat, from@lon, from@alt),
-    mod = 0
-  )
-}
-
-# Convert UTC seconds → continuous ampm count (d*2 + half + frac).
-# Noon is computed directly from the equation of time; midnight from solar anti-transit.
-method(chronon_divmod, list(cal_time_civil$second, cal_time_solar$ampm)) <- function(from, to, x) {
-  list(
-    div = approx_solar_ampm_from_utc(as.double(x), to@lat, to@lon, to@alt) / to@n,
-    mod = 0
-  )
-}
-
-# Convert ampm count → UTC seconds.
-# Noon is reconstructed directly from the equation of time via C++.
-method(chronon_divmod, list(cal_time_solar$ampm, cal_time_civil$second)) <- function(from, to, x) {
-  list(
-    div = approx_utc_from_solar_ampm(as.double(x) * from@n, from@lat, from@lon, from@alt),
     mod = 0
   )
 }
