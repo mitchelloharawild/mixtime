@@ -211,7 +211,7 @@ method(cyclical_labels, list(cal_time_solar$second, S7::class_any)) <- function(
   sprintf("%02d", i)
 }
 method(cyclical_labels, list(cal_time_solar$degree, S7::class_any)) <- function(granule, cycle, i) {
-  sprintf("%03d", i)
+  sprintf("%03d", (i - 180L*chronon_cardinality(cycle, cal_time_solar$day(1L))) %% 360L)
 }
 method(cyclical_labels, list(cal_time_solar$arcminute, S7::class_any)) <- function(granule, cycle, i) {
   sprintf("%02d", i)
