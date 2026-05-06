@@ -61,5 +61,5 @@ noon and solar midnight:
 # Find the current solar time in Melbourne
 datetime(Sys.time(), calendar = cal_time_solar, lat = -37.8136, lon = 144.9631)
 #> <mixtime[1]>
-#> [1] 2026-05-07 02:13:44 [37.81S 144.96E]
+#> [1] 2026-05-07 04:23:23 [37.81S 144.96E]
 ```

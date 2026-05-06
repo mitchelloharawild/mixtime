@@ -383,14 +383,14 @@ remaining days (i.e. the 15th).
 
 The Symmetry454 calendar has an irregular cardinality for weeks → months
 (because of the 4–5–4 pattern and leap weeks), so a divmod method is
-required. The key challenge is correctly accounting for the [293-year
-leap year pattern](https://kalendis.free.nf/leap/293-leap-pattern.pdf).
-Symmetry454 leap weeks follow a structured sub-cycle pattern: 293 years
-decompose into five groups (45+79+45+79+45 years), each of which
-decomposes further into primary 17-year sub-cycles (with 3 leap years)
-and secondary 11-year sub-cycles (with 2 leap years). The majority of
-the following code uses this structure to efficiently count how many
-leap weeks have occurred before any given week number in a cycle.
+required. The key challenge is correctly accounting for the 293-year
+leap year pattern. Symmetry454 leap weeks follow a structured sub-cycle
+pattern: 293 years decompose into five groups (45+79+45+79+45 years),
+each of which decomposes further into primary 17-year sub-cycles (with 3
+leap years) and secondary 11-year sub-cycles (with 2 leap years). The
+majority of the following code uses this structure to efficiently count
+how many leap weeks have occurred before any given week number in a
+cycle.
 
 ``` r
 

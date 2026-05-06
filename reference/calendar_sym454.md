@@ -49,8 +49,8 @@ Rather than intercalary days, Symmetry454 uses a **leap week** appended
 to December once every 5 or 6 years, making December a 5-week month in
 leap years. A year is a leap year if `(52 * year + 146) %% 293 < 52`.
 
-This yields a mean year of 365 + 71/293 days (≈ 365 days, 5 hours, 48
-minutes, 56.5 seconds), intentionally slightly shorter than the mean
+This yields a mean year of 365 + 71/293 days (approx 365 days, 5 hours,
+48 minutes, 56.5 seconds), intentionally slightly shorter than the mean
 northward equinoctial year.
 
 ## See also
