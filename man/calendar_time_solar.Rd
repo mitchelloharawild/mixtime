@@ -38,31 +38,6 @@ solar midnight:\tabular{lll}{
 }
 
 }
-
-\subsection{Solar clock units}{
-
-Phases describe the illumination state of the sky and correspond to standard
-twilight definitions used in astronomy and navigation. Each phase is bounded
-by a pair of solar altitude thresholds:\tabular{lll}{
-   Phase \tab Solar altitude range \tab Description \cr
-   Night \tab < -18° \tab Sky fully dark; from last dusk to first dawn (spans noon) \cr
-   Astronomical dawn \tab -18° to -12° \tab Astronomical twilight before sunrise; faint objects obscured \cr
-   Nautical dawn \tab -12° to -6° \tab Nautical twilight before sunrise; horizon visible at sea \cr
-   Civil dawn \tab -6° to -0.833° \tab Civil twilight before sunrise; sky brightening in the east \cr
-   Day \tab > -0.833° \tab Sun above the horizon; spans solar noon \cr
-   Civil dusk \tab -0.833° to -6° \tab Civil twilight after sunset; sky fading in the west \cr
-   Nautical dusk \tab -6° to -12° \tab Nautical twilight after sunset; horizon visible at sea \cr
-   Astronomical dusk \tab -12° to -18° \tab Astronomical twilight after sunset; faint objects obscured \cr
-}
-
-
-The -0.833° threshold for sunrise and sunset accounts for the mean angular
-radius of the solar disc (0.267°) plus the standard atmospheric refraction
-at the horizon (0.566°). Noon and midnight are derived from the equation of
-time rather than a fixed altitude. Locations that experience polar day or
-polar night (civil days where sunrise does not occur) are not currently
-supported, it is recommended to use an alternative reference location.
-}
 }
 \examples{
 # Find the current solar time in Melbourne
