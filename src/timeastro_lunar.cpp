@@ -70,57 +70,57 @@ static double lunation_index_before_or_at(double unix_time) {
 
 // Moon's phase elongation in degrees [0, 360): 0 deg = new, 180 deg = full.
 // Shares sun_apparent_longitude() and unix_to_julian_centuries() with solar code.
-static double moon_phase_angle(double jd) {
-  double T  = jd_to_julian_centuries(jd);
-  double T2 = T * T;
-  double T3 = T2 * T;
-  double T4 = T3 * T;
+// static double moon_phase_angle(double jd) {
+//   double T1  = jd_to_julian_centuries(jd);
+//   double T2 = T1 * T1;
+//   double T3 = T2 * T1;
+//   double T4 = T3 * T1;
 
-  // Moon's mean elements (Meeus eqs 47.1-47.5), using Horner's method
-  double Lp = 218.3164477 + T * (481267.88123421 + T * (-0.0015786 + T * (1.0 / 538841.0    - T / 65194000.0)));
-  double D  = 297.8501921 + T * (445267.1114034  + T * (-0.0018819 + T * (1.0 / 545868.0    - T / 113065000.0)));
-  double M  = 357.5291092 + T * (35999.0502909   + T * (-0.0001536 + T *  1.0 / 24490000.0));
-  double Mp = 134.9633964 + T * (477198.8675055  + T * ( 0.0087414 + T * (1.0 / 69699.0     - T / 14712000.0)));
-  double F  =  93.2720950 + T * (483202.0175233  + T * (-0.0036539 + T * (-1.0 / 3526000.0  + T / 863310000.0)));
+//   // Moon's mean elements (Meeus eqs 47.1-47.5)
+//   double Lp = 218.3164477 + 481267.88123421 * T1 - 0.0015786 * T2 + T3 / 538841.0   - T4 / 65194000.0;
+//   double D  = 297.8501921 + 445267.1114034  * T1 - 0.0018819 * T2 + T3 / 545868.0   - T4 / 113065000.0;
+//   double M  = 357.5291092 + 35999.0502909   * T1 - 0.0001536 * T2 + T3 / 24490000.0;
+//   double Mp = 134.9633964 + 477198.8675055  * T1 + 0.0087414 * T2 + T3 / 69699.0    - T4 / 14712000.0;
+//   double F  =  93.2720950 + 483202.0175233  * T1 - 0.0036539 * T2 - T3 / 3526000.0  + T4 / 863310000.0;
 
-  double D_r  = D  * DEG2RAD;
-  double M_r  = M  * DEG2RAD;
-  double Mp_r = Mp * DEG2RAD;
-  double F_r  = F  * DEG2RAD;
+//   double D_r  = D  * DEG2RAD;
+//   double M_r  = M  * DEG2RAD;
+//   double Mp_r = Mp * DEG2RAD;
+//   double F_r  = F  * DEG2RAD;
 
-  // Longitude perturbations (Meeus Table 47.A), units 1e-6 degrees
-  double dL = 6288774 * std::sin(Mp_r)
-            + 1274027 * std::sin(2.0*D_r - Mp_r)
-            +  658314 * std::sin(2.0*D_r)
-            +  213618 * std::sin(2.0*Mp_r)
-            -  185116 * std::sin(M_r)
-            -  114332 * std::sin(2.0*F_r)
-            +   58793 * std::sin(2.0*D_r - 2.0*Mp_r)
-            +   57066 * std::sin(2.0*D_r - M_r - Mp_r)
-            +   53322 * std::sin(2.0*D_r + Mp_r)
-            +   45758 * std::sin(2.0*D_r - M_r)
-            -   40923 * std::sin(M_r - Mp_r)
-            -   34720 * std::sin(D_r)
-            -   30383 * std::sin(M_r + Mp_r)
-            +   15327 * std::sin(2.0*D_r - 2.0*F_r)
-            -   12528 * std::sin(Mp_r + 2.0*F_r)
-            +   10980 * std::sin(Mp_r - 2.0*F_r)
-            +   10675 * std::sin(4.0*D_r - Mp_r)
-            +   10034 * std::sin(3.0*Mp_r)
-            +    8548 * std::sin(4.0*D_r - 2.0*Mp_r)
-            -    7888 * std::sin(2.0*D_r + M_r - Mp_r)
-            -    6766 * std::sin(2.0*D_r + M_r)
-            -    5163 * std::sin(D_r - Mp_r);
+//   // Longitude perturbations (Meeus Table 47.A), units 1e-6 degrees
+//   double dL = 6288774 * std::sin(Mp_r)
+//             + 1274027 * std::sin(2.0*D_r - Mp_r)
+//             +  658314 * std::sin(2.0*D_r)
+//             +  213618 * std::sin(2.0*Mp_r)
+//             -  185116 * std::sin(M_r)
+//             -  114332 * std::sin(2.0*F_r)
+//             +   58793 * std::sin(2.0*D_r - 2.0*Mp_r)
+//             +   57066 * std::sin(2.0*D_r - M_r - Mp_r)
+//             +   53322 * std::sin(2.0*D_r + Mp_r)
+//             +   45758 * std::sin(2.0*D_r - M_r)
+//             -   40923 * std::sin(M_r - Mp_r)
+//             -   34720 * std::sin(D_r)
+//             -   30383 * std::sin(M_r + Mp_r)
+//             +   15327 * std::sin(2.0*D_r - 2.0*F_r)
+//             -   12528 * std::sin(Mp_r + 2.0*F_r)
+//             +   10980 * std::sin(Mp_r - 2.0*F_r)
+//             +   10675 * std::sin(4.0*D_r - Mp_r)
+//             +   10034 * std::sin(3.0*Mp_r)
+//             +    8548 * std::sin(4.0*D_r - 2.0*Mp_r)
+//             -    7888 * std::sin(2.0*D_r + M_r - Mp_r)
+//             -    6766 * std::sin(2.0*D_r + M_r)
+//             -    5163 * std::sin(D_r - Mp_r);
 
-  double lambda_moon = Lp + dL / 1000000.0;
+//   double lambda_moon = Lp + dL / 1000000.0;
 
-  // Reuse shared solar helper for Sun's apparent longitude
-  double lambda_sun = sun_apparent_longitude(T);
+//   // Reuse shared solar helper for Sun's apparent longitude
+//   double lambda_sun = sun_apparent_longitude(T1);
 
-  double elongation = std::fmod(lambda_moon - lambda_sun, 360.0);
-  if (elongation < 0) elongation += 360.0;
-  return elongation;
-}
+//   double elongation = std::fmod(lambda_moon - lambda_sun, 360.0);
+//   if (elongation < 0) elongation += 360.0;
+//   return elongation;
+// }
 
 // ============================================================================
 // Scalar lunation helpers (shared by exported functions)
