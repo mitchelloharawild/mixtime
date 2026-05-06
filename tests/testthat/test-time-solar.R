@@ -645,7 +645,7 @@ test_that("Round-trip UTC → phase count → UTC", {
 # This should be close to solar noon (within a few minutes), since solar noon
 # is the midpoint of the day by definition.
 # ---------------------------------------------------------------------------
-test_that("Fractional phase interpolation: day midpoint ≈ solar noon", {
+test_that("Fractional phase interpolation: day midpoint approx solar noon", {
   mel_illum <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
   mel_ampm  <- cal_time_solar$ampm(1L,         lat = -37.8136, lon = 144.9631)
   muc_illum <- cal_time_solar$illumination(1L, lat = 48.133,   lon = 11.583)
