@@ -516,14 +516,15 @@ doubles approx_solar_phase_from_utc(doubles unix_times,
     double ut = unix_times[i];
     if (std::isnan(ut)) { result[i] = NA_REAL; continue; }
 
-    // All 8 boundaries of solar day d fall within the UTC day floor(ut/86400),
-    // except the post-midnight portion of night (phase 7) which belongs to
-    // solar day d-1 but occurs in UTC day d.  Try both UTC days.
-    double sd = std::floor(ut / 86400.0);
+    // Solar event windows are centred on solar noon (noon ± 12 h).  For
+    // east-longitude locations, noon falls in a later UTC calendar day than
+    // the events in the pre-dawn portion of the same solar day.  Try
+    // sd+1, sd, and sd-1 to cover all cases.
+    double sd = std::floor(ut / 86400.0) + 1.0;
 
     result[i] = NA_REAL;
 
-    for (int attempt = 0; attempt <= 1 && std::isnan(result[i]); attempt++, sd -= 1.0) {
+    for (int attempt = 0; attempt <= 2 && std::isnan(result[i]); attempt++, sd -= 1.0) {
       if (sd != last_sd) {
         last_sd = sd;
         recompute_phase_boundaries(sd, alt_deg, cache, pcache);
