@@ -35,16 +35,16 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
     return(x)
   }
 
-  # Add default tz if not given in `to` chronon
-  if (S7::prop_exists(to, "tz") && is.na(to@tz)){
-    to@tz <- if (S7::prop_exists(from, "tz")) from@tz else NA_character_
-  }
+  # Inherit granule properties from `from` if not given in `to` granule
+  to <- granule_inherit_props(to, from)
+
+  # Handle timezones
+  # TODO - Generalise for converting to any different granule attribute
+  # (e.g. locA -> locB)
   if (is.null(tz)) {
     tz <- tz_name(to)
-  }
-  if (is.na(tz)) {
     # UTC is a suitable proxy for naive time zones
-    tz <- "UTC"
+    if (is.na(tz)) tz <- "UTC"
   }
   
   # Find path along convertable time units
@@ -73,19 +73,8 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   prop_to <- S7::prop_names(to)
   # Initialise intermediate classes with 1L and adjacent properties
   path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(tu){
-    S7::S7_inherits(tu, S7::S7_class(from))
-    prop_tu <- names(tu@properties)
-    prop <- if (identical(prop_tu, prop_to)) {
-      S7::props(to)
-    } else if (identical(prop_tu, prop_from)) {
-      S7::props(from)
-    } else {
-      list()
-    }
-
-    # Intermediates use unit size 1L
-    prop$n <- 1L
-    do.call(tu, prop)
+    # Ideally inherit from `to`, but if incomplete inherit from `from`
+    granule_inherit_props(granule_inherit_props(tu(1L), to), from)
   })
 
   # Convert chronons along the path

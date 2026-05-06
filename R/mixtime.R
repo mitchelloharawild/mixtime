@@ -64,19 +64,15 @@ new_mixtime <- function(x = new_time()) {
 #' )
 #' @export
 mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data), discrete = TRUE) {
-  # Add default tz if not given in chronon or cycle
-  if (S7::prop_exists(chronon, "tz") && is.na(chronon@tz)){
-    # TODO - handle case where data has multiple timezones
-    # Requires splitting up data into groups with the same timezone
-    tz <- tz_name(data[1L])
-    chronon@tz <- if (identical(tz, "")) naive_tz else tz
-  }
-  if (!is.null(cycle) && S7::prop_exists(cycle, "tz") && is.na(cycle@tz)){
-    cycle@tz <- chronon@tz
+  # Add default granule properties if not given in chronon or cycle
+  chronon <- granule_inherit_props(chronon, time_chronon(data))
+  if (!is.null(cycle)) {
+    cycle <- granule_inherit_props(cycle, chronon)
   }
 
   # Parse text data
   if (is.character(data)) {
+    # TODO - Use chronon specific parsers (#20)
     tz <- tz_name(chronon)
     data <- as.POSIXct(data, tz = if(is.na(tz)) "UTC" else tz)
   }
