@@ -63,7 +63,9 @@ hook](https://rconsortium.github.io/S7/articles/packages.html):
 ## Time units
 
 Time units are the building blocks of calendars. Time units are S7
-classes that inherit `mt_unit`, a purely abstract time unit class.
+classes created with
+[`new_time_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time_unit.md),
+which inherit from `mt_unit` (a purely abstract time unit class).
 
 In practice, most time units should inherit either:
 
@@ -78,7 +80,7 @@ your time unit can be defined with S7 by:
 
 - inheriting properties from `mt_tz_unit` (`tz` IANA names) or
   `mt_loc_unit` (for `lon`, `lat`, and `alt`),
-- defining custom S7 properties with `S7::new_class(properties = ...)`.
+- defining custom S7 properties with `new_time_unit(properties = ...)`.
 
 The name of a time unit’s S7 class becomes the internal identifier for
 that unit, so it should be unique across all calendars. The class name
@@ -88,18 +90,18 @@ for developers.
 ``` r
 
 # Timezone-aware Symmetry454 year and month units
-S7::new_class("tu_symmetry454_year",  parent = mt_tz_unit)
+new_time_unit("tu_symmetry454_year",  parent = mt_tz_unit)
 #> <tu_symmetry454_year> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(n, tz) {...}
+#> @ constructor: function(...) {...}
 #> @ validator  : <NULL>
 #> @ properties :
 #>  $ n : <integer> or <double>
 #>  $ tz: <character>
-S7::new_class("tu_symmetry454_month", parent = mt_tz_unit)
+new_time_unit("tu_symmetry454_month", parent = mt_tz_unit)
 #> <tu_symmetry454_month> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(n, tz) {...}
+#> @ constructor: function(...) {...}
 #> @ validator  : <NULL>
 #> @ properties :
 #>  $ n : <integer> or <double>
@@ -127,8 +129,8 @@ and astronomical calendars. The base calendars provided by mixtime are:
 ``` r
 
 cal_symmetry454 <- new_calendar(
-  year  = S7::new_class("tu_symmetry454_year",  parent = mt_tz_unit),
-  month = S7::new_class("tu_symmetry454_month", parent = mt_tz_unit),
+  year  = new_time_unit("tu_symmetry454_year",  parent = mt_tz_unit),
+  month = new_time_unit("tu_symmetry454_month", parent = mt_tz_unit),
   week  = cal_isoweek$week,
   # Inherit civil-time units (day, hour, minute, second, ...)
   inherit = cal_time_civil,

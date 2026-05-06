@@ -33,14 +33,13 @@ etc.).
 ``` r
 t <- linear_time(
   1:3, 
-  cal_time_solar_sunset$day(1L, lat = -37.8136, lon = 144.9631)
+  cal_time_solar$day(1L, lat = -37.8136, lon = 144.9631)
 )
-#> Error: object 'cal_time_solar_sunset' not found
 
 loc_longitude(t)
-#> [1] NA
+#> [1] 144.9631 144.9631 144.9631
 loc_latitude(t)
-#> [1] NA
+#> [1] -37.8136 -37.8136 -37.8136
 loc_altitude(t)
-#> [1] NA
+#> [1] 0 0 0
 ```

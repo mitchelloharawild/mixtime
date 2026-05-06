@@ -525,6 +525,8 @@ units and calendars.
 
 ### Time units and calendars
 
+- [`new_time_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time_unit.md)
+  : Create a new time unit class
 - [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_calendar.md)
   : Create a new calendar
 - [`mt_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)

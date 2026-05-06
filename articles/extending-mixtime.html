@@ -143,8 +143,8 @@ hook</a>:</p>
 <h2 id="time-units">Time units<a class="anchor" aria-label="anchor" href="#time-units"></a>
 </h2>
 <p>Time units are the building blocks of calendars. Time units are S7
-classes that inherit <code>mt_unit</code>, a purely abstract time unit
-class.</p>
+classes created with <code><a href="../reference/new_time_unit.html">new_time_unit()</a></code>, which inherit from
+<code>mt_unit</code> (a purely abstract time unit class).</p>
 <p>In practice, most time units should inherit either:</p>
 <ul>
 <li>
@@ -162,7 +162,7 @@ arguments needed for your time unit can be defined with S7 by:</p>
 IANA names) or <code>mt_loc_unit</code> (for <code>lon</code>,
 <code>lat</code>, and <code>alt</code>),</li>
 <li>defining custom S7 properties with
-<code>S7::new_class(properties = ...)</code>.</li>
+<code>new_time_unit(properties = ...)</code>.</li>
 </ul>
 <p>The name of a time unit’s S7 class becomes the internal identifier
 for that unit, so it should be unique across all calendars. The class
@@ -170,18 +170,18 @@ name is not important to users of the calendar, but it should be
 descriptive for developers.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Timezone-aware Symmetry454 year and month units</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"tu_symmetry454_year"</span>,  parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/new_time_unit.html">new_time_unit</a></span><span class="op">(</span><span class="st">"tu_symmetry454_year"</span>,  parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;tu_symmetry454_year&gt; class</span></span>
 <span><span class="co">#&gt; @ parent     : &lt;mixtime::mt_tz_unit&gt;</span></span>
-<span><span class="co">#&gt; @ constructor: function(n, tz) {...}</span></span>
+<span><span class="co">#&gt; @ constructor: function(...) {...}</span></span>
 <span><span class="co">#&gt; @ validator  : &lt;NULL&gt;</span></span>
 <span><span class="co">#&gt; @ properties :</span></span>
 <span><span class="co">#&gt;  $ n : &lt;integer&gt; or &lt;double&gt;</span></span>
 <span><span class="co">#&gt;  $ tz: &lt;character&gt;</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"tu_symmetry454_month"</span>, parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/new_time_unit.html">new_time_unit</a></span><span class="op">(</span><span class="st">"tu_symmetry454_month"</span>, parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;tu_symmetry454_month&gt; class</span></span>
 <span><span class="co">#&gt; @ parent     : &lt;mixtime::mt_tz_unit&gt;</span></span>
-<span><span class="co">#&gt; @ constructor: function(n, tz) {...}</span></span>
+<span><span class="co">#&gt; @ constructor: function(...) {...}</span></span>
 <span><span class="co">#&gt; @ validator  : &lt;NULL&gt;</span></span>
 <span><span class="co">#&gt; @ properties :</span></span>
 <span><span class="co">#&gt;  $ n : &lt;integer&gt; or &lt;double&gt;</span></span>
@@ -211,8 +211,8 @@ lunar phases)</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cal_symmetry454</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_calendar.html">new_calendar</a></span><span class="op">(</span></span>
-<span>  year  <span class="op">=</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"tu_symmetry454_year"</span>,  parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span>,</span>
-<span>  month <span class="op">=</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"tu_symmetry454_month"</span>, parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span>,</span>
+<span>  year  <span class="op">=</span> <span class="fu"><a href="../reference/new_time_unit.html">new_time_unit</a></span><span class="op">(</span><span class="st">"tu_symmetry454_year"</span>,  parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span>,</span>
+<span>  month <span class="op">=</span> <span class="fu"><a href="../reference/new_time_unit.html">new_time_unit</a></span><span class="op">(</span><span class="st">"tu_symmetry454_month"</span>, parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span>,</span>
 <span>  week  <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">$</span><span class="va">week</span>,</span>
 <span>  <span class="co"># Inherit civil-time units (day, hour, minute, second, ...)</span></span>
 <span>  inherit <span class="op">=</span> <span class="va">cal_time_civil</span>,</span>
