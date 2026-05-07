@@ -26,7 +26,6 @@ URL: https://pkg.mitchelloharawild.com/mixtime/, https://github.com/mitchellohar
 BugReports: https://github.com/mitchelloharawild/mixtime/issues
 Encoding: UTF-8
 Language: en-GB
-LazyData: true
 Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 3.0.2)

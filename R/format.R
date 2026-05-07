@@ -175,13 +175,13 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
 
   # Apply labels
   parts$linear <- .mapply(
-    \(tu, x) rlang::exec(linear_labels, tu[[1L]], x, !!!attributes(tu)), 
+    function(tu, x) rlang::exec(linear_labels, tu[[1L]], x, !!!attributes(tu)), 
     dots = list(res_split[["1"]], parts$linear), 
     MoreArgs = NULL
   )
   parts$cyclical <- .mapply(
     # TODO floor(x) shouldn't be necessary, fix chronon_parts()?
-    \(tu, x) rlang::exec(cyclical_labels, tu[[1L]], tu[[2L]], floor(x), !!!attributes(tu)), 
+    function(tu, x) rlang::exec(cyclical_labels, tu[[1L]], tu[[2L]], floor(x), !!!attributes(tu)), 
     dots = list(res_split[["2"]], parts$cyclical), 
     MoreArgs = NULL
   )
