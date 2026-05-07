@@ -68,6 +68,20 @@ extern "C" SEXP _mixtime_approx_solar_phase_from_utc(SEXP unix_times, SEXP lat_d
     return cpp11::as_sexp(approx_solar_phase_from_utc(cpp11::as_cpp<cpp11::decay_t<doubles>>(unix_times), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
   END_CPP11
 }
+// timeastro_solar.cpp
+doubles approx_solar_phase_from_solar_seconds(doubles solar_second_counts, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_solar_phase_from_solar_seconds(SEXP solar_second_counts, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_solar_phase_from_solar_seconds(cpp11::as_cpp<cpp11::decay_t<doubles>>(solar_second_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+  END_CPP11
+}
+// timeastro_solar.cpp
+doubles approx_solar_seconds_from_solar_phase(doubles phase_counts, double lat_deg, double lon_deg, double alt_deg);
+extern "C" SEXP _mixtime_approx_solar_seconds_from_solar_phase(SEXP phase_counts, SEXP lat_deg, SEXP lon_deg, SEXP alt_deg) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(approx_solar_seconds_from_solar_phase(cpp11::as_cpp<cpp11::decay_t<doubles>>(phase_counts), cpp11::as_cpp<cpp11::decay_t<double>>(lat_deg), cpp11::as_cpp<cpp11::decay_t<double>>(lon_deg), cpp11::as_cpp<cpp11::decay_t<double>>(alt_deg)));
+  END_CPP11
+}
 // timezone-info.cpp
 writable::doubles get_tz_offset(const doubles& posixct, const strings& zone);
 extern "C" SEXP _mixtime_get_tz_offset(SEXP posixct, SEXP zone) {
@@ -92,18 +106,20 @@ extern "C" SEXP _mixtime_get_tz_transitions(SEXP start_posixct, SEXP end_posixct
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixtime_approx_lunar_phase_from_utc",   (DL_FUNC) &_mixtime_approx_lunar_phase_from_utc,   1},
-    {"_mixtime_approx_lunations_from_utc",     (DL_FUNC) &_mixtime_approx_lunations_from_utc,     1},
-    {"_mixtime_approx_solar_phase_from_utc",   (DL_FUNC) &_mixtime_approx_solar_phase_from_utc,   4},
-    {"_mixtime_approx_solar_phase_utc",        (DL_FUNC) &_mixtime_approx_solar_phase_utc,        4},
-    {"_mixtime_approx_solar_seconds_from_utc", (DL_FUNC) &_mixtime_approx_solar_seconds_from_utc, 4},
-    {"_mixtime_approx_utc_from_lunar_phase",   (DL_FUNC) &_mixtime_approx_utc_from_lunar_phase,   1},
-    {"_mixtime_approx_utc_from_lunations",     (DL_FUNC) &_mixtime_approx_utc_from_lunations,     1},
-    {"_mixtime_approx_utc_from_solar_seconds", (DL_FUNC) &_mixtime_approx_utc_from_solar_seconds, 4},
-    {"_mixtime_get_tz_abbreviation",           (DL_FUNC) &_mixtime_get_tz_abbreviation,           2},
-    {"_mixtime_get_tz_offset",                 (DL_FUNC) &_mixtime_get_tz_offset,                 2},
-    {"_mixtime_get_tz_transitions",            (DL_FUNC) &_mixtime_get_tz_transitions,            3},
-    {"_mixtime_mt_glue_fmt",                   (DL_FUNC) &_mixtime_mt_glue_fmt,                   2},
+    {"_mixtime_approx_lunar_phase_from_utc",           (DL_FUNC) &_mixtime_approx_lunar_phase_from_utc,           1},
+    {"_mixtime_approx_lunations_from_utc",             (DL_FUNC) &_mixtime_approx_lunations_from_utc,             1},
+    {"_mixtime_approx_solar_phase_from_solar_seconds", (DL_FUNC) &_mixtime_approx_solar_phase_from_solar_seconds, 4},
+    {"_mixtime_approx_solar_phase_from_utc",           (DL_FUNC) &_mixtime_approx_solar_phase_from_utc,           4},
+    {"_mixtime_approx_solar_phase_utc",                (DL_FUNC) &_mixtime_approx_solar_phase_utc,                4},
+    {"_mixtime_approx_solar_seconds_from_solar_phase", (DL_FUNC) &_mixtime_approx_solar_seconds_from_solar_phase, 4},
+    {"_mixtime_approx_solar_seconds_from_utc",         (DL_FUNC) &_mixtime_approx_solar_seconds_from_utc,         4},
+    {"_mixtime_approx_utc_from_lunar_phase",           (DL_FUNC) &_mixtime_approx_utc_from_lunar_phase,           1},
+    {"_mixtime_approx_utc_from_lunations",             (DL_FUNC) &_mixtime_approx_utc_from_lunations,             1},
+    {"_mixtime_approx_utc_from_solar_seconds",         (DL_FUNC) &_mixtime_approx_utc_from_solar_seconds,         4},
+    {"_mixtime_get_tz_abbreviation",                   (DL_FUNC) &_mixtime_get_tz_abbreviation,                   2},
+    {"_mixtime_get_tz_offset",                         (DL_FUNC) &_mixtime_get_tz_offset,                         2},
+    {"_mixtime_get_tz_transitions",                    (DL_FUNC) &_mixtime_get_tz_transitions,                    3},
+    {"_mixtime_mt_glue_fmt",                           (DL_FUNC) &_mixtime_mt_glue_fmt,                           2},
     {NULL, NULL, 0}
 };
 }

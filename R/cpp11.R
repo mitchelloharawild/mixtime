@@ -36,6 +36,14 @@ approx_solar_phase_from_utc <- function(unix_times, lat_deg, lon_deg, alt_deg) {
   .Call(`_mixtime_approx_solar_phase_from_utc`, unix_times, lat_deg, lon_deg, alt_deg)
 }
 
+approx_solar_phase_from_solar_seconds <- function(solar_second_counts, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_solar_phase_from_solar_seconds`, solar_second_counts, lat_deg, lon_deg, alt_deg)
+}
+
+approx_solar_seconds_from_solar_phase <- function(phase_counts, lat_deg, lon_deg, alt_deg) {
+  .Call(`_mixtime_approx_solar_seconds_from_solar_phase`, phase_counts, lat_deg, lon_deg, alt_deg)
+}
+
 get_tz_offset <- function(posixct, zone) {
   .Call(`_mixtime_get_tz_offset`, posixct, zone)
 }

@@ -1,7 +1,8 @@
 date1 <- as.integer(as.Date("2026-02-26"))
 date2 <- as.integer(as.Date("2026-08-19"))
 expect_equal_time <- function(object, expected, tolerance = 120, ...) {
-  expect_equal(as.numeric(object), as.numeric(expected), tolerance = tolerance, ...)
+  tdiff <- abs(as.numeric(object) - as.numeric(expected))
+  expect_lte(max(tdiff), tolerance, ...)
 }
 
 # ---------------------------------------------------------------------------
@@ -31,43 +32,43 @@ test_that("All 8 phase boundaries correct: Melbourne, 2026-02-26", {
 
   # p=0: astronomical dawn (sun crosses -18° ascending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 0L, mel)),
-    as.POSIXct("2026-02-26 05:37:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date1 * 8L + 0L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-02-26 05:28:00", tz = "Australia/Melbourne")
   )
   # p=1: nautical dawn (sun crosses -12° ascending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 1L, mel)),
-    as.POSIXct("2026-02-26 06:07:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date1 * 8L + 1L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-02-26 06:01:00", tz = "Australia/Melbourne")
   )
   # p=2: civil dawn (sun crosses -6° ascending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 2L, mel)),
+    as.POSIXct(linear_time(date1 * 8L + 2L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-02-26 06:34:00", tz = "Australia/Melbourne")
   )
   # p=3: sunrise (sun crosses -0.833° ascending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 3L, mel)),
+    as.POSIXct(linear_time(date1 * 8L + 3L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-02-26 07:01:00", tz = "Australia/Melbourne")
   )
   # p=4: sunset (sun crosses -0.833° descending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 4L, mel)),
+    as.POSIXct(linear_time(date1 * 8L + 4L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-02-26 20:04:00", tz = "Australia/Melbourne")
   )
   # p=5: civil dusk (sun crosses -6° descending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 5L, mel)),
+    as.POSIXct(linear_time(date1 * 8L + 5L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-02-26 20:31:00", tz = "Australia/Melbourne")
   )
   # p=6: nautical dusk (sun crosses -12° descending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 6L, mel)),
-    as.POSIXct("2026-02-26 20:58:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date1 * 8L + 6L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-02-26 21:03:00", tz = "Australia/Melbourne")
   )
   # p=7: astronomical dusk / night begins (sun crosses -18° descending)
   expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 7L, mel)),
-    as.POSIXct("2026-02-26 21:28:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date1 * 8L + 7L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-02-26 21:36:00", tz = "Australia/Melbourne")
   )
 })
 
@@ -80,43 +81,43 @@ test_that("All 8 phase boundaries correct: Melbourne, 2026-08-19", {
 
   # p=0: astronomical dawn
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 0L, mel)),
-    as.POSIXct("2026-08-19 05:36:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date2 * 8L + 0L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-08-19 05:32:00", tz = "Australia/Melbourne")
   )
   # p=1: nautical dawn
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 1L, mel)),
-    as.POSIXct("2026-08-19 06:06:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date2 * 8L + 1L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-08-19 06:02:00", tz = "Australia/Melbourne")
   )
   # p=2: civil dawn
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 2L, mel)),
+    as.POSIXct(linear_time(date2 * 8L + 2L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-08-19 06:33:00", tz = "Australia/Melbourne")
   )
   # p=3: sunrise
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 3L, mel)),
+    as.POSIXct(linear_time(date2 * 8L + 3L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-08-19 07:00:00", tz = "Australia/Melbourne")
   )
   # p=4: sunset
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 4L, mel)),
+    as.POSIXct(linear_time(date2 * 8L + 4L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-08-19 17:47:00", tz = "Australia/Melbourne")
   )
   # p=5: civil dusk
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 5L, mel)),
+    as.POSIXct(linear_time(date2 * 8L + 5L, mel), tz = "Australia/Melbourne"),
     as.POSIXct("2026-08-19 18:14:00", tz = "Australia/Melbourne")
   )
   # p=6: nautical dusk
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 6L, mel)),
-    as.POSIXct("2026-08-19 18:41:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date2 * 8L + 6L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-08-19 18:45:00", tz = "Australia/Melbourne")
   )
   # p=7: astronomical dusk / night begins
   expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 7L, mel)),
-    as.POSIXct("2026-08-19 19:11:00", tz = "Australia/Melbourne")
+    as.POSIXct(linear_time(date2 * 8L + 7L, mel), tz = "Australia/Melbourne"),
+    as.POSIXct("2026-08-19 19:16:00", tz = "Australia/Melbourne")
   )
 })
 
@@ -130,12 +131,12 @@ test_that("All 8 phase boundaries correct: Munich, 2026-02-26", {
   # p=0: astronomical dawn
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 0L, muc)),
-    as.POSIXct("2026-02-26 05:18:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-02-26 05:17:00", tz = "Europe/Berlin")
   )
   # p=1: nautical dawn
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 1L, muc)),
-    as.POSIXct("2026-02-26 05:58:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-02-26 05:53:00", tz = "Europe/Berlin")
   )
   # p=2: civil dawn
   expect_equal_time(
@@ -160,12 +161,12 @@ test_that("All 8 phase boundaries correct: Munich, 2026-02-26", {
   # p=6: nautical dusk
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 6L, muc)),
-    as.POSIXct("2026-02-26 18:55:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-02-26 19:00:00", tz = "Europe/Berlin")
   )
   # p=7: astronomical dusk / night begins
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 7L, muc)),
-    as.POSIXct("2026-02-26 19:37:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-02-26 19:36:00", tz = "Europe/Berlin")
   )
 })
 
@@ -180,12 +181,12 @@ test_that("All 8 phase boundaries correct: Munich, 2026-08-19", {
   # p=0: astronomical dawn
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 0L, muc)),
-    as.POSIXct("2026-08-19 04:05:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-08-19 04:10:00", tz = "Europe/Berlin")
   )
   # p=1: nautical dawn
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 1L, muc)),
-    as.POSIXct("2026-08-19 05:05:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-08-19 04:57:00", tz = "Europe/Berlin")
   )
   # p=2: civil dawn
   expect_equal_time(
@@ -210,12 +211,12 @@ test_that("All 8 phase boundaries correct: Munich, 2026-08-19", {
   # p=6: nautical dusk
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 6L, muc)),
-    as.POSIXct("2026-08-19 21:27:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-08-19 21:35:00", tz = "Europe/Berlin")
   )
   # p=7: astronomical dusk / night begins
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 7L, muc)),
-    as.POSIXct("2026-08-19 22:27:00", tz = "Europe/Berlin")
+    as.POSIXct("2026-08-19 22:22:00", tz = "Europe/Berlin")
   )
 })
 
@@ -229,17 +230,17 @@ test_that("All 8 phase boundaries correct: Honolulu, 2026-02-26", {
   # p=0: astronomical dawn
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 0L, hni)),
-    as.POSIXct("2026-02-26 05:40:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-02-26 05:39:00", tz = "Pacific/Honolulu")
   )
   # p=1: nautical dawn
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 1L, hni)),
-    as.POSIXct("2026-02-26 06:06:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-02-26 06:05:00", tz = "Pacific/Honolulu")
   )
   # p=2: civil dawn
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 2L, hni)),
-    as.POSIXct("2026-02-26 06:32:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-02-26 06:31:00", tz = "Pacific/Honolulu")
   )
   # p=3: sunrise
   expect_equal_time(
@@ -259,7 +260,7 @@ test_that("All 8 phase boundaries correct: Honolulu, 2026-02-26", {
   # p=6: nautical dusk
   expect_equal_time(
     as.POSIXct(linear_time(date1 * 8L + 6L, hni)),
-    as.POSIXct("2026-02-26 19:23:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-02-26 19:22:00", tz = "Pacific/Honolulu")
   )
   # p=7: astronomical dusk / night begins
   expect_equal_time(
@@ -278,7 +279,7 @@ test_that("All 8 phase boundaries correct: Honolulu, 2026-08-19", {
   # p=0: astronomical dawn
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 0L, hni)),
-    as.POSIXct("2026-08-19 04:54:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-08-19 04:53:00", tz = "Pacific/Honolulu")
   )
   # p=1: nautical dawn
   expect_equal_time(
@@ -298,22 +299,22 @@ test_that("All 8 phase boundaries correct: Honolulu, 2026-08-19", {
   # p=4: sunset
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 4L, hni)),
-    as.POSIXct("2026-08-19 18:59:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-08-19 18:58:00", tz = "Pacific/Honolulu")
   )
   # p=5: civil dusk
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 5L, hni)),
-    as.POSIXct("2026-08-19 19:22:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-08-19 19:21:00", tz = "Pacific/Honolulu")
   )
   # p=6: nautical dusk
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 6L, hni)),
-    as.POSIXct("2026-08-19 19:49:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-08-19 19:48:00", tz = "Pacific/Honolulu")
   )
   # p=7: astronomical dusk / night begins
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 8L + 7L, hni)),
-    as.POSIXct("2026-08-19 20:16:00", tz = "Pacific/Honolulu")
+    as.POSIXct("2026-08-19 20:15:00", tz = "Pacific/Honolulu")
   )
 })
 
@@ -372,142 +373,6 @@ test_that("Solar noon calculations", {
   expect_equal_time(
     as.POSIXct(linear_time(date2 * 2L + 1L, muc_ampm)),
     as.POSIXct("2026-08-19 13:17:00", tz = "Europe/Berlin")
-  )
-})
-
-# ---------------------------------------------------------------------------
-# Solar astronomical dawn calculations (replaces "Solar midnight calculations")
-# p=0 is the astro-dawn boundary (sun crosses -18° ascending). For Melbourne
-# (UTC+11) this falls on UTC day d-1 even though the local date is day d.
-# ---------------------------------------------------------------------------
-test_that("Solar astronomical dawn calculations", {
-  # Astro dawn = illumination phase 0 (sun crosses -18° ascending)
-  mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 0L, mel_illumination)),
-    as.POSIXct("2026-02-26 05:37:00", tz = "Australia/Melbourne")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 0L, mel_illumination)),
-    as.POSIXct("2026-08-19 05:36:00", tz = "Australia/Melbourne")
-  )
-
-  muc_illumination <- cal_time_solar$illumination(1L, lat = 48.133, lon = 11.583)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 0L, muc_illumination)),
-    as.POSIXct("2026-02-26 05:18:00", tz = "Europe/Berlin")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 0L, muc_illumination)),
-    as.POSIXct("2026-08-19 04:05:00", tz = "Europe/Berlin")
-  )
-})
-
-# ---------------------------------------------------------------------------
-# Solar dawn calculations (civil twilight)
-# p=2: sun crosses -6° ascending. Old tests used +3L (off-by-one), fixed here.
-# ---------------------------------------------------------------------------
-test_that("Solar dawn calculations (civil twilight)", {
-  # Civil dawn = illumination phase 2 (sun crosses -6° ascending)
-  mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 2L, mel_illumination)),
-    as.POSIXct("2026-02-26 06:34:00", tz = "Australia/Melbourne")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 2L, mel_illumination)),
-    as.POSIXct("2026-08-19 06:33:00", tz = "Australia/Melbourne")
-  )
-
-  muc_illumination <- cal_time_solar$illumination(1L, lat = 48.133, lon = 11.583)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 2L, muc_illumination)),
-    as.POSIXct("2026-02-26 06:29:00", tz = "Europe/Berlin")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 2L, muc_illumination)),
-    as.POSIXct("2026-08-19 05:39:00", tz = "Europe/Berlin")
-  )
-})
-
-# ---------------------------------------------------------------------------
-# Solar sunrise calculations
-# p=3: sun crosses -0.833° ascending. Old tests used +4L, fixed here.
-# ---------------------------------------------------------------------------
-test_that("Solar sunrise calculations", {
-  # Sunrise = illumination phase 3 (sun crosses -0.833° ascending)
-  mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 3L, mel_illumination)),
-    as.POSIXct("2026-02-26 07:01:00", tz = "Australia/Melbourne")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 3L, mel_illumination)),
-    as.POSIXct("2026-08-19 07:00:00", tz = "Australia/Melbourne")
-  )
-
-  muc_illumination <- cal_time_solar$illumination(1L, lat = 48.133, lon = 11.583)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 3L, muc_illumination)),
-    as.POSIXct("2026-02-26 07:00:00", tz = "Europe/Berlin")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 3L, muc_illumination)),
-    as.POSIXct("2026-08-19 06:13:00", tz = "Europe/Berlin")
-  )
-})
-
-# ---------------------------------------------------------------------------
-# Solar sunset calculations
-# p=4: sun crosses -0.833° descending. Old tests used +5L, fixed here.
-# ---------------------------------------------------------------------------
-test_that("Solar sunset calculations", {
-  # Sunset = illumination phase 4 (sun crosses -0.833° descending)
-  mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 4L, mel_illumination)),
-    as.POSIXct("2026-02-26 20:04:00", tz = "Australia/Melbourne")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 4L, mel_illumination)),
-    as.POSIXct("2026-08-19 17:47:00", tz = "Australia/Melbourne")
-  )
-
-  muc_illumination <- cal_time_solar$illumination(1L, lat = 48.133, lon = 11.583)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 4L, muc_illumination)),
-    as.POSIXct("2026-02-26 17:53:00", tz = "Europe/Berlin")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 4L, muc_illumination)),
-    as.POSIXct("2026-08-19 20:20:00", tz = "Europe/Berlin")
-  )
-})
-
-# ---------------------------------------------------------------------------
-# Solar dusk calculations (civil twilight)
-# p=5: sun crosses -6° descending. Old tests used +6L, fixed here.
-# ---------------------------------------------------------------------------
-test_that("Solar dusk calculations (civil twilight)", {
-  # Civil dusk = illumination phase 5 (sun crosses -6° descending)
-  mel_illumination <- cal_time_solar$illumination(1L, lat = -37.8136, lon = 144.9631)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 5L, mel_illumination)),
-    as.POSIXct("2026-02-26 20:31:00", tz = "Australia/Melbourne")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 5L, mel_illumination)),
-    as.POSIXct("2026-08-19 18:14:00", tz = "Australia/Melbourne")
-  )
-
-  muc_illumination <- cal_time_solar$illumination(1L, lat = 48.133, lon = 11.583)
-  expect_equal_time(
-    as.POSIXct(linear_time(date1 * 8L + 5L, muc_illumination)),
-    as.POSIXct("2026-02-26 18:24:00", tz = "Europe/Berlin")
-  )
-  expect_equal_time(
-    as.POSIXct(linear_time(date2 * 8L + 5L, muc_illumination)),
-    as.POSIXct("2026-08-19 20:53:00", tz = "Europe/Berlin")
   )
 })
 
@@ -599,7 +464,6 @@ test_that("Round-trip UTC → phase count → UTC", {
   illumination <- linear_time(midpoints_utc, mel, discrete = FALSE)
   recovered <- as.POSIXct(illumination)
   expect_equal_time(recovered, midpoints_utc)
-
 
   lat <- 48.133; lon <- 11.583
   muc <- cal_time_solar$illumination(1L, lat = lat, lon = lon)

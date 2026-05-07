@@ -29,29 +29,29 @@
 #' | AM   | Solar midnight to noon  | Morning half; before solar transit       |
 #' | PM   | Solar noon to midnight  | Afternoon half; after solar transit      |
 #' 
-# #' ## Solar clock units
-# #' 
-# #' Phases describe the illumination state of the sky and correspond to standard
-# #' twilight definitions used in astronomy and navigation. Each phase is bounded
-# #' by a pair of solar altitude thresholds:
-# #' 
-# #' | Phase              | Solar altitude range  | Description                                                 |
-# #' |--------------------|-----------------------|-------------------------------------------------------------|
-# #' | Night              | < -18°                | Sky fully dark; from last dusk to first dawn (spans noon)   |
-# #' | Astronomical dawn  | -18° to -12°          | Astronomical twilight before sunrise; faint objects obscured|
-# #' | Nautical dawn      | -12° to -6°           | Nautical twilight before sunrise; horizon visible at sea    |
-# #' | Civil dawn         | -6° to -0.833°        | Civil twilight before sunrise; sky brightening in the east  |
-# #' | Day                | > -0.833°             | Sun above the horizon; spans solar noon                     |
-# #' | Civil dusk         | -0.833° to -6°        | Civil twilight after sunset; sky fading in the west         |
-# #' | Nautical dusk      | -6° to -12°           | Nautical twilight after sunset; horizon visible at sea      |
-# #' | Astronomical dusk  | -12° to -18°          | Astronomical twilight after sunset; faint objects obscured  |
-# #' 
-# #' The -0.833° threshold for sunrise and sunset accounts for the mean angular
-# #' radius of the solar disc (0.267°) plus the standard atmospheric refraction
-# #' at the horizon (0.566°). Noon and midnight are derived from the equation of
-# #' time rather than a fixed altitude. Locations that experience polar day or
-# #' polar night (civil days where sunrise does not occur) are not currently 
-# #' supported, it is recommended to use an alternative reference location.
+#' ## Solar illumination phases
+#' 
+#' Phases describe the illumination state of the sky and correspond to standard
+#' twilight definitions used in astronomy and navigation. Each phase is bounded
+#' by a pair of solar altitude thresholds:
+#' 
+#' | Phase              | Solar altitude range  | Description                                                 |
+#' |--------------------|-----------------------|-------------------------------------------------------------|
+#' | Night              | < -18°                | Sky fully dark; from last dusk to first dawn (spans noon)   |
+#' | Astronomical dawn  | -18° to -12°          | Astronomical twilight before sunrise; faint objects obscured|
+#' | Nautical dawn      | -12° to -6°           | Nautical twilight before sunrise; horizon visible at sea    |
+#' | Civil dawn         | -6° to -0.833°        | Civil twilight before sunrise; sky brightening in the east  |
+#' | Day                | > -0.833°             | Sun above the horizon; spans solar noon                     |
+#' | Civil dusk         | -0.833° to -6°        | Civil twilight after sunset; sky fading in the west         |
+#' | Nautical dusk      | -6° to -12°           | Nautical twilight after sunset; horizon visible at sea      |
+#' | Astronomical dusk  | -12° to -18°          | Astronomical twilight after sunset; faint objects obscured  |
+#' 
+#' The -0.833° threshold for sunrise and sunset accounts for the mean angular
+#' radius of the solar disc (0.267°) plus the standard atmospheric refraction
+#' at the horizon (0.566°). Noon and midnight are derived from the equation of
+#' time rather than a fixed altitude. Locations that experience polar day or
+#' polar night (civil days where sunrise does not occur) are not currently 
+#' supported, it is recommended to use an alternative reference location.
 #' 
 #' @seealso [`cal_time_civil`]
 #' 
@@ -69,8 +69,8 @@ cal_time_solar <- new_calendar(
   second = S7::new_class("tu_solar_second", parent = mt_loc_unit),
   degree = S7::new_class("tu_solar_degree", parent = mt_loc_unit),
   arcminute = S7::new_class("tu_solar_arcminute", parent = mt_loc_unit),
-  arcsecond = S7::new_class("tu_solar_arcsecond", parent = mt_loc_unit)#,
-  # illumination = S7::new_class("tu_solar_lum", parent = mt_loc_unit)
+  arcsecond = S7::new_class("tu_solar_arcsecond", parent = mt_loc_unit),
+  illumination = S7::new_class("tu_solar_lum", parent = mt_loc_unit)
 )
 
 # Time unit labels
@@ -90,8 +90,8 @@ method(time_unit_full, cal_time_solar$arcminute) <- function(x) "arcminute"
 method(time_unit_abbr, cal_time_solar$arcminute) <- function(x) "'"
 method(time_unit_full, cal_time_solar$arcsecond) <- function(x) "arcsecond"
 method(time_unit_abbr, cal_time_solar$arcsecond) <- function(x) "\""
-# method(time_unit_full, cal_time_solar$illumination) <- function(x) "illumination phase"
-# method(time_unit_abbr, cal_time_solar$illumination) <- function(x) "I"
+method(time_unit_full, cal_time_solar$illumination) <- function(x) "illumination phase"
+method(time_unit_abbr, cal_time_solar$illumination) <- function(x) "I"
 
 # Default formats
 method(chronon_format_linear, list(cal_time_solar$day, class_any)) <- function(x, cal) "{lin(day)}"
@@ -102,12 +102,7 @@ method(chronon_format_linear, list(cal_time_solar$second, class_any)) <- functio
 method(chronon_format_linear, list(cal_time_solar$degree, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0")
 method(chronon_format_linear, list(cal_time_solar$arcminute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'")
 method(chronon_format_linear, list(cal_time_solar$arcsecond, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'{cyc(arcsecond,arcminute)}\"")
-# method(chronon_format_linear, list(cal_time_solar$illumination, class_any)) <- function(x, cal) "{lin(day)} {cyc(illumination,day)}"
-
-# 8 illumination phases per solar day (night, 3 x dawn, day, 3 x dusk)
-# method(chronon_cardinality, list(cal_time_solar$illumination, cal_time_solar$day)) <- function(x, y, at = NULL) {
-#   y@n * 8L / x@n
-# }
+method(chronon_format_linear, list(cal_time_solar$illumination, class_any)) <- function(x, cal) "{lin(day)} {cyc(illumination,day)}"
 
 # Solar time
 method(chronon_cardinality, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(x, y, at = NULL) {
@@ -134,11 +129,18 @@ method(chronon_cardinality, list(cal_time_solar$arcsecond, cal_time_solar$arcmin
   y@n * 60L / x@n
 }
 
+# Solar illumination phases
+method(chronon_cardinality, list(cal_time_solar$second, cal_time_solar$illumination)) <- function(x, y, at = NULL) {
+  (approx_solar_seconds_from_solar_phase((at + 1L) * y@n, y@lat, y@lon, y@alt) -
+     approx_solar_seconds_from_solar_phase(at * y@n, y@lat, y@lon, y@alt)) / x@n
+}
+
+
 # The number of UTC seconds in a solar second
 method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar$second)) <- function(x, y, at = NULL) {
   at_ss <- approx_solar_seconds_from_utc(at, y@lat, y@lon, y@alt)
-  (approx_utc_from_solar_seconds(at_ss + y@n, y@lat, y@lon, y@alt) -
-     approx_utc_from_solar_seconds(at_ss, y@lat, y@lon, y@alt)) / x@n
+  (approx_utc_from_solar_seconds((at_ss + 1L) * y@n, y@lat, y@lon, y@alt) -
+     approx_utc_from_solar_seconds(at_ss * y@n, y@lat, y@lon, y@alt)) / x@n
 }
 
 # Convert UTC seconds → continuous solar second count
@@ -157,23 +159,22 @@ method(chronon_divmod, list(cal_time_solar$second, cal_time_civil$second)) <- fu
   )
 }
 
-# # Convert UTC seconds → continuous solar phase count.
-# # Delegates entirely to C++ which handles midnight boundaries and NaN phases.
-# method(chronon_divmod, list(cal_time_civil$second, cal_time_solar$illumination)) <- function(from, to, x) {
-#   list(
-#     div = approx_solar_phase_from_utc(as.double(x) * from@n, to@lat, to@lon, to@alt) / to@n,
-#     mod = 0
-#   )
-# }
-
-# # Convert solar phase count → UTC seconds.
-# # Integer phase counts return the phase start boundary; fractional counts interpolate.
-# method(chronon_divmod, list(cal_time_solar$illumination, cal_time_civil$second)) <- function(from, to, x) {
-#   list(
-#     div = approx_solar_phase_utc(as.double(x), from@lat, from@lon, from@alt),
-#     mod = 0
-#   )
-# }
+# Convert solar seconds → continuous solar phase count.
+# A single C++ call converts solar seconds directly to phases without a UTC round-trip.
+method(chronon_divmod, list(cal_time_solar$second, cal_time_solar$illumination)) <- function(from, to, x) {
+  list(
+    div = approx_solar_phase_from_solar_seconds(as.double(x) * from@n, to@lat, to@lon, to@alt) / to@n,
+    mod = 0
+  )
+}
+# Convert solar phase count → solar seconds.
+# Integer phase counts return the phase start boundary; fractional counts interpolate.
+method(chronon_divmod, list(cal_time_solar$illumination, cal_time_solar$second)) <- function(from, to, x) {
+  list(
+    div = approx_solar_seconds_from_solar_phase(as.double(x) * from@n, from@lat, from@lon, from@alt) / to@n,
+    mod = 0
+  )
+}
 
 ## Time labels
 ### Linear labels for solar days (re-use Gregorian dates)

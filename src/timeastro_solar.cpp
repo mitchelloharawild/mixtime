@@ -497,3 +497,143 @@ doubles approx_solar_phase_from_utc(doubles unix_times,
   return result;
 }
 
+// Continuous solar second counts -> continuous solar phase counts.
+//
+// Avoids a UTC round-trip by converting solar seconds directly to a UTC
+// timestamp (via the solar-day midnight boundaries already in the cache) and
+// then running the standard phase-boundary search against the same cache.
+// A single SolarGeometryCache is shared across both steps.
+[[cpp11::register]]
+doubles approx_solar_phase_from_solar_seconds(doubles solar_second_counts,
+                                               double lat_deg, double lon_deg,
+                                               double alt_deg = 0.0) {
+  int n = solar_second_counts.size();
+  writable::doubles result(n);
+  SolarGeometryCache cache(lat_deg, lon_deg);
+
+  double last_sd = std::numeric_limits<double>::quiet_NaN();
+  PhaseBoundaryCache pcache;
+
+  for (int i = 0; i < n; i++) {
+    double ss = solar_second_counts[i];
+    if (std::isnan(ss)) { result[i] = NA_REAL; continue; }
+
+    // Step 1: solar seconds -> UTC timestamp (mirrors utc_from_solar_days_impl).
+    double sd_count = ss / 86400.0;
+    double complete = std::floor(sd_count);
+    double fraction = sd_count - complete;
+
+    double day_utc = std::numeric_limits<double>::quiet_NaN();
+    for (double d : {complete - 1.0, complete, complete + 1.0}) {
+      const SolarGeometry& sg = cache.get(d);
+      if (!sg.valid) continue;
+      if (std::round(sg.midnight_unix() / 86400.0) == complete) {
+        day_utc = d;
+        break;
+      }
+    }
+    if (std::isnan(day_utc)) { result[i] = NA_REAL; continue; }
+
+    const SolarGeometry& today = cache.get(day_utc);
+    const SolarGeometry& next  = cache.get(day_utc + 1.0);
+    if (!today.valid || !next.valid) { result[i] = NA_REAL; continue; }
+
+    double ut = today.midnight_unix() + fraction * (next.midnight_unix() - today.midnight_unix());
+
+    // Step 2: UTC -> phase (mirrors approx_solar_phase_from_utc).
+    // Try sd+1, sd, sd-1 to cover east-longitude wraparound.
+    double sd = std::floor(ut / 86400.0) + 1.0;
+    result[i] = NA_REAL;
+
+    for (int attempt = 0; attempt <= 2 && std::isnan(result[i]); attempt++, sd -= 1.0) {
+      if (sd != last_sd) {
+        last_sd = sd;
+        recompute_phase_boundaries(sd, alt_deg, cache, pcache);
+      }
+      if (!pcache.valid) continue;
+
+      for (int p = 0; p <= 6; p++) {
+        double lo = pcache.b[p];
+        double hi = pcache.b[p + 1];
+        if (std::isnan(lo) || std::isnan(hi)) continue;
+        if (ut >= lo && ut < hi) {
+          result[i] = sd * 8.0 + p + (ut - lo) / (hi - lo);
+          break;
+        }
+      }
+      if (!std::isnan(result[i])) continue;
+
+      double lo7 = pcache.b[7];
+      double hi7 = pcache.dawn_next;
+      if (!std::isnan(lo7) && !std::isnan(hi7) && ut >= lo7 && ut < hi7)
+        result[i] = sd * 8.0 + 7.0 + (ut - lo7) / (hi7 - lo7);
+    }
+  }
+  return result;
+}
+
+// Continuous solar phase counts -> continuous solar second counts.
+//
+// Avoids a UTC round-trip by converting the interpolated UTC boundary
+// timestamp directly to solar seconds (via midnight boundaries in the same
+// cache). A single SolarGeometryCache and PhaseBoundaryCache are shared
+// across both steps.
+[[cpp11::register]]
+doubles approx_solar_seconds_from_solar_phase(doubles phase_counts,
+                                               double lat_deg, double lon_deg,
+                                               double alt_deg = 0.0) {
+  int n = phase_counts.size();
+  writable::doubles result(n);
+  SolarGeometryCache cache(lat_deg, lon_deg);
+
+  for (int i = 0; i < n; i++) {
+    double pc = phase_counts[i];
+    if (std::isnan(pc)) { result[i] = NA_REAL; continue; }
+
+    double pf_floor  = std::floor(pc);
+    double alpha     = pc - pf_floor;
+
+    double d         = std::floor(pf_floor / 8.0);  // display day integer
+    int    phase_idx = (int)std::fmod(pf_floor, 8.0);
+    if (phase_idx < 0) { phase_idx += 8; d -= 1.0; }
+
+    // Use d directly as the SolarGeometry cache key for phase boundaries,
+    // consistent with how approx_solar_phase_utc encodes phase counts.
+    // (The solar-second system uses a midnight-rounded UTC day which may
+    // differ from d for east-longitude locations, but boundaries must be
+    // computed with d to yield the same UTC times as approx_solar_phase_utc.)
+    const SolarGeometry& today = cache.get(d);
+    const SolarGeometry& next  = cache.get(d + 1.0);
+    if (!today.valid || !next.valid) { result[i] = NA_REAL; continue; }
+
+    // Step 1: phase -> UTC timestamp (mirrors approx_solar_phase_utc).
+    double t0 = solar_phase_boundary_from_geom(today, next, phase_idx, alt_deg);
+    if (std::isnan(t0)) { result[i] = NA_REAL; continue; }
+
+    double t1;
+    if (phase_idx == 7) {
+      const SolarGeometry& next2 = cache.get(d + 2.0);
+      if (!next2.valid) { result[i] = NA_REAL; continue; }
+      t1 = solar_phase_boundary_from_geom(next, next2, 0, alt_deg);
+    } else {
+      t1 = solar_phase_boundary_from_geom(today, next, phase_idx + 1, alt_deg);
+    }
+    if (std::isnan(t1)) { result[i] = NA_REAL; continue; }
+
+    double ut = t0 + alpha * (t1 - t0);
+
+    // Step 2: UTC -> solar seconds (mirrors solar_days_from_utc_impl).
+    double day_utc2 = solar_day_index_from_utc(ut, cache);
+    if (std::isnan(day_utc2)) { result[i] = NA_REAL; continue; }
+
+    SolarDayBounds bounds(day_utc2, cache);
+    if (!bounds.valid) { result[i] = NA_REAL; continue; }
+
+    double day_display = std::round(bounds.midnight_d / 86400.0);
+    double solar_days  = day_display + (ut - bounds.midnight_d)
+                                     / (bounds.midnight_d1 - bounds.midnight_d);
+    result[i] = solar_days * 86400.0;
+  }
+  return result;
+}
+
