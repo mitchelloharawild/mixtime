@@ -102,7 +102,7 @@ method(chronon_format_linear, list(cal_time_solar$second, class_any)) <- functio
 method(chronon_format_linear, list(cal_time_solar$degree, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0")
 method(chronon_format_linear, list(cal_time_solar$arcminute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'")
 method(chronon_format_linear, list(cal_time_solar$arcsecond, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'{cyc(arcsecond,arcminute)}\"")
-method(chronon_format_linear, list(cal_time_solar$illumination, class_any)) <- function(x, cal) "{lin(day)} {cyc(illumination,day)}"
+method(chronon_format_linear, list(cal_time_solar$illumination, class_any)) <- function(x, cal) "{lin(day)} {lin(illumination)}"
 
 # Solar time
 method(chronon_cardinality, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(x, y, at = NULL) {
@@ -182,14 +182,19 @@ S7::method(linear_labels, cal_time_solar$day) <- function(granule, i, ...) {
   return(format(.Date(i * granule@n)))
 }
 
-### Cyclical labels for solar time granules
+### Linear labels for solar time granules
+# (not cyclical over solar days due to midnight day boundary splitting nights)
 solar_illumination_phases <- c(
   "night", "astronomical dawn", "nautical dawn", "civil dawn",
   "day", "civil dusk", "nautical dusk", "astronomical dusk"
 )
-method(cyclical_labels, list(cal_time_solar$illumination, cal_time_solar$day)) <- function(granule, cycle, i) {
-  solar_illumination_phases[i + 1L]
+method(linear_labels, cal_time_solar$illumination) <- function(granule, i) {
+  solar_illumination_phases[floor((i * granule@n)%%8) + 1L]
 }
+
+# method(cyclical_labels, list(cal_time_solar$illumination, cal_time_solar$day)) <- function(granule, cycle, i) {
+#   solar_illumination_phases[i + 1L]
+# }
 
 solar_ampm_labels <- c("AM", "PM")
 method(cyclical_labels, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(granule, cycle, i) {
