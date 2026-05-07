@@ -64,11 +64,11 @@ yqm(Sys.Date())
 yd <- new_linear_time_fn(day(1L))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-05-06
+#> [1] 2026-05-07
 
 # Gregorian date time with hourly precision
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-05-06 18h
+#> [1] 2026-05-07 15h
 ```

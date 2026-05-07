@@ -96,7 +96,7 @@ cyclical_time(
   calendar = cal_isoweek
 )
 #> <mixtime[1]>
-#> [1] Wed
+#> [1] Thu
 
 # Month of year (1-12)
 cyclical_time(
@@ -114,7 +114,7 @@ yearweek(Sys.time(), discrete = TRUE)
 #> [1] 2026 W19
 yearweek(Sys.time(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 W19 39.7%
+#> [1] 2026 W19 52.1%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -124,7 +124,7 @@ cyclical_time(
   calendar = cal_gregorian
 )
 #> <mixtime[1]>
-#> [1] D06
+#> [1] D07
 
 # Hours, minutes, and seconds
 cyclical_time(
@@ -133,5 +133,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 18:40:11
+#> [1] 15:27:36
 ```

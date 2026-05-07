@@ -84,12 +84,12 @@ a numeric vector (e.g. seconds since epoch), or a time class (e.g. Date, POSIXct
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a mixtime for today</span></span></span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a mixtime for the current date and time</span></span></span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06 18:40:13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 15:27:38</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert time from tsibble classes to mixtime</span></span></span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu">tsibble</span><span class="fu">::</span><span class="fu"><a href="https://tsibble.tidyverts.org/reference/year-month.html" class="external-link">yearmonth</a></span><span class="op">(</span><span class="st">"2024 Jan"</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -99,34 +99,34 @@ a numeric vector (e.g. seconds since epoch), or a time class (e.g. Date, POSIXct
 <span class="r-in"><span><span class="co"># Create a mixtime for the time of day (cyclical time)</span></span></span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, cycle <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 18:40:13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 15:27:39</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Specify a timezone for the chronon</span></span></span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06 18:40:13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 15:27:39</span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="st">"Pacific/Honolulu"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06 08:40:14 HST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 05:27:39 HST</span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">second</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="st">"Australia/Melbourne"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 04:40:14 AEST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-08 01:27:39 AEST</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Dates (and all granularities) can have timezones</span></span></span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07</span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="st">"Pacific/Honolulu"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06 HST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 HST</span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="st">"Australia/Melbourne"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 AEST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-08 AEST</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Continuous time tracks progress within the chronon</span></span></span>
 <span class="r-in"><span><span class="fu">mixtime</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06 77.8%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 64.4%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Mixtime can combine different granularities and timezones in a vector</span></span></span>
 <span class="r-in"><span><span class="va">now</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span></span>
@@ -139,7 +139,7 @@ a numeric vector (e.g. seconds since epoch), or a time class (e.g. Date, POSIXct
 <span class="r-in"><span>  <span class="fu">mixtime</span><span class="op">(</span><span class="va">now</span>, chronon <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-06 18:40:14 2026-05-06 18:40    2026 May           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-07 15:27:39 2026-05-07 15:27    2026 May           </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
