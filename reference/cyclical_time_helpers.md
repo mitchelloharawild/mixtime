@@ -77,6 +77,7 @@ and
 
 For example, to create a representation for day of the month:
 
+
     day_of_month <- new_cyclical_time_fn(
       chronon = day(1L), cycle = month(1L),
       default_calendar = cal_gregorian

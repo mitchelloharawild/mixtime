@@ -108,7 +108,9 @@ one week, with years as the granule. Defaults to ISO 8601 week calendar.</p></li
 <p>These functions adapt to the calendar system of the input data. For example:</p><ul><li><p><code>year("2025-12-29")</code> returns a Gregorian year</p></li>
 <li><p><code>year(yearweek("2025-12-29"))</code> returns an ISO week-based year</p></li>
 </ul><p>You can also explicitly specify a calendar using the <code>calendar</code> argument:</p>
-<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="st">"2025-12-29"</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></code></pre><p></p></div>
+<div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="st">"2025-12-29"</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></code></pre></div>
+
     </div>
     <div class="section level2">
     <h2 id="custom-linear-time-representations">Custom linear time representations<a class="anchor" aria-label="anchor" href="#custom-linear-time-representations"></a></h2>

@@ -83,6 +83,7 @@ example:
 You can also explicitly specify a calendar using the `calendar`
 argument:
 
+
     year(yearweek("2025-12-29"), calendar = cal_isoweek)
 
 ## Custom linear time representations

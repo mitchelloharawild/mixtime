@@ -111,10 +111,12 @@ The chronon is one month, cycling within a year.</p></li>
 <p>You can create custom cyclical time representations using <code><a href="cyclical_time.html">cyclical_time()</a></code>
 with any of the supported time units (see <a href="calendar_gregorian.html">calendar_gregorian</a> and <a href="calendar_isoweek.html">calendar_isoweek</a>).</p>
 <p>For example, to create a representation for day of the month:</p>
-<p></p><div class="sourceCode r"><pre><code><span><span class="va">day_of_month</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_cyclical_time_fn.html">new_cyclical_time_fn</a></span><span class="op">(</span></span>
+<div class="sourceCode"><pre><code><span></span>
+<span><span class="va">day_of_month</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_cyclical_time_fn.html">new_cyclical_time_fn</a></span><span class="op">(</span></span>
 <span>  chronon <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, cycle <span class="op">=</span> <span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>,</span>
 <span>  default_calendar <span class="op">=</span> <span class="va">cal_gregorian</span></span>
-<span><span class="op">)</span></span></code></pre><p></p></div>
+<span><span class="op">)</span></span></code></pre></div>
+
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
