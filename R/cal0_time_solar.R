@@ -1,4 +1,4 @@
-#' Solar time
+#' Solar time unit classes
 #' 
 #' This time calendar contains solar time units, where the boundary of each day
 #' is at apparent solar midnight. Solar events define the `ampm` (midnight and

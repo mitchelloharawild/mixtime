@@ -3,7 +3,7 @@
 \name{calendar_time_solar}
 \alias{calendar_time_solar}
 \alias{cal_time_solar}
-\title{Solar time}
+\title{Solar time unit classes}
 \format{
 A location-based calendar containing solar time units.
 }
