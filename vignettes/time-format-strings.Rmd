@@ -57,7 +57,6 @@ For example, here we display the time in Berlin alongside Melbourne:
 fmt_time <- chronon_format_linear(cal_gregorian$second(1L))
 mel <- "Australia/Melbourne"
 fmt_time_mel <- "({cyc(hour(1L, tz=mel), day(1L, tz = mel))}:{cyc(minute(1L, tz=mel), hour(1L, tz = mel))}:{cyc(second(1L, tz=mel), minute(1L, tz = mel))} {tz(.time, mel)})"
-debugonce(tz_abbreviation)
 format(
   datetime(Sys.time(), tz = "UTC"), 
   format = paste(fmt_time, "{tz(.time)}", fmt_time_mel)
