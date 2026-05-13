@@ -74,6 +74,7 @@ tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
 #'
 #' @param x A POSIXct datetime object or something coercible to POSIXct.
 #'   The timezone is extracted from this object.
+#' @param tz A character vector of timezones to abbreviate at time point `x`.
 #'
 #' @return A character vector of timezone abbreviations.
 #'
@@ -82,15 +83,16 @@ tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
 #' tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
 #'
 #' @export
-tz_abbreviation <- function(x) {
-  tz <- tz_name(x)
+tz_abbreviation <- function(x, tz = tz_name(x)) {
+  tz <- vctrs::vec_recycle(tz, length(x))
+
   # If tz is empty, then the object has a naive local timezone
   tz_given <- !is.na(tz)
 
   # TODO: Handle timezone changes within chronon using [before]/[after]
   if (any(tz_given)) {
     tz[tz_given] <- get_tz_abbreviation(
-      chronon_convert(x[tz_given], cal_time_civil$second(1L)),
+      as.double(chronon_convert(x[tz_given], cal_time_civil$second(1L))),
       tz[tz_given]
     )
   }

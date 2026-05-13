@@ -4,11 +4,13 @@
 \alias{tz_abbreviation}
 \title{Get timezone abbreviation}
 \usage{
-tz_abbreviation(x)
+tz_abbreviation(x, tz = tz_name(x))
 }
 \arguments{
 \item{x}{A POSIXct datetime object or something coercible to POSIXct.
 The timezone is extracted from this object.}
+
+\item{tz}{A character vector of timezones to abbreviate at time point \code{x}.}
 }
 \value{
 A character vector of timezone abbreviations.
