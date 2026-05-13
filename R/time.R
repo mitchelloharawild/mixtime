@@ -1,7 +1,6 @@
 #' Constructor for mixtime time vectors
 #' 
 #' @description
-#' `r lifecycle::badge("stable")`
 #' 
 #' Creates a `mixtime` time vector at a specific time point, with a specified 
 #' chronon and optional cycle. The `chronon` defines the smallest indivisible
