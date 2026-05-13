@@ -91,7 +91,6 @@ seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 
 # Cyclical time sequences
 seq(month_of_year(0L), month_of_year(11L))
-# seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
 seq(day_of_week(0L), day_of_week(6L), by = 1)
 
 }
