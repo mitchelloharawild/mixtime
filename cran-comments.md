@@ -1,4 +1,11 @@
-There is no DOI currently associated with this software.
+## Re-submission
+
+This re-submission fixes all issues reported in the previous submission.
+
+There were two false positives in the reported issues:
+
+* There are no commented code lines in the examples of cyclical_time_helpers.Rd
+* There are no DOIs currently associated with this software.
 
 ## Test environments
 * local ubuntu 24.04 install, R 4.5.2
