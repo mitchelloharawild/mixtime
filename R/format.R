@@ -87,9 +87,9 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
       cal,
 
       # The label helper functions, returns time units and label options
-      lin = function(x, ...) structure(list(as_tu(x)), ...),
-      cyc = function(x, y, ...) {
-        structure(list(as_tu(x), as_tu(y)), ...)
+      lin = function(granule, ...) structure(list(as_tu(granule)), ...),
+      cyc = function(granule, cycle, ...) {
+        structure(list(as_tu(granule), as_tu(cycle)), ...)
       },
 
       # Attribute helper functions
