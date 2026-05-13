@@ -15,6 +15,14 @@ the total number of elements across all vectors in \code{x}, and can contain
 duplicates. If not provided, it defaults to a sequence from 1 to the total
 number of elements across all vectors in \code{x}.}
 }
+\value{
+When used as a class definition (e.g., in \code{S7::method(generic, class_mixtime)}), an S7 class object representing the \code{mixtime} class,
+inheriting from \link[vecvec:class_vecvec]{vecvec::class_vecvec}. When called as a constructor
+(\code{class_mixtime(list(...))}), a mixtime vector of S7 class \code{mixtime}
+(also inheriting the S3 class \code{"mixtime"}), containing the supplied list
+of time vectors as a \link[vecvec:class_vecvec]{vecvec::class_vecvec} structure. End users should
+prefer \code{\link[=mixtime]{mixtime()}} or \code{\link[=new_mixtime]{new_mixtime()}} for construction.
+}
 \description{
 \code{class_mixtime} is the base S7 class for all mixtime vector objects,
 inheriting from \link[vecvec:class_vecvec]{vecvec::class_vecvec}. While not intended to be used

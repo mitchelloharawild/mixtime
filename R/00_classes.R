@@ -84,6 +84,14 @@ mt_unit <- S7::new_class(
 #' @param x A list of `"mt_time"` vectors, see [new_time()] for details.
 #' @inheritParams vecvec::class_vecvec
 #'
+#' @return When used as a class definition (e.g., in `S7::method(generic,
+#'   class_mixtime)`), an S7 class object representing the `mixtime` class,
+#'   inheriting from [vecvec::class_vecvec]. When called as a constructor
+#'   (`class_mixtime(list(...))`), a mixtime vector of S7 class `mixtime`
+#'   (also inheriting the S3 class `"mixtime"`), containing the supplied list
+#'   of time vectors as a [vecvec::class_vecvec] structure. End users should
+#'   prefer [mixtime()] or [new_mixtime()] for construction.
+#'
 #' @seealso [mixtime()] for creating mixtime vectors, and [new_mixtime()] for
 #' the low-level constructor function of this S7 class.
 #'
