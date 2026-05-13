@@ -44,8 +44,8 @@ mt_unit_display <- function(x, units, parts, ...) {
 }
 
 time_format_default <- function(x) {
-  chronon <- time_chronon(x)
-  cycle <- time_cycle(x)
+  chronon <- attr(x, "chronon")
+  cycle <- attr(x, "cycle")
 
   fmt <- if (is.null(cycle)) {
     chronon_format_linear(chronon)
@@ -64,11 +64,11 @@ time_format_default <- function(x) {
 
 time_format_impl <- function(x, format = time_format_default(x), ...) {
   # Obtain core time information
-  chronon <- time_chronon(x)
+  chronon <- attr(x, "chronon")
   cal <- time_calendar(chronon)
   
   # Extend evaluation calendar cycle calendar units
-  cycle <- time_cycle(x)
+  cycle <- attr(x, "cycle")
   if (!is.null(cycle)) {
     cycle_units <- setdiff(names(cal_cyc <- time_calendar(cycle)), names(cal))
     cal[cycle_units] <- cal_cyc[cycle_units]
@@ -95,7 +95,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
       # Attribute helper functions
       tz = tz_abbreviation,
       loc = function(x) {
-        chronon <- time_chronon(x)
+        chronon <- attr(x, "chronon")
         if (!S7::S7_inherits(mt_loc_unit)) return("")
         lat <- chronon@lat
         lon <- chronon@lon

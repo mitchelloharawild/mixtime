@@ -1,7 +1,7 @@
 #' @export
 format.mt_duration <- function(x, ...) {
   # TODO - better pluralisation
-  unit <- time_unit_full(time_chronon(x))
+  unit <- time_unit_full(attr(x, "chronon"))
   x <- vec_data(x)
   x_na <- is.na(x)
   out <- rep("NA", length(x))
@@ -81,7 +81,7 @@ vec_arith.mt_duration.mt_duration <- function(op, x, y, ...) {
   if (!op %in% c("-", "+")) {
     cli::cli_abort("Only addition and subtraction are supported for durations.", call. = FALSE)
   }
-  tu <- chronon_common(time_chronon(x), time_chronon(y))
+  tu <- chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon")))
   res <- vec_arith_base(
     op,
     chronon_convert(x, tu, discrete = FALSE),

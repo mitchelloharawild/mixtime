@@ -20,7 +20,7 @@
 #   - `$linear`: a list of integer vectors, one per element of `linear`.
 #   - `$cyclical`: a list of integer vectors, one per element of `cyclical`.
 chronon_parts <- function(x, linear = list(), cyclical = list()) {
-  start_tu <- time_chronon(x)
+  start_tu <- attr(x, "chronon")
 
   # Apply time zone offset to x, with truncation for discrete time models.
   x_tz <- tz_offset(x)

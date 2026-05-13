@@ -98,8 +98,8 @@ seq.mt_time <- function(
 
   # Check chronon compatibility
   if (!missing_from && !missing_to) {
-    from_chronon <- time_chronon(from)
-    to_chronon <- time_chronon(to)
+    from_chronon <- chronon_common(from)
+    to_chronon <- chronon_common(to)
     
     # Check that from and to have the same time classes
     if (!identical(from_chronon, to_chronon)) {
@@ -125,12 +125,12 @@ seq.mt_time <- function(
     }
     if (is_time_duration(by)) {
       by_size <- as.numeric(by)
-      by <- time_chronon(by)
+      by <- attr(by, "chronon")
       by@n <- by@n * by_size
     }
 
     # Sequence chronon
-    chronon <- time_chronon(ptype)
+    chronon <- chronon_common(ptype)
 
     # Parse `by` argument
     if (is.character(by)) by <- parse_time_unit(by)

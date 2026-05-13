@@ -12,7 +12,8 @@ time_chronon(x, ...)
 \item{...}{Additional arguments for methods.}
 }
 \value{
-A time granule object representing the chronon (e.g., \code{cal_gregorian$day(1L)})
+A time \code{\link[=duration]{duration()}} vector representing the chronon of each
+value (e.g., \code{days(1L)}).
 }
 \description{
 This S7 generic function extracts the chronon (the smallest time granule) from a

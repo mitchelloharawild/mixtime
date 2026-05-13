@@ -320,7 +320,7 @@ vec_arith.mt_time.mt_time <- function(op, x, y, ...) {
   if (op != "-") {
      stop("Only subtracting two time points is supported for continuous time", call. = FALSE)
   }
-  tu <- chronon_common(time_chronon(x), time_chronon(y))
+  tu <- chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon")))
   res <- vec_arith_base(
     op,
     chronon_convert(x, tu, discrete = FALSE),
@@ -334,7 +334,8 @@ vec_arith.mt_time.mt_time <- function(op, x, y, ...) {
 #' @export
 vec_cast.Date.mt_linear <- function(x, to, ...) {
   vec_restore(
-    chronon_convert(x, cal_gregorian$day(1L, tz = tz_name(time_chronon(x)))),
+    # Convert to naive time zone dates
+    chronon_convert(x, cal_gregorian$day(1L, tz = tz_name(attr(x, "chronon")))),
     to
   )
 }

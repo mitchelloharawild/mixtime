@@ -64,8 +64,48 @@ new_mixtime <- function(x = new_time()) {
 #' )
 #' @export
 mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data), discrete = TRUE) {
+  # Handle duration-based chronon and cycle inputs
+  if (is_mixtime(chronon)) {
+    if (length(chronon@x) > 1L) {
+      cli::cli_abort(
+        c(
+          "mixtime() currently only supports singular granule chronons",
+          i = "To mix chronons, combine several mixtime vectors with {.fun c}."
+        ),
+        call = NULL
+      )
+    }
+    chronon_duration <- chronon@x[[1L]]
+    chronon <- attr(chronon_duration, "chronon")
+    if (length(chronon_duration) == 1L) {
+      # Scale the granule by the chronon duration (e.g. 3 months -> 3 * month(1L))
+      chronon@n <- chronon@n * as.numeric(chronon_duration)
+    }
+  }
+  if (is_mixtime(cycle)) {
+    if (length(cycle@x) > 1L) {
+      cli::cli_abort(
+        c(
+          "mixtime() currently only supports singular granule cycles",
+          i = "To mix cycles, combine several mixtime vectors with {.fun c}."
+        ),
+        call = NULL
+      )
+    }
+    cycle_duration <- cycle@x[[1L]]
+    if (anyNA(cycle_duration)) {
+      cycle <- NULL
+    } else {
+      cycle <- attr(cycle_duration, "chronon")
+      if (length(cycle_duration) == 1L) {
+        # Scale the granule by the cycle duration (e.g. 3 months -> 3 * month(1L))
+        cycle@n <- cycle@n * as.numeric(cycle_duration)
+      }
+    }
+  }
+  
   # Add default granule properties if not given in chronon or cycle
-  chronon <- granule_inherit_props(chronon, time_chronon(data))
+  chronon <- granule_inherit_props(chronon, chronon_common(data))
   if (!is.null(cycle)) {
     cycle <- granule_inherit_props(cycle, chronon)
   }

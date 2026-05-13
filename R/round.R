@@ -40,11 +40,11 @@ method(time_round, S7::class_any) <- function(x, granule, ...) {
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
-  by <- time_chronon(granule)
+  by <- attr(granule@x[[1L]], "chronon")
   by@n <- by@n * as.numeric(granule)
   
   # Inherit non-naive attributes from chronon
-  by <- granule_inherit_props(by, chronon <- time_chronon(x))
+  by <- granule_inherit_props(by, chronon <- chronon_common(x))
 
   # Convert time into the granule chronon
   res <- chronon_convert(x, by)
@@ -83,11 +83,11 @@ method(time_ceiling, S7::class_any) <- function(x, granule, ...) {
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
-  by <- time_chronon(granule)
+  by <- attr(granule@x[[1L]], "chronon")
   by@n <- by@n * as.numeric(granule)
   
   # Inherit non-naive attributes from chronon
-  by <- granule_inherit_props(by, chronon <- time_chronon(x))
+  by <- granule_inherit_props(by, chronon <- chronon_common(x))
 
   # Convert time into the granule chronon
   res <- chronon_convert(x, by)
@@ -126,11 +126,11 @@ method(time_floor, S7::class_any) <- function(x, granule, ...) {
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
-  by <- time_chronon(granule)
+  by <- attr(granule@x[[1L]], "chronon")
   by@n <- by@n * as.numeric(granule)
   
   # Inherit non-naive attributes from chronon
-  by <- granule_inherit_props(by, chronon <- time_chronon(x))
+  by <- granule_inherit_props(by, chronon <- chronon_common(x))
 
   # Convert time into the granule chronon
   res <- chronon_convert(x, by)

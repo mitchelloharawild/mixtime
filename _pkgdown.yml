@@ -130,6 +130,7 @@ reference:
   - as_mixtime
   - is_mixtime
   - is_time
+  - chronon_common
 - subtitle: "Mixtime Accessors"
   desc: "Functions for accessing the components of mixtime objects."
   contents:

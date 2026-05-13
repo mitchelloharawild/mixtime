@@ -12,8 +12,8 @@ time_cycle(x, ...)
 \item{...}{Additional arguments for methods.}
 }
 \value{
-A time granule object representing the cycle, or \code{NULL} if the object
-has no cyclical component.
+A time \code{\link[=duration]{duration()}} object representing the cycle of each value
+(e.g. \code{weeks(1L)}), or \code{NA} if the object has no cyclical component.
 }
 \description{
 This S7 generic function extracts the cycle (the cyclical time granule) from
@@ -21,7 +21,7 @@ a time object, such as cyclical time representations.
 }
 \examples{
 
-# Non-cyclical objects return NULL
+# Non-cyclical objects return NA
 time_cycle(Sys.Date())
 
 # The cycle of a cyclical time object
