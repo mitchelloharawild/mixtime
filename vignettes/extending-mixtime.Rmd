@@ -462,7 +462,7 @@ These default formats can be improved to better suit the Symmetry454 calendar. F
 ### Time formats {#time-formats}
 
 <!-- TODO: Time formatting vignette -->
-The default formatting for time vectors is defined by `chronon_format_linear()` for linear time and `chronon_format_cyclical()` for cyclical time. These methods return mixtime format strings which are used to format and print time vectors. A mixtime format string is a [glue](https://glue.tidyverse.org/) style string where time granules wrapped in `{}` are replaced with granule labels for the corresponding time points.
+The default formatting for time vectors is defined by `chronon_format_linear()` for linear time and `chronon_format_cyclical()` for cyclical time. These methods return mixtime format strings which are used to format and print time vectors. A mixtime format string is a [glue](https://glue.tidyverse.org/) style string where time granules wrapped in `{}` are replaced with granule labels for the corresponding time points. These format strings are described in more detail in the `vignette("time-format-strings")` vignette.
 
 There are two types of granule labels useful for these time format strings:
 
