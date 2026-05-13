@@ -1,7 +1,8 @@
 #' Linear time function factory
 #' 
 #' `new_linear_time_fn()` creates a linear time function for a specified
-#' chronon. A chronon is the smallest indivisible time granule (e.g., days, hours).
+#' chronon. A chronon is the smallest indivisible time granule (e.g., days, 
+#' hours).
 #' 
 #' @param chronon A bare call for a time granule object representing the chronon
 #'   (e.g., `day(1)`)
@@ -13,22 +14,19 @@
 #' 
 #' @examples
 #' 
-#' # NOTE: These examples need updating to define default granules/format strings.
-#' 
-#' # A year-month time representation with months as the chronon
+#' # Linear time with 1 month granules as the chronon
 #' ym <- new_linear_time_fn(month(1L))
 #' ym(Sys.Date())
 #' 
-#' # A year-quarter-month time representation with months as the chronon
-#' yqm <- new_linear_time_fn(month(1L))
-#' yqm(1:100)
-#' yqm(Sys.Date())
-#' 
-#' # A year-day time representation with days as the chronon
+#' # Linear time with 1 day granules as the chronon
 #' yd <- new_linear_time_fn(day(1L))
 #' yd(Sys.Date())
 #' 
-#' # Gregorian date time with hourly precision
+#' # Linear time with 1 week granules as the chronon, using the ISO week calendar
+#' yw <- new_linear_time_fn(week(1L), default_calendar = cal_isoweek)
+#' yw(Sys.Date())
+#' 
+#' # Linear time with 1 hour granules as the chronon
 #' ymd_h <- new_linear_time_fn(hour(1L))
 #' ymd_h(Sys.time())
 #' 
