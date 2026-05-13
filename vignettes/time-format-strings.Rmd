@@ -124,7 +124,7 @@ The table below maps every `strftime`/`strptime` conversion specification to its
 <summary>Show/hide POSIX and mixtime equivalent code table</summary>
 
 | POSIX | mixtime | Description |
-|---|---|---|
+|-------|----------------------------------|-------------|
 | `%Y` | `{lin(year)}` | Year with century (e.g. 2026) |
 | `%G` | `{lin(cal_isoweek$year)}` | ISO 8601 week-based year (1-53) |
 | `%m` | `{cyc(month, year)}` | Month as decimal number (01–12) |
