@@ -31,6 +31,22 @@ class_mixtime(x = list(), i = seq_len(sum(lengths(x))))
   contain duplicates. If not provided, it defaults to a sequence from 1
   to the total number of elements across all vectors in `x`.
 
+## Value
+
+When used as a class definition (e.g., in
+`S7::method(generic, class_mixtime)`), an S7 class object representing
+the `mixtime` class, inheriting from
+[vecvec::class_vecvec](https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html).
+When called as a constructor (`class_mixtime(list(...))`), a mixtime
+vector of S7 class `mixtime` (also inheriting the S3 class `"mixtime"`),
+containing the supplied list of time vectors as a
+[vecvec::class_vecvec](https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html)
+structure. End users should prefer
+[`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+or
+[`new_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_mixtime.md)
+for construction.
+
 ## See also
 
 [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)

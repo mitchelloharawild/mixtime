@@ -25,8 +25,9 @@ time_chronon(x, ...)
 
 ## Value
 
-A time granule object representing the chronon (e.g.,
-`cal_gregorian$day(1L)`)
+A time
+[`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
+vector representing the chronon of each value (e.g., `days(1L)`).
 
 ## Examples
 
@@ -34,25 +35,21 @@ A time granule object representing the chronon (e.g.,
 
 # The chronon of a Date object is 1 day
 time_chronon(Sys.Date())
-#> <mixtime::tu_day>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#> <mixtime[1]>
+#> [1] 1 day
 
 # The chronon of a POSIXct object is 1 second
 time_chronon(Sys.time())
-#> <mixtime::tu_second>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#> <mixtime[1]>
+#> [1] 1 second
 
 # The chronon of a continuous time year and month is 1 month
 time_chronon(yearmonth(Sys.Date()))
-#> <mixtime::tu_month>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#> <mixtime[1]>
+#> [1] 1 month
 
 # The common chronon of a mixed time object is the finest chronon
 time_chronon(c(yearmonth(Sys.Date()), Sys.Date()))
-#> <mixtime::tu_day>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#> <mixtime[2]>
+#> [1] 1 month 1 day  
 ```

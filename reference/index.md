@@ -138,7 +138,7 @@ Solar time systems where day boundaries are defined by solar events
 (sunrise, noon, or sunset) at specific geographic locations.
 
 - [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
-  : Solar time
+  : Solar time unit classes
 
 ### Lunar Time System
 
@@ -188,7 +188,7 @@ multiple time granularities.
 - [`class_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/class_mixtime.md)
   : Base S7 class for mixtime vector objects
 - [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
-  **\[stable\]** : Constructor for mixtime time vectors
+  : Constructor for mixtime time vectors
 - [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
   : Convert a time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_mixtime.md)
@@ -197,6 +197,9 @@ multiple time granularities.
   [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
   [`is_time_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
   : Check the time type of values
+- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)
+  [`chronon_common.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)
+  : Find the common chronon of a time object
 
 ### Mixtime Accessors
 

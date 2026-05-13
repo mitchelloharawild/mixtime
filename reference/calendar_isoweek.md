@@ -15,6 +15,13 @@ cal_isoweek
 
 A civil-based calendar containing ISO 8601 time units.
 
+## Value
+
+An S3 list of class `c("cal_isoweek", "mt_calendar")` containing the
+named time unit classes of the ISO 8601 week calendar. Each unit is
+accessible via `$` notation and calling it with a step size produces a
+time granule (e.g., 1 week granule as `cal_isoweek$week(1L)`).
+
 ## Details
 
 The following time units are available in the ISO week date calendar:

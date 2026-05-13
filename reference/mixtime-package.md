@@ -10,11 +10,11 @@ arithmetic enables conversion between time granules (e.g. days to
 months) and calendar systems. Multi-unit arithmetic allows for temporal
 analysis with other granules of common calendars (e.g. fortnights are
 2-week units). Time vectors of different granularities (e.g. monthly and
-quarterly) can be combined in a single vector, making mixtime ideal for
-data that changes observation frequency over time or requires temporal
-reconciliation across scales. The package is extensible, allowing users
-to define custom calendars that build upon civil and astronomical time
-systems.
+quarterly) can be combined in a single vector, making 'mixtime' ideal
+for data that changes observation frequency over time or requires
+temporal reconciliation across scales. The package is extensible,
+allowing users to define custom calendars that build upon civil and
+astronomical time systems.
 
 ## See also
 

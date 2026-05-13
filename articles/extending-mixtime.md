@@ -787,7 +787,10 @@ for cyclical time. These methods return mixtime format strings which are
 used to format and print time vectors. A mixtime format string is a
 [glue](https://glue.tidyverse.org/) style string where time granules
 wrapped in [`{}`](https://rdrr.io/r/base/Paren.html) are replaced with
-granule labels for the corresponding time points.
+granule labels for the corresponding time points. These format strings
+are described in more detail in the
+[`vignette("time-format-strings")`](https://pkg.mitchelloharawild.com/mixtime/articles/time-format-strings.md)
+vignette.
 
 There are two types of granule labels useful for these time format
 strings:

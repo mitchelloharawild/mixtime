@@ -24,20 +24,22 @@ time_cycle(x, ...)
 
 ## Value
 
-A time granule object representing the cycle, or `NULL` if the object
-has no cyclical component.
+A time
+[`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
+object representing the cycle of each value (e.g. `weeks(1L)`), or `NA`
+if the object has no cyclical component.
 
 ## Examples
 
 ``` r
 
-# Non-cyclical objects return NULL
+# Non-cyclical objects return NA
 time_cycle(Sys.Date())
-#> NULL
+#> <mixtime[1]>
+#> [1] NA
 
 # The cycle of a cyclical time object
 time_cycle(month_of_year(Sys.Date()))
-#> <mixtime::tu_year>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#> <mixtime[1]>
+#> [1] 1 year
 ```

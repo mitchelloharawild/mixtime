@@ -96,7 +96,7 @@ cyclical_time(
   calendar = cal_isoweek
 )
 #> <mixtime[1]>
-#> [1] Thu
+#> [1] Wed
 
 # Month of year (1-12)
 cyclical_time(
@@ -107,14 +107,15 @@ cyclical_time(
 #> <mixtime[1]>
 #> [1] May
 
-# Discrete vs continuous time
-# yearweek(x) is linear_time(x, chronon = day(1L), cycle = week(1L), calendar = cal_isoweek)
-yearweek(Sys.time(), discrete = TRUE)
+# Continuous time (discrete = FALSE) for fractional month of year
+cyclical_time(
+  Sys.Date(),
+  chronon = month(1L),
+  cycle = year(1L),
+  discrete = FALSE
+)
 #> <mixtime[1]>
-#> [1] 2026 W19
-yearweek(Sys.time(), discrete = FALSE)
-#> <mixtime[1]>
-#> [1] 2026 W19 52.5%
+#> [1] May 38.7%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -124,7 +125,7 @@ cyclical_time(
   calendar = cal_gregorian
 )
 #> <mixtime[1]>
-#> [1] D07
+#> [1] D13
 
 # Hours, minutes, and seconds
 cyclical_time(
@@ -133,5 +134,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 16:10:42
+#> [1] 13:46:15
 ```

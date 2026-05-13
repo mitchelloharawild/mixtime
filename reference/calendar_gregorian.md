@@ -15,6 +15,13 @@ cal_gregorian
 
 A civil-based calendar containing Gregorian time units.
 
+## Value
+
+An S3 list of class `c("cal_gregorian", "mt_calendar")` containing the
+named time unit classes of the Gregorian calendar. Each unit is
+accessible via `$` notation and calling it with a step size produces a
+time granule (e.g., 1 month granule as `cal_gregorian$month(1L)`).
+
 ## Details
 
 The following time units are available in the Gregorian calendar
@@ -56,5 +63,5 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-05-07 16h
+#> [1] 2026-05-13 13h
 ```

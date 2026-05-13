@@ -11,7 +11,7 @@ data's calendar."><meta property="og:image" content="https://pkg.mitchelloharawi
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,7 @@ data's calendar."><meta property="og:image" content="https://pkg.mitchelloharawi
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -134,7 +135,7 @@ to create custom representations with any combination of chronons and granules.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026</span>
 <span class="r-in"><span><span class="fu">year</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 34.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 36.2%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ISO week-based year</span></span></span>
 <span class="r-in"><span><span class="fu">year</span><span class="op">(</span><span class="fu">yearweek</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -147,7 +148,7 @@ to create custom representations with any combination of chronons and granules.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Q2</span>
 <span class="r-in"><span><span class="fu">yearquarter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Q2 38.1%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 Q2 44.7%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Year-month</span></span></span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -155,12 +156,12 @@ to create custom representations with any combination of chronons and granules.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 May</span>
 <span class="r-in"><span><span class="fu">yearmonth</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 May 19.4%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 May 38.7%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Year-week (ISO 8601)</span></span></span>
 <span class="r-in"><span><span class="fu">yearweek</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 W19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026 W20</span>
 <span class="r-in"><span><span class="fu">yearweek</span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">52</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[53]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1970 W01 1970 W02 1970 W03 1970 W04 1970 W05 1970 W06 1970 W07 1970 W08</span>

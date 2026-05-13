@@ -3,7 +3,8 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   extending-mixtime: extending-mixtime.html
-last_built: 2026-05-07T16:10Z
+  time-format-strings: time-format-strings.html
+last_built: 2026-05-13T13:46Z
 urls:
   reference: https://pkg.mitchelloharawild.com/mixtime/reference
   article: https://pkg.mitchelloharawild.com/mixtime/articles

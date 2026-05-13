@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -36,28 +37,28 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.1.0" id="mixtime-010">mixtime 0.1.0<a class="anchor" aria-label="anchor" href="#mixtime-010"></a></h2>
 <p>This is the initial CRAN release of the package with provides the core data types and temporal manipulation for temporal analysis with mixed granularity data.</p>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-0-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-1-0"></a></h3>
 <div class="section level4">
-<h4 id="time-development-version">Time<a class="anchor" aria-label="anchor" href="#time-development-version"></a></h4>
+<h4 id="time-0-1-0">Time<a class="anchor" aria-label="anchor" href="#time-0-1-0"></a></h4>
 <ul><li>The generic <code><a href="../reference/mixtime.html">mixtime()</a></code> constructor for creating mixed temporal vectors that combine time points of different granularities (e.g. monthly and quarterly) in a single vector via <code>vecvec</code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="linear-time-development-version">Linear time<a class="anchor" aria-label="anchor" href="#linear-time-development-version"></a></h4>
+<h4 id="linear-time-0-1-0">Linear time<a class="anchor" aria-label="anchor" href="#linear-time-0-1-0"></a></h4>
 <ul><li>
 <code><a href="../reference/linear_time.html">linear_time()</a></code> creates linear time vectors with a user-specified chronon (smallest indivisible time granule), supporting both discrete (integer) and continuous (fractional) time models.</li>
 <li>Convenience functions for common temporal granularities: <code><a href="../reference/linear_time_helpers.html">year()</a></code>, <code><a href="../reference/linear_time_helpers.html">yearquarter()</a></code>, <code><a href="../reference/linear_time_helpers.html">yearmonth()</a></code>, <code><a href="../reference/linear_time_helpers.html">yearweek()</a></code>, <code><a href="../reference/linear_time_helpers.html">date()</a></code>, and <code><a href="../reference/linear_time_helpers.html">datetime()</a></code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="cyclical-time-development-version">Cyclical time<a class="anchor" aria-label="anchor" href="#cyclical-time-development-version"></a></h4>
+<h4 id="cyclical-time-0-1-0">Cyclical time<a class="anchor" aria-label="anchor" href="#cyclical-time-0-1-0"></a></h4>
 <ul><li>
 <code><a href="../reference/cyclical_time.html">cyclical_time()</a></code> creates cyclical time vectors representing positions within a repeating cycle (e.g. day-of-week, month-of-year).</li>
 <li>Convenience functions for common cyclical temporal granularities: <code><a href="../reference/cyclical_time_helpers.html">month_of_year()</a></code>, <code><a href="../reference/cyclical_time_helpers.html">day_of_year()</a></code>, <code><a href="../reference/cyclical_time_helpers.html">day_of_month()</a></code>, <code><a href="../reference/cyclical_time_helpers.html">day_of_week()</a></code>, <code><a href="../reference/cyclical_time_helpers.html">week_of_year()</a></code>, and <code><a href="../reference/cyclical_time_helpers.html">time_of_day()</a></code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="calendar-systems-development-version">Calendar systems<a class="anchor" aria-label="anchor" href="#calendar-systems-development-version"></a></h4>
+<h4 id="calendar-systems-0-1-0">Calendar systems<a class="anchor" aria-label="anchor" href="#calendar-systems-0-1-0"></a></h4>
 <ul><li>Three initial calendar systems:
 <ul><li>
 <code>cal_gregorian</code>: standard Gregorian calendar with year, quarter, month, day, hour, minute, second, and millisecond units.</li>
@@ -68,21 +69,21 @@
 </ul></li>
 </ul></div>
 <div class="section level4">
-<h4 id="sequences-development-version">Sequences<a class="anchor" aria-label="anchor" href="#sequences-development-version"></a></h4>
+<h4 id="sequences-0-1-0">Sequences<a class="anchor" aria-label="anchor" href="#sequences-0-1-0"></a></h4>
 <ul><li>
 <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code> methods for <code>mixtime</code> and <code>mt_time</code> objects support integer, string (e.g. <code>"1 month"</code>), and time unit <code>by</code> arguments, as well as <code>length.out</code> and <code>along.with</code>. Overflow behaviour when step granules differ from sequence granules can be controlled with <code>on_invalid = "nearest"</code> (default) or <code>"overflow"</code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="rounding-development-version">Rounding<a class="anchor" aria-label="anchor" href="#rounding-development-version"></a></h4>
+<h4 id="rounding-0-1-0">Rounding<a class="anchor" aria-label="anchor" href="#rounding-0-1-0"></a></h4>
 <ul><li>
 <code>round_time()</code>, <code>floor_time()</code>, and <code>ceiling_time()</code> round time objects to a specified time granule, preserving the input class and timezone.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="formatting-development-version">Formatting<a class="anchor" aria-label="anchor" href="#formatting-development-version"></a></h4>
+<h4 id="formatting-0-1-0">Formatting<a class="anchor" aria-label="anchor" href="#formatting-0-1-0"></a></h4>
 <ul><li>A mixed-calendar general purpose formatting system is provided for <code>mixtime</code> objects. The format strings use glue-like <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> substitutions with the helper functions <code>lin(x)</code> and <code>cyc(x, y)</code> to position linear and cyclical time components in a string. <code>x</code> and <code>y</code> are time granules from a calendar, which can be used to create general purpose mixed-calendar time formats.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="timezone-support-development-version">Timezone support<a class="anchor" aria-label="anchor" href="#timezone-support-development-version"></a></h4>
+<h4 id="timezone-support-0-1-0">Timezone support<a class="anchor" aria-label="anchor" href="#timezone-support-0-1-0"></a></h4>
 <ul><li>
 <code><a href="../reference/tz_name.html">tz_name()</a></code> extracts the timezone from a time object.</li>
 <li>
@@ -93,16 +94,16 @@
 <code><a href="../reference/tz_transitions.html">tz_transitions()</a></code> returns a data frame of DST and other timezone transitions between two time points.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="accessor-functions-development-version">Accessor functions<a class="anchor" aria-label="anchor" href="#accessor-functions-development-version"></a></h4>
+<h4 id="accessor-functions-0-1-0">Accessor functions<a class="anchor" aria-label="anchor" href="#accessor-functions-0-1-0"></a></h4>
 <ul><li>
 <code><a href="../reference/time_calendar.html">time_calendar()</a></code> extracts the calendar system from a time object.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="tsibble-and-fable-compatibility-development-version">tsibble and fable compatibility<a class="anchor" aria-label="anchor" href="#tsibble-and-fable-compatibility-development-version"></a></h4>
+<h4 id="tsibble-and-fable-compatibility-0-1-0">tsibble and fable compatibility<a class="anchor" aria-label="anchor" href="#tsibble-and-fable-compatibility-0-1-0"></a></h4>
 <ul><li>Methods for <code>tsibble</code> index validation are provided, enabling <code>mixtime</code> vectors to be used as time indexes in <code>tsibble</code> objects and in forecasting with <code>fable</code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="extensibility-development-version">Extensibility<a class="anchor" aria-label="anchor" href="#extensibility-development-version"></a></h4>
+<h4 id="extensibility-0-1-0">Extensibility<a class="anchor" aria-label="anchor" href="#extensibility-0-1-0"></a></h4>
 <ul><li><p><code><a href="../reference/new_calendar.html">new_calendar()</a></code> defines a calendar as a named collection of time unit classes, with optional inheritance from another calendar.</p></li>
 <li><p><code><a href="../reference/mt_unit.html">mt_unit()</a></code>, <code><a href="../reference/mt_unit.html">mt_tz_unit()</a></code>, and <code><a href="../reference/mt_unit.html">mt_loc_unit()</a></code> primitives for creating new time units.</p></li>
 <li><p><code><a href="../reference/new_linear_time_fn.html">new_linear_time_fn()</a></code> and <code><a href="../reference/new_cyclical_time_fn.html">new_cyclical_time_fn()</a></code> are factories for building convenient linear and cyclical time functions (e.g. <code><a href="../reference/linear_time_helpers.html">yearmonth()</a></code>).</p></li>
@@ -128,7 +129,7 @@
 </ul></li>
 </ul></div>
 <div class="section level4">
-<h4 id="vignettes-development-version">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes-development-version"></a></h4>
+<h4 id="vignettes-0-1-0">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes-0-1-0"></a></h4>
 <ul><li>Extending mixtime - a vignette on how to define new calendars and implement calendar arithmetic for temporal operations within the calendar’s units and with other calendars.</li>
 </ul></div>
 </div>

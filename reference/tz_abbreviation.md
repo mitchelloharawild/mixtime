@@ -6,7 +6,7 @@ datetime in its specified timezone.
 ## Usage
 
 ``` r
-tz_abbreviation(x)
+tz_abbreviation(x, tz = tz_name(x))
 ```
 
 ## Arguments
@@ -15,6 +15,10 @@ tz_abbreviation(x)
 
   A POSIXct datetime object or something coercible to POSIXct. The
   timezone is extracted from this object.
+
+- tz:
+
+  A character vector of timezones to abbreviate at time point `x`.
 
 ## Value
 

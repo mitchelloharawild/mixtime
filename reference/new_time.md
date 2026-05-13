@@ -1,7 +1,5 @@
 # Constructor for mixtime time vectors
 
-**\[stable\]**
-
 Creates a `mixtime` time vector at a specific time point, with a
 specified chronon and optional cycle. The `chronon` defines the smallest
 indivisible time granule for the time vector, while the `cycle` allows
@@ -53,7 +51,7 @@ new_time(
   class = "mt_linear"
 )
 #> <mt_linear[1]>
-#> [1] 2026-05-07 0.0%
+#> [1] 2026-05-13 0.0%
 
 # Create a discrete mixtime time vector for the current date and time
 new_time(
@@ -62,7 +60,7 @@ new_time(
   class = "mt_linear"
 )
 #> <mt_linear[1]>
-#> [1] 2026-05-07 16:10:47
+#> [1] 2026-05-13 13:46:20
 
 # Create a discrete mixtime time vector for the time of day (cyclical time)
 new_time(
@@ -72,5 +70,5 @@ new_time(
   class = "mt_cyclical"
 )
 #> <mt_cyclical[1]>
-#> [1] 16:10:47
+#> [1] 13:46:21
 ```

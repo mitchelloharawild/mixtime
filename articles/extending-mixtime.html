@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -779,7 +780,9 @@ vectors.</p>
 return mixtime format strings which are used to format and print time
 vectors. A mixtime format string is a <a href="https://glue.tidyverse.org/" class="external-link">glue</a> style string where time
 granules wrapped in <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> are replaced with granule labels for
-the corresponding time points.</p>
+the corresponding time points. These format strings are described in
+more detail in the <code><a href="../articles/time-format-strings.html">vignette("time-format-strings")</a></code>
+vignette.</p>
 <p>There are two types of granule labels useful for these time format
 strings:</p>
 <ul>

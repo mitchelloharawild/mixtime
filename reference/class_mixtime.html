@@ -15,7 +15,7 @@ class."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mix
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@ class."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mix
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -73,6 +74,15 @@ duplicates. If not provided, it defaults to a sequence from 1 to the total
 number of elements across all vectors in <code>x</code>.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>When used as a class definition (e.g., in <code>S7::method(generic, class_mixtime)</code>), an S7 class object representing the <code>mixtime</code> class,
+inheriting from <a href="https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html" class="external-link">vecvec::class_vecvec</a>. When called as a constructor
+(<code>class_mixtime(list(...))</code>), a mixtime vector of S7 class <code>mixtime</code>
+(also inheriting the S3 class <code>"mixtime"</code>), containing the supplied list
+of time vectors as a <a href="https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html" class="external-link">vecvec::class_vecvec</a> structure. End users should
+prefer <code><a href="mixtime.html">mixtime()</a></code> or <code><a href="new_mixtime.html">new_mixtime()</a></code> for construction.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="mixtime.html">mixtime()</a></code> for creating mixtime vectors, and <code><a href="new_mixtime.html">new_mixtime()</a></code> for

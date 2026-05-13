@@ -1,4 +1,4 @@
-# Solar time
+# Solar time unit classes
 
 This time calendar contains solar time units, where the boundary of each
 day is at apparent solar midnight. Solar events define the `ampm`
@@ -14,6 +14,16 @@ cal_time_solar
 ## Format
 
 A location-based calendar containing solar time units.
+
+## Value
+
+An S3 list of class `c("cal_time_solar", "mt_calendar")` containing the
+named time unit classes of the solar calendar. Each unit is accessible
+via `$` notation and calling it with a step size and location produces a
+time granule (e.g., 1 solar day granule as
+`cal_time_solar$day(1L, lat = 0, lon = 0)`). Because solar day
+boundaries depend on the observer's position, each unit constructor
+requires `lat` and `lon` arguments.
 
 ## Details
 
@@ -87,5 +97,5 @@ alternative reference location.
 # Find the current solar time in Melbourne
 datetime(Sys.time(), calendar = cal_time_solar, lat = -37.8136, lon = 144.9631)
 #> <mixtime[1]>
-#> [1] 2026-05-08 01:53:57 [37.81S 144.96E]
+#> [1] 2026-05-13 23:29:42 [37.81S 144.96E]
 ```
