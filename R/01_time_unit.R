@@ -107,7 +107,9 @@ new_time_unit <- function(
 #' @rdname time_unit_labels
 #' @export
 time_unit_full <- S7::new_generic("time_unit_full", "x")
+method(time_unit_full, mt_unit) <- function(x) "unit"
 
 #' @rdname time_unit_labels
 #' @export
 time_unit_abbr <- S7::new_generic("time_unit_abbr", "x")
+method(time_unit_abbr, mt_unit) <- function(x) ""
