@@ -164,9 +164,9 @@ linear_time <- function(
 #' 
 #' You can also explicitly specify a calendar using the `calendar` argument:
 #' 
-#' ```r
+#' \preformatted{
 #' year(yearweek("2025-12-29"), calendar = cal_isoweek)
-#' ```
+#' }
 #' 
 #' @section Custom linear time representations:
 #' For more complex time structures, use [linear_time()] or [new_linear_time_fn()]

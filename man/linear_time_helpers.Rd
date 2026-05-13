@@ -66,8 +66,9 @@ These functions adapt to the calendar system of the input data. For example:
 
 You can also explicitly specify a calendar using the \code{calendar} argument:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{year(yearweek("2025-12-29"), calendar = cal_isoweek)
-}\if{html}{\out{</div>}}
+\preformatted{
+year(yearweek("2025-12-29"), calendar = cal_isoweek)
+}
 }
 
 \section{Custom linear time representations}{

@@ -233,12 +233,13 @@ vec_cast.double.mt_cyclical <- function(x, to, ...) {
 #' with any of the supported time units (see [calendar_gregorian] and [calendar_isoweek]).
 #' 
 #' For example, to create a representation for day of the month:
-#' ```r
+#' 
+#' \preformatted{
 #' day_of_month <- new_cyclical_time_fn(
 #'   chronon = day(1L), cycle = month(1L),
 #'   default_calendar = cal_gregorian
 #' )
-#' ```
+#' }
 #'  
 #' @return A `mixtime` time vector containing an `mt_cyclical` vector with chronon and cycle matching the function used.
 #' 

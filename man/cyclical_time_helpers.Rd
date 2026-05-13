@@ -65,11 +65,12 @@ with any of the supported time units (see \link{calendar_gregorian} and \link{ca
 
 For example, to create a representation for day of the month:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{day_of_month <- new_cyclical_time_fn(
+\preformatted{
+day_of_month <- new_cyclical_time_fn(
   chronon = day(1L), cycle = month(1L),
   default_calendar = cal_gregorian
 )
-}\if{html}{\out{</div>}}
+}
 }
 
 \examples{
