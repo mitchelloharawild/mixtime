@@ -143,7 +143,6 @@ method(chronon_cardinality, list(cal_time_solar$second, cal_time_solar$illuminat
      approx_solar_seconds_from_solar_phase(at * y@n, y@lat, y@lon, y@alt)) / x@n
 }
 
-
 # The number of UTC seconds in a solar second
 method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar$second)) <- function(x, y, at = NULL) {
   at_ss <- approx_solar_seconds_from_utc(at, y@lat, y@lon, y@alt)
@@ -193,8 +192,8 @@ S7::method(linear_labels, cal_time_solar$day) <- function(granule, i, ...) {
 ### Linear labels for solar time granules
 # (not cyclical over solar days due to midnight day boundary splitting nights)
 solar_illumination_phases <- c(
-  "night", "astronomical dawn", "nautical dawn", "civil dawn",
-  "day", "civil dusk", "nautical dusk", "astronomical dusk"
+  "astronomical dawn", "nautical dawn", "civil dawn", "day",
+  "civil dusk", "nautical dusk", "astronomical dusk", "night"
 )
 method(linear_labels, cal_time_solar$illumination) <- function(granule, i) {
   solar_illumination_phases[floor((i * granule@n)%%8) + 1L]
