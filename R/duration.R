@@ -3,7 +3,10 @@ format.mt_duration <- function(x, ...) {
   # TODO - better pluralisation
   unit <- time_unit_full(time_chronon(x))
   x <- vec_data(x)
-  paste0(x, " ", unit, ifelse(x == 1, "", "s"))
+  x_na <- is.na(x)
+  out <- rep("NA", length(x))
+  out[!x_na] <- paste0(x[!x_na], " ", unit, ifelse(x[!x_na] == 1, "", "s"))
+  out
 }
 
 #' Duration vectors
