@@ -10,6 +10,12 @@ A civil-based calendar containing ISO 8601 time units.
 \usage{
 cal_isoweek
 }
+\value{
+An S3 list of class \code{c("cal_isoweek", "mt_calendar")} containing
+the named time unit classes of the ISO 8601 week calendar. Each unit is
+accessible via \code{$} notation and calling it with a step size produces a
+time granule (e.g., 1 week granule as \code{cal_isoweek$week(1L)}).
+}
 \description{
 Time unit constructors for the ISO 8601 calendar system. These units can be
 used with \code{\link[=linear_time]{linear_time()}} to create custom time representations.

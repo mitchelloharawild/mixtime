@@ -10,6 +10,12 @@ A civil-based calendar containing Gregorian time units.
 \usage{
 cal_gregorian
 }
+\value{
+An S3 list of class \code{c("cal_gregorian", "mt_calendar")} containing
+the named time unit classes of the Gregorian calendar. Each unit is
+accessible via \code{$} notation and calling it with a step size produces a
+time granule (e.g., 1 month granule as \code{cal_gregorian$month(1L)}).
+}
 \description{
 Time unit constructors for the Gregorian calendar system. These units can be
 used with \code{\link[=linear_time]{linear_time()}} to create custom time representations.

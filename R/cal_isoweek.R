@@ -21,6 +21,11 @@
 #' January may belong to the last week of the previous ISO year, and some days in
 #' late December may belong to the first week of the next ISO year.
 #' 
+#' @return An S3 list of class `c("cal_isoweek", "mt_calendar")` containing
+#'   the named time unit classes of the ISO 8601 week calendar. Each unit is
+#'   accessible via `$` notation and calling it with a step size produces a
+#'   time granule (e.g., 1 week granule as `cal_isoweek$week(1L)`).
+#'
 #' @seealso [linear_time()] for creating custom time representations,
 #'   [yearweek()] for a pre-defined ISO 8601 year-week representation
 #' 

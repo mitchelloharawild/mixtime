@@ -21,6 +21,11 @@
 #' the Gregorian calendar rules. For units that don't have a fixed relationship
 #' (e.g., months to days), the conversion requires a time context.
 #' 
+#' @return An S3 list of class `c("cal_gregorian", "mt_calendar")` containing
+#'   the named time unit classes of the Gregorian calendar. Each unit is
+#'   accessible via `$` notation and calling it with a step size produces a
+#'   time granule (e.g., 1 month granule as `cal_gregorian$month(1L)`).
+#'
 #' @seealso [linear_time()] for creating linear time points.
 #' 
 #' @examples

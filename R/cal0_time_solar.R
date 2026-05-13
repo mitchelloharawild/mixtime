@@ -53,6 +53,14 @@
 #' polar night (civil days where sunrise does not occur) are not currently 
 #' supported, it is recommended to use an alternative reference location.
 #' 
+#' @return An S3 list of class `c("cal_time_solar", "mt_calendar")` containing
+#'   the named time unit classes of the solar calendar. Each unit is
+#'   accessible via `$` notation and calling it with a step size and location
+#'   produces a time granule (e.g., 1 solar day granule as
+#'   `cal_time_solar$day(1L, lat = 0, lon = 0)`). Because solar day boundaries
+#'   depend on the observer's position, each unit constructor requires `lat`
+#'   and `lon` arguments.
+#'
 #' @seealso [`cal_time_civil`]
 #' 
 #' @examples

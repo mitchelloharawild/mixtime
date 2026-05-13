@@ -12,6 +12,14 @@
 #' - `month()`: Synodic month unit
 #' - `phase()`: Synodic phase unit
 #' 
+#' @return An S3 list of class `c("cal_time_lunar", "mt_calendar")` containing
+#'   the named time unit classes of the lunar calendar. Each unit is
+#'   accessible via `$` notation and calling it with a step size and location
+#'   produces a time granule (e.g., 1 synodic month granule as
+#'   `cal_time_lunar$month(1L, lat = 0, lon = 0)`). Because lunar phases depend
+#'   on the observer's position, each unit constructor requires `lat` and `lon`
+#'   arguments.
+#'
 #' @seealso [`cal_time_civil`]
 #' 
 #' @examples

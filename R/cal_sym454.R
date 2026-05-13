@@ -33,6 +33,11 @@
 #' minutes, 56.5 seconds), intentionally slightly shorter than the mean
 #' northward equinoctial year.
 #'
+#' @return An S3 list of class `c("cal_sym454", "mt_calendar")` containing
+#'   the named time unit classes of the Symmetry454 calendar. Each unit is
+#'   accessible via `$` notation and calling it with a step size produces a
+#'   time granule (e.g., 1 week granule as `cal_sym454$week(1L)`).
+#'
 #' @seealso [linear_time()] for creating linear time points, and
 #'   <https://en.wikipedia.org/wiki/Symmetry454> for more calendar details.
 #'

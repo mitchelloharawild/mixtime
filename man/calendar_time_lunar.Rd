@@ -10,6 +10,15 @@ A location-based calendar containing lunar time units.
 \usage{
 cal_time_lunar
 }
+\value{
+An S3 list of class \code{c("cal_time_lunar", "mt_calendar")} containing
+the named time unit classes of the lunar calendar. Each unit is
+accessible via \code{$} notation and calling it with a step size and location
+produces a time granule (e.g., 1 synodic month granule as
+\code{cal_time_lunar$month(1L, lat = 0, lon = 0)}). Because lunar phases depend
+on the observer's position, each unit constructor requires \code{lat} and \code{lon}
+arguments.
+}
 \description{
 Time unit constructors for the lunar time system where the boundary of each
 day is at sunrise, sunset, or noon. This calendar is intended to be
