@@ -130,7 +130,7 @@ vec_cast.mt_duration.mt_duration <- function(x, to, ..., x_arg, to_arg) {
 #' @export
 vec_ptype2.mt_duration.mt_duration <- function(x, y, ..., x_arg, y_arg) {
   new_time(
-    chronon = chronon_common(attr(x, "chronon"), attr(y, "chronon")),
+    chronon = chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon"))),
     class = "mt_duration"
   )
 }
@@ -176,8 +176,8 @@ vec_cast.mt_cyclical.double <- function(x, to, ...) {
 #' @export
 vec_ptype2.mt_cyclical.mt_cyclical <- function(x, y, ..., x_arg, y_arg) {
   new_time(
-    chronon = chronon_common(attr(x, "chronon"), attr(y, "chronon")),
-    cycle = chronon_common(attr(x, "cycle"), attr(y, "cycle")),
+    chronon = chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon"))),
+    cycle = chronon_common_impl(list(attr(x, "cycle"), attr(y, "cycle"))),
     class = "mt_cyclical"
   )
 }
