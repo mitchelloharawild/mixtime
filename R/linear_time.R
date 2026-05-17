@@ -287,14 +287,17 @@ vec_arith.numeric.mt_time <- function(op, x, y, ...) {
 #' @export
 vec_arith.mt_time.mt_duration <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
-    stop("Only additing and subtracting durations are supported for continuous time", call. = FALSE)
+    stop("Only adding and subtracting durations are supported for continuous time", call. = FALSE)
   }
-  cardinality <- chronon_cardinality(
-    attr(x, "chronon"), attr(y, "chronon"),
-    at = vec_data(x)
-  )
-
-  res <- vec_arith_base(op, vec_data(x), vec_data(y) * cardinality, ...)
+  x_chronon <- attr(x, "chronon")
+  y_chronon <- attr(y, "chronon")
+  # `at` must be in units of the coarser chronon (y), not the time's chronon (x)
+  at_y <- floor(chronon_convert_impl(vec_data(x), x_chronon, y_chronon, discrete = FALSE))
+  cardinality <- chronon_cardinality(x_chronon, y_chronon, at = at_y)
+  shift <- vec_data(y) * cardinality
+  # Preserve integer type for discrete time points
+  if (is.integer(vec_data(x))) shift <- as.integer(round(shift))
+  res <- vec_arith_base(op, vec_data(x), shift, ...)
   attributes(res) <- attributes(x)
   res
 }
@@ -302,14 +305,17 @@ vec_arith.mt_time.mt_duration <- function(op, x, y, ...) {
 #' @export
 vec_arith.mt_duration.mt_time <- function(op, x, y, ...) {
   if (!op %in% c("+", "-")) {
-    stop("Only additing and subtracting durations are supported for continuous time", call. = FALSE)
+    stop("Only adding and subtracting durations are supported for continuous time", call. = FALSE)
   }
-  cardinality <- chronon_cardinality(
-    attr(y, "chronon"), attr(x, "chronon"),
-    at = vec_data(y)
-  )
-
-  res <- vec_arith_base(op, vec_data(x) * cardinality, vec_data(y), ...)
+  x_chronon <- attr(x, "chronon")
+  y_chronon <- attr(y, "chronon")
+  # `at` must be in units of the coarser chronon (x the duration), not the time's chronon (y)
+  at_x <- floor(chronon_convert_impl(vec_data(y), y_chronon, x_chronon, discrete = FALSE))
+  cardinality <- chronon_cardinality(y_chronon, x_chronon, at = at_x)
+  shift <- vec_data(x) * cardinality
+  # Preserve integer type for discrete time points
+  if (is.integer(vec_data(y))) shift <- as.integer(round(shift))
+  res <- vec_arith_base(op, shift, vec_data(y), ...)
   attributes(res) <- attributes(y)
   res
 }
