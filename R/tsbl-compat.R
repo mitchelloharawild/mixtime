@@ -12,7 +12,7 @@ method(interval_pull, class_mixtime) <- function(x) {
 }
 
 interval_pull.mt_linear <- function(x) {
-  chronon <- time_chronon(x)
+  chronon <- attr(x, "chronon")
 
   interval <- list(chronon@n)
   names(interval) <- time_unit_full(chronon)
