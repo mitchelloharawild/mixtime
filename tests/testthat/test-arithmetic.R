@@ -204,6 +204,43 @@ test_that("integer + duration shifts the duration magnitude", {
   expect_equal(as.integer(2L + months(3L)), 5L)
 })
 
+test_that("duration * numeric scales the duration magnitude", {
+  expect_equal(as.integer(days(3L)   * 3),   9L)
+  expect_equal(as.integer(months(2L) * 6),   12L)
+  expect_equal(as.integer(days(5L)   * 0),   0L)
+  expect_equal(as.integer(days(5L)   * 1),   5L)
+  expect_equal(as.integer(days(5L)   * -1),  -5L)
+})
+
+test_that("numeric * duration is commutative", {
+  expect_equal(as.integer(3   * days(3L)),   9L)
+  expect_equal(as.integer(0.5 * days(6L)),   3L)
+})
+
+test_that("duration / numeric scales the duration magnitude", {
+  expect_equal(as.integer(days(6L)    / 2),   3L)
+  expect_equal(as.integer(months(9L)  / 3),   3L)
+  expect_equal(as.double(days(5L)    / 2),    2.5)
+})
+
+test_that("duration / duration returns a dimensionless ratio", {
+  expect_equal(as.double(days(6L)   / days(2L)),   3)
+  expect_equal(as.double(days(6L)   / days(6L)),   1)
+  expect_equal(as.double(months(4L) / months(2L)), 2)
+})
+
+test_that("duration / duration converts to a common chronon before dividing (same calendar)", {
+  # months and years share cal_gregorian; years(1L) == 12 months
+  expect_equal(as.double(years(2L) / months(1L)), 24)
+  expect_equal(as.double(months(6L) / years(1L)), 0.5)
+})
+
+test_that("duration / duration converts to a common chronon before dividing (cross-calendar)", {
+  # weeks (cal_isoweek) and days (cal_gregorian) share a common day chronon
+  expect_equal(as.double(weeks(1L) / days(1L)), 7)
+  expect_equal(as.double(days(14L) / weeks(1L)), 2)
+})
+
 # ---------------------------------------------------------------------------
 # Vectorised operations
 # ---------------------------------------------------------------------------

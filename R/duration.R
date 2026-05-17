@@ -78,24 +78,34 @@ vec_arith.mt_duration <- function(op, x, y, ...) {
 #' @method vec_arith.mt_duration mt_duration
 #' @export
 vec_arith.mt_duration.mt_duration <- function(op, x, y, ...) {
-  if (!op %in% c("-", "+")) {
-    cli::cli_abort("Only addition and subtraction are supported for durations.", call. = FALSE)
+  if (!op %in% c("-", "+", "/")) {
+    cli::cli_abort("Only addition, subtraction, and division are supported between two durations.", call. = FALSE)
   }
-  tu <- chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon")))
-  res <- vec_arith_base(
-    op,
-    chronon_convert(x, tu, discrete = FALSE),
-    chronon_convert(y, tu, discrete = FALSE),
-    ...
-  )
+
+  # Find common chronon for x and y as the basis for arithmetic operations.
+  x_chronon <- attr(x, "chronon")
+  y_chronon <- attr(y, "chronon")
+  tu <- chronon_common_impl(list(x_chronon, y_chronon))
+
+  # Scale magnitudes to common chronon units before performing arithmetic
+  x <- vec_data(x) * chronon_cardinality(tu, x_chronon)
+  y <- vec_data(y) * chronon_cardinality(tu, y_chronon)
+
+  res <- vec_arith_base(op, x, y, ...)
+  if (op == "/") {
+    # duration / duration = numeric ratio
+    return(res)
+  }
+
+  # Return a duration with the common chronon
   new_time(res, chronon = tu, class = "mt_duration")
 }
 
 #' @method vec_arith.mt_duration numeric
 #' @export
 vec_arith.mt_duration.numeric <- function(op, x, y, ...) {
-  if (!op %in% c("+", "-")) {
-    stop("Only numeric addition and subtraction supported for time durations", call. = FALSE)
+  if (!op %in% c("+", "-", "*", "/")) {
+    stop("Only addition, subtraction, multiplication, and division supported for time durations", call. = FALSE)
   }
   res <- vec_arith_base(op, x, y, ...)
   vec_restore(res, x)
@@ -104,8 +114,8 @@ vec_arith.mt_duration.numeric <- function(op, x, y, ...) {
 #' @method vec_arith.numeric mt_duration
 #' @export
 vec_arith.numeric.mt_duration <- function(op, x, y, ...) {
-  if (!op %in% c("+", "-")) {
-    stop("Only numeric addition and subtraction supported for time durations", call. = FALSE)
+  if (!op %in% c("+", "-", "*")) {
+    stop("Only addition, subtraction, and multiplication supported for time durations", call. = FALSE)
   }
   res <- vec_arith_base(op, x, y, ...)
   vec_restore(res, y)
