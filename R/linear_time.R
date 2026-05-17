@@ -251,6 +251,10 @@ vec_math.mt_time <- function(.fn, .x, ...) {
   if (.fn %in% c("is.nan", "is.finite", "is.infinite")) {
     return(vctrs::vec_math_base(.fn, .x, ...))
   }
+  if (.fn %in% c("round", "floor", "ceiling")) {
+    res <- vctrs::vec_math_base(.fn, .x, ...)
+    return(vec_restore(res, .x))
+  }
   stop(sprintf("Math function '%s' not supported for continuous time", .fn), call. = FALSE)
 }
 
