@@ -290,7 +290,7 @@ vec_arith.mt_time.mt_duration <- function(op, x, y, ...) {
     stop("Only additing and subtracting durations are supported for continuous time", call. = FALSE)
   }
   cardinality <- chronon_cardinality(
-    time_chronon(x), time_chronon(y),
+    attr(x, "chronon"), attr(y, "chronon"),
     at = vec_data(x)
   )
 
@@ -305,7 +305,7 @@ vec_arith.mt_duration.mt_time <- function(op, x, y, ...) {
     stop("Only additing and subtracting durations are supported for continuous time", call. = FALSE)
   }
   cardinality <- chronon_cardinality(
-    time_chronon(y), time_chronon(x),
+    attr(y, "chronon"), attr(x, "chronon"),
     at = vec_data(y)
   )
 
