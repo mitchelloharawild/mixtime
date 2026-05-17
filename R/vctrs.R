@@ -30,8 +30,8 @@ time_valid <- function(x) {
 method(vec_proxy_order, class_mixtime) <- function(x, ...) {
   if (length(x@x) > 1L) {
     # Convert all time values to a common chronon
-    chronons <- lapply(x@x, time_chronon)
-    chronon_type <- chronon_common(!!!chronons)
+    chronons <- lapply(x@x, function(v) attr(v, "chronon"))
+    chronon_type <- chronon_common_impl(chronons)
 
     x@x <- lapply(x@x, function(v) {
       if (is.integer(v)) v <- v + 0.5
