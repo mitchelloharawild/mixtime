@@ -115,9 +115,6 @@ vec_restore.mt_linear <- function(x, to, ..., x_arg, to_arg) {
 # ----------------------------------------------------------------
 
 #' @export
-vec_cast.mt_duration.double <- vec_cast.mt_linear.double
-
-#' @export
 vec_cast.mt_duration.integer <- vec_cast.mt_linear.integer
 
 #' @export
@@ -134,6 +131,24 @@ vec_ptype2.mt_duration.mt_duration <- function(x, y, ..., x_arg, y_arg) {
     class = "mt_duration"
   )
 }
+
+#' @export
+vec_ptype2.mt_duration.double <- function(x, y, ..., x_arg, y_arg) x
+
+#' @export
+vec_ptype2.double.mt_duration <- function(x, y, ..., x_arg, y_arg) y
+
+#' @export
+vec_cast.mt_duration.double <- function(x, to, ..., x_arg, to_arg) {
+  attributes(x) <- attributes(to)
+  x
+}
+
+#' @export
+vec_ptype2.mt_duration.integer <- function(x, y, ..., x_arg, y_arg) x
+
+#' @export
+vec_ptype2.integer.mt_duration <- function(x, y, ..., x_arg, y_arg) y
 
 #' @method vec_restore mt_duration
 #' @export
