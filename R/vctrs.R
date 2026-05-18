@@ -86,6 +86,7 @@ vec_cast.mt_linear.double <- function(x, to, ...) {
 #' @export
 vec_ptype2.mt_linear.mt_linear <- function(x, y, ..., x_arg, y_arg) {
   new_time(
+    vec_ptype2(vec_data(x), vec_data(y)),
     chronon = chronon_common_impl(
       list(attr(x, "chronon"), attr(y, "chronon"))
     ),
@@ -125,7 +126,9 @@ vec_cast.mt_duration.integer <- vec_cast.mt_linear.integer
 
 #' @export
 vec_cast.mt_duration.mt_duration <- function(x, to, ..., x_arg, to_arg) {
+  discrete <- is.integer(vec_data(to))
   x <- as.numeric(x) * chronon_cardinality(attr(to, "chronon"), attr(x, "chronon"))
+  if (discrete) x <- as.integer(x)
   attributes(x) <- attributes(to)
   x
 }
@@ -133,6 +136,7 @@ vec_cast.mt_duration.mt_duration <- function(x, to, ..., x_arg, to_arg) {
 #' @export
 vec_ptype2.mt_duration.mt_duration <- function(x, y, ..., x_arg, y_arg) {
   new_time(
+    vec_ptype2(vec_data(x), vec_data(y)),
     chronon = chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon"))),
     class = "mt_duration"
   )
