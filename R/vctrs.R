@@ -114,6 +114,12 @@ vec_restore.mt_linear <- function(x, to, ..., x_arg, to_arg) {
 # mt_duration methods
 # ----------------------------------------------------------------
 
+#' @method vec_cast.character mt_duration
+#' @export
+vec_cast.character.mt_duration <- function(x, to, ...) {
+  format(x)
+}
+
 #' @export
 vec_cast.mt_duration.integer <- vec_cast.mt_linear.integer
 

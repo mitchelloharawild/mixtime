@@ -11,3 +11,10 @@ test_that("vec_proxy_order() works for mixed-chronon mixtime vectors", {
   expect_no_error(vctrs::vec_proxy_order(c(yearmonth(360L), year(2000L))))
   expect_length(vctrs::vec_proxy_order(c(yearmonth(360L), year(2000L))), 2L)
 })
+
+test_that("vec_cast to character works for mt_duration", {
+  expect_equal(vctrs::vec_cast(years(1L), character()), format(years(1L)))
+  expect_equal(vctrs::vec_cast(months(3L), character()), format(months(3L)))
+  expect_type(vctrs::vec_cast(years(1:3), character()), "character")
+  expect_length(vctrs::vec_cast(years(1:3), character()), 3L)
+})
