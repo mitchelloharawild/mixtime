@@ -1,0 +1,67 @@
+# Gregorian time unit classes
+
+Time unit constructors for the Gregorian calendar system. These units
+can be used with
+[`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time.md)
+to create custom time representations.
+
+## Usage
+
+``` r
+cal_gregorian
+```
+
+## Format
+
+A civil-based calendar containing Gregorian time units.
+
+## Value
+
+An S3 list of class `c("cal_gregorian", "mt_calendar")` containing the
+named time unit classes of the Gregorian calendar. Each unit is
+accessible via `$` notation and calling it with a step size produces a
+time granule (e.g., 1 month granule as `cal_gregorian$month(1L)`).
+
+## Details
+
+The following time units are available in the Gregorian calendar
+(`cal_gregorian$`).
+
+- [`year()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md):
+  Year unit
+
+- `quarter()`: Quarter (3-month period) unit
+
+- `month()`: Month unit
+
+- `day()`: Day unit
+
+- `hour()`: Hour unit
+
+- `minute()`: Minute unit
+
+- `second()`: Second unit
+
+- `millisecond()`: Millisecond unit
+
+These units form a hierarchy where conversions between adjacent units
+follow the Gregorian calendar rules. For units that don't have a fixed
+relationship (e.g., months to days), the conversion requires a time
+context.
+
+## See also
+
+[`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time.md)
+for creating linear time points.
+
+## Examples
+
+``` r
+# Create a custom time representation using Gregorian units
+linear_time(
+  Sys.time(),
+  chronon = hour(1L)
+)
+#> <mixtime[1]>
+#> [1] 2026-05-19 08h
+```

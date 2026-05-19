@@ -1,0 +1,48 @@
+# Civil time unit classes
+
+Time unit constructors for the civil time system where the boundary of
+each day is at midnight on the 24 hour clock. This calendar is intended
+to be built on by other calendars (e.g. `[cal_time_civil]` and
+`[cal_isoweek]`) to add common time components. These units can be used
+with
+[`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time.md)
+to create custom time representations.
+
+## Usage
+
+``` r
+cal_time_civil
+```
+
+## Value
+
+A time granule object for the civil time system.
+
+## Details
+
+The following time units are available (`cal_time_civil$`).
+
+- `day()`: Day unit
+
+- `hour()`: Hour unit
+
+- `minute()`: Minute unit
+
+- `second()`: Second unit
+
+- `millisecond()`: Millisecond unit
+
+## See also
+
+`cal_time_civil`,
+[`cal_isoweek`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_isoweek.md)
+
+## Examples
+
+``` r
+# Create a custom time representation using civil time granules
+hms <- new_cyclical_time_fn(
+  chronon = second(1L),
+  cycle = hour(1L)
+)
+```
