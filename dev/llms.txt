@@ -48,7 +48,7 @@ or with helpers:
   [`seconds()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration_helpers.md),
   [`milliseconds()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration_helpers.md)
 
-**🕰️ Time types**
+**🕰️ Temporal semantics**
 
 - Discrete and continuous time models
 - Timezone support for all chronons
