@@ -1,3 +1,5 @@
+# mixtime (development version)
+
 # mixtime 0.1.0
 
 This is the initial CRAN release of the package with provides the core data 
