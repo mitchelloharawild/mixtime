@@ -45,11 +45,11 @@ reference:
 
 - title: "Time Duration Representations"
   desc: "Functions to create and work with time durations"
-- subtitle: "Cyclical Time Vectors"
+- subtitle: "Time Duration Vectors"
   desc: "The general function for creating time durations"
   contents:
   - duration
-- subtitle: "Cyclical Time Helpers"
+- subtitle: "Time Duration Helpers"
   desc: "Convenience functions for common time durations"
   contents:
   - years
