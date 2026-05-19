@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/mixtime)](https://CRAN.R-project.org/package=mixtime)
 <!-- badges: end -->
 
 mixtime provides flexible time classes for time series analysis and forecasting with mixed temporal granularities. It is designed for handling temporal data at different frequencies, making it ideal for:
