@@ -16,6 +16,7 @@
 
 * Fixed incorrect usage of `time_chronon()` causing arithmetic to fail.
 * Fixed incompatibilities with vctrs sorting, ptype2, and casting methods.
+* Fixed formatting of cyclical time with mixed-calendar chronon and cycle (#62).
 
 # mixtime 0.1.0
 
