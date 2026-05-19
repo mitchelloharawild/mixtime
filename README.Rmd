@@ -41,7 +41,7 @@ mixtime provides flexible time classes for time series analysis and forecasting 
 
   * `years()`, `quarters()`, `months()`, `weeks()`, `days()`, `hours()`, `minutes()`, `seconds()`, `milliseconds()`
   
-**🕰️ Time types**
+**🕰️ Temporal semantics**
 
   * Discrete and continuous time models
   * Timezone support for all chronons

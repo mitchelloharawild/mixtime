@@ -42,7 +42,7 @@ or with helpers:
 - `years()`, `quarters()`, `months()`, `weeks()`, `days()`, `hours()`,
   `minutes()`, `seconds()`, `milliseconds()`
 
-**🕰️ Time types**
+**🕰️ Temporal semantics**
 
 - Discrete and continuous time models
 - Timezone support for all chronons
