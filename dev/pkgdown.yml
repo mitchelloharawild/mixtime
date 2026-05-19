@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   extending-mixtime: extending-mixtime.html
   time-format-strings: time-format-strings.html
-last_built: 2026-05-19T13:32Z
+last_built: 2026-05-19T14:07Z
 urls:
   reference: https://pkg.mitchelloharawild.com/mixtime/reference
   article: https://pkg.mitchelloharawild.com/mixtime/articles

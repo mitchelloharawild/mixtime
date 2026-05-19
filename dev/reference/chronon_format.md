@@ -55,7 +55,7 @@ chronon_format_linear(cal_isoweek$day(1L))
 chronon_format_cyclical(cal_gregorian$month(1L), cal_gregorian$year(1L))
 #> [1] "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
 chronon_format_cyclical(cal_gregorian$day(1L), cal_gregorian$month(1L))
-#> [1] "D{cyc(day,month)}"
+#> [1] "D{cyc(chronon_common(time_chronon(.time)), chronon_common(time_cycle(.time)))}"
 chronon_format_cyclical(cal_isoweek$day(1L), cal_isoweek$week(1L))
 #> [1] "{cyc(day,week,label=TRUE)}"
 chronon_format_cyclical(cal_isoweek$week(1L), cal_isoweek$year(1L))
