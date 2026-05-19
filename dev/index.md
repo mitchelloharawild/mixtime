@@ -133,13 +133,13 @@ cal_gregorian
 cal_gregorian$month(1L) # (1L is integer 1)
 #> <mixtime::tu_month>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 
 # A 2-week time granule (fortnights)
 cal_isoweek$week(2L)
 #> <mixtime::tu_week>
 #>  @ n : int 2
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 ```
 
 ### Linear Time
@@ -253,7 +253,7 @@ date(demo_time, tz = "America/Los_Angeles")
 #> [1] 2026-02-22 PST
 date(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-22 PST 43.8%
+#> [1] 2026-02-22 43.8% PST
 day_of_week(demo_time, tz = "America/Los_Angeles")
 #> <mixtime[1]>
 #> [1] Sun PST
@@ -264,7 +264,7 @@ date(demo_time, tz = "Australia/Melbourne")
 #> [1] 2026-02-23 AEDT
 date(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-23 AEDT 23.0%
+#> [1] 2026-02-23 23.0% AEDT
 day_of_week(demo_time, tz = "Australia/Melbourne")
 #> <mixtime[1]>
 #> [1] Mon AEDT
