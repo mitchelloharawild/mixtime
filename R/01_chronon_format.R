@@ -41,12 +41,7 @@ method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
 #' @export
 chronon_format_cyclical <- new_generic("chronon_format_cyclical", c("x", "y"))
 method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
-  cal <- time_calendar(x)
-  tu_i <- match(
-    c(S7_class_id(x), S7_class_id(y)),
-    vapply(cal, S7_class_id, character(1L))
-  )
-  paste0(time_unit_abbr(x), "{cyc(", paste0(names(cal)[tu_i], collapse = ","), ")}")
+  paste0(time_unit_abbr(x), "{cyc(chronon_common(time_chronon(.time)), chronon_common(time_cycle(.time)))}")
 }
 
 #' Default formatting strings for chronon attributes
