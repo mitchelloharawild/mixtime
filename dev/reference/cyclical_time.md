@@ -134,5 +134,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 14:07:49
+#> [1] 14:10:07
 ```
