@@ -15,6 +15,11 @@
   for rounding to a specified time granule).
 - Added casting from time durations to character vectors.
 
+### Improvements
+
+- Continuous time model durations now always show at least one decimal
+  place.
+
 ### Bug fixes
 
 - Fixed incorrect usage of
