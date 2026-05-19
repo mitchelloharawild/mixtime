@@ -60,7 +60,7 @@ new_time(
   class = "mt_linear"
 )
 #> <mt_linear[1]>
-#> [1] 2026-05-19 08:40:41
+#> [1] 2026-05-19 08:49:07
 
 # Create a discrete mixtime time vector for the time of day (cyclical time)
 new_time(
@@ -70,5 +70,5 @@ new_time(
   class = "mt_cyclical"
 )
 #> <mt_cyclical[1]>
-#> [1] 08:40:41
+#> [1] 08:49:07
 ```

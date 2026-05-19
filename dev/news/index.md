@@ -2,6 +2,27 @@
 
 ## mixtime (development version)
 
+### New features
+
+- Added support for multiplication and division of time durations.
+- Added
+  [`round()`](https://rdrr.io/r/base/Round.html)/[`floor()`](https://rdrr.io/r/base/Round.html)/[`ceiling()`](https://rdrr.io/r/base/Round.html)
+  methods for rounding time by chronons. (note: use
+  [`time_round()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md),
+  [`time_floor()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md),
+  and
+  [`time_ceiling()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)
+  for rounding to a specified time granule).
+- Added casting from time durations to character vectors.
+
+### Bug fixes
+
+- Fixed incorrect usage of
+  [`time_chronon()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_chronon.md)
+  causing arithmetic to fail.
+- Fixed incompatibilities with vctrs sorting, ptype2, and casting
+  methods.
+
 ## mixtime 0.1.0
 
 This is the initial CRAN release of the package with provides the core
