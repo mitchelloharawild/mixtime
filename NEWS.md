@@ -1,5 +1,18 @@
 # mixtime (development version)
 
+## New features
+
+* Added support for multiplication and division of time durations.
+* Added `round()`/`floor()`/`ceiling()` methods for rounding time by chronons.
+  (note: use `time_round()`, `time_floor()`, and `time_ceiling()` for rounding
+  to a specified time granule).
+* Added casting from time durations to character vectors.
+
+## Bug fixes
+
+* Fixed incorrect usage of `time_chronon()` causing arithmetic to fail.
+* Fixed incompatibilities with vctrs sorting, ptype2, and casting methods.
+
 # mixtime 0.1.0
 
 This is the initial CRAN release of the package with provides the core data 
