@@ -50,14 +50,14 @@ Convenience functions for common cyclical time representations
 
 Functions to create and work with time durations
 
-### Cyclical Time Vectors
+### Time Duration Vectors
 
 The general function for creating time durations
 
 - [`duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration.md)
   : Duration vectors
 
-### Cyclical Time Helpers
+### Time Duration Helpers
 
 Convenience functions for common time durations
 
