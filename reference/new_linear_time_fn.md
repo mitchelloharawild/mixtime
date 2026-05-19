@@ -41,7 +41,7 @@ ym(Sys.Date())
 yd <- new_linear_time_fn(day(1L))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-05-18
+#> [1] 2026-05-19
 
 # Linear time with 1 week granules as the chronon, using the ISO week calendar
 yw <- new_linear_time_fn(week(1L), default_calendar = cal_isoweek)
@@ -53,5 +53,5 @@ yw(Sys.Date())
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-05-18 08h
+#> [1] 2026-05-19 08h
 ```

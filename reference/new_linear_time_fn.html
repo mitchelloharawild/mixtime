@@ -37,7 +37,7 @@ hours)."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mi
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Linear time function factory</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/linear_time.R" class="external-link"><code>R/linear_time.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.1.0/R/linear_time.R" class="external-link"><code>R/linear_time.R</code></a></small>
       <div class="d-none name"><code>new_linear_time_fn.Rd</code></div>
     </div>
 
@@ -85,7 +85,7 @@ conversion if they don't exist in the calendar of the input data (e.g.,
 <span class="r-in"><span><span class="va">yd</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">yd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-19</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Linear time with 1 week granules as the chronon, using the ISO week calendar</span></span></span>
 <span class="r-in"><span><span class="va">yw</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, default_calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></span>
@@ -97,7 +97,7 @@ conversion if they don't exist in the calendar of the input data (e.g.,
 <span class="r-in"><span><span class="va">ymd_h</span> <span class="op">&lt;-</span> <span class="fu">new_linear_time_fn</span><span class="op">(</span><span class="fu">hour</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ymd_h</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-18 08h</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-05-19 08h</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

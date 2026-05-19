@@ -41,7 +41,7 @@ granules form a cyclical time relationship (e.g., day of the week)."><meta prope
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Cyclical time function factory</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/cyclical_time.R" class="external-link"><code>R/cyclical_time.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.1.0/R/cyclical_time.R" class="external-link"><code>R/cyclical_time.R</code></a></small>
       <div class="d-none name"><code>new_cyclical_time_fn.Rd</code></div>
     </div>
 
@@ -86,7 +86,7 @@ conversion if they don't exist in the calendar of the input data (e.g., <code>ca
 <span class="r-in"><span><span class="va">day_of_week</span> <span class="op">&lt;-</span> <span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, default_calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Mon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Tue</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">month_of_year</span> <span class="op">&lt;-</span> <span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
