@@ -11,6 +11,7 @@
 ## Improvements
 
 * Continuous time model durations now always show at least one decimal place.
+* Added formatting support for `NaN`, `Inf`, and `-Inf` values in time types.
 
 ## Bug fixes
 

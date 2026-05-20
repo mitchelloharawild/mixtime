@@ -74,7 +74,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
     cal[cycle_units] <- cal_cyc[cycle_units]
   }
 
-  x_na <- is.na(x)
+  x_special <- is.na(x) | is.infinite(vec_data(x))
   
   # Create glue evaluation environment
   as_tu <- function(x) {
@@ -168,7 +168,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   # Compute the numeric parts for display
   res_split <- split(fmt[fmt_parts], lengths(fmt[fmt_parts]))
   parts <- chronon_parts(
-    x        = x[!x_na],
+    x        = x[!x_special],
     linear   = unlist(res_split[["1"]], recursive = FALSE),
     cyclical = res_split[["2"]]
   )
@@ -191,13 +191,38 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
     fmt[fmt_parts] <- unsplit(Filter(length, parts), lengths(fmt[fmt_parts]))
   }
 
-  # Handle format parts which include NA values (e.g. timezones)
-  if (any(x_na) && any(fmt_inc_na <- lengths(fmt) == length(x))) {
-    fmt[fmt_inc_na] <- lapply(fmt[fmt_inc_na], function(x) x[!x_na])
+  # Handle format parts which include special values (e.g. timezones)
+  if (any(x_special) && any(fmt_inc_special <- lengths(fmt) == length(x))) {
+    fmt[fmt_inc_special] <- lapply(fmt[fmt_inc_special], function(x) x[!x_special])
   }
 
   out <- character(length(x))
-  out[!x_na] <- trimws(rlang::exec(paste0, !!!fmt))
-  out[x_na] <- "NA"
+  out[!x_special] <- trimws(rlang::exec(paste0, !!!fmt))
+  out[x_special] <- format(vec_data(x)[x_special])
+  out
+}
+
+#' @export
+format.mt_time <- function(x, format = time_format_default(x), ...) {
+  # return(rep("", length(x))) # Avoid infinite recursion in time_format_default
+  time_format_impl(x, format = format, ...)
+}
+
+#' @export
+format.mt_duration <- function(x, nsmall = 1L, ...) {
+  unit <- time_unit_full(attr(x, "chronon"))
+  is_frac <- is.double(vec_data(x))
+  x <- vec_data(x)
+  x_special <- is.na(x) | is.infinite(x)
+  out <- character(length(x))
+  if (is_frac) {
+    # Round to at most `digits` decimal places, then format with nsmall = 1 to
+    # ensure at least 1 decimal place while stripping unnecessary trailing zeros.
+    formatted <- format(x[!x_special], nsmall = nsmall, ...)
+    out[!x_special] <- paste0(formatted, " ", unit, "s")
+  } else {
+    out[!x_special] <- paste0(x[!x_special], " ", unit, ifelse(x[!x_special] == 1L, "", "s"))
+  }
+  out[x_special] <- format(x[x_special])
   out
 }

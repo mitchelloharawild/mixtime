@@ -1,21 +1,3 @@
-#' @export
-format.mt_duration <- function(x, nsmall = 1L, ...) {
-  unit <- time_unit_full(attr(x, "chronon"))
-  is_frac <- is.double(vec_data(x))
-  x <- vec_data(x)
-  x_na <- is.na(x)
-  out <- rep("NA", length(x))
-  if (is_frac) {
-    # Round to at most `digits` decimal places, then format with nsmall = 1 to
-    # ensure at least 1 decimal place while stripping unnecessary trailing zeros.
-    formatted <- format(x[!x_na], nsmall = nsmall, ...)
-    out[!x_na] <- paste0(formatted, " ", unit, "s")
-  } else {
-    out[!x_na] <- paste0(x[!x_na], " ", unit, ifelse(x[!x_na] == 1L, "", "s"))
-  }
-  out
-}
-
 #' Duration vectors
 #' 
 #' `duration()` creates a vector of durations with a specified chronon.
