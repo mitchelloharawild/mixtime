@@ -44,7 +44,7 @@ method(vec_proxy_order, class_mixtime) <- function(x, ...) {
 #' @importFrom vctrs vec_proxy_equal
 method(vec_proxy_equal, class_mixtime) <- function(x, ...) {
   data_frame(
-    x = as.integer(x),
+    x = as.numeric(x),
     g = unvecvec(vecvec_apply(x, function(x) rep(rlang::hash(attr(x, "chronon")), length(x))))
   )
 }
