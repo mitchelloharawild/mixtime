@@ -117,7 +117,7 @@ year(Sys.Date())
 #> [1] 2026
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 38.1%
+#> [1] 2026 40.0%
 
 # ISO week-based year
 year(yearweek(Sys.Date()))
@@ -130,7 +130,7 @@ yearquarter(Sys.Date())
 #> [1] 2026 Q2
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 Q2 52.3%
+#> [1] 2026 Q2 60.0%
 
 # Year-month
 yearmonth(Sys.Date())
@@ -138,12 +138,12 @@ yearmonth(Sys.Date())
 #> [1] 2026 May
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 May 61.3%
+#> [1] 2026 May 83.9%
 
 # Year-week (ISO 8601)
 yearweek(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 W21
+#> [1] 2026 W22
 yearweek(0:52)
 #> <mixtime[53]>
 #>  [1] 1970 W01 1970 W02 1970 W03 1970 W04 1970 W05 1970 W06 1970 W07 1970 W08

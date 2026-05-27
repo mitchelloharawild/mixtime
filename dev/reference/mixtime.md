@@ -55,12 +55,12 @@ the specified `chronon` and `cycle`.
 # Create a mixtime for today
 mixtime(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-05-20
+#> [1] 2026-05-27
 
 # Create a mixtime for the current date and time
 mixtime(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-05-20 14:38:37
+#> [1] 2026-05-27 15:56:46
 
 # Convert time from tsibble classes to mixtime
 mixtime(tsibble::yearmonth("2024 Jan"))
@@ -70,34 +70,34 @@ mixtime(tsibble::yearmonth("2024 Jan"))
 # Create a mixtime for the time of day (cyclical time)
 mixtime(Sys.time(), cycle = cal_gregorian$day(1L))
 #> <mixtime[1]>
-#> [1] 14:38:37
+#> [1] 15:56:47
 
 # Specify a timezone for the chronon
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = Sys.timezone()))
 #> <mixtime[1]>
-#> [1] 2026-05-20 14:38:37
+#> [1] 2026-05-27 15:56:47
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = "Pacific/Honolulu"))
 #> <mixtime[1]>
-#> [1] 2026-05-20 04:38:37 HST
+#> [1] 2026-05-27 05:56:47 HST
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = "Australia/Melbourne"))
 #> <mixtime[1]>
-#> [1] 2026-05-21 00:38:37 AEST
+#> [1] 2026-05-28 01:56:47 AEST
 
 # Dates (and all granularities) can have timezones
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = Sys.timezone()))
 #> <mixtime[1]>
-#> [1] 2026-05-20
+#> [1] 2026-05-27
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = "Pacific/Honolulu"))
 #> <mixtime[1]>
-#> [1] 2026-05-20 HST
+#> [1] 2026-05-27 HST
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = "Australia/Melbourne"))
 #> <mixtime[1]>
-#> [1] 2026-05-21 AEST
+#> [1] 2026-05-28 AEST
 
 # Continuous time tracks progress within the chronon
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = Sys.timezone()), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-05-20 61.0%
+#> [1] 2026-05-27 66.4%
 
 # Mixtime can combine different granularities and timezones in a vector
 now <- Sys.time()
@@ -110,5 +110,5 @@ c(
   mixtime(now, chronon = cal_gregorian$month(1L))
 )
 #> <mixtime[3]>
-#> [1] 2026-05-20 14:38:38 2026-05-20 14:38    2026 May           
+#> [1] 2026-05-27 15:56:47 2026-05-27 15:56    2026 May           
 ```

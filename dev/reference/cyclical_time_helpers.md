@@ -99,7 +99,7 @@ month_of_year(Sys.Date())
 #> [1] May
 day_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] D140
+#> [1] D147
 day_of_week(Sys.Date())
 #> <mixtime[1]>
 #> [1] Wed
