@@ -21,6 +21,8 @@
   place.
 - Added formatting support for `NaN`, `Inf`, and `-Inf` values in time
   types.
+- Improved [`str()`](https://rdrr.io/r/utils/str.html) output to be more
+  compact for each time type.
 
 ### Bug fixes
 
