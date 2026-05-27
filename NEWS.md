@@ -12,6 +12,7 @@
 
 * Continuous time model durations now always show at least one decimal place.
 * Added formatting support for `NaN`, `Inf`, and `-Inf` values in time types.
+* Improved `str()` output to be more compact for each time type.
 
 ## Bug fixes
 
