@@ -61,7 +61,14 @@ chronon_common.mixtime <- function(x, .ptype = NULL, ...) {
 
 S7::method(chronon_common, class_any) <- function(x, .ptype = NULL, ...) {
   chronon_common_impl(
-    lapply(time_chronon(x)@x, attr, "chronon"),
+    list(attr(time_chronon(x[1L])@x[[1L]], "chronon")),
+    .ptype = .ptype
+  )
+}
+
+S7::method(chronon_common, class_mixtime) <- function(x, .ptype = NULL, ...) {
+  chronon_common_impl(
+    lapply(x@x, attr, "chronon"),
     .ptype = .ptype
   )
 }
