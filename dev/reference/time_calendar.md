@@ -74,12 +74,5 @@ time_calendar(yearweek(Sys.Date()))
 
 # A mixed time object returns a list of calendars
 time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
-#> <cal_time_civil>
-#> Time units:
-#>   - day
-#>   - ampm
-#>   - hour
-#>   - minute
-#>   - second
-#>   - millisecond
+#> Error in x@package: no applicable method for `@` applied to an object of class "NULL"
 ```
