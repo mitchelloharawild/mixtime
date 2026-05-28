@@ -126,7 +126,7 @@ linear_time <- function(
     cli::cli_abort(e$message, call = NULL)
   })
 
-  mixtime(data, chronon = chronon, discrete = discrete)
+  mixtime(data, chronon = chronon, cycle = NULL, discrete = discrete)
 }
 
 #' Linear time helper functions
