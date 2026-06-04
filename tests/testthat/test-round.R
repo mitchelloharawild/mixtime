@@ -231,8 +231,6 @@ test_that("time_floor/time_ceiling work for Date", {
   expect_s3_class(res_floor, "Date")
 })
 
-# ...existing code...
-
 # ── datetime: civil (Gregorian + timezone) ────────────────────────────────────
 
 test_that("time_floor/time_ceiling/time_round work for civil datetime rounded to day", {

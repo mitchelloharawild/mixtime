@@ -119,17 +119,14 @@ method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$month)) <- fun
 
 ### Chronon casting between Gregorian time granules
 method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function(from, to, x) {
-  # Modulo arithmetic to convert from days to months
-  # if (chronon_cardinality(cal_gregorian$month(1L), to) != 1L) {
-  #   stop("Converting to non-month chronons from days not yet supported", call. = FALSE)
-  # }
-
   # Scale `x` to be 1 day increments
   x_scale <- from@n
   x <- x_scale * x
+  x_int  <- floor(x)
+  x_frac <- x - x_int
 
   # Shift to days since 0000-03-01 (algorithm anchor)
-  z <- x + 719468L
+  z <- x_int + 719468L
   
   # (day) -> (year, month, day) arithmetic
   era   <- (z >= 0L) * (z %/% 146097L) + (z < 0L) * ((z - 146096L) %/% 146097L)
@@ -151,7 +148,7 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function
 
   list(
     div = res %/% res_scale,
-    mod = day / x_scale # This is in cal_gregorian$day(1L), should be cal_gregorian$day(***?)
+    mod = (day + x_frac) / x_scale
   )
 }
 method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function(from, to, x) {
@@ -191,9 +188,11 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(
   # Scale `x` to be 1 day increments
   x_scale <- from@n
   x <- x_scale * x
+  x_int  <- floor(x)
+  x_frac <- x - x_int
 
   # Shift to days since 0000-03-01 (algorithm anchor)
-  z     <- x + 719468L
+  z     <- x_int + 719468L
 
   era   <- (z >= 0L) * (z %/% 146097L) + (z < 0L) * ((z - 146096L) %/% 146097L)
   doe   <- z - era * 146097L                      # day-of-era [0, 146096]
@@ -207,8 +206,8 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(
   yday <- (doy + 59 + ly) %% (365L + ly)
   
   list(
-    div = year-1970L,
-    mod = yday/x_scale
+    div = year - 1970L,
+    mod = (yday + x_frac) / x_scale
   )
 }
 method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(from, to, x) {

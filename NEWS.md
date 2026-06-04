@@ -19,6 +19,8 @@
 * Fixed incorrect usage of `time_chronon()` causing arithmetic to fail.
 * Fixed incompatibilities with vctrs sorting, ptype2, and casting methods.
 * Fixed formatting of cyclical time with mixed-calendar chronon and cycle (#62).
+* Fixed divmod of Gregorian day -> month and day -> year producing incorrect
+  divisors near the year boundary for continuous time dates.
 
 # mixtime 0.1.0
 
