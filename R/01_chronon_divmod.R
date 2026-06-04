@@ -29,7 +29,7 @@ chronon_divmod <- S7::new_generic("chronon_divmod", c("from", "to"))
 # #' @rdname chronon_divmod
 S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # No casting needed for identical time granules
-  if (identical(S7::S7_class(from), S7::S7_class(to))) {
+  if (identical(S7_class_id(from), S7_class_id(to))) {
     divisor <- to@n / from@n
     return(
       list(
