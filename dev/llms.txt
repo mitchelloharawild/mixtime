@@ -445,7 +445,8 @@ clock in a specific time zone.
 Solar time systems where day boundaries are defined by solar events
 (sunrise, noon, or sunset) at specific geographic locations.
 
-- [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_solar.md)
+- [`cal_time_solar_transit`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_solar.md)
+  [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_solar.md)
   : Solar time unit classes
 
 ### Lunar Time System
@@ -453,7 +454,8 @@ Solar time systems where day boundaries are defined by solar events
 The lunar time system where each month begins at the new moon, with day
 boundaries defined by lunar events.
 
-- [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_lunar.md)
+- [`cal_time_lunar_synodic`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_lunar.md)
+  [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_lunar.md)
   : Lunar time unit classes
 
 ## Time Attributes
