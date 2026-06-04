@@ -34,6 +34,8 @@
 - Fixed formatting of cyclical time with mixed-calendar chronon and
   cycle
   ([\#62](https://github.com/mitchelloharawild/mixtime/issues/62)).
+- Fixed divmod of Gregorian day -\> month and day -\> year producing
+  incorrect divisors near the year boundary for continuous time dates.
 
 ## mixtime 0.1.0
 
