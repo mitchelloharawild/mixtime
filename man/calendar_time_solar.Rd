@@ -2,17 +2,20 @@
 % Please edit documentation in R/cal0_time_solar.R
 \name{calendar_time_solar}
 \alias{calendar_time_solar}
+\alias{cal_time_solar_transit}
 \alias{cal_time_solar}
 \title{Solar time unit classes}
 \format{
-A location-based calendar containing solar time units.
+A location-based calendar containing transit-based solar time units.
 }
 \usage{
+cal_time_solar_transit
+
 cal_time_solar
 }
 \value{
 An S3 list of class \code{c("cal_time_solar", "mt_calendar")} containing
-the named time unit classes of the solar calendar. Each unit is
+the named time unit classes of the solar transit calendar. Each unit is
 accessible via \code{$} notation and calling it with a step size and location
 produces a time granule (e.g., 1 solar day granule as
 \code{cal_time_solar$day(1L, lat = 0, lon = 0)}). Because solar day boundaries
@@ -20,9 +23,10 @@ depend on the observer's position, each unit constructor requires \code{lat}
 and \code{lon} arguments.
 }
 \description{
-This time calendar contains solar time units, where the boundary of each day
-is at apparent solar midnight. Solar events define the \code{ampm} (midnight and
-noon) and \code{illumination} (dawn, sunrise, sunset, dusk) units.
+Time unit constructors for the transit-based solar time system, where the
+boundary of each day is at apparent solar midnight. Solar events define the
+\code{ampm} (midnight and noon) and \code{illumination} (dawn, sunrise, sunset, dusk)
+units. \code{cal_time_solar} is an alias for \code{cal_time_solar_transit}.
 }
 \details{
 The following time units are available in the solar calendar systems.
@@ -79,5 +83,5 @@ datetime(Sys.time(), calendar = cal_time_solar, lat = -37.8136, lon = 144.9631)
 
 }
 \seealso{
-\code{\link{cal_time_civil}}
+\code{\link{cal_time_civil}}, \code{\link{cal_time_lunar}}
 }

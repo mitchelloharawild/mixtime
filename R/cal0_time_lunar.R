@@ -1,10 +1,13 @@
 #' Lunar time unit classes
 #'
-#' Time unit constructors for the lunar time system where the boundary of each
-#' day is at sunrise, sunset, or noon. This calendar is intended to be
-#' built on by other calendars to add common time components.
+#' Time unit constructors for the synodic lunar time system, where the boundary
+#' of each month is at the new moon (lunar conjunction) and the boundary of
+#' each phase is at a lunar octant (each eighth of the synodic cycle). Both
+#' boundaries are location-independent, as the new moon is a geocentric
+#' astronomical event. `cal_time_lunar` is an alias for
+#' `cal_time_lunar_synodic`.
 #'
-#' @format A location-based calendar containing lunar time units.
+#' @format A calendar containing synodic lunar time units.
 #' 
 #' @details
 #' The following time units are available in the lunar calendar systems.
@@ -13,27 +16,30 @@
 #' - `phase()`: Synodic phase unit
 #' 
 #' @return An S3 list of class `c("cal_time_lunar", "mt_calendar")` containing
-#'   the named time unit classes of the lunar calendar. Each unit is
-#'   accessible via `$` notation and calling it with a step size and location
-#'   produces a time granule (e.g., 1 synodic month granule as
-#'   `cal_time_lunar$month(1L, lat = 0, lon = 0)`). Because lunar phases depend
-#'   on the observer's position, each unit constructor requires `lat` and `lon`
-#'   arguments.
+#'   the named time unit classes of the synodic lunar calendar. Each unit is
+#'   accessible via `$` notation and calling it with a step size produces a
+#'   time granule (e.g., 1 synodic month granule as
+#'   `cal_time_lunar$month(1L)`). Lunar month and phase boundaries are
+#'   location-independent.
 #'
-#' @seealso [`cal_time_civil`]
+#' @seealso [`cal_time_civil`], [`cal_time_solar`]
 #' 
 #' @examples
 #' # Find the time of a new moon in the Gregorian calendar
-#' t <- linear_time(Sys.Date(), cal_time_lunar$month(1L, lat = -37.8136, lon = 144.9631))
+#' t <- linear_time(Sys.Date(), cal_time_lunar$month(1L))
 #' datetime(t, tz = "Australia/Melbourne")
 #' 
 #' 
 #' @name calendar_time_lunar
 #' @export
-cal_time_lunar <- new_calendar(
+cal_time_lunar_synodic <- new_calendar(
   month = S7::new_class("tu_lunar_month", parent = mt_loc_unit),
   phase = S7::new_class("tu_lunar_phase", parent = mt_loc_unit)
 )
+
+#' @export
+#' @rdname calendar_time_lunar
+cal_time_lunar <- cal_time_lunar_synodic
 
 # Time granule labels
 method(time_unit_full, cal_time_lunar$month) <- function(x) "synodic month"

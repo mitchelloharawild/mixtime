@@ -2,27 +2,32 @@
 % Please edit documentation in R/cal0_time_lunar.R
 \name{calendar_time_lunar}
 \alias{calendar_time_lunar}
+\alias{cal_time_lunar_synodic}
 \alias{cal_time_lunar}
 \title{Lunar time unit classes}
 \format{
-A location-based calendar containing lunar time units.
+A calendar containing synodic lunar time units.
 }
 \usage{
+cal_time_lunar_synodic
+
 cal_time_lunar
 }
 \value{
 An S3 list of class \code{c("cal_time_lunar", "mt_calendar")} containing
-the named time unit classes of the lunar calendar. Each unit is
-accessible via \code{$} notation and calling it with a step size and location
-produces a time granule (e.g., 1 synodic month granule as
-\code{cal_time_lunar$month(1L, lat = 0, lon = 0)}). Because lunar phases depend
-on the observer's position, each unit constructor requires \code{lat} and \code{lon}
-arguments.
+the named time unit classes of the synodic lunar calendar. Each unit is
+accessible via \code{$} notation and calling it with a step size produces a
+time granule (e.g., 1 synodic month granule as
+\code{cal_time_lunar$month(1L)}). Lunar month and phase boundaries are
+location-independent.
 }
 \description{
-Time unit constructors for the lunar time system where the boundary of each
-day is at sunrise, sunset, or noon. This calendar is intended to be
-built on by other calendars to add common time components.
+Time unit constructors for the synodic lunar time system, where the boundary
+of each month is at the new moon (lunar conjunction) and the boundary of
+each phase is at a lunar octant (each eighth of the synodic cycle). Both
+boundaries are location-independent, as the new moon is a geocentric
+astronomical event. \code{cal_time_lunar} is an alias for
+\code{cal_time_lunar_synodic}.
 }
 \details{
 The following time units are available in the lunar calendar systems.
@@ -33,11 +38,11 @@ The following time units are available in the lunar calendar systems.
 }
 \examples{
 # Find the time of a new moon in the Gregorian calendar
-t <- linear_time(Sys.Date(), cal_time_lunar$month(1L, lat = -37.8136, lon = 144.9631))
+t <- linear_time(Sys.Date(), cal_time_lunar$month(1L))
 datetime(t, tz = "Australia/Melbourne")
 
 
 }
 \seealso{
-\code{\link{cal_time_civil}}
+\code{\link{cal_time_civil}}, \code{\link{cal_time_solar}}
 }
