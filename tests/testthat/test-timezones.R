@@ -102,6 +102,46 @@ test_that("timezone functions handle invalid timezone names gracefully", {
   expect_error(get_tz_transitions(time, time, "Invalid/Timezone"))
 })
 
+test_that("converting zoned time to naive time strips the timezone", {
+  zoned <- datetime("2024-04-07 02:00:00", tz = "Australia/Melbourne")
+  naive <- datetime(zoned, tz = NA)
+
+  expect_true(is.na(tz(naive)))
+  # Wall-clock time is preserved
+  expect_equal(format(naive), "2024-04-07 02:00:00")
+})
+
+test_that("converting zoned time to naive preserves wall-clock time across DST gap", {
+  # Melbourne falls back at 03:00 AEDT → 02:00 AEST on 2024-04-07.
+  # The ambiguous 02:xx hour appears twice; both wall-clock values are kept as-is.
+  from <- datetime("2024-04-07 00:00:00", tz = "Australia/Melbourne")
+  mel_dst <- seq(from, length.out = 10, by = hours(1L))
+  naive <- datetime(mel_dst, tz = NA)
+
+  expect_true(is.na(tz(naive)))
+  expect_length(naive, 10)
+  # The two 02:00 entries (one AEDT, one AEST) both map to 02:00 wall-clock
+  expect_equal(sum(format(naive) == "2024-04-07 02:00:00"), 2L)
+})
+
+test_that("converting naive time to zoned time errors", {
+  zoned <- datetime("2024-01-15 12:00:00", tz = "America/New_York")
+  naive <- datetime(zoned, tz = NA)
+
+  expect_error(
+    datetime(naive, tz = "America/New_York"),
+    regexp = "timezone-naive"
+  )
+})
+
+test_that("converting naive time to zoned errors for any target timezone", {
+  naive <- datetime(as.POSIXct("2024-07-15 09:00:00", tz = "UTC"), tz = NA)
+
+  expect_error(datetime(naive, tz = "UTC"))
+  expect_error(datetime(naive, tz = "Asia/Tokyo"))
+  expect_error(datetime(naive, tz = "Europe/Berlin"))
+})
+
 test_that("get_tz_transitions handles time ranges with no transitions", {
   # Short time range with no transitions
   start <- as.POSIXct("2024-06-01", tz = "America/New_York")

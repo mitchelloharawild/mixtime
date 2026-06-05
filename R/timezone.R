@@ -55,7 +55,7 @@ tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
   # Naive and UTC time has no time zone offsets
   if(is.na(tz) || tz == "UTC") return(offset_s)
 
-  tu_s <- cal_time_civil$second(1L)
+  tu_s <- cal_time_civil$second(1L, tz = "UTC")
   time_s <- chronon_convert_impl(x, chronon, tu_s, FALSE, "UTC")
   offset_s <- get_tz_offset(as.double(time_s), tz)
   nz_offset <- offset_s != 0

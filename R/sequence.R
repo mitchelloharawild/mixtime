@@ -138,6 +138,9 @@ seq.mt_time <- function(
     if (is.numeric(by) && !S7::S7_inherits(by, mt_unit)) {
       by <- S7::S7_class(chronon)(by)
     }
+
+    # Inherit granule properties from `by` if not given in `chronon` granule
+    by <- granule_inherit_props(by, chronon)
     
     # Convert to `from`/`to` time chronons to `by` time chronons
     seq_part <- NULL

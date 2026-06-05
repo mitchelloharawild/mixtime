@@ -9,6 +9,8 @@ mt_tz_unit <- new_class(
   parent = mt_unit,
   properties = list(tz = new_property(S7::class_character, default = naive_tz)),
   constructor = function (n = 1L, tz = naive_tz) {
+    # Allow for logical NA for convenience
+    if (is.na(tz) && !identical(tz, naive_tz)) tz <- NA_character_
     S7::new_object(mt_unit(n = n), tz = tz)
   },
   validator = function(self) {

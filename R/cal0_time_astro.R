@@ -23,6 +23,10 @@ mt_loc_unit <- S7::new_class(
     alt = S7::new_property(S7::class_numeric, default = naive(0))
   ),
   constructor = function (n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0)) {
+    # Allow for logical NA for convenience
+    if (is.na(lat) && !identical(lat, naive_loc)) lat <- NA_real_
+    if (is.na(lon) && !identical(lon, naive_loc)) lon <- NA_real_
+    
     S7::new_object(mt_unit(n = n), lat = lat, lon = lon, alt = alt)
   },
   validator = function(self) {
