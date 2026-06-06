@@ -1,17 +1,17 @@
 #' Extract timezone from an object
 #'
 #' Generic function to extract the timezone from objects that have timezone information.
-#' 
+#'
 #' @param x An object with timezone information.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A character vector representing the timezone of each time point
 #'   (e.g., "America/New_York", "UTC").
-#' 
+#'
 #' @examples
 #' tz_name(Sys.time())
 #' tz_name(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
-#' 
+#'
 #' @export
 tz_name <- S7::new_generic("tz_name", "x")
 S7::method(tz_name, class_mixtime) <- function(x) {
@@ -42,10 +42,23 @@ S7::method(tz_name, S7::class_any) <- function(x) {
 #' tz_offset(as.POSIXct(Sys.time(), tz = Sys.timezone()))
 #' tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
 tz_offset <- S7::new_generic("tz_offset", "x")
-S7::method(tz_offset, S7::class_POSIXt) <- function(x, tz = tz_name(time_chronon(x)), ...) get_tz_offset(x, tz)
+S7::method(tz_offset, S7::class_POSIXt) <- function(
+  x,
+  tz = tz_name(time_chronon(x)),
+  ...
+) {
+  get_tz_offset(x, tz)
+}
 S7::method(tz_offset, S7::class_Date) <- function(x, ...) rep.int(0, length(x))
-method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(tz_offset, numeric())
-method(tz_offset, S7::new_S3_class("mt_time")) <- function(x, tz = tz_name(attr(x, "chronon")), ...) {
+method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(
+  tz_offset,
+  numeric()
+)
+method(tz_offset, S7::new_S3_class("mt_time")) <- function(
+  x,
+  tz = tz_name(attr(x, "chronon")),
+  ...
+) {
   tz_offset_impl(as.numeric(x), attr(x, "chronon"), tz)
 }
 
@@ -53,18 +66,24 @@ tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
   offset_s <- rep(0L, length(x))
 
   # Naive and UTC time has no time zone offsets
-  if(is.na(tz) || tz == "UTC") return(offset_s)
+  if (is.na(tz) || tz == "UTC") {
+    return(offset_s)
+  }
 
   tu_s <- cal_time_civil$second(1L, tz = "UTC")
   time_s <- chronon_convert_impl(x, chronon, tu_s, FALSE, "UTC")
   offset_s <- get_tz_offset(as.double(time_s), tz)
-  nz_offset <- offset_s != 0
-  if(!any(nz_offset)) return(rep(0, length(x)))
-  offset_s[nz_offset] <- offset_s[nz_offset]*chronon_cardinality(
-    chronon, tu_s, time_s[nz_offset]
-  )
+  nz_offset <- !is.na(offset_s) & offset_s != 0
+  if (!any(nz_offset)) {
+    return(rep(0, length(x)))
+  }
+  offset_s[nz_offset] <- offset_s[nz_offset] *
+    chronon_cardinality(
+      chronon,
+      tu_s,
+      time_s[nz_offset]
+    )
   offset_s
-
 }
 
 #' Get timezone abbreviation
@@ -84,20 +103,20 @@ tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
 #'
 #' @export
 tz_abbreviation <- function(x, tz = tz_name(x)) {
-  tz <- vctrs::vec_recycle(tz, length(x))
+  tz_abbr <- character(length(x))
 
   # If tz is empty, then the object has a naive local timezone
-  tz_given <- !is.na(tz)
+  tz_given <- !is.na(tz) & !is.na(x)
 
   # TODO: Handle timezone changes within chronon using [before]/[after]
   if (any(tz_given)) {
-    tz[tz_given] <- get_tz_abbreviation(
+    tz_abbr[tz_given] <- get_tz_abbreviation(
       as.double(chronon_convert(x[tz_given], cal_time_civil$second(1L))),
       tz[tz_given]
     )
   }
 
-  tz
+  tz_abbr
 }
 
 #' Get timezone transitions
@@ -119,7 +138,7 @@ tz_abbreviation <- function(x, tz = tz_name(x)) {
 #'   as.POSIXct("2024-01-01", tz = "America/New_York"),
 #'   as.POSIXct("2024-12-31", tz = "America/New_York")
 #' )
-#' 
+#'
 #' @export
 tz_transitions <- function(start, end) {
   start <- as.double(as.POSIXct(start))
