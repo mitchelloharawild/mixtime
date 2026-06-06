@@ -152,34 +152,6 @@ cyclical_time <- function(
   # data <- chronon_divmod(from = chronon, to = cycle, x = data)$mod
 }
 
-#' @method vec_cast.character mt_cyclical
-#' @export
-vec_cast.character.mt_cyclical <- function(x, to, ...) {
-  chronon <- time_chronon(x)
-  cycle <- time_cycle(x)
-
-  xf <- floor(x <- vec_data(x))
-  out <- cyclical_labels(chronon, cycle[[1L]], xf)
-
-  is_discrete <- is.integer(x)
-  if(!is_discrete) {
-    out <- paste0(out, sprintf("-%.1f%%", (x-xf)*100))
-  }
-  out
-}
-
-#' @method vec_cast.integer mt_cyclical
-#' @export
-vec_cast.integer.mt_cyclical <- function(x, to, ...) {
-  vec_cast(vec_data(x), integer())
-}
-
-#' @method vec_cast.double mt_cyclical
-#' @export
-vec_cast.double.mt_cyclical <- function(x, to, ...) {
-  vec_cast(vec_data(x), double())
-}
-
 # #' @importFrom vctrs vec_arith
 # #' @method vec_arith mt_cyclical
 # #' @export
