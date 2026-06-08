@@ -106,7 +106,7 @@ test_that("converting zoned time to naive time strips the timezone", {
   zoned <- datetime("2024-04-07 02:00:00", tz = "Australia/Melbourne")
   naive <- datetime(zoned, tz = NA)
 
-  expect_true(is.na(tz(naive)))
+  expect_true(is.na(tz_name(naive)))
   # Wall-clock time is preserved
   expect_equal(format(naive), "2024-04-07 02:00:00")
 })
@@ -118,7 +118,7 @@ test_that("converting zoned time to naive preserves wall-clock time across DST g
   mel_dst <- seq(from, length.out = 10, by = hours(1L))
   naive <- datetime(mel_dst, tz = NA)
 
-  expect_true(is.na(tz(naive)))
+  expect_true(all(is.na(tz_name(naive))))
   expect_length(naive, 10)
   # The two 02:00 entries (one AEDT, one AEST) both map to 02:00 wall-clock
   expect_equal(sum(format(naive) == "2024-04-07 02:00:00"), 2L)
