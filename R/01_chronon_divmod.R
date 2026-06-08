@@ -54,8 +54,12 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
 
   path[[1]] <- from
   path[[length(path)]] <- to
-  # Initialise intermediate classes with 1L
-  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
+  # Initialise intermediate classes with 1L and adjacent properties
+  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(tu){
+    # Ideally inherit from `to`, but if incomplete inherit from `from`
+    granule_inherit_props(granule_inherit_props(tu(1L), to), from)
+  })
+  
 
   chronon <- vector("list", length(path))
   chronon[[1]] <- vec_data(x)

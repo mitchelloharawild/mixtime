@@ -88,9 +88,12 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
 
   path[[1]] <- y
   path[[length(path)]] <- x
-  # Initialise intermediate classes with 1L
-  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(x) x(1L))
-
+  # Initialise intermediate classes with 1L and adjacent properties
+  path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(tu){
+    # Ideally inherit from `x`, but if incomplete inherit from `y`
+    granule_inherit_props(granule_inherit_props(tu(1L), x), y)
+  })
+  
   result <- path[[1]]
   for (i in seq(2, length.out = length(path)-1)) {
     ## QUESTION: Why does this not work with `generic` instead of `chronon_cardinality`? S7 bug?
