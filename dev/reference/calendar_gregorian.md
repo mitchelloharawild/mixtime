@@ -63,5 +63,5 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-06-04 13h
+#> [1] 2026-06-10 16h
 ```

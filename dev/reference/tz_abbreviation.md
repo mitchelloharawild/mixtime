@@ -28,7 +28,7 @@ A character vector of timezone abbreviations.
 
 ``` r
 tz_abbreviation(Sys.time())
-#> [1] NA
+#> [1] ""
 tz_abbreviation(as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York"))
 #> [1] "EST"
 ```

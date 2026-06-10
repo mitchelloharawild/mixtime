@@ -14,6 +14,7 @@
   [`time_ceiling()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)
   for rounding to a specified time granule).
 - Added casting from time durations to character vectors.
+- Added explicit conversion to naive time by using `tz = NA`.
 
 ### Improvements
 
