@@ -51,7 +51,7 @@ S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
   # POSIXct is a 1-second chronon with time zone information
   duration(
     rep(1L, length(x)),
-    chronon = cal_gregorian$second(1L, tz = attr(x, "tzone") %||% naive_tz)
+    chronon = cal_gregorian$second(1L, tz = attr(x, "tzone") %||% "UTC")
   )
 }
 
