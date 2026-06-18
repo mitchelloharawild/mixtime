@@ -40,7 +40,7 @@ and cycle.
 day_of_week <- new_cyclical_time_fn(day(1L), week(1L), default_calendar = cal_isoweek)
 day_of_week(Sys.Date())
 #> <mixtime[1]>
-#> [1] Wed
+#> [1] Thu
 
 month_of_year <- new_cyclical_time_fn(month(1L), year(1L))
 month_of_year(Sys.Date())
