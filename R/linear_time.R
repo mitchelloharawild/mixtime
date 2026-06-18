@@ -330,14 +330,34 @@ vec_arith.mt_time.mt_time <- function(op, x, y, ...) {
   if (op != "-") {
      stop("Only subtracting two time points is supported for continuous time", call. = FALSE)
   }
-  tu <- chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon")))
-  res <- vec_arith_base(
-    op,
-    chronon_convert(x, tu, discrete = FALSE),
-    chronon_convert(y, tu, discrete = FALSE),
-    ...
-  )
+  x_chronon <- attr(x, "chronon")
+  y_chronon <- attr(y, "chronon")
+  tu <- chronon_common_impl(list(x_chronon, y_chronon))
+  cx <- chronon_convert(x, tu, discrete = FALSE)
+  cy <- chronon_convert(y, tu, discrete = FALSE)
+  # When a TZ-aware operand uses a coarser granule than the common chronon, the
+  # conversion produces a wall-clock value rather than a UTC-aligned value (the
+  # TZ offset cancels in same-TZ coarser->finer conversions). Subtract the TZ
+  # offset at the wall-clock position to realign to UTC.
+  cx <- tz_wall_clock_to_utc(cx, x_chronon, tu)
+  cy <- tz_wall_clock_to_utc(cy, y_chronon, tu)
+  res <- vec_arith_base(op, cx, cy, ...)
   new_time(res, chronon = tu, class = "mt_duration")
+}
+
+# Correct wall-clock -> UTC alignment for coarser-granule TZ-aware operands.
+# When from_chronon has a non-UTC TZ and is a different (coarser) class than to_chronon,
+# the chronon_convert result is a wall-clock value (the offset was added then canceled).
+# Subtracting the TZ offset at that position restores the true UTC-equivalent value.
+tz_wall_clock_to_utc <- function(value, from_chronon, to_chronon) {
+  if (!S7::S7_inherits(from_chronon, mt_tz_unit)) return(value)
+  from_tz <- tz_name(from_chronon)
+  if (is.na(from_tz) || from_tz == "UTC") return(value)
+  # Same granule class: offset already cancelled correctly (no correction needed)
+  if (identical(S7::S7_class(from_chronon)@name, S7::S7_class(to_chronon)@name)) return(value)
+  # Coarser granule: subtract the TZ offset at the wall-clock position
+  tzo <- get_tz_offset(as.double(value), from_tz)
+  value - tzo
 }
 
 #' @method vec_cast.Date mt_linear

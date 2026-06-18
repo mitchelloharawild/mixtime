@@ -300,3 +300,24 @@ test_that("adding two time points errors", {
   d <- date(as.Date("2020-01-01"))
   expect_error(d + d)
 })
+
+# ---------------------------------------------------------------------------
+# Timezone-aware time - date subtraction (issue #97)
+# ---------------------------------------------------------------------------
+
+test_that("datetime() - date() uses the date's timezone for its day boundary", {
+  # 2026-06-16 09:30:00 AEST = 2026-06-15 23:30:00 UTC = 2026-06-16 01:30:00 CEST
+  t <- datetime("2026-06-16 09:30:00", tz = "Australia/Melbourne")
+
+  # Melbourne date: 2026-06-16 AEST; time-of-day in Melbourne = 9h30m = 34200s
+  result_mel <- t - date(t, tz = "Australia/Melbourne", discrete = TRUE)
+  expect_equal(as.double(result_mel), 34200)
+
+  # Berlin date: 2026-06-16 CEST; time-of-day in Berlin = 1h30m = 5400s
+  result_ber <- t - date(t, tz = "Europe/Berlin", discrete = TRUE)
+  expect_equal(as.double(result_ber), 5400)
+
+  # UTC date: 2026-06-15 UTC; time-of-day in UTC = 23h30m = 84600s
+  result_utc <- t - date(t, tz = "UTC", discrete = TRUE)
+  expect_equal(as.double(result_utc), 84600)
+})
