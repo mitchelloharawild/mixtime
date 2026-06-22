@@ -27,7 +27,7 @@ mt_unit_display <- function(x, units, parts, ...) {
     if (is.na(xi)) {
       cli::cli_abort(
         c(
-          "The calendar time unit of {x} {time_unit_full(x)}{cli::qty(x)}{?s} could not be found."
+          "The calendar time unit of {x} {time_unit_plural(x, vec_data(x))} could not be found."
         ),
         call = NULL
       )
@@ -210,7 +210,7 @@ format.mt_time <- function(x, format = time_format_default(x), ...) {
 
 #' @export
 format.mt_duration <- function(x, nsmall = 1L, ...) {
-  unit <- time_unit_full(attr(x, "chronon"))
+  chronon <- attr(x, "chronon")
   is_frac <- is.double(vec_data(x))
   x <- vec_data(x)
   x_special <- is.na(x) | is.infinite(x)
@@ -219,9 +219,10 @@ format.mt_duration <- function(x, nsmall = 1L, ...) {
     # Round to at most `digits` decimal places, then format with nsmall = 1 to
     # ensure at least 1 decimal place while stripping unnecessary trailing zeros.
     formatted <- format(x[!x_special], nsmall = nsmall, ...)
-    out[!x_special] <- paste0(formatted, " ", unit, "s")
+    # Fractional durations are always plural
+    out[!x_special] <- paste0(formatted, " ", time_unit_plural(chronon, 2L))
   } else {
-    out[!x_special] <- paste0(x[!x_special], " ", unit, ifelse(x[!x_special] == 1L, "", "s"))
+    out[!x_special] <- paste0(x[!x_special], " ", time_unit_plural(chronon, x[!x_special]))
   }
   out[x_special] <- format(x[x_special])
   out

@@ -2,10 +2,13 @@
 % Please edit documentation in R/01_time_unit.R
 \name{time_unit_full}
 \alias{time_unit_full}
+\alias{time_unit_plural}
 \alias{time_unit_abbr}
 \title{Time units as a string}
 \usage{
 time_unit_full(x, ...)
+
+time_unit_plural(x, n = 2L)
 
 time_unit_abbr(x, ...)
 }
@@ -13,6 +16,8 @@ time_unit_abbr(x, ...)
 \item{x}{A time granule object (e.g., \code{cal_gregorian$month(1L)})}
 
 \item{...}{Additional arguments for methods.}
+
+\item{n}{Numeric quantity used to select singular or plural form.}
 }
 \value{
 A string representing the time unit
@@ -21,9 +26,13 @@ A string representing the time unit
 These S7 generic functions provide the full and abbreviated names for time
 units. \code{time_unit_full()} is used in messages and durations (e.g., "2 months").
 \code{time_unit_abbr()} is used for tsibble index interval displays (e.g., "1M").
+\code{time_unit_plural()} pluralises the full unit name for a given quantity using
+cli-style pluralisation (e.g., \code{"year{?/s}"} becomes \code{"year"} or \code{"years"}).
 }
 \examples{
 time_unit_full(cal_gregorian$year(1L))
+time_unit_plural(cal_gregorian$year(1L), 1L)
+time_unit_plural(cal_gregorian$year(1L), 2L)
 time_unit_abbr(cal_gregorian$year(1L))
 
 }

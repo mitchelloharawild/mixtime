@@ -94,20 +94,31 @@ new_time_unit <- function(
 #' These S7 generic functions provide the full and abbreviated names for time
 #' units. `time_unit_full()` is used in messages and durations (e.g., "2 months").
 #' `time_unit_abbr()` is used for tsibble index interval displays (e.g., "1M").
+#' `time_unit_plural()` pluralises the full unit name for a given quantity using
+#' cli-style pluralisation (e.g., `"year{?/s}"` becomes `"year"` or `"years"`).
 #' 
 #' @param x A time granule object (e.g., `cal_gregorian$month(1L)`)
+#' @param n Numeric quantity used to select singular or plural form.
 #' @param ... Additional arguments for methods.
 #' 
 #' @return A string representing the time unit
 #' 
 #' @examples
 #' time_unit_full(cal_gregorian$year(1L))
+#' time_unit_plural(cal_gregorian$year(1L), 1L)
+#' time_unit_plural(cal_gregorian$year(1L), 2L)
 #' time_unit_abbr(cal_gregorian$year(1L))
 #' 
 #' @rdname time_unit_labels
 #' @export
 time_unit_full <- S7::new_generic("time_unit_full", "x")
-method(time_unit_full, mt_unit) <- function(x) "unit"
+method(time_unit_full, mt_unit) <- function(x) "unit{?/s}"
+
+#' @rdname time_unit_labels
+#' @export
+time_unit_plural <- function(x, n = 2L) {
+  str_plural(time_unit_full(x), as.numeric(n))
+}
 
 #' @rdname time_unit_labels
 #' @export

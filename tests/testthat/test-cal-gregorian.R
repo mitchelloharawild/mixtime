@@ -211,17 +211,26 @@ test_that("cyclical_labels for months work correctly", {
 })
 
 test_that("time_unit methods return correct strings", {
-  expect_equal(time_unit_full(cal_gregorian$year(1L)), "year")
+  expect_equal(time_unit_full(cal_gregorian$year(1L)), "year{?/s}")
   expect_equal(time_unit_abbr(cal_gregorian$year(1L)), "Y")
   
-  expect_equal(time_unit_full(cal_gregorian$month(1L)), "month")
+  expect_equal(time_unit_full(cal_gregorian$month(1L)), "month{?/s}")
   expect_equal(time_unit_abbr(cal_gregorian$month(1L)), "M")
   
-  expect_equal(time_unit_full(cal_gregorian$day(1L)), "day")
+  expect_equal(time_unit_full(cal_gregorian$day(1L)), "day{?/s}")
   expect_equal(time_unit_abbr(cal_gregorian$day(1L)), "D")
   
-  expect_equal(time_unit_full(cal_gregorian$hour(1L)), "hour")
+  expect_equal(time_unit_full(cal_gregorian$hour(1L)), "hour{?/s}")
   expect_equal(time_unit_abbr(cal_gregorian$hour(1L)), "h")
+})
+
+test_that("time_unit_plural produces correct singular and plural forms", {
+  expect_equal(time_unit_plural(cal_gregorian$year(1L), 1L), "year")
+  expect_equal(time_unit_plural(cal_gregorian$year(1L), 2L), "years")
+  expect_equal(time_unit_plural(cal_gregorian$month(1L), 1L), "month")
+  expect_equal(time_unit_plural(cal_gregorian$month(1L), 3L), "months")
+  expect_equal(time_unit_plural(cal_gregorian$day(1L), 1L), "day")
+  expect_equal(time_unit_plural(cal_gregorian$day(1L), 7L), "days")
 })
 
 test_that("formatting of fractional/continuous dates (discrete = FALSE) around March 31st", {

@@ -39,9 +39,8 @@ cyclical_labels <- S7::new_generic("cyclical_labels", c("granule", "cycle"))
 # #' @rdname cyclical_labels
 method(cyclical_labels, list(mt_unit, mt_unit)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE, ...) {
   if (!label) return(as.character(i))
-  # TODO - pluralise the full time unit
   paste0(
-    if (abbreviate) time_unit_abbr(granule) else time_unit_full(granule), 
+    if (abbreviate) time_unit_abbr(granule) else time_unit_plural(granule, i),
     i
   )
 }

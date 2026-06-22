@@ -108,7 +108,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     cli::cli_abort(
       c(
         "The following linear time parts could not be computed from the input time object:",
-        i = "{time_unit_full(linear[lin_missed])} ({linear[lin_missed]})",
+        i = "{time_unit_plural(linear[lin_missed], 1L)} ({linear[lin_missed]})",
         i = "All requested linear parts need to be included as granules for {.code linear_time()}"
       ),
       call = NULL
@@ -118,7 +118,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     cli::cli_abort(
       c(
         "The following cyclical time parts could not be computed from the input time object:",
-        i = "{time_unit_full(cyclical[cyc_missed])} ({cyclical[cyc_missed][[1L]]$from} -> {cyclical[cyc_missed][[1L]]$to})",
+        i = "{time_unit_plural(cyclical[cyc_missed], 1L)} ({cyclical[cyc_missed][[1L]]$from} -> {cyclical[cyc_missed][[1L]]$to})",
         i = "All requested cyclical parts need to be included as granules for {.code linear_time()}"
       ),
       call = NULL

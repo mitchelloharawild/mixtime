@@ -39,9 +39,9 @@ cal_isoweek <- new_calendar(
 )
 
 # Time unit labels
-method(time_unit_full, cal_isoweek$year) <- function(x) "isoyear"
+method(time_unit_full, cal_isoweek$year) <- function(x) "isoyear{?/s}"
 method(time_unit_abbr, cal_isoweek$year) <- function(x) "IY"
-method(time_unit_full, cal_isoweek$week) <- function(x) "week"
+method(time_unit_full, cal_isoweek$week) <- function(x) "week{?/s}"
 method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
 
 # Epoch for years

@@ -42,9 +42,9 @@ cal_time_lunar_synodic <- new_calendar(
 cal_time_lunar <- cal_time_lunar_synodic
 
 # Time granule labels
-method(time_unit_full, cal_time_lunar$month) <- function(x) "synodic month"
+method(time_unit_full, cal_time_lunar$month) <- function(x) "synodic month{?/s}"
 method(time_unit_abbr, cal_time_lunar$month) <- function(x) "LM"
-method(time_unit_full, cal_time_lunar$phase) <- function(x) "synodic phase"
+method(time_unit_full, cal_time_lunar$phase) <- function(x) "synodic phase{?/s}"
 method(time_unit_abbr, cal_time_lunar$phase) <- function(x) "LP"
 
 # Default formats

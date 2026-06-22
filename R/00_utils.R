@@ -104,3 +104,27 @@ topNamespaceName <- function (env = parent.frame()) {
   }
   as.character(getNamespaceName(env))
 }
+
+# Resolve a cli-style {?singular/plural} or {?zero/singular/plural} tokens
+str_plural <- function(template, n) {
+  m <- regexpr("\\{\\?[^}]*\\}", template, perl = TRUE)
+  if (m[[1L]] == -1L) return(rep_len(template, length(n)))
+
+  ml <- attr(m, "match.length")
+  parts <- strsplit(substr(template, m + 2L, m + ml - 2L), "/", fixed = TRUE)[[1L]]
+  prefix <- substr(template, 1L, m - 1L)
+  suffix <- substr(template, m + ml, nchar(template))
+  
+  # +s suffix if no plural form is provided
+  if (length(parts) == 1L) {
+    parts <- c(parts, paste0(parts, "s"))
+  }
+
+  idx <- if (length(parts) == 3L) {
+    ifelse(n == 0, 1L, ifelse(n == 1L, 2L, 3L))
+  } else {
+    ifelse(n == 1L, 1L, 2L)
+  }
+
+  paste0(prefix, parts[idx], suffix)
+}

@@ -65,17 +65,17 @@ cal_time_civil <- new_calendar(
 )
 
 # Time unit labels
-method(time_unit_full, cal_time_civil$day) <- function(x) "day"
+method(time_unit_full, cal_time_civil$day) <- function(x) "day{?/s}"
 method(time_unit_abbr, cal_time_civil$day) <- function(x) "D"
-method(time_unit_full, cal_time_civil$ampm) <- function(x) "halfday"
+method(time_unit_full, cal_time_civil$ampm) <- function(x) "halfday{?/s}"
 method(time_unit_abbr, cal_time_civil$ampm) <- function(x) "hd"
-method(time_unit_full, cal_time_civil$hour) <- function(x) "hour"
+method(time_unit_full, cal_time_civil$hour) <- function(x) "hour{?/s}"
 method(time_unit_abbr, cal_time_civil$hour) <- function(x) "h"
-method(time_unit_full, cal_time_civil$minute) <- function(x) "minute"
+method(time_unit_full, cal_time_civil$minute) <- function(x) "minute{?/s}"
 method(time_unit_abbr, cal_time_civil$minute) <- function(x) "m"
-method(time_unit_full, cal_time_civil$second) <- function(x) "second"
+method(time_unit_full, cal_time_civil$second) <- function(x) "second{?/s}"
 method(time_unit_abbr, cal_time_civil$second) <- function(x) "s"
-method(time_unit_full, cal_time_civil$millisecond) <- function(x) "millisecond"
+method(time_unit_full, cal_time_civil$millisecond) <- function(x) "millisecond{?/s}"
 method(time_unit_abbr, cal_time_civil$millisecond) <- function(x) "ms"
 
 # Default formats

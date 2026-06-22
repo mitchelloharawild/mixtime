@@ -46,11 +46,11 @@ cal_gregorian <- new_calendar(
 )
 
 # Time unit labels
-method(time_unit_full, cal_gregorian$year) <- function(x) "year"
+method(time_unit_full, cal_gregorian$year) <- function(x) "year{?/s}"
 method(time_unit_abbr, cal_gregorian$year) <- function(x) "Y"
-method(time_unit_full, cal_gregorian$quarter) <- function(x) "quarter"
+method(time_unit_full, cal_gregorian$quarter) <- function(x) "quarter{?/s}"
 method(time_unit_abbr, cal_gregorian$quarter) <- function(x) "Q"
-method(time_unit_full, cal_gregorian$month) <- function(x) "month"
+method(time_unit_full, cal_gregorian$month) <- function(x) "month{?/s}"
 method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
 
 # Epoch for years

@@ -15,7 +15,7 @@ interval_pull.mt_linear <- function(x) {
   chronon <- attr(x, "chronon")
 
   interval <- list(chronon@n)
-  names(interval) <- time_unit_full(chronon)
+  names(interval) <- time_unit_plural(chronon, 1L)
 
   rlang::inject(tsibble::new_interval(!!!interval))
 }

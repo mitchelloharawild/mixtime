@@ -88,23 +88,23 @@ cal_time_solar <- cal_time_solar_transit
 
 
 # Time unit labels
-method(time_unit_full, cal_time_solar$day) <- function(x) "day"
+method(time_unit_full, cal_time_solar$day) <- function(x) "day{?/s}"
 method(time_unit_abbr, cal_time_solar$day) <- function(x) "D"
-method(time_unit_full, cal_time_solar$ampm) <- function(x) "halfday"
+method(time_unit_full, cal_time_solar$ampm) <- function(x) "halfday{?/s}"
 method(time_unit_abbr, cal_time_solar$ampm) <- function(x) "HD"
-method(time_unit_full, cal_time_solar$hour) <- function(x) "hour"
+method(time_unit_full, cal_time_solar$hour) <- function(x) "hour{?/s}"
 method(time_unit_abbr, cal_time_solar$hour) <- function(x) "h"
-method(time_unit_full, cal_time_solar$minute) <- function(x) "minute"
+method(time_unit_full, cal_time_solar$minute) <- function(x) "minute{?/s}"
 method(time_unit_abbr, cal_time_solar$minute) <- function(x) "m"
-method(time_unit_full, cal_time_solar$second) <- function(x) "second"
+method(time_unit_full, cal_time_solar$second) <- function(x) "second{?/s}"
 method(time_unit_abbr, cal_time_solar$second) <- function(x) "s"
-method(time_unit_full, cal_time_solar$degree) <- function(x) "degree"
+method(time_unit_full, cal_time_solar$degree) <- function(x) "degree{?/s}"
 method(time_unit_abbr, cal_time_solar$degree) <- function(x) "\u00b0"
-method(time_unit_full, cal_time_solar$arcminute) <- function(x) "arcminute"
+method(time_unit_full, cal_time_solar$arcminute) <- function(x) "arcminute{?/s}"
 method(time_unit_abbr, cal_time_solar$arcminute) <- function(x) "'"
-method(time_unit_full, cal_time_solar$arcsecond) <- function(x) "arcsecond"
+method(time_unit_full, cal_time_solar$arcsecond) <- function(x) "arcsecond{?/s}"
 method(time_unit_abbr, cal_time_solar$arcsecond) <- function(x) "\""
-method(time_unit_full, cal_time_solar$illumination) <- function(x) "illumination phase"
+method(time_unit_full, cal_time_solar$illumination) <- function(x) "illumination phase{?/s}"
 method(time_unit_abbr, cal_time_solar$illumination) <- function(x) "I"
 
 # Default formats

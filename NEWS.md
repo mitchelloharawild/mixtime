@@ -11,6 +11,10 @@
 
 ## Improvements
 
+* `time_unit_full()` now uses cli-style pluralisation templates (e.g.,
+  `"year{?/s}"`, `"centur{?y/ies}"`), enabling accurate plural forms beyond a
+  simple `s` suffix. A new `time_unit_plural(x, n)` helper resolves the
+  template for a given quantity.
 * Continuous time model durations now always show at least one decimal place.
 * Added formatting support for `NaN`, `Inf`, and `-Inf` values in time types.
 * Improved `str()` output to be more compact for each time type.
