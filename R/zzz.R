@@ -3,7 +3,11 @@
   S7::methods_register()
 
   # Register vecvec methods
-  vecvec::vecvec_register(class_mixtime)
+  vecvec::vecvec_register(
+    class_mixtime,
+    f_ptype2 = vec_ptype2_mixtime,
+    f_cast_to = vec_cast_to_mixtime
+  )
   
   # Initialise tzdb package
   tzdb::tzdb_initialize()

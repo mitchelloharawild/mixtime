@@ -198,3 +198,10 @@ is_mixtime <- function(x) {
 `Summary.mixtime::mixtime` <- function(..., na.rm = FALSE) {
   new_mixtime(NextMethod())
 }
+
+method(c, class_mixtime) <- function(...) {
+  dots <- unname(rlang::list2(...))
+  is_mt <- vapply(dots, is_mixtime, logical(1L))
+  dots[!is_mt] <- lapply(dots[!is_mt], vec_cast_to_mixtime, to = new_mixtime())
+  do.call(utils::getS3method("c", "vecvec::vecvec"), dots)
+}

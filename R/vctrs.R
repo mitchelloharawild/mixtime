@@ -14,9 +14,7 @@ time_valid <- function(x) {
   !inherits(try(time_chronon(x), silent = TRUE), "try-error")
 }
 
-#' @method vec_ptype2 mixtime::mixtime
-#' @export
-`vec_ptype2.mixtime::mixtime` <- function(x, y, ...) {
+vec_ptype2_mixtime <- function(x, y, ...) {
   x_is_time <- time_valid(x)
   y_is_time <- time_valid(y)
 
@@ -24,6 +22,10 @@ time_valid <- function(x) {
     vctrs::stop_incompatible_type(x, y, x_arg = "", y_arg = "")
   }
   new_mixtime()
+}
+
+vec_cast_to_mixtime <- function(x, to, ...) {
+  mixtime(x)
 }
 
 #' @importFrom vctrs vec_proxy_order
