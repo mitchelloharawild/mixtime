@@ -229,18 +229,18 @@ format.mt_duration <- function(x, nsmall = 1L, ...) {
 }
 
 #' @export
-str.mt_linear <- function(x, vec.len = getOption("str")$vec.len %||% 4L, ...) {
-  cat("linear<", format(time_chronon(x)[1L]), "> [1:", length(x), "] ", .mt_str_values(x, vec.len), "\n", sep = "")
+str.mt_linear <- function(object, vec.len = getOption("str")$vec.len %||% 4L, ...) {
+  cat("linear<", format(time_chronon(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
 }
 
 #' @export
-str.mt_cyclical <- function(x, vec.len = getOption("str")$vec.len %||% 4L, ...) {
-  cat("cyclical<", format(time_chronon(x)[1L]), "/", format(time_cycle(x)[1L]), "> [1:", length(x), "] ", .mt_str_values(x, vec.len), "\n", sep = "")
+str.mt_cyclical <- function(object, vec.len = getOption("str")$vec.len %||% 4L, ...) {
+  cat("cyclical<", format(time_chronon(object)[1L]), "/", format(time_cycle(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
 }
 
 #' @export
-str.mt_duration <- function(x, vec.len = getOption("str")$vec.len %||% 4L, ...) {
-  cat("duration<", format(time_chronon(x)[1L]), "> [1:", length(x), "] ", .mt_str_values(x, vec.len), "\n", sep = "")
+str.mt_duration <- function(object, vec.len = getOption("str")$vec.len %||% 4L, ...) {
+  cat("duration<", format(time_chronon(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
 }
 
 .mt_str_values <- function(x, vec_len) {
