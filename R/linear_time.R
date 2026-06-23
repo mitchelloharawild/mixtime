@@ -365,7 +365,7 @@ tz_wall_clock_to_utc <- function(value, from_chronon, to_chronon) {
 vec_cast.Date.mt_linear <- function(x, to, ...) {
   vec_restore(
     # Convert to naive time zone dates
-    chronon_convert(x, cal_gregorian$day(1L, tz = tz_name(attr(x, "chronon")))),
+    chronon_convert(x, cal_gregorian$day(1L, tz = NA_character_)),
     to
   )
 }
