@@ -154,10 +154,14 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function
 method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function(from, to, x) {
   # Convert to months since epoch
   x <- from@n * x
-  
-  year <- x%/%12L + 1970L
+
+  # Separate integer and fractional parts to correctly handle fractional months
+  x_int <- floor(x)
+  x_frac <- x - x_int
+
+  year <- x_int %/% 12L + 1970L
   ly <- as.integer(is_leap_year(year))
-  month <- (x%%12L) + 1L
+  month <- (x_int %% 12L) + 1L
 
   # Start of the month in days since epoch
   result <- 
@@ -168,6 +172,10 @@ method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function
     # Days this year before this month
     (367 * month - 362)%/%12 +
     (month > 2) * (-2 + ly) - ly
+
+  # Convert fractional months to fractional days using days in current month
+  days_in_month <- monthdays[month] + (month == 2L) * ly
+  result <- result + x_frac * days_in_month
 
   # Scale by `to` day chronons
   result <- result / to@n
