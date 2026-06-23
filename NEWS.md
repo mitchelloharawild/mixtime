@@ -1,4 +1,4 @@
-# mixtime (development version)
+# mixtime 0.2.0
 
 ## New features
 
@@ -17,6 +17,9 @@
   template for a given quantity.
 * Continuous time model durations now always show at least one decimal place.
 * Added formatting support for `NaN`, `Inf`, and `-Inf` values in time types.
+* Added time zone support for arithmetic.
+* Time durations now use the same formatting system and format strings as linear
+  and cyclical time.
 * Improved `str()` output to be more compact for each time type.
 
 ## Bug fixes
@@ -26,6 +29,7 @@
 * Fixed formatting of cyclical time with mixed-calendar chronon and cycle (#62).
 * Fixed divmod of Gregorian day -> month and day -> year producing incorrect
   divisors near the year boundary for continuous time dates.
+* Fixed `c()` allowing non-time vectors in mixtime vectors.
 
 # mixtime 0.1.0
 
