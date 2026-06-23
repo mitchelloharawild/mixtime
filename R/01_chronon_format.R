@@ -27,8 +27,7 @@ chronon_format_linear <- new_generic("chronon_format_linear", c("x", "cal"), fun
   S7::S7_dispatch()
 })
 method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
-  tu_i <- match(S7_class_id(x), vapply(cal, S7_class_id, character(1L)))
-  paste0(time_unit_abbr(x), "{lin(", names(cal)[tu_i], ")}")
+  paste0(time_unit_abbr(x), "{lin(chronon_common(.time))}")
 }
 
 #' @examples
