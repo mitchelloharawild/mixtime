@@ -35,7 +35,7 @@ Imports:
     rlang,
     cli,
     S7,
-    vecvec (> 1.2.0),
+    vecvec (>= 1.2.0),
     tzdb,
     methods
 Suggests: 
