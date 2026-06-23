@@ -13,7 +13,7 @@ like day_of_week() or month_of_year()."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@ like day_of_week() or month_of_year()."><meta property="og:image" content="https
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Cyclical time points</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.1.0/R/cyclical_time.R" class="external-link"><code>R/cyclical_time.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/cyclical_time.R" class="external-link"><code>R/cyclical_time.R</code></a></small>
       <div class="d-none name"><code>cyclical_time.Rd</code></div>
     </div>
 
@@ -131,7 +131,7 @@ include <a href="calendar_gregorian.html">cal_gregorian</a> and <a href="calenda
 <span class="r-in"><span>  cycle <span class="op">=</span> <span class="fu"><a href="linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] May</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Jun</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Continuous time (discrete = FALSE) for fractional month of year</span></span></span>
 <span class="r-in"><span><span class="fu">cyclical_time</span><span class="op">(</span></span></span>
@@ -141,7 +141,7 @@ include <a href="calendar_gregorian.html">cal_gregorian</a> and <a href="calenda
 <span class="r-in"><span>  discrete <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] May 58.1%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Jun 73.3%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Day of month with Gregorian calendar</span></span></span>
 <span class="r-in"><span><span class="fu">cyclical_time</span><span class="op">(</span></span></span>
@@ -151,7 +151,7 @@ include <a href="calendar_gregorian.html">cal_gregorian</a> and <a href="calenda
 <span class="r-in"><span>  calendar <span class="op">=</span> <span class="va">cal_gregorian</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] D19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] D23</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Hours, minutes, and seconds</span></span></span>
 <span class="r-in"><span><span class="fu">cyclical_time</span><span class="op">(</span></span></span>
@@ -160,7 +160,7 @@ include <a href="calendar_gregorian.html">cal_gregorian</a> and <a href="calenda
 <span class="r-in"><span>  cycle <span class="op">=</span> <span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 08:38:22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12:19:35</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

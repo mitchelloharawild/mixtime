@@ -48,7 +48,7 @@ or with helpers:
   [`seconds()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md),
   [`milliseconds()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration_helpers.md)
 
-**🕰️ Time types**
+**🕰️ Temporal semantics**
 
 - Discrete and continuous time models
 - Timezone support for all chronons
@@ -133,13 +133,13 @@ cal_gregorian
 cal_gregorian$month(1L) # (1L is integer 1)
 #> <mixtime::tu_month>
 #>  @ n : int 1
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 
 # A 2-week time granule (fortnights)
 cal_isoweek$week(2L)
 #> <mixtime::tu_week>
 #>  @ n : int 2
-#>  @ tz: chr ""
+#>  @ tz: 'mt_naive' chr NA
 ```
 
 ### Linear Time
@@ -179,12 +179,12 @@ yearquarter(demo_date) + 0:7
 #> [1] 2026 Q1 2026 Q2 2026 Q3 2026 Q4 2027 Q1 2027 Q2 2027 Q3 2027 Q4
 yearmonth(demo_date) + 0:11
 #> <mixtime[12]>
-#>  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep
-#>  [9] 2026 Oct 2026 Nov 2026 Dec 2027 Jan
+#>  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep 2026 Oct 2026 Nov
+#> [11] 2026 Dec 2027 Jan
 yearweek(demo_date) + 0:10
 #> <mixtime[11]>
-#>  [1] 2026 W08 2026 W09 2026 W10 2026 W11 2026 W12 2026 W13 2026 W14 2026 W15
-#>  [9] 2026 W16 2026 W17 2026 W18
+#>  [1] 2026 W08 2026 W09 2026 W10 2026 W11 2026 W12 2026 W13 2026 W14 2026 W15 2026 W16 2026 W17
+#> [11] 2026 W18
 date(demo_date) + 0:6
 #> <mixtime[7]>
 #> [1] 2026-02-22 2026-02-23 2026-02-24 2026-02-25 2026-02-26 2026-02-27 2026-02-28
@@ -253,7 +253,7 @@ date(demo_time, tz = "America/Los_Angeles")
 #> [1] 2026-02-22 PST
 date(demo_time, tz = "America/Los_Angeles", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-22 PST 43.8%
+#> [1] 2026-02-22 43.8% PST
 day_of_week(demo_time, tz = "America/Los_Angeles")
 #> <mixtime[1]>
 #> [1] Sun PST
@@ -264,7 +264,7 @@ date(demo_time, tz = "Australia/Melbourne")
 #> [1] 2026-02-23 AEDT
 date(demo_time, tz = "Australia/Melbourne", discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-02-23 AEDT 23.0%
+#> [1] 2026-02-23 23.0% AEDT
 day_of_week(demo_time, tz = "Australia/Melbourne")
 #> <mixtime[1]>
 #> [1] Mon AEDT
@@ -296,14 +296,12 @@ sequences of time points iterating by a given time granule.
 # Integer increments (advances by chronon's natural granule)
 seq(yearmonth(demo_date), by = 1L, length.out = 10)
 #> <mixtime[10]>
-#>  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep
-#>  [9] 2026 Oct 2026 Nov
+#>  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep 2026 Oct 2026 Nov
 
 # Time can be sequenced by different granules than the chronon
 seq(date(demo_date), by = cal_gregorian$month(1L), length.out = 8)
 #> <mixtime[8]>
-#> [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22
-#> [8] 2026-09-22
+#> [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22 2026-09-22
 ```
 
 # Package index
@@ -358,14 +356,14 @@ Convenience functions for common cyclical time representations
 
 Functions to create and work with time durations
 
-### Cyclical Time Vectors
+### Time Duration Vectors
 
 The general function for creating time durations
 
 - [`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
   : Duration vectors
 
-### Cyclical Time Helpers
+### Time Duration Helpers
 
 Convenience functions for common time durations
 
@@ -445,7 +443,8 @@ clock in a specific time zone.
 Solar time systems where day boundaries are defined by solar events
 (sunrise, noon, or sunset) at specific geographic locations.
 
-- [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+- [`cal_time_solar_transit`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+  [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
   : Solar time unit classes
 
 ### Lunar Time System
@@ -453,7 +452,8 @@ Solar time systems where day boundaries are defined by solar events
 The lunar time system where each month begins at the new moon, with day
 boundaries defined by lunar events.
 
-- [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
+- [`cal_time_lunar_synodic`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
+  [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
   : Lunar time unit classes
 
 ## Time Attributes
@@ -551,6 +551,7 @@ units and calendars.
 ### Time labels and formatting
 
 - [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
+  [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   : Time units as a string
 - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
@@ -559,6 +560,7 @@ units and calendars.
   : Friendly labels for cyclical relationships
 - [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
   [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
+  [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
   : Default formatting strings for chronons
 - [`chronon_format_attr()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format_attr.md)
   : Default formatting strings for chronon attributes

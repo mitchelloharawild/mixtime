@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Extending mixtime</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.1.0/vignettes/extending-mixtime.Rmd" class="external-link"><code>vignettes/extending-mixtime.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/vignettes/extending-mixtime.Rmd" class="external-link"><code>vignettes/extending-mixtime.Rmd</code></a></small>
       <div class="d-none name"><code>extending-mixtime.Rmd</code></div>
     </div>
 
@@ -125,7 +125,8 @@ components of time with <code><a href="../reference/linear_labels.html">linear_l
 <li>
 <a href="#time-formats">Time formats</a>: default format strings
 with <code><a href="../reference/chronon_format.html">chronon_format_linear()</a></code>,
-<code><a href="../reference/chronon_format.html">chronon_format_cyclical()</a></code>
+<code><a href="../reference/chronon_format.html">chronon_format_cyclical()</a></code>,
+<code><a href="../reference/chronon_format.html">chronon_format_duration()</a></code>
 </li>
 </ul>
 </li>
@@ -611,8 +612,9 @@ methods return format strings that are parsed by
 <p>Each time unit has two format methods:</p>
 <ul>
 <li>
-<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> returns the singular full name of the
-unit (e.g. “Symmetry454 year”)</li>
+<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> returns the full name of the unit,
+optionally with cli plural marker
+(e.g. <code>"Symmetry454 year{?/s}"</code>)</li>
 <li>
 <code><a href="../reference/time_unit_labels.html">time_unit_abbr()</a></code> returns the short abbreviation of the
 unit (e.g. “Y”)</li>
@@ -620,10 +622,14 @@ unit (e.g. “Y”)</li>
 <p>The full name is used in messages (e.g. “Can’t convert from
 Symmetry454 year to day”) and the abbreviation is used for displaying
 time intervals and durations.</p>
+<p>The plural marker uses <code>{?singular_suffix/plural_suffix}</code>
+syntax. Irregular plurals use the full form,
+e.g. <code>"centur{?y/ies}"</code>. The default is to suffix with “s”
+for plurals (i.e. <code>{?/s}</code>).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 year"</span></span>
+<code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 year{?/s}"</span></span>
 <span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Y"</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 month"</span></span>
+<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 month{?/s}"</span></span>
 <span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"M"</span></span></code></pre></div>
 <p>The time unit abbreviations are also used in the default time
 formatting string, so we can now create and view a Symmetry454 linear
@@ -885,6 +891,21 @@ month of year:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"1955-11-12"</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_symmetry454</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
 <span><span class="co">#&gt; [1] Nov</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="duration-formats-chronon_format_duration">Duration formats: <code>chronon_format_duration()</code><a class="anchor" aria-label="anchor" href="#duration-formats-chronon_format_duration"></a>
+</h4>
+<p>Duration vectors (created with <code><a href="../reference/duration.html">duration()</a></code>) are formatted
+using <code><a href="../reference/chronon_format.html">chronon_format_duration()</a></code>, which dispatches on the
+chronon. The default method is usually sufficient, which uses
+<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> to produce a label for the duration.</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/duration.html">duration</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 1 Symmetry454 year</span></span>
+<span><span class="fu"><a href="../reference/duration.html">duration</a></span><span class="op">(</span><span class="fl">3L</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 3 Symmetry454 months</span></span></code></pre></div>
 </div>
 </div>
 </div>

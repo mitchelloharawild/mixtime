@@ -13,6 +13,8 @@ data's
 chronon_format_linear(x, cal = time_calendar(x), ...)
 
 chronon_format_cyclical(x, y, ...)
+
+chronon_format_duration(x, ...)
 ```
 
 ## Arguments
@@ -55,9 +57,16 @@ chronon_format_linear(cal_isoweek$day(1L))
 chronon_format_cyclical(cal_gregorian$month(1L), cal_gregorian$year(1L))
 #> [1] "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
 chronon_format_cyclical(cal_gregorian$day(1L), cal_gregorian$month(1L))
-#> [1] "D{cyc(day,month)}"
+#> [1] "D{cyc(chronon_common(.time), chronon_common(time_cycle(.time)))}"
 chronon_format_cyclical(cal_isoweek$day(1L), cal_isoweek$week(1L))
 #> [1] "{cyc(day,week,label=TRUE)}"
 chronon_format_cyclical(cal_isoweek$week(1L), cal_isoweek$year(1L))
 #> [1] "W{cyc(week,year)}"
+
+chronon_format_duration(cal_gregorian$year(1L))
+#> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
+chronon_format_duration(cal_gregorian$month(1L))
+#> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
+chronon_format_duration(cal_gregorian$day(1L))
+#> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
 ```

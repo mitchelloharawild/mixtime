@@ -45,5 +45,5 @@ day_of_week(Sys.Date())
 month_of_year <- new_cyclical_time_fn(month(1L), year(1L))
 month_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] May
+#> [1] Jun
 ```

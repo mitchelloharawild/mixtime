@@ -1,26 +1,29 @@
 # Solar time unit classes
 
-This time calendar contains solar time units, where the boundary of each
-day is at apparent solar midnight. Solar events define the `ampm`
-(midnight and noon) and `illumination` (dawn, sunrise, sunset, dusk)
-units.
+Time unit constructors for the transit-based solar time system, where
+the boundary of each day is at apparent solar midnight. Solar events
+define the `ampm` (midnight and noon) and `illumination` (dawn, sunrise,
+sunset, dusk) units. `cal_time_solar` is an alias for
+`cal_time_solar_transit`.
 
 ## Usage
 
 ``` r
+cal_time_solar_transit
+
 cal_time_solar
 ```
 
 ## Format
 
-A location-based calendar containing solar time units.
+A location-based calendar containing transit-based solar time units.
 
 ## Value
 
 An S3 list of class `c("cal_time_solar", "mt_calendar")` containing the
-named time unit classes of the solar calendar. Each unit is accessible
-via `$` notation and calling it with a step size and location produces a
-time granule (e.g., 1 solar day granule as
+named time unit classes of the solar transit calendar. Each unit is
+accessible via `$` notation and calling it with a step size and location
+produces a time granule (e.g., 1 solar day granule as
 `cal_time_solar$day(1L, lat = 0, lon = 0)`). Because solar day
 boundaries depend on the observer's position, each unit constructor
 requires `lat` and `lon` arguments.
@@ -89,7 +92,8 @@ alternative reference location.
 
 ## See also
 
-[`cal_time_civil`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_civil.md)
+[`cal_time_civil`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_civil.md),
+[`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
 
 ## Examples
 
@@ -97,5 +101,5 @@ alternative reference location.
 # Find the current solar time in Melbourne
 datetime(Sys.time(), calendar = cal_time_solar, lat = -37.8136, lon = 144.9631)
 #> <mixtime[1]>
-#> [1] 2026-05-19 18:21:42 [37.81S 144.96E]
+#> [1] 2026-06-23 21:57:10 [37.81S 144.96E]
 ```

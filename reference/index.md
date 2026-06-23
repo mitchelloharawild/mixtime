@@ -50,14 +50,14 @@ Convenience functions for common cyclical time representations
 
 Functions to create and work with time durations
 
-### Cyclical Time Vectors
+### Time Duration Vectors
 
 The general function for creating time durations
 
 - [`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
   : Duration vectors
 
-### Cyclical Time Helpers
+### Time Duration Helpers
 
 Convenience functions for common time durations
 
@@ -137,7 +137,8 @@ clock in a specific time zone.
 Solar time systems where day boundaries are defined by solar events
 (sunrise, noon, or sunset) at specific geographic locations.
 
-- [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+- [`cal_time_solar_transit`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
+  [`cal_time_solar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.md)
   : Solar time unit classes
 
 ### Lunar Time System
@@ -145,7 +146,8 @@ Solar time systems where day boundaries are defined by solar events
 The lunar time system where each month begins at the new moon, with day
 boundaries defined by lunar events.
 
-- [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
+- [`cal_time_lunar_synodic`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
+  [`cal_time_lunar`](https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_lunar.md)
   : Lunar time unit classes
 
 ## Time Attributes
@@ -243,6 +245,7 @@ units and calendars.
 ### Time labels and formatting
 
 - [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
+  [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   : Time units as a string
 - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
@@ -251,6 +254,7 @@ units and calendars.
   : Friendly labels for cyclical relationships
 - [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
   [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
+  [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
   : Default formatting strings for chronons
 - [`chronon_format_attr()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format_attr.md)
   : Default formatting strings for chronon attributes
