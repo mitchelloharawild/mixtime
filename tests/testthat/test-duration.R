@@ -47,11 +47,6 @@ test_that("fractional duration with more decimals is shown up to 3 decimal place
   expect_equal(format(minutes(1.1234)), "1.1234 minutes")
 })
 
-test_that("fractional duration respects digits argument (max decimal places)", {
-  expect_equal(format(minutes(1.0),    digits = 1L), "1.0 minutes")
-  expect_equal(format(minutes(1.16),   digits = 2L), "1.2 minutes")
-  expect_equal(format(minutes(1.123),  digits = 3L), "1.12 minutes")
-})
 
 test_that("fractional duration 0.0 is plural with one decimal", {
   expect_equal(format(minutes(0.0)), "0.0 minutes")

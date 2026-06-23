@@ -52,7 +52,11 @@ method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
 #' @export
 chronon_format_duration <- new_generic("chronon_format_duration", "x")
 method(chronon_format_duration, mt_unit) <- function(x) {
-  "{vec_data(.time)} {time_unit_plural(chronon_common(.time), vec_data(.time))}"
+  paste0(
+    "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))}",
+    " ",
+    "{time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
+  )
 }
 
 #' Default formatting strings for chronon attributes

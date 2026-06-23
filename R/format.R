@@ -210,7 +210,6 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
 
 #' @export
 format.mt_time <- function(x, format = time_format_default(x), ...) {
-  # return(rep("", length(x))) # Avoid infinite recursion in time_format_default
   time_format_impl(x, format = format, ...)
 }
 
