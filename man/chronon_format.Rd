@@ -3,11 +3,14 @@
 \name{chronon_format_linear}
 \alias{chronon_format_linear}
 \alias{chronon_format_cyclical}
+\alias{chronon_format_duration}
 \title{Default formatting strings for chronons}
 \usage{
 chronon_format_linear(x, cal = time_calendar(x), ...)
 
 chronon_format_cyclical(x, y, ...)
+
+chronon_format_duration(x, ...)
 }
 \arguments{
 \item{x}{A time granule for the chronon.}
@@ -39,5 +42,9 @@ chronon_format_cyclical(cal_gregorian$month(1L), cal_gregorian$year(1L))
 chronon_format_cyclical(cal_gregorian$day(1L), cal_gregorian$month(1L))
 chronon_format_cyclical(cal_isoweek$day(1L), cal_isoweek$week(1L))
 chronon_format_cyclical(cal_isoweek$week(1L), cal_isoweek$year(1L))
+
+chronon_format_duration(cal_gregorian$year(1L))
+chronon_format_duration(cal_gregorian$month(1L))
+chronon_format_duration(cal_gregorian$day(1L))
 
 }

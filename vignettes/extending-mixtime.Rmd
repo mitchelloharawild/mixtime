@@ -31,7 +31,7 @@ The extension points covered are:
 * [Labels](#labels) for displaying time, defined by: 
   * [Time units](#display-time-units): temporal properties (e.g. interval) and user messages with `time_unit_abbr()`, `time_unit_full()`
   * [Time labels](#time-labels): labelling granular components of time with `linear_labels()`, `cyclical_labels()`
-  * [Time formats](#time-formats): default format strings with `chronon_format_linear()`, `chronon_format_cyclical()` 
+  * [Time formats](#time-formats): default format strings with `chronon_format_linear()`, `chronon_format_cyclical()`, `chronon_format_duration()`
 
 The mixtime package uses S7 for all extension methods. If you are new to S7, the vignette on [generics and methods](https://rconsortium.github.io/S7/articles/generics-methods.html) is a good place to start. It is best to develop new calendars and time units in a separate package that imports mixtime, and registering your methods with the following [`.onLoad` hook](https://rconsortium.github.io/S7/articles/packages.html):
 
@@ -346,15 +346,17 @@ The labelling methods control how time units and time points are displayed as te
 
 Each time unit has two format methods:
 
-* `time_unit_full()` returns the singular full name of the unit (e.g. "Symmetry454 year")
+* `time_unit_full()` returns the full name of the unit, optionally with cli plural marker (e.g. `"Symmetry454 year{?/s}"`)
 * `time_unit_abbr()` returns the short abbreviation of the unit (e.g. "Y")
 
 The full name is used in messages (e.g. "Can't convert from Symmetry454 year to day") and the abbreviation is used for displaying time intervals and durations.
 
+The plural marker uses `{?singular_suffix/plural_suffix}` syntax. Irregular plurals use the full form, e.g. `"centur{?y/ies}"`. The default is to suffix with "s" for plurals (i.e. `{?/s}`).
+
 ```{r}
-S7::method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year"
+S7::method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year{?/s}"
 S7::method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "Y"
-S7::method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month"
+S7::method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month{?/s}"
 S7::method(time_unit_abbr, cal_symmetry454$month) <- function(x) "M"
 ```
 
@@ -532,4 +534,13 @@ S7::method(
 These methods are used when formatting cyclical time vectors, such as month of year:
 ```{r}
 month_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
+```
+
+#### Duration formats: `chronon_format_duration()`
+
+Duration vectors (created with `duration()`) are formatted using `chronon_format_duration()`, which dispatches on the chronon. The default method is usually sufficient, which uses `time_unit_full()` to produce a label for the duration.
+
+```{r}
+duration(1L, cal_symmetry454$year(1L))
+duration(3L, cal_symmetry454$month(1L))
 ```

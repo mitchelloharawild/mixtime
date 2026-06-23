@@ -45,8 +45,12 @@ mt_unit_display <- function(x, units, parts, ...) {
 
 time_format_default <- function(x) {
   chronon <- attr(x, "chronon")
-  cycle <- attr(x, "cycle")
 
+  if (inherits(x, "mt_duration")) {
+    return(chronon_format_duration(chronon))
+  }
+
+  cycle <- attr(x, "cycle")
   fmt <- if (is.null(cycle)) {
     chronon_format_linear(chronon)
   } else {
@@ -206,26 +210,6 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
 format.mt_time <- function(x, format = time_format_default(x), ...) {
   # return(rep("", length(x))) # Avoid infinite recursion in time_format_default
   time_format_impl(x, format = format, ...)
-}
-
-#' @export
-format.mt_duration <- function(x, nsmall = 1L, ...) {
-  chronon <- attr(x, "chronon")
-  is_frac <- is.double(vec_data(x))
-  x <- vec_data(x)
-  x_special <- is.na(x) | is.infinite(x)
-  out <- character(length(x))
-  if (is_frac) {
-    # Round to at most `digits` decimal places, then format with nsmall = 1 to
-    # ensure at least 1 decimal place while stripping unnecessary trailing zeros.
-    formatted <- format(x[!x_special], nsmall = nsmall, ...)
-    # Fractional durations are always plural
-    out[!x_special] <- paste0(formatted, " ", time_unit_plural(chronon, 2L))
-  } else {
-    out[!x_special] <- paste0(x[!x_special], " ", time_unit_plural(chronon, x[!x_special]))
-  }
-  out[x_special] <- format(x[x_special])
-  out
 }
 
 #' @export
