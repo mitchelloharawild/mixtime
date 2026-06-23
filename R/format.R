@@ -91,7 +91,9 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
       cal,
 
       # The label helper functions, returns time units and label options
-      lin = function(granule, ...) structure(list(as_tu(granule)), ...),
+      lin = function(granule, ...) {
+        structure(list(as_tu(granule)), ...)
+      },
       cyc = function(granule, cycle, ...) {
         structure(list(as_tu(granule), as_tu(cycle)), ...)
       },
@@ -128,7 +130,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   )
 
   fmt <- mt_glue_fmt(format, env = env)
-  fmt_parts <- !vapply(fmt, is.character, logical(1L))
+  fmt_parts <- vapply(fmt, is.list, logical(1L))
 
   # Resolve bare S7 class tokens (e.g. from {year}, {month}, {day}) into
   # lin/cyc lists using the chronon_cardinality graph to order fine->coarse.

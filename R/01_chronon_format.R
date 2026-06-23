@@ -40,7 +40,7 @@ method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
 #' @export
 chronon_format_cyclical <- new_generic("chronon_format_cyclical", c("x", "y"))
 method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
-  paste0(time_unit_abbr(x), "{cyc(chronon_common(time_chronon(.time)), chronon_common(time_cycle(.time)))}")
+  paste0(time_unit_abbr(x), "{cyc(chronon_common(.time), chronon_common(time_cycle(.time)))}")
 }
 
 #' @examples
@@ -52,7 +52,7 @@ method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
 #' @export
 chronon_format_duration <- new_generic("chronon_format_duration", "x")
 method(chronon_format_duration, mt_unit) <- function(x) {
-  "{lin(chronon_common(.time))} {time_unit_plural(attr(.time, 'chronon'), vec_data(.time))}"
+  "{vec_data(.time)} {time_unit_plural(chronon_common(.time), vec_data(.time))}"
 }
 
 #' Default formatting strings for chronon attributes
