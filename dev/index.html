@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -196,12 +196,12 @@
 <span><span class="co">#&gt; [1] 2026 Q1 2026 Q2 2026 Q3 2026 Q4 2027 Q1 2027 Q2 2027 Q3 2027 Q4</span></span>
 <span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">11</span></span>
 <span><span class="co">#&gt; &lt;mixtime[12]&gt;</span></span>
-<span><span class="co">#&gt;  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep</span></span>
-<span><span class="co">#&gt;  [9] 2026 Oct 2026 Nov 2026 Dec 2027 Jan</span></span>
+<span><span class="co">#&gt;  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep 2026 Oct 2026 Nov</span></span>
+<span><span class="co">#&gt; [11] 2026 Dec 2027 Jan</span></span>
 <span><span class="fu"><a href="reference/linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span></span>
 <span><span class="co">#&gt; &lt;mixtime[11]&gt;</span></span>
-<span><span class="co">#&gt;  [1] 2026 W08 2026 W09 2026 W10 2026 W11 2026 W12 2026 W13 2026 W14 2026 W15</span></span>
-<span><span class="co">#&gt;  [9] 2026 W16 2026 W17 2026 W18</span></span>
+<span><span class="co">#&gt;  [1] 2026 W08 2026 W09 2026 W10 2026 W11 2026 W12 2026 W13 2026 W14 2026 W15 2026 W16 2026 W17</span></span>
+<span><span class="co">#&gt; [11] 2026 W18</span></span>
 <span><span class="fu"><a href="reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">6</span></span>
 <span><span class="co">#&gt; &lt;mixtime[7]&gt;</span></span>
 <span><span class="co">#&gt; [1] 2026-02-22 2026-02-23 2026-02-24 2026-02-25 2026-02-26 2026-02-27 2026-02-28</span></span></code></pre></div>
@@ -291,14 +291,12 @@
 <code class="sourceCode R"><span><span class="co"># Integer increments (advances by chronon's natural granule)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1L</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[10]&gt;</span></span>
-<span><span class="co">#&gt;  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep</span></span>
-<span><span class="co">#&gt;  [9] 2026 Oct 2026 Nov</span></span>
+<span><span class="co">#&gt;  [1] 2026 Feb 2026 Mar 2026 Apr 2026 May 2026 Jun 2026 Jul 2026 Aug 2026 Sep 2026 Oct 2026 Nov</span></span>
 <span></span>
 <span><span class="co"># Time can be sequenced by different granules than the chronon</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="va">demo_date</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[8]&gt;</span></span>
-<span><span class="co">#&gt; [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22</span></span>
-<span><span class="co">#&gt; [8] 2026-09-22</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2026-02-22 2026-03-22 2026-04-22 2026-05-22 2026-06-22 2026-07-22 2026-08-22 2026-09-22</span></span></code></pre></div>
 </div>
 </div>
 </div>

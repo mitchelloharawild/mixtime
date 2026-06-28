@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,25 +38,33 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="mixtime-020">mixtime 0.2.0<a class="anchor" aria-label="anchor" href="#mixtime-020"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
 <ul><li>Added support for multiplication and division of time durations.</li>
 <li>Added <code><a href="https://rdrr.io/r/base/Round.html" class="external-link">round()</a></code>/<code><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor()</a></code>/<code><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling()</a></code> methods for rounding time by chronons. (note: use <code><a href="../reference/time_round.html">time_round()</a></code>, <code><a href="../reference/time_round.html">time_floor()</a></code>, and <code><a href="../reference/time_round.html">time_ceiling()</a></code> for rounding to a specified time granule).</li>
 <li>Added casting from time durations to character vectors.</li>
 <li>Added explicit conversion to naive time by using <code>tz = NA</code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
-<ul><li>Continuous time model durations now always show at least one decimal place.</li>
+<h3 id="improvements-0-2-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> now uses cli-style pluralisation templates (e.g., <code>"year{?/s}"</code>, <code>"centur{?y/ies}"</code>), enabling accurate plural forms beyond a simple <code>s</code> suffix. A new <code>time_unit_plural(x, n)</code> helper resolves the template for a given quantity.</li>
+<li>Continuous time model durations now always show at least one decimal place.</li>
 <li>Added formatting support for <code>NaN</code>, <code>Inf</code>, and <code>-Inf</code> values in time types.</li>
+<li>Added time zone support for arithmetic.</li>
+<li>Time durations now use the same formatting system and format strings as linear and cyclical time.</li>
 <li>Improved <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> output to be more compact for each time type.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
 <ul><li>Fixed incorrect usage of <code><a href="../reference/time_chronon.html">time_chronon()</a></code> causing arithmetic to fail.</li>
 <li>Fixed incompatibilities with vctrs sorting, ptype2, and casting methods.</li>
 <li>Fixed formatting of cyclical time with mixed-calendar chronon and cycle (<a href="https://github.com/mitchelloharawild/mixtime/issues/62" class="external-link">#62</a>).</li>
 <li>Fixed divmod of Gregorian day -&gt; month and day -&gt; year producing incorrect divisors near the year boundary for continuous time dates.</li>
+<li>Fixed <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> allowing non-time vectors in mixtime vectors.</li>
 </ul></div>
 </div>
     <div class="section level2">

@@ -43,7 +43,8 @@ The extension points covered are:
     [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md)
   - [Time formats](#time-formats): default format strings with
     [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md),
-    [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
+    [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md),
+    [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
 
 The mixtime package uses S7 for all extension methods. If you are new to
 S7, the vignette on [generics and
@@ -587,7 +588,8 @@ the final labels.
 Each time unit has two format methods:
 
 - [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-  returns the singular full name of the unit (e.g. “Symmetry454 year”)
+  returns the full name of the unit, optionally with cli plural marker
+  (e.g. `"Symmetry454 year{?/s}"`)
 - [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
   returns the short abbreviation of the unit (e.g. “Y”)
 
@@ -595,11 +597,15 @@ The full name is used in messages (e.g. “Can’t convert from Symmetry454
 year to day”) and the abbreviation is used for displaying time intervals
 and durations.
 
+The plural marker uses `{?singular_suffix/plural_suffix}` syntax.
+Irregular plurals use the full form, e.g. `"centur{?y/ies}"`. The
+default is to suffix with “s” for plurals (i.e. `{?/s}`).
+
 ``` r
 
-S7::method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year"
+S7::method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year{?/s}"
 S7::method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "Y"
-S7::method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month"
+S7::method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month{?/s}"
 S7::method(time_unit_abbr, cal_symmetry454$month) <- function(x) "M"
 ```
 
@@ -901,4 +907,25 @@ month of year:
 month_of_year(as.Date("1955-11-12"), calendar = cal_symmetry454)
 #> <mixtime[1]>
 #> [1] Nov
+```
+
+#### Duration formats: `chronon_format_duration()`
+
+Duration vectors (created with
+[`duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration.md))
+are formatted using
+[`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md),
+which dispatches on the chronon. The default method is usually
+sufficient, which uses
+[`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+to produce a label for the duration.
+
+``` r
+
+duration(1L, cal_symmetry454$year(1L))
+#> <mixtime[1]>
+#> [1] 1 Symmetry454 year
+duration(3L, cal_symmetry454$month(1L))
+#> <mixtime[1]>
+#> [1] 3 Symmetry454 months
 ```

@@ -245,6 +245,7 @@ units and calendars.
 ### Time labels and formatting
 
 - [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+  [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
   [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
   : Time units as a string
 - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_labels.md)
@@ -253,6 +254,7 @@ units and calendars.
   : Friendly labels for cyclical relationships
 - [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
   [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
+  [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
   : Default formatting strings for chronons
 - [`chronon_format_attr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format_attr.md)
   : Default formatting strings for chronon attributes

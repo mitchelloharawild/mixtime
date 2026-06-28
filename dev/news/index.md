@@ -2,6 +2,8 @@
 
 ## mixtime (development version)
 
+## mixtime 0.2.0
+
 ### New features
 
 - Added support for multiplication and division of time durations.
@@ -18,10 +20,18 @@
 
 ### Improvements
 
+- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+  now uses cli-style pluralisation templates (e.g., `"year{?/s}"`,
+  `"centur{?y/ies}"`), enabling accurate plural forms beyond a simple
+  `s` suffix. A new `time_unit_plural(x, n)` helper resolves the
+  template for a given quantity.
 - Continuous time model durations now always show at least one decimal
   place.
 - Added formatting support for `NaN`, `Inf`, and `-Inf` values in time
   types.
+- Added time zone support for arithmetic.
+- Time durations now use the same formatting system and format strings
+  as linear and cyclical time.
 - Improved [`str()`](https://rdrr.io/r/utils/str.html) output to be more
   compact for each time type.
 
@@ -37,6 +47,8 @@
   ([\#62](https://github.com/mitchelloharawild/mixtime/issues/62)).
 - Fixed divmod of Gregorian day -\> month and day -\> year producing
   incorrect divisors near the year boundary for continuous time dates.
+- Fixed [`c()`](https://rdrr.io/r/base/c.html) allowing non-time vectors
+  in mixtime vectors.
 
 ## mixtime 0.1.0
 
