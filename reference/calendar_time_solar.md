@@ -101,5 +101,5 @@ alternative reference location.
 # Find the current solar time in Melbourne
 datetime(Sys.time(), calendar = cal_time_solar, lat = -37.8136, lon = 144.9631)
 #> <mixtime[1]>
-#> [1] 2026-06-23 21:57:10 [37.81S 144.96E]
+#> [1] 2026-06-28 22:16:31 [37.81S 144.96E]
 ```
