@@ -4,6 +4,8 @@
 
 ## mixtime 0.2.0
 
+CRAN release: 2026-06-28
+
 ### New features
 
 - Added support for multiplication and division of time durations.
