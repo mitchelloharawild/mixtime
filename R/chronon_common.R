@@ -74,5 +74,11 @@ chronon_common_impl <- function(chronons, .ptype = NULL) {
   # The cardinality methods are directional
   # (such that `x` is a finer chronon than `y`)
   # Construct a graph of the methods to find the common root chronon.
-  S7_graph_glb(method_signatures(chronon_cardinality), chronons)(1L)
+  glb <- S7_graph_glb(method_signatures(chronon_cardinality), chronons)(1L)
+
+
+  # Restore properties of the common chronon from the input chronons. 
+  # If the properties (e.g. timezone) vary across the input chronons, they are
+  # dropped from the common chronon (resulting in a timezone-naive chronon).
+  granule_inherit_shared_props(glb, chronons)
 }
