@@ -4,7 +4,7 @@
 
 * Substantially faster performance by caching the granule cardinality graph 
   (used by `chronon_convert()`, `chronon_divmod()`, `chronon_common()` and
-   `time_parts()`).
+  `time_parts()`) and tzdb names (used in operations with timezones).
 
 # mixtime 0.2.0
 

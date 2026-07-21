@@ -1,9 +1,20 @@
+# tzdb::tzdb_names() re-derives its result on every call; the timezone
+# database only changes via an explicit tzdb::tzdb_initialize() (done once,
+# in .onLoad()), so the name list is cached lazily on first use.
+tzdb_names_cached <- local({
+  names <- NULL
+  function() {
+    if (is.null(names)) names <<- tzdb::tzdb_names()
+    names
+  }
+})
+
 check_tz_name <- function(zone) {
   # Naive time zone
   if (is.na(zone)) return(invisible(TRUE))
-  
+
   # Specified time zone
-  if (!zone %in% tzdb::tzdb_names()) {
+  if (!zone %in% tzdb_names_cached()) {
     cli::cli_abort(
       c(
         "Timezone {.val {zone}} not found in timezone database.",
