@@ -25,7 +25,7 @@ The extension points covered are:
 * [Time units](#time-units): S7 classes inheriting from `mt_unit`, `mt_tz_unit`, or `mt_loc_unit`
 * [Calendars](#calendars): Creating calendars from time units with `new_calendar()`
 * [Calendar arithmetic](#calendar-arithmetic) for defining temporal relationships between time units:
-  * [Cardinality](#cardinality): Define the number of finer units in a coarser unit with `chronon_cardinality()`
+  * [Cardinality](#cardinality): Define the number of finer units in a coarser unit with `chronon_cardinality_fixed()` and `chronon_cardinality()`
   * [Divmod](#divmod): Define the division and remainder of time units with `chronon_divmod()`
   * [Epoch anchors](#epoch): Define the reference point for a time unit with `chronon_epoch()`
 * [Labels](#labels) for displaying time, defined by: 
@@ -99,9 +99,9 @@ These time units can be used as chronons/cycles within `mixtime()` (and also `li
 
 ## Calendar arithmetic {#calendar-arithmetic}
 
-Two S7 generics drive all calendar calculations: `chronon_cardinality()` and `chronon_divmod()`. These functions are used to manipulate time, such as converting between units, generating sequences, and comparing time points. The details of how they work are not important for users of the calendar, but they are the main extension points for developers creating new calendars.
+Three S7 generics drive all calendar calculations: `chronon_cardinality_fixed()`, `chronon_cardinality()` and `chronon_divmod()`. These functions are used to manipulate time, such as converting between units, generating sequences, and comparing time points. The details of how they work are not important for users of the calendar, but they are the main extension points for developers creating new calendars.
 
-For a time unit to be useful in mixtime, at minimum a `chronon_cardinality()` method between itself and the next coarser unit must be defined. Time units with irregular relationships (e.g. days → months) also require `chronon_divmod()` to efficiently compute relationships between units.
+For a time unit to be useful in mixtime, at minimum a `chronon_cardinality_fixed()` or `chronon_cardinality()` method between itself and the next coarser unit must be defined. Time units with irregular relationships (e.g. days → months) also require `chronon_divmod()` to efficiently compute relationships between units.
 
 Defining these methods for time units between different calendars is also possible, which allows for interoperability between calendars. In most cases, calendars will share a common base calendar (e.g. `cal_time_civil`) which provides a common time unit (e.g. civil days) or methods for converting between different calendars (e.g. civil midnight to solar midnight).
 
@@ -113,23 +113,25 @@ The cardinality is the number of finer units that fit inside a coarser unit. For
 chronon_cardinality(cal_isoweek$day(1L), cal_isoweek$week(1L))
 ```
 
-For units with a fixed relationship (e.g. 7 days per week) the `at` argument can be ignored. The `at` variable disambiguates the point in time for variable cardinalities (e.g. days per month), `at` is the internal numeric representation of time in the coarser unit (e.g. months since epoch for days → months).
-
-```{r}
-chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 0L) # Jan 1970
-chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 1L) # Feb 1970
-chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 25L) # Feb 1972 (leap year)
-```
+Units with a fixed relationship (e.g. 7 days per week) don't need a time context, so they should be defined with `chronon_cardinality_fixed()` instead, which takes just the two units (no `at`) and returns the number of unit (`n = 1L`) `x` granules that fit within one unit `y` granule. Defining `chronon_cardinality_fixed()` for a pair automatically provides the corresponding `chronon_cardinality()` method (scaled by the requested granule sizes), and is what allows the relationship to be used when deriving `chronon_divmod()` by graph traversal (see [Divmod](#divmod)) — a plain `chronon_cardinality()` method cannot be used there since no `at` is available mid-traversal.
 
 In the Symmetry454 calendar every year has exactly 12 months (a fixed relationship).
 
 ```{r cardinality-fixed}
 # Each Symmetry454 year has 12 months
-S7::method(chronon_cardinality, list(cal_symmetry454$month, cal_symmetry454$year)) <-
-  function(x, y, at = NULL) {
-    y@n * 12L / x@n
+S7::method(chronon_cardinality_fixed, list(cal_symmetry454$month, cal_symmetry454$year)) <-
+  function(x, y) {
+    12L
   }
 chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$year(1L))
+```
+
+Variable cardinalities (e.g. days per month) instead need a `chronon_cardinality()` method, disambiguated by the `at` argument: the internal numeric representation of time in the coarser unit (e.g. months since epoch for days → months).
+
+```{r}
+chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 0L) # Jan 1970
+chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 1L) # Feb 1970
+chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 25L) # Feb 1972 (leap year)
 ```
 
 The number of weeks in each month follows the repeating **4–5–4** pattern across each quarter (months 1–3: 4, 5, 4 weeks; months 4–6: 4, 5, 4 weeks; and so on). The `circsum()` helper computes how many weeks fall in an n-month period by summing the appropriate slice of this cycle, which is especially useful when the `month` unit has a size greater than 1.
@@ -197,7 +199,7 @@ chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$week(2L), at = 0:
 
 ### Divmod {#divmod}
 
-The divmod operation is a combined division and modulus that converts between time granules and is defined with `chronon_divmod()` methods. These methods are required to efficiently convert between units with irregular relationships, such as days → months. For regular relationships (e.g. days → weeks) the divmod is automatically derived from `chronon_cardinality()` methods alone.
+The divmod operation is a combined division and modulus that converts between time granules and is defined with `chronon_divmod()` methods. These methods are required to efficiently convert between units with irregular relationships, such as days → months. For regular relationships (e.g. days → weeks) the divmod is automatically derived from `chronon_cardinality_fixed()` methods alone.
 
 `chronon_divmod(from, to, x)` converts times `x` in the `from` granules into time points in `to` granules. For example, the date "1970-02-15" is day 45 since epoch (`x = 45` and `from = cal_gregorian$day(1L)`), converted to months (`to = cal_gregorian$month(1L)`) gives 1 month and 14 days (div = 1, mod = 14).
 

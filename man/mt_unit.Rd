@@ -51,12 +51,22 @@ constructor functions accessible via \code{$} notation (e.g., \code{calendar$day
 \section{Calendar Algebra Methods}{
 
 
-Time units enable calendar arithmetic through two key generic methods
+Time units enable calendar arithmetic through key generic methods
 that should be implemented for custom time units:
 \itemize{
+\item \code{chronon_cardinality_fixed(x, y)} - Returns the number of unit \code{x}
+granules that fit within one unit \code{y} granule, for relationships that are
+a constant, context-independent number (e.g., 7 days per week, 24 hours
+per day). Prefer this over \code{chronon_cardinality()} whenever the
+relationship does not depend on \code{at}, since it is also used to determine
+which relationships are safe to use for \code{\link[=chronon_divmod]{chronon_divmod()}}'s graph
+traversal.
 \item \code{chronon_cardinality(x, y, at)} - Returns the number of \code{x} granule
-that fit within one \code{y} granule This can be a fixed value (e.g.,
-7 days per week) or variable based on \code{at} (e.g., 28-31 days per month).
+that fit within one \code{y} granule. This is variable based on \code{at} (e.g.,
+28-31 days per month). Only implement this directly (rather than
+\code{chronon_cardinality_fixed()}) when the relationship genuinely depends on
+\code{at}, and pair it with a direct \code{chronon_divmod()} method so that the
+relationship remains reachable during graph traversal.
 \item \code{chronon_divmod(x, from, to)} - Converts time point \code{x} from granules of
 \code{from} to granules of \code{to}, returning a list with \code{div} (the quotient)
 and \code{mod}. This enables conversions between granules that have

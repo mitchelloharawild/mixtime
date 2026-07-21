@@ -66,8 +66,8 @@ method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- functio
   ifelse(p == 4 | (p == 3 & is_leap_year(year)), 53L, 52L)  
 }
 
-method(chronon_cardinality, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y, at = NULL) {
-  y@n*7L/x@n
+method(chronon_cardinality_fixed, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y) {
+  7L
 }
 
 method(chronon_divmod, list(cal_isoweek$day, cal_isoweek$week)) <- function(from, to, x) {

@@ -119,28 +119,28 @@ method(chronon_format_linear, list(cal_time_solar$arcsecond, class_any)) <- func
 method(chronon_format_linear, list(cal_time_solar$illumination, class_any)) <- function(x, cal) "{lin(day)} {lin(illumination)}"
 
 # Solar time
-method(chronon_cardinality, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(x, y, at = NULL) {
-  y@n * 2L / x@n
+method(chronon_cardinality_fixed, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(x, y) {
+  2L
 }
-method(chronon_cardinality, list(cal_time_solar$hour, cal_time_solar$day)) <- function(x, y, at = NULL) {
-  y@n * 24L / x@n
+method(chronon_cardinality_fixed, list(cal_time_solar$hour, cal_time_solar$day)) <- function(x, y) {
+  24L
 }
-method(chronon_cardinality, list(cal_time_solar$minute, cal_time_solar$hour)) <- function(x, y, at = NULL) {
-  y@n * 60L / x@n
+method(chronon_cardinality_fixed, list(cal_time_solar$minute, cal_time_solar$hour)) <- function(x, y) {
+  60L
 }
-method(chronon_cardinality, list(cal_time_solar$second, cal_time_solar$minute)) <- function(x, y, at = NULL) {
-  y@n * 60L / x@n
+method(chronon_cardinality_fixed, list(cal_time_solar$second, cal_time_solar$minute)) <- function(x, y) {
+  60L
 }
 
 # Solar arc time
-method(chronon_cardinality, list(cal_time_solar$degree, cal_time_solar$day)) <- function(x, y, at = NULL) {
-  y@n * 360L / x@n
+method(chronon_cardinality_fixed, list(cal_time_solar$degree, cal_time_solar$day)) <- function(x, y) {
+  360L
 }
-method(chronon_cardinality, list(cal_time_solar$arcminute, cal_time_solar$degree)) <- function(x, y, at = NULL) {
-  y@n * 60L / x@n
+method(chronon_cardinality_fixed, list(cal_time_solar$arcminute, cal_time_solar$degree)) <- function(x, y) {
+  60L
 }
-method(chronon_cardinality, list(cal_time_solar$arcsecond, cal_time_solar$arcminute)) <- function(x, y, at = NULL) {
-  y@n * 60L / x@n
+method(chronon_cardinality_fixed, list(cal_time_solar$arcsecond, cal_time_solar$arcminute)) <- function(x, y) {
+  60L
 }
 
 # Solar illumination phases

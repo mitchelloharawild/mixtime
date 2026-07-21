@@ -1,5 +1,12 @@
 # mixtime (development version)
 
+## New features
+
+* Added `chronon_cardinality_fixed()`, a variant of `chronon_cardinality()`
+  for time granule pairs whose relationship is a constant, context-independent
+  number (e.g., 60 seconds in a minute) rather than dependent on an `at` time
+  point (e.g., 28-31 days in a month).
+
 ## Improvements
 
 * Substantially faster performance by caching the granule cardinality graph 

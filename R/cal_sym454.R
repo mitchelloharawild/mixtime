@@ -106,9 +106,9 @@ S7::method(cyclical_labels, list(cal_sym454$week, cal_sym454$month)) <-
 method(chronon_epoch, cal_sym454$year) <- function(x) 1970L
 
 ## Cardinality
-S7::method(chronon_cardinality, list(cal_sym454$month, cal_sym454$year)) <-
-  function(x, y, at = NULL) {
-    y@n * 12L / x@n
+S7::method(chronon_cardinality_fixed, list(cal_sym454$month, cal_sym454$year)) <-
+  function(x, y) {
+    12L
   }
 S7::method(chronon_cardinality, list(cal_sym454$week, cal_sym454$month)) <-
   function(x, y, at = NULL) {

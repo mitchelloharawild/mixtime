@@ -65,11 +65,11 @@ method(chronon_format_linear, list(cal_gregorian$day, S7::new_S3_class("cal_greg
 method(chronon_format_cyclical, list(cal_gregorian$month, cal_gregorian$year)) <- function(x, y) "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
 
 ### Calendar algebra methods for Gregorian time units
-method(chronon_cardinality, list(cal_gregorian$quarter, cal_gregorian$year)) <- function(x, y, at = NULL) {
-  y@n*4L/x@n
+method(chronon_cardinality_fixed, list(cal_gregorian$quarter, cal_gregorian$year)) <- function(x, y) {
+  4L
 }
-method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$year)) <- function(x, y, at = NULL) {
-  y@n*12L/x@n
+method(chronon_cardinality_fixed, list(cal_gregorian$month, cal_gregorian$year)) <- function(x, y) {
+  12L
 }
 method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$year)) <- function(x, y, at = NULL) {
   if (is.null(at)) {
@@ -80,8 +80,8 @@ method(chronon_cardinality, list(cal_gregorian$day, cal_gregorian$year)) <- func
   }
   (is_leap_year(1970L + as.integer(at)) + 365L)/x@n
 }
-method(chronon_cardinality, list(cal_gregorian$month, cal_gregorian$quarter)) <- function(x, y, at = NULL) {
-  y@n*3L/x@n
+method(chronon_cardinality_fixed, list(cal_gregorian$month, cal_gregorian$quarter)) <- function(x, y) {
+  3L
 }
 
 monthdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)

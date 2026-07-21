@@ -90,50 +90,50 @@ method(chronon_format_cyclical, list(cal_time_civil$minute, cal_time_civil$day))
 
 ## HOURs in DAYs
 method(
-  chronon_cardinality, 
+  chronon_cardinality_fixed,
   list(cal_time_civil$hour, cal_time_civil$day)
-) <- function(x, y, at = NULL) {
-  y@n*24L/x@n
+) <- function(x, y) {
+  24L
 }
 
 ## AMPMs in DAYs
 method(
-  chronon_cardinality, 
+  chronon_cardinality_fixed,
   list(cal_time_civil$ampm, cal_time_civil$day)
-) <- function(x, y, at = NULL) {
-  y@n*2L/x@n
+) <- function(x, y) {
+  2L
 }
 
 ## HOURs in AMPMs
 method(
-  chronon_cardinality, 
+  chronon_cardinality_fixed,
   list(cal_time_civil$hour, cal_time_civil$ampm)
-) <- function(x, y, at = NULL) {
-  y@n*12L/x@n
+) <- function(x, y) {
+  12L
 }
 
 ## MINUTEs in HOURs
 method(
-  chronon_cardinality, 
+  chronon_cardinality_fixed,
   list(cal_time_civil$minute, cal_time_civil$hour)
-) <- function(x, y, at = NULL) {
-  y@n*60L/x@n
+) <- function(x, y) {
+  60L
 }
 
 ## SECONDs in MINUTEs
 method(
-  chronon_cardinality,
+  chronon_cardinality_fixed,
   list(cal_time_civil$second, cal_time_civil$minute)
-) <- function(x, y, at = NULL) {
-  y@n*60L/x@n
+) <- function(x, y) {
+  60L
 }
 
 ## MILLISECONDs in SECONDs
 method(
-  chronon_cardinality, 
+  chronon_cardinality_fixed,
   list(cal_time_civil$millisecond, cal_time_civil$second)
-) <- function(x, y, at = NULL) {
-  y@n*1000L/x@n
+) <- function(x, y) {
+  1000L
 }
 
 

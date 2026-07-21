@@ -76,27 +76,30 @@ compile_signature_graph <- function(signatures) {
 # (unique()-ing ~35 signature objects) on every chronon_convert() call.
 .chronon_signature_cache <- new.env(parent = emptyenv())
 
+# The divmod graph only uses edges from direct chronon_divmod() methods and
+# fixed (context-independent) chronon_cardinality_fixed() methods. 
 chronon_divmod_graph <- function() {
   sig_divmod <- method_signatures(chronon_divmod)
-  sig_card <- method_signatures(chronon_cardinality)
-  n <- length(sig_divmod) + length(sig_card)
+  sig_fixed <- method_signatures(chronon_cardinality_fixed)
+  n <- length(sig_divmod) + length(sig_fixed)
 
   cache <- .chronon_signature_cache
   if (!identical(cache$divmod_n, n)) {
     cache$divmod_n <- n
-    cache$divmod_graph <- compile_signature_graph(unique(c(sig_divmod, sig_card)))
+    cache$divmod_graph <- compile_signature_graph(unique(c(sig_divmod, sig_fixed)))
   }
   cache$divmod_graph
 }
 
 chronon_cardinality_graph <- function() {
   sig_card <- method_signatures(chronon_cardinality)
-  n <- length(sig_card)
+  sig_fixed <- method_signatures(chronon_cardinality_fixed)
+  n <- length(sig_card) + length(sig_fixed)
 
   cache <- .chronon_signature_cache
   if (!identical(cache$cardinality_n, n)) {
     cache$cardinality_n <- n
-    cache$cardinality_graph <- compile_signature_graph(sig_card)
+    cache$cardinality_graph <- compile_signature_graph(unique(c(sig_card, sig_fixed)))
   }
   cache$cardinality_graph
 }

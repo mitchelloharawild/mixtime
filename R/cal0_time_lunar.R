@@ -62,8 +62,8 @@ method(chronon_cardinality, list(cal_time_civil$second, cal_time_lunar$phase)) <
 }
 
 # The number of lunar phases in a lunar (synodic) month
-method(chronon_cardinality, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(x, y, at = NULL) {
-  y@n*8L/x@n
+method(chronon_cardinality_fixed, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(x, y) {
+  8L
 }
 
 # The number of UTC seconds in a lunar (synodic) phase

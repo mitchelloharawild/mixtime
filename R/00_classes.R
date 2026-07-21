@@ -16,14 +16,25 @@
 #' constructor functions accessible via `$` notation (e.g., `calendar$day(1L)`).
 #' 
 #' @section Calendar Algebra Methods:
-#' 
-#' Time units enable calendar arithmetic through two key generic methods
+#'
+#' Time units enable calendar arithmetic through key generic methods
 #' that should be implemented for custom time units:
-#' 
+#'
+#' * `chronon_cardinality_fixed(x, y)` - Returns the number of unit `x`
+#'   granules that fit within one unit `y` granule, for relationships that are
+#'   a constant, context-independent number (e.g., 7 days per week, 24 hours
+#'   per day). Prefer this over `chronon_cardinality()` whenever the
+#'   relationship does not depend on `at`, since it is also used to determine
+#'   which relationships are safe to use for [chronon_divmod()]'s graph
+#'   traversal.
+#'
 #' * `chronon_cardinality(x, y, at)` - Returns the number of `x` granule
-#'   that fit within one `y` granule This can be a fixed value (e.g.,
-#'   7 days per week) or variable based on `at` (e.g., 28-31 days per month).
-#'   
+#'   that fit within one `y` granule. This is variable based on `at` (e.g.,
+#'   28-31 days per month). Only implement this directly (rather than
+#'   `chronon_cardinality_fixed()`) when the relationship genuinely depends on
+#'   `at`, and pair it with a direct `chronon_divmod()` method so that the
+#'   relationship remains reachable during graph traversal.
+#'
 #' * `chronon_divmod(x, from, to)` - Converts time point `x` from granules of
 #'   `from` to granules of `to`, returning a list with `div` (the quotient)
 #'   and `mod`. This enables conversions between granules that have
