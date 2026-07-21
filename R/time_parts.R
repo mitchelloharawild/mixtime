@@ -31,7 +31,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   # Find suitable graph path for repeated chronon_divmod() calls
   # that computes all cyclical and linear parts.
   path <- S7_graph_dispatch_multi(
-    signatures = method_signatures(chronon_cardinality),
+    graph      = chronon_cardinality_graph(),
     start      = start_tu,
     terminals  = linear,
     groups     = cyclical
