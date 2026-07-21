@@ -152,3 +152,37 @@ test_that("get_tz_transitions handles time ranges with no transitions", {
   expect_s3_class(transitions, "data.frame")
   expect_equal(nrow(transitions), 0)
 })
+
+test_that("the common chronon keeps a timezone the inputs agree on", {
+  # The common chronon is found as the greatest lower bound of the inputs, which
+  # is built from the granule's class alone. Properties describing the time
+  # rather than its granularity (such as the timezone) must be carried across,
+  # otherwise combining two Melbourne times gives a timezone-naive result which
+  # can no longer be converted back to either input.
+  tz <- "Australia/Melbourne"
+  secs <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = tz))
+  hrs <- linear_time(
+    as.POSIXct("2015-01-01 00:00:00", tz = tz),
+    cal_gregorian$hour(1L)
+  )
+
+  expect_equal(tz_name(chronon_common(c(secs, secs))), tz)
+  expect_equal(tz_name(chronon_common(c(secs, hrs))), tz)
+
+  # Combining no longer drops the timezone, whichever way round it is done.
+  expect_equal(unique(tz_name(c(secs, hrs))), tz)
+  expect_equal(unique(tz_name(c(hrs, secs))), tz)
+})
+
+test_that("the common chronon of disagreeing timezones is naive", {
+  # A common chronon that claimed one of the input timezones would silently
+  # move the other input's time points.
+  melb <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "Australia/Melbourne"))
+  utc <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "UTC"))
+  naive <- datetime(melb, tz = NA)
+
+  expect_true(is.na(tz_name(chronon_common(c(melb, utc)))))
+  # Naive time cannot be represented in a timezone, so a naive input keeps the
+  # common chronon naive rather than being adopted into the other's zone.
+  expect_true(is.na(tz_name(chronon_common(c(melb, naive)))))
+})
