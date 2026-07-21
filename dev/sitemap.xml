@@ -15,6 +15,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_lunar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_time_solar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_divmod.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_epoch.html</loc></url>

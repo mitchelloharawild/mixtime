@@ -2,6 +2,25 @@
 
 ## mixtime (development version)
 
+### New features
+
+- Added
+  [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md),
+  a variant of
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+  for time granule pairs whose relationship is a constant,
+  context-independent number (e.g., 60 seconds in a minute) rather than
+  dependent on an `at` time point (e.g., 28-31 days in a month).
+
+### Improvements
+
+- Substantially faster performance by caching the granule cardinality
+  graph (used by `chronon_convert()`,
+  [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_divmod.md),
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)
+  and `time_parts()`) and tzdb names (used in operations with
+  timezones).
+
 ## mixtime 0.2.0
 
 CRAN release: 2026-06-28

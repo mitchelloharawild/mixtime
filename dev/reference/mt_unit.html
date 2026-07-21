@@ -107,10 +107,20 @@ constructor functions accessible via <code>$</code> notation (e.g., <code>calend
 
 
 
-<p>Time units enable calendar arithmetic through two key generic methods
-that should be implemented for custom time units:</p><ul><li><p><code>chronon_cardinality(x, y, at)</code> - Returns the number of <code>x</code> granule
-that fit within one <code>y</code> granule This can be a fixed value (e.g.,
-7 days per week) or variable based on <code>at</code> (e.g., 28-31 days per month).</p></li>
+<p>Time units enable calendar arithmetic through key generic methods
+that should be implemented for custom time units:</p><ul><li><p><code>chronon_cardinality_fixed(x, y)</code> - Returns the number of unit <code>x</code>
+granules that fit within one unit <code>y</code> granule, for relationships that are
+a constant, context-independent number (e.g., 7 days per week, 24 hours
+per day). Prefer this over <code><a href="chronon_cardinality.html">chronon_cardinality()</a></code> whenever the
+relationship does not depend on <code>at</code>, since it is also used to determine
+which relationships are safe to use for <code><a href="chronon_divmod.html">chronon_divmod()</a></code>'s graph
+traversal.</p></li>
+<li><p><code>chronon_cardinality(x, y, at)</code> - Returns the number of <code>x</code> granule
+that fit within one <code>y</code> granule. This is variable based on <code>at</code> (e.g.,
+28-31 days per month). Only implement this directly (rather than
+<code><a href="chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code>) when the relationship genuinely depends on
+<code>at</code>, and pair it with a direct <code><a href="chronon_divmod.html">chronon_divmod()</a></code> method so that the
+relationship remains reachable during graph traversal.</p></li>
 <li><p><code>chronon_divmod(x, from, to)</code> - Converts time point <code>x</code> from granules of
 <code>from</code> to granules of <code>to</code>, returning a list with <code>div</code> (the quotient)
 and <code>mod</code>. This enables conversions between granules that have

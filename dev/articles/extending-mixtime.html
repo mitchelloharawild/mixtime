@@ -98,7 +98,8 @@ temporal relationships between time units:
 <ul>
 <li>
 <a href="#cardinality">Cardinality</a>: Define the number of finer
-units in a coarser unit with <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code>
+units in a coarser unit with <code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code>
+and <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code>
 </li>
 <li>
 <a href="#divmod">Divmod</a>: Define the division and remainder of
@@ -261,13 +262,15 @@ below.</p>
 <div class="section level2">
 <h2 id="calendar-arithmetic">Calendar arithmetic<a class="anchor" aria-label="anchor" href="#calendar-arithmetic"></a>
 </h2>
-<p>Two S7 generics drive all calendar calculations:
+<p>Three S7 generics drive all calendar calculations:
+<code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code>,
 <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> and <code><a href="../reference/chronon_divmod.html">chronon_divmod()</a></code>.
 These functions are used to manipulate time, such as converting between
 units, generating sequences, and comparing time points. The details of
 how they work are not important for users of the calendar, but they are
 the main extension points for developers creating new calendars.</p>
 <p>For a time unit to be useful in mixtime, at minimum a
+<code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> or
 <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> method between itself and the next
 coarser unit must be defined. Time units with irregular relationships
 (e.g. days → months) also require <code><a href="../reference/chronon_divmod.html">chronon_divmod()</a></code> to
@@ -288,29 +291,40 @@ cardinality of <code>cal_isoweek$day(1L)</code> in terms of
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/chronon_cardinality.html">chronon_cardinality</a></span><span class="op">(</span><span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 7</span></span></code></pre></div>
-<p>For units with a fixed relationship (e.g. 7 days per week) the
-<code>at</code> argument can be ignored. The <code>at</code> variable
-disambiguates the point in time for variable cardinalities (e.g. days
-per month), <code>at</code> is the internal numeric representation of
-time in the coarser unit (e.g. months since epoch for days →
-months).</p>
+<p>Units with a fixed relationship (e.g. 7 days per week) don’t need a
+time context, so they should be defined with
+<code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> instead, which takes just the
+two units (no <code>at</code>) and returns the number of unit
+(<code>n = 1L</code>) <code>x</code> granules that fit within one unit
+<code>y</code> granule. Defining
+<code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> for a pair automatically
+provides the corresponding <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> method
+(scaled by the requested granule sizes), and is what allows the
+relationship to be used when deriving <code><a href="../reference/chronon_divmod.html">chronon_divmod()</a></code> by
+graph traversal (see <a href="#divmod">Divmod</a>) — a plain
+<code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> method cannot be used there since no
+<code>at</code> is available mid-traversal.</p>
+<p>In the Symmetry454 calendar every year has exactly 12 months (a fixed
+relationship).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Each Symmetry454 year has 12 months</span></span>
+<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_cardinality_fixed</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fl">12L</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="fu"><a href="../reference/chronon_cardinality.html">chronon_cardinality</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 12</span></span></code></pre></div>
+<p>Variable cardinalities (e.g. days per month) instead need a
+<code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> method, disambiguated by the
+<code>at</code> argument: the internal numeric representation of time in
+the coarser unit (e.g. months since epoch for days → months).</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/chronon_cardinality.html">chronon_cardinality</a></span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, at <span class="op">=</span> <span class="fl">0L</span><span class="op">)</span> <span class="co"># Jan 1970</span></span>
 <span><span class="co">#&gt; [1] 31</span></span>
 <span><span class="fu"><a href="../reference/chronon_cardinality.html">chronon_cardinality</a></span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, at <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="co"># Feb 1970</span></span>
 <span><span class="co">#&gt; [1] 28</span></span>
 <span><span class="fu"><a href="../reference/chronon_cardinality.html">chronon_cardinality</a></span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, at <span class="op">=</span> <span class="fl">25L</span><span class="op">)</span> <span class="co"># Feb 1972 (leap year)</span></span>
 <span><span class="co">#&gt; [1] 29</span></span></code></pre></div>
-<p>In the Symmetry454 calendar every year has exactly 12 months (a fixed
-relationship).</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Each Symmetry454 year has 12 months</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_cardinality</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">at</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">y</span><span class="op">@</span><span class="va">n</span> <span class="op">*</span> <span class="fl">12L</span> <span class="op">/</span> <span class="va">x</span><span class="op">@</span><span class="va">n</span></span>
-<span>  <span class="op">}</span></span>
-<span><span class="fu"><a href="../reference/chronon_cardinality.html">chronon_cardinality</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 12</span></span></code></pre></div>
 <p>The number of weeks in each month follows the repeating
 <strong>4–5–4</strong> pattern across each quarter (months 1–3: 4, 5, 4
 weeks; months 4–6: 4, 5, 4 weeks; and so on). The <code><a href="../reference/circsum.html">circsum()</a></code>
@@ -399,7 +413,7 @@ between time granules and is defined with <code><a href="../reference/chronon_di
 methods. These methods are required to efficiently convert between units
 with irregular relationships, such as days → months. For regular
 relationships (e.g. days → weeks) the divmod is automatically derived
-from <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> methods alone.</p>
+from <code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> methods alone.</p>
 <p><code>chronon_divmod(from, to, x)</code> converts times
 <code>x</code> in the <code>from</code> granules into time points in
 <code>to</code> granules. For example, the date “1970-02-15” is day 45

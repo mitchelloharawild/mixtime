@@ -25,6 +25,8 @@ The extension points covered are:
   relationships between time units:
   - [Cardinality](#cardinality): Define the number of finer units in a
     coarser unit with
+    [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
+    and
     [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
   - [Divmod](#divmod): Define the division and remainder of time units
     with
@@ -185,7 +187,8 @@ calendar arithmetic methods described below.
 
 ## Calendar arithmetic
 
-Two S7 generics drive all calendar calculations:
+Three S7 generics drive all calendar calculations:
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md),
 [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
 and
 [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_divmod.md).
@@ -195,6 +198,8 @@ how they work are not important for users of the calendar, but they are
 the main extension points for developers creating new calendars.
 
 For a time unit to be useful in mixtime, at minimum a
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
+or
 [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
 method between itself and the next coarser unit must be defined. Time
 units with irregular relationships (e.g. days → months) also require
@@ -220,11 +225,41 @@ chronon_cardinality(cal_isoweek$day(1L), cal_isoweek$week(1L))
 #> [1] 7
 ```
 
-For units with a fixed relationship (e.g. 7 days per week) the `at`
-argument can be ignored. The `at` variable disambiguates the point in
-time for variable cardinalities (e.g. days per month), `at` is the
-internal numeric representation of time in the coarser unit (e.g. months
-since epoch for days → months).
+Units with a fixed relationship (e.g. 7 days per week) don’t need a time
+context, so they should be defined with
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
+instead, which takes just the two units (no `at`) and returns the number
+of unit (`n = 1L`) `x` granules that fit within one unit `y` granule.
+Defining
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
+for a pair automatically provides the corresponding
+[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+method (scaled by the requested granule sizes), and is what allows the
+relationship to be used when deriving
+[`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_divmod.md)
+by graph traversal (see [Divmod](#divmod)) — a plain
+[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+method cannot be used there since no `at` is available mid-traversal.
+
+In the Symmetry454 calendar every year has exactly 12 months (a fixed
+relationship).
+
+``` r
+
+# Each Symmetry454 year has 12 months
+S7::method(chronon_cardinality_fixed, list(cal_symmetry454$month, cal_symmetry454$year)) <-
+  function(x, y) {
+    12L
+  }
+chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$year(1L))
+#> [1] 12
+```
+
+Variable cardinalities (e.g. days per month) instead need a
+[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+method, disambiguated by the `at` argument: the internal numeric
+representation of time in the coarser unit (e.g. months since epoch for
+days → months).
 
 ``` r
 
@@ -234,20 +269,6 @@ chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 1L) # F
 #> [1] 28
 chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 25L) # Feb 1972 (leap year)
 #> [1] 29
-```
-
-In the Symmetry454 calendar every year has exactly 12 months (a fixed
-relationship).
-
-``` r
-
-# Each Symmetry454 year has 12 months
-S7::method(chronon_cardinality, list(cal_symmetry454$month, cal_symmetry454$year)) <-
-  function(x, y, at = NULL) {
-    y@n * 12L / x@n
-  }
-chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$year(1L))
-#> [1] 12
 ```
 
 The number of weeks in each month follows the repeating **4–5–4**
@@ -351,7 +372,7 @@ methods. These methods are required to efficiently convert between units
 with irregular relationships, such as days → months. For regular
 relationships (e.g. days → weeks) the divmod is automatically derived
 from
-[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
 methods alone.
 
 `chronon_divmod(from, to, x)` converts times `x` in the `from` granules

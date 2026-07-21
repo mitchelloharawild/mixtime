@@ -74,8 +74,11 @@ time_calendar(yearweek(Sys.Date()))
 
 # A mixed time object returns a list of calendars
 time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
-#> <cal_time_civil>
+#> <cal_gregorian>
 #> Time units:
+#>   - year
+#>   - quarter
+#>   - month
 #>   - day
 #>   - ampm
 #>   - hour
