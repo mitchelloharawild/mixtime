@@ -46,16 +46,7 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   }
   
   # Find path along convertable time units
-  path <- S7_graph_dispatch(
-    unique(c(
-      # Chronon divmod should be directional
-      method_signatures(chronon_divmod),
-      # Chronon cardinality is a undirected fallback
-      method_signatures(chronon_cardinality)
-    )),
-    from,
-    to
-  )
+  path <- S7_graph_dispatch(chronon_divmod_graph(), from, to)
 
   # Convert to target tz naive time for standard chronon boundaries
   # Skipped if:  

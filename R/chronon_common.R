@@ -74,7 +74,7 @@ chronon_common_impl <- function(chronons, .ptype = NULL) {
   # The cardinality methods are directional
   # (such that `x` is a finer chronon than `y`)
   # Construct a graph of the methods to find the common root chronon.
-  glb <- S7_graph_glb(method_signatures(chronon_cardinality), chronons)(1L)
+  glb <- S7_graph_glb(chronon_cardinality_graph(), chronons)(1L)
 
 
   # Restore properties of the common chronon from the input chronons. 

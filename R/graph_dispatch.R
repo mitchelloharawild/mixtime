@@ -41,28 +41,69 @@ method_signatures <- function(generic) {
   traverse_methods(generic@methods)
 }
 
-S7_graph_dispatch <- function(signatures, start, end) {
-  # Find all unique classes (the graph dispatch nodes)
-  classes <- vec_unique(list_unchop(signatures))
+S7_signature_id <- function(sig) {
+  # If the argument is an S7 class, return the class identifiers (package and name)
+  if (!is.list(sig)) return(S7_class_id(sig))
 
-  S7_signature_id <- function(sig) {
-    # If the argument is an S7 class, return the class identifiers (package and name)
-    if (!is.list(sig)) return(S7_class_id(sig))
-    
-    # Iterate within the signature to access S7 classes
-    lapply(sig, S7_signature_id)
-  }
-  
-  chr_signatures <- S7_signature_id(signatures)
+  # Iterate within the signature to access S7 classes
+  lapply(sig, S7_signature_id)
+}
+
+# Compile a signature list into the flattened graph structures shared by
+# S7_graph_dispatch(), S7_graph_dispatch_multi() and S7_graph_glb(): the
+# de-duplicated node classes, their character ids, and integer edge endpoints.
+compile_signature_graph <- function(signatures) {
+  classes <- vec_unique(list_unchop(signatures))
   chr_classes <- vapply(classes, S7_class_id, character(1L))
 
-  int_nodes <- seq_along(classes)
-  int_edges <- vec_match(unlist(chr_signatures), chr_classes)
-  int_edge_from <- int_edges[seq(1, length(int_edges), by = 2)]
-  int_edge_to <- int_edges[seq(2, length(int_edges), by = 2)]
-  
-  int_node_start <- vec_match(S7_class_id(start), chr_classes)
-  int_node_end <- vec_match(S7_class_id(end), chr_classes)
+  int_edges <- vec_match(unlist(S7_signature_id(signatures)), chr_classes)
+
+  list(
+    classes = classes,
+    chr_classes = chr_classes,
+    edge_from = int_edges[seq(1, length(int_edges), by = 2)],
+    edge_to = int_edges[seq(2, length(int_edges), by = 2)]
+  )
+}
+
+# Cache of compiled signature graphs used for chronon graph dispatch.
+#
+# The registered S7 methods for chronon_divmod()/chronon_cardinality() are
+# fixed after package load for the built-in calendars, and extensions only
+# ever add methods (S7 provides no way to remove one), so the graphs
+# compiled from them are cached and only rebuilt when a raw (pre-dedup)
+# signature count changes. This avoids re-deriving the dispatch graph
+# (unique()-ing ~35 signature objects) on every chronon_convert() call.
+.chronon_signature_cache <- new.env(parent = emptyenv())
+
+chronon_divmod_graph <- function() {
+  sig_divmod <- method_signatures(chronon_divmod)
+  sig_card <- method_signatures(chronon_cardinality)
+  n <- length(sig_divmod) + length(sig_card)
+
+  cache <- .chronon_signature_cache
+  if (!identical(cache$divmod_n, n)) {
+    cache$divmod_n <- n
+    cache$divmod_graph <- compile_signature_graph(unique(c(sig_divmod, sig_card)))
+  }
+  cache$divmod_graph
+}
+
+chronon_cardinality_graph <- function() {
+  sig_card <- method_signatures(chronon_cardinality)
+  n <- length(sig_card)
+
+  cache <- .chronon_signature_cache
+  if (!identical(cache$cardinality_n, n)) {
+    cache$cardinality_n <- n
+    cache$cardinality_graph <- compile_signature_graph(sig_card)
+  }
+  cache$cardinality_graph
+}
+
+S7_graph_dispatch <- function(graph, start, end) {
+  int_node_start <- vec_match(S7_class_id(start), graph$chr_classes)
+  int_node_end <- vec_match(S7_class_id(end), graph$chr_classes)
   if (is.na(int_node_start) || is.na(int_node_end)) {
     missing_units <- c(
       if (is.na(int_node_start)) S7_class_id(start),
@@ -79,8 +120,8 @@ S7_graph_dispatch <- function(signatures, start, end) {
   }
 
   int_path <- bfs_shortest_path(
-    from = int_edge_from,
-    to = int_edge_to,
+    from = graph$edge_from,
+    to = graph$edge_to,
     start = int_node_start,
     end = int_node_end
   )
@@ -97,7 +138,7 @@ S7_graph_dispatch <- function(signatures, start, end) {
   }
 
   # Instantiate path of classed S7 objects for dispatch
-  classes[int_path]
+  graph$classes[int_path]
 }
 
 S7_class_id <- function(x) {
@@ -255,20 +296,8 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
   return(integer(0))
 }
 
-S7_graph_dispatch_multi <- function(signatures, start, terminals = list(), groups = list()) {
-  classes <- vec_unique(list_unchop(signatures))
-
-  S7_signature_id <- function(sig) {
-    if (!is.list(sig)) return(S7_class_id(sig))
-    lapply(sig, S7_signature_id)
-  }
-
-  chr_signatures <- S7_signature_id(signatures)
-  chr_classes    <- vapply(classes, S7_class_id, character(1L))
-
-  int_edges     <- vec_match(unlist(chr_signatures), chr_classes)
-  int_edge_from <- int_edges[seq(1, length(int_edges), by = 2)]
-  int_edge_to   <- int_edges[seq(2, length(int_edges), by = 2)]
+S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = list()) {
+  chr_classes <- graph$chr_classes
 
   int_start <- vec_match(S7_class_id(start), chr_classes)
 
@@ -285,8 +314,8 @@ S7_graph_dispatch_multi <- function(signatures, start, terminals = list(), group
   })
 
   int_tree <- steiner_tree_paths(
-    from      = int_edge_from,
-    to        = int_edge_to,
+    from      = graph$edge_from,
+    to        = graph$edge_to,
     start     = int_start,
     terminals = int_terminals,
     groups    = int_groups
@@ -303,7 +332,7 @@ S7_graph_dispatch_multi <- function(signatures, start, terminals = list(), group
     resolved <- if (!is.na(match_i)) {
       all_objects[[match_i]]
     } else {
-      classes[[node$node]](1L)
+      graph$classes[[node$node]](1L)
     }
 
     list(
@@ -398,31 +427,12 @@ steiner_tree_paths <- function(
   tree
 }
 
-S7_graph_glb <- function(signatures, chronons) {
-  # Find all unique classes (the graph dispatch nodes)
-  classes <- vec_unique(list_unchop(signatures))
-
-  S7_signature_id <- function(sig) {
-    # If the argument is an S7 class, return the class identifiers (package and name)
-    if (!is.list(sig)) return(S7_class_id(sig))
-    
-    # Iterate within the signature to access S7 classes
-    lapply(sig, S7_signature_id)
-  }
-  
-  chr_signatures <- S7_signature_id(signatures)
-  chr_classes <- vapply(classes, S7_class_id, character(1L))
-
-  int_nodes <- seq_along(classes)
-  int_edges <- vec_match(unlist(chr_signatures), chr_classes)
-  int_edge_from <- int_edges[seq(1, length(int_edges), by = 2)]
-  int_edge_to <- int_edges[seq(2, length(int_edges), by = 2)]
-  
-  int_chronons <- vec_match(vapply(chronons, S7_class_id, character(1L)), chr_classes)
+S7_graph_glb <- function(graph, chronons) {
+  int_chronons <- vec_match(vapply(chronons, S7_class_id, character(1L)), graph$chr_classes)
 
   int_glb <- greatest_lower_bound(
-    from = int_edge_from,
-    to = int_edge_to,
+    from = graph$edge_from,
+    to = graph$edge_to,
     nodes = int_chronons
   )
 
@@ -434,7 +444,7 @@ S7_graph_glb <- function(signatures, chronons) {
   }
 
   # Return glb
-  classes[[int_glb]]
+  graph$classes[[int_glb]]
 }
 
 # Finds the greatest lower bound that contains all `nodes` in a graph defined by

@@ -41,16 +41,7 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
 
   # Apply graph dispatch to find shortest path between from and to using
   # divmod conversions between time granules (e.g. day -> month)
-  path <- S7_graph_dispatch(
-    unique(c(
-      # Chronon divmod should be directional
-      method_signatures(chronon_divmod),
-      # Chronon cardinality is a undirected fallback
-      method_signatures(chronon_cardinality)
-    )),
-    from,
-    to
-  )
+  path <- S7_graph_dispatch(chronon_divmod_graph(), from, to)
 
   path[[1]] <- from
   path[[length(path)]] <- to

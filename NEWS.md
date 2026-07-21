@@ -1,5 +1,11 @@
 # mixtime (development version)
 
+## Improvements
+
+* Substantially faster performance by caching the granule cardinality graph 
+  (used by `chronon_convert()`, `chronon_divmod()`, `chronon_common()` and
+   `time_parts()`).
+
 # mixtime 0.2.0
 
 ## New features
