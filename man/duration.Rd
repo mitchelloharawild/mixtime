@@ -4,16 +4,26 @@
 \alias{duration}
 \title{Duration vectors}
 \usage{
-duration(data, chronon = time_chronon(data), calendar = time_calendar(data))
+duration(
+  data,
+  chronon = time_chronon(data),
+  discrete = NULL,
+  calendar = time_calendar(data)
+)
 }
 \arguments{
-\item{data}{A time vector of duration magnitudes.}
+\item{data}{A time vector of duration magnitudes, or an existing
+\code{\link[=duration]{duration()}} vector to convert to \code{chronon} granules.}
 
 \item{chronon}{A time granule expression representing the chronon, evaluated
 in the context of \code{calendar}. Use unquoted expressions like \code{month(1L)} or
 \code{day(1L)}. Chronons from a specific calendar can also be used (e.g.
 \code{cal_gregorian$month(1L)}). Defaults to the time chronon of the input
 \code{data} (\code{time_chronon(data)}).}
+
+\item{discrete}{Logical. If \code{TRUE} (default), returns integer durations
+always rounding down (discrete time model). If \code{FALSE}, returns fractional
+durations (continuous time model).}
 
 \item{calendar}{Calendar system used to evaluate \code{chronon}. Defaults to
 \code{time_calendar(data)} for existing time objects. Common options include
@@ -33,6 +43,10 @@ duration(3L, cal_gregorian$month(1L))
 
 # A vector of durations in days
 duration(1:7, cal_gregorian$day(1L))
+
+# Convert a duration of 4 days into weeks
+duration(days(4), cal_isoweek$week(1L), discrete = FALSE)
+duration(days(4), cal_isoweek$week(1L), discrete = TRUE)
 
 }
 \seealso{

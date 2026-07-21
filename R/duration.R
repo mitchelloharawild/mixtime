@@ -4,43 +4,71 @@
 #' Durations represent a fixed span of time measured in a given time granule
 #' (e.g., 3 months, 5 days), without reference to a specific point in time.
 #' 
-#' @param data A time vector of duration magnitudes.
+#' @param data A time vector of duration magnitudes, or an existing
+#'  [duration()] vector to convert to `chronon` granules.
 #' @param chronon A time granule expression representing the chronon, evaluated
 #'  in the context of `calendar`. Use unquoted expressions like `month(1L)` or
-#'  `day(1L)`. Chronons from a specific calendar can also be used (e.g. 
+#'  `day(1L)`. Chronons from a specific calendar can also be used (e.g.
 #'  `cal_gregorian$month(1L)`). Defaults to the time chronon of the input
 #'  `data` (`time_chronon(data)`).
+#' @param discrete Logical. If `TRUE` (default), returns integer durations 
+#'   always rounding down (discrete time model). If `FALSE`, returns fractional 
+#'   durations (continuous time model).
 #' @param calendar Calendar system used to evaluate `chronon`. Defaults to
 #'   `time_calendar(data)` for existing time objects. Common options include
 #'   [cal_gregorian] and [cal_isoweek].
-#' 
+#'
 #' @return A `mixtime` vector containing an `mt_duration` vector.
-#' 
-#' @seealso 
+#'
+#' @seealso
 #' - [new_duration_fn()] for creating reusable duration functions
 #' - [cal_gregorian], [cal_isoweek] for calendar systems
-#' 
+#'
 #' @examples
 #' # A duration of 3 months
 #' duration(3L, cal_gregorian$month(1L))
-#' 
+#'
 #' # A vector of durations in days
 #' duration(1:7, cal_gregorian$day(1L))
-#' 
+#'
+#' # Convert a duration of 4 days into weeks
+#' duration(days(4), cal_isoweek$week(1L), discrete = FALSE)
+#' duration(days(4), cal_isoweek$week(1L), discrete = TRUE)
+#'
 #' @export
 duration <- function(
-  data, chronon = time_chronon(data), calendar = time_calendar(data)
+  data, chronon = time_chronon(data), discrete = NULL,
+  calendar = time_calendar(data)
 ) {
-  if (!is.numeric(data)) {
-    cli::cli_abort("{.var data} must be a numeric vector.", call. = FALSE)
-  }
-
   # Evaluate chronon and cycle with a calendar mask
   quo_chronon <- enquo(chronon)
   chronon <- eval_tidy(quo_chronon, data = calendar, env = emptyenv())
 
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time granule object.", call. = FALSE)
+  }
+
+  # Convert an existing duration into the requested chronon
+  if (is_mixtime(data) && is_time_duration(data)[1L]) {
+    if (length(data@x) > 1L) {
+      cli::cli_abort(
+        c(
+          "{.fn duration} currently only supports converting durations with a single chronon.",
+          i = "To combine several chronons, combine several duration vectors with {.fun c}."
+        ),
+        call = NULL
+      )
+    }
+    raw <- data@x[[1L]]
+    from_chronon <- attr(raw, "chronon")
+    if (is.null(discrete)) discrete <- is.integer(vec_data(raw))
+    x <- as.numeric(data) * chronon_cardinality(chronon, from_chronon)
+    if (discrete) x <- as.integer(floor(x))
+    return(new_mixtime(new_time(x, chronon = chronon, class = "mt_duration")))
+  }
+
+  if (!is.numeric(data)) {
+    cli::cli_abort("{.var data} must be a numeric vector.", call. = FALSE)
   }
   new_mixtime(new_time(data, chronon = chronon, class = "mt_duration"))
 }

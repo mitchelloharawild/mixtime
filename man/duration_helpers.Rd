@@ -32,7 +32,8 @@ seconds(data, calendar = time_calendar(data), ...)
 milliseconds(data, calendar = time_calendar(data), ...)
 }
 \arguments{
-\item{data}{A time vector of duration magnitudes.}
+\item{data}{A time vector of duration magnitudes, or an existing
+\code{\link[=duration]{duration()}} vector to convert to \code{chronon} granules.}
 
 \item{calendar}{Calendar system used to evaluate \code{chronon}. Defaults to
 \code{time_calendar(data)} for existing time objects. Common options include

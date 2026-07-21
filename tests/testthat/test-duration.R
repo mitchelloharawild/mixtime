@@ -81,3 +81,28 @@ test_that("vector of fractional durations formats correctly", {
     c("1.0 minutes", "1.1 minutes", "NA")
   )
 })
+
+# ---------------------------------------------------------------------------
+# Converting between duration chronons
+# ---------------------------------------------------------------------------
+
+test_that("converting a duration to a coarser chronon is continuous by default for doubles", {
+  expect_equal(as.numeric(duration(days(4.0), cal_isoweek$week(1L))), 4/7)
+})
+
+test_that("converting a duration to a coarser chronon is discrete by default for integers", {
+  expect_identical(as.integer(duration(days(4L), cal_isoweek$week(1L))), 0L)
+})
+
+test_that("discrete = FALSE returns a fractional duration", {
+  expect_equal(as.numeric(duration(days(4L), cal_isoweek$week(1L), discrete = FALSE)), 4/7)
+})
+
+test_that("discrete = TRUE truncates to whole units", {
+  expect_identical(as.integer(duration(days(4), cal_isoweek$week(1L), discrete = TRUE)), 0L)
+  expect_identical(as.integer(duration(days(10), cal_isoweek$week(1L), discrete = TRUE)), 1L)
+})
+
+test_that("converting a duration to a finer chronon multiplies the magnitude", {
+  expect_equal(as.numeric(duration(weeks(2L), cal_gregorian$day(1L))), 14)
+})
