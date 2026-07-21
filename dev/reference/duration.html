@@ -49,7 +49,12 @@ Durations represent a fixed span of time measured in a given time granule
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">duration</span><span class="op">(</span><span class="va">data</span>, chronon <span class="op">=</span> <span class="fu"><a href="time_chronon.html">time_chronon</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">duration</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  chronon <span class="op">=</span> <span class="fu"><a href="time_chronon.html">time_chronon</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span>
+<span>  discrete <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  calendar <span class="op">=</span> <span class="fu"><a href="time_calendar.html">time_calendar</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -57,7 +62,8 @@ Durations represent a fixed span of time measured in a given time granule
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A time vector of duration magnitudes.</p></dd>
+<dd><p>A time vector of duration magnitudes, or an existing
+<code>duration()</code> vector to convert to <code>chronon</code> granules.</p></dd>
 
 
 <dt id="arg-chronon">chronon<a class="anchor" aria-label="anchor" href="#arg-chronon"></a></dt>
@@ -66,6 +72,12 @@ in the context of <code>calendar</code>. Use unquoted expressions like <code>mon
 <code>day(1L)</code>. Chronons from a specific calendar can also be used (e.g.
 <code>cal_gregorian$month(1L)</code>). Defaults to the time chronon of the input
 <code>data</code> (<code>time_chronon(data)</code>).</p></dd>
+
+
+<dt id="arg-discrete">discrete<a class="anchor" aria-label="anchor" href="#arg-discrete"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (default), returns integer durations
+always rounding down (discrete time model). If <code>FALSE</code>, returns fractional
+durations (continuous time model).</p></dd>
 
 
 <dt id="arg-calendar">calendar<a class="anchor" aria-label="anchor" href="#arg-calendar"></a></dt>
@@ -97,6 +109,14 @@ in the context of <code>calendar</code>. Use unquoted expressions like <code>mon
 <span class="r-in"><span><span class="fu">duration</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, <span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[7]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 day  2 days 3 days 4 days 5 days 6 days 7 days</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Convert a duration of 4 days into weeks</span></span></span>
+<span class="r-in"><span><span class="fu">duration</span><span class="op">(</span><span class="fu"><a href="duration_helpers.html">days</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5714286 weeks</span>
+<span class="r-in"><span><span class="fu">duration</span><span class="op">(</span><span class="fu"><a href="duration_helpers.html">days</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, discrete <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 weeks</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
