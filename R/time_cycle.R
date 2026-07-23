@@ -29,7 +29,7 @@ S7::method(time_cycle, class_mixtime) <- function(x) {
   x
 }
 
-S7::method(time_cycle, S7::new_S3_class("mt_time")) <- function(x) {
+S7::method(time_cycle, mt_time) <- function(x) {
   if (is.null(attr(x, "cycle"))) {
     return(duration(NA_real_, mt_unit(1L)))
   }

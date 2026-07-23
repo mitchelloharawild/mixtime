@@ -36,7 +36,7 @@ time_round <- new_generic("time_round", "x", function(x, granule, ...) {
 method(time_round, class_mixtime) <- vecvec::vecvec_apply_fn(time_round)
 method(time_round, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
-  if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
+  if (S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
@@ -79,7 +79,7 @@ time_ceiling <- new_generic("time_ceiling", "x", function(x, granule, ...) {
 method(time_ceiling, class_mixtime) <- vecvec::vecvec_apply_fn(time_ceiling)
 method(time_ceiling, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
-  if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
+  if (S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }
@@ -122,7 +122,7 @@ time_floor <- new_generic("time_floor", "x", function(x, granule, ...) {
 method(time_floor, class_mixtime) <- vecvec::vecvec_apply_fn(time_floor)
 method(time_floor, S7::class_any) <- function(x, granule, ...) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
-  if (S7::S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
+  if (S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
   if (length(granule) != 1L) {
     cli::cli_abort("{.var granule} must be a single time duration", call. = FALSE)
   }

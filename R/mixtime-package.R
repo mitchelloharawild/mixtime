@@ -9,7 +9,7 @@
 #' @import lifecycle
 #' @import vctrs
 #' @importFrom rlang ensym ensyms enexpr enexprs enquo enquos sym syms expr exprs quo quos eval_tidy
-#' @importFrom S7 method<- super new_generic new_class new_property class_any
+#' @importFrom S7 method<- super new_generic new_class new_property class_any S7_inherits S7_data S7_data<-
 #' @importFrom vecvec vecvec_apply unvecvec
 #' @useDynLib mixtime, .registration = TRUE
 ## usethis namespace: end

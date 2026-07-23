@@ -8,8 +8,8 @@
 #' @return A `mixtime` object, which allows mixed-type time vectors to coexist in a single vector.
 #' 
 #' @export
-new_mixtime <- function(x = new_time()) {
-  stopifnot(inherits(x, "mt_time"))
+new_mixtime <- function(x = mt_linear()) {
+  stopifnot(S7_inherits(x, mt_time))
   class_mixtime(list(x))
 }
 
@@ -140,36 +140,12 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
   }
 
   new_mixtime(
-    new_time(
-      data,
-      chronon,
-      cycle,
-      if (is.null(cycle)) "mt_linear" else "mt_cyclical"
-    )
+    if (is.null(cycle)) {
+      mt_linear(data, chronon = chronon)
+    } else {
+      mt_cyclical(data, chronon = chronon, cycle = cycle)
+    }
   )
-}
-
-#' Convert a time class into a mixtime
-#'
-#' Coerces a time object (e.g. `Date`, `POSIXct`, `yearmonth`) to a `mixtime`
-#' vector using [vctrs::vec_cast()]. The chronon and cycle are inferred from
-#' `x` via [time_chronon()] and [time_cycle()].
-#'
-#' @param x A time value to convert to a `mixtime`. Any time class with a defined `time_chronon()` method can be converted (e.g. `Date`, `POSIXct`, `yearmonth`, etc.).
-#' @param ... Additional arguments passed to the underlying [vec_cast()] method.
-#'
-#' @return A `mixtime` object corresponding to `x`.
-#'
-#' @seealso [mixtime()] for constructing a `mixtime` directly from data,
-#'   [is_mixtime()] for testing if an object is a `mixtime`.
-#'
-#' @examples
-#' as_mixtime(Sys.Date())
-#' as_mixtime(Sys.time())
-#'
-#' @export
-as_mixtime <- function(x, ...) {
-  vec_cast(x, new_mixtime())
 }
 
 #' Check if an object is a mixtime
@@ -190,7 +166,7 @@ as_mixtime <- function(x, ...) {
 #'
 #' @export
 is_mixtime <- function(x) {
-  S7::S7_inherits(x, class_mixtime)
+  S7_inherits(x, class_mixtime)
 }
 
 #' @method Summary mixtime::mixtime

@@ -31,7 +31,7 @@ S7::method(time_chronon, class_mixtime) <- function(x) {
   x
 }
 
-S7::method(time_chronon, S7::new_S3_class("mt_time")) <- function(x) {
+S7::method(time_chronon, mt_time) <- function(x) {
   duration(rep(1L, length(x)), attr(x, "chronon"))
 }
 

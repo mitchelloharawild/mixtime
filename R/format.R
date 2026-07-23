@@ -2,7 +2,7 @@
 mt_unit_display <- function(x, units, parts, ...) {
   if (is_mt <- inherits(x, "S7_class")) {
     # Match based on class only, e.g. {year}-{month}-{day}
-    xi <- which(vapply(units, S7::S7_inherits, logical(1L), x))
+    xi <- which(vapply(units, S7_inherits, logical(1L), x))
     if (length(xi) == 0L) {
       # This doesn't match one of the expected units, maybe it's not a mixtime S7 class?
       is_mt <- FALSE
@@ -18,7 +18,7 @@ mt_unit_display <- function(x, units, parts, ...) {
         call = NULL
       )
     }
-  } else if (is_mt <- S7::S7_inherits(x, mt_unit)) {
+  } else if (is_mt <- S7_inherits(x, mt_unit)) {
     xi <- vec_match(
       data.frame(x = vec_data(x), tu = S7_class_id(x)),
       data.frame(x = vapply(units, function(u) u@n, numeric(1L)), tu = vapply(units, S7_class_id, character(1L)))
@@ -46,7 +46,7 @@ mt_unit_display <- function(x, units, parts, ...) {
 time_format_default <- function(x) {
   chronon <- attr(x, "chronon")
 
-  if (inherits(x, "mt_duration")) {
+  if (S7_inherits(x, mt_duration)) {
     return(chronon_format_duration(chronon))
   }
 
@@ -82,7 +82,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   
   # Create glue evaluation environment
   as_tu <- function(x) {
-    if (!S7::S7_inherits(x, mt_unit)) x <- x(1L)
+    if (!S7_inherits(x, mt_unit)) x <- x(1L)
     granule_inherit_props(x, chronon)
   }
   env <- rlang::new_environment(
@@ -102,7 +102,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
       tz = tz_abbreviation,
       loc = function(x) {
         chronon <- attr(x, "chronon")
-        if (!S7::S7_inherits(mt_loc_unit)) return("")
+        if (!S7_inherits(mt_loc_unit)) return("")
         lat <- chronon@lat
         lon <- chronon@lon
         alt <- chronon@alt
@@ -209,22 +209,29 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
 }
 
 #' @export
-format.mt_time <- function(x, format = time_format_default(x), ...) {
-  time_format_impl(x, format = format, ...)
+S7::method(format, mt_time) <- function(x, ...) {
+  time_format_impl(x, ...)
 }
 
 #' @export
-str.mt_linear <- function(object, vec.len = getOption("str")$vec.len %||% 4L, ...) {
+S7::method(print, mt_time) <- function(x, ...) {
+  cat(paste0("<", class(x)[[1L]], "[", length(x), "]>"), "\n", sep = "")
+  print(format(x), quote = FALSE)
+  invisible(x)
+}
+
+#' @export
+S7::method(str, mt_linear) <- function(object, ..., vec.len = getOption("str")$vec.len %||% 4L) {
   cat("linear<", format(time_chronon(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
 }
 
 #' @export
-str.mt_cyclical <- function(object, vec.len = getOption("str")$vec.len %||% 4L, ...) {
+S7::method(str, mt_cyclical) <- function(object, ..., vec.len = getOption("str")$vec.len %||% 4L) {
   cat("cyclical<", format(time_chronon(object)[1L]), "/", format(time_cycle(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
 }
 
 #' @export
-str.mt_duration <- function(object, vec.len = getOption("str")$vec.len %||% 4L, ...) {
+S7::method(str, mt_duration) <- function(object, ..., vec.len = getOption("str")$vec.len %||% 4L) {
   cat("duration<", format(time_chronon(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
 }
 

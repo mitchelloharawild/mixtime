@@ -35,7 +35,7 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   # TODO - Generalise for converting to any different granule attribute
   # (e.g. locA -> locB)
 
-  is_tz_conv <- S7::S7_inherits(from, mt_tz_unit) && S7::S7_inherits(to, mt_tz_unit)
+  is_tz_conv <- S7_inherits(from, mt_tz_unit) && S7_inherits(to, mt_tz_unit)
   if (is_tz_conv) {
     if (is.na(tz_name(from)) && !is.na(tz_name(to))) {
       cli::cli_abort(
@@ -105,7 +105,7 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   x
 }
 
-method(chronon_convert, S7::new_S3_class("mt_linear")) <- function(x, to, discrete = FALSE, ...) {
+method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, ...) {
   chronon_convert_impl(vec_data(x), attr(x, "chronon"), to, discrete)
 }
 

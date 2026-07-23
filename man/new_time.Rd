@@ -26,6 +26,13 @@ A \code{mt_time} vector representing the time points in \code{x} according to
 the specified \code{chronon} and \code{cycle}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{new_time()} was the low-level constructor for \code{mt_time} vectors. It has been
+deprecated in favour of calling the concrete time class constructors directly:
+\code{\link[=mt_linear]{mt_linear()}} for linear time, \code{\link[=mt_duration]{mt_duration()}} for durations, and
+\code{\link[=mt_cyclical]{mt_cyclical()}} for cyclical time.
+
 Creates a \code{mixtime} time vector at a specific time point, with a specified
 chronon and optional cycle. The \code{chronon} defines the smallest indivisible
 time granule for the time vector, while the \code{cycle} allows for cyclical time

@@ -215,7 +215,7 @@ method(cyclical_labels, list(cal_time_solar$ampm, cal_time_solar$day)) <- functi
 }
 
 method(cyclical_labels, list(cal_time_solar$hour, S7::class_any)) <- function(granule, cycle, i) {
-  if (S7::S7_inherits(cycle, cal_time_civil$ampm)) {
+  if (S7_inherits(cycle, cal_time_civil$ampm)) {
     # 12 hours count with 12,1,2,...,11
     sprintf("%02d", (i-1L)%%12L + 1L)
   } else {

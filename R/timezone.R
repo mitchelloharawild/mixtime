@@ -17,7 +17,7 @@ tz_name <- S7::new_generic("tz_name", "x")
 S7::method(tz_name, class_mixtime) <- function(x) {
   as.character(vecvec::vecvec_apply(x, tz_name))
 }
-S7::method(tz_name, S7::new_S3_class("mt_time")) <- function(x) {
+S7::method(tz_name, mt_time) <- function(x) {
   rep_len(tz_name(attr(x, "chronon")), length(x))
 }
 S7::method(tz_name, mt_tz_unit) <- function(x) x@tz
@@ -54,7 +54,7 @@ method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(
   tz_offset,
   numeric()
 )
-method(tz_offset, S7::new_S3_class("mt_time")) <- function(
+method(tz_offset, mt_time) <- function(
   x,
   tz = tz_name(attr(x, "chronon")),
   ...

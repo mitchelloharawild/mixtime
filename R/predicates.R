@@ -21,14 +21,14 @@
 is_time_linear <- S7::new_generic("is_time_linear", "x")
 method(is_time_linear, class_mixtime) <- vecvec::vecvec_apply_fn(is_time_linear, logical())
 method(is_time_linear, class_any) <- function(x) rep.int(FALSE, length(x))
-method(is_time_linear, S7::new_S3_class("mt_linear")) <- function(x) rep.int(TRUE, length(x))
+method(is_time_linear, mt_linear) <- function(x) rep.int(TRUE, length(x))
 
 #' @rdname is_time
 #' @export
 is_time_cyclical <- S7::new_generic("is_time_cyclical", "x")
 method(is_time_cyclical, class_mixtime) <- vecvec::vecvec_apply_fn(is_time_cyclical, logical())
 method(is_time_cyclical, class_any) <- function(x) rep.int(FALSE, length(x))
-method(is_time_cyclical, S7::new_S3_class("mt_cyclical")) <- function(x) rep.int(TRUE, length(x))
+method(is_time_cyclical, mt_cyclical) <- function(x) rep.int(TRUE, length(x))
 
 #' @rdname is_time
 #' @export
@@ -36,4 +36,4 @@ is_time_duration <- S7::new_generic("is_time_duration", "x")
 method(is_time_duration, class_mixtime) <- vecvec::vecvec_apply_fn(is_time_duration, logical())
 method(is_time_duration, class_any) <- function(x) rep.int(FALSE, length(x))
 method(is_time_duration, new_S4_class("Period", package = "lubridate")) <- function(x) rep.int(TRUE, length(x))
-method(is_time_duration, S7::new_S3_class("mt_duration")) <- function(x) rep.int(TRUE, length(x))
+method(is_time_duration, mt_duration) <- function(x) rep.int(TRUE, length(x))

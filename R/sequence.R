@@ -78,8 +78,9 @@
 }
 
 #' @rdname seq.mixtime
+#' @method seq mixtime::mt_time
 #' @export
-seq.mt_time <- function(
+`seq.mixtime::mt_time` <- function(
   from, to, by, length.out = NULL, along.with = NULL, 
   on_invalid = c("nearest", "overflow"), ...
 ) {
@@ -135,7 +136,7 @@ seq.mt_time <- function(
     # Parse `by` argument
     if (is.character(by)) by <- parse_time_unit(by)
     # Numeric `by` uses chronon
-    if (is.numeric(by) && !S7::S7_inherits(by, mt_unit)) {
+    if (is.numeric(by) && !S7_inherits(by, mt_unit)) {
       by <- S7::S7_class(chronon)(by)
     }
 
@@ -260,7 +261,7 @@ seq.mt_time <- function(
 #   }
 
 #   # Convert `by` to match `ptype` units
-#   if (!is.null(arg$by) && S7::S7_inherits(arg$by, mt_unit)) {
+#   if (!is.null(arg$by) && S7_inherits(arg$by, mt_unit)) {
 #     arg$by <- chronon_cardinality(time_chronon(ptype), arg$by)
 #   }
 

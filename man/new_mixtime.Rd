@@ -4,7 +4,7 @@
 \alias{new_mixtime}
 \title{Constructor for mixtime vectors}
 \usage{
-new_mixtime(x = new_time())
+new_mixtime(x = mt_linear())
 }
 \arguments{
 \item{x}{A mixtime time vector (created with \code{\link[=new_time]{new_time()}}) to wrap in a mixtime class.}

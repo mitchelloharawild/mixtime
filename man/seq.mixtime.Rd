@@ -2,12 +2,12 @@
 % Please edit documentation in R/sequence.R
 \name{seq.mixtime::mixtime}
 \alias{seq.mixtime::mixtime}
-\alias{seq.mt_time}
+\alias{seq.mixtime::mt_time}
 \title{Generate sequences of mixtime values}
 \usage{
 \method{seq}{`mixtime::mixtime`}(...)
 
-\method{seq}{mt_time}(
+\method{seq}{`mixtime::mt_time`}(
   from,
   to,
   by,

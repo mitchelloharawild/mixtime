@@ -14,8 +14,8 @@ mt_loc_unit(n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0))
 mt_tz_unit(n = 1L, tz = naive_tz)
 }
 \arguments{
-\item{n}{The step size of time granule. For example, \code{n = 2L} is 2 time units -
-for \code{cal_isoweek$week(2L)} that would be 2 weeks (a fortnight).}
+\item{n}{The step size of time granule. For example, \code{n = 2L} is 2 time
+units, and \code{cal_isoweek$week(2L)} would represent 2 weeks (a fortnight).}
 
 \item{lat}{Numeric. Latitude in decimal degrees. Range: -90 to 90.
 Default: naive location (astronomical calculations require \code{lat}).}

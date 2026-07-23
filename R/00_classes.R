@@ -46,8 +46,8 @@
 #' arithmetic, understanding that months have variable lengths and handling
 #' timezone-aware conversions.
 #' 
-#' @param n The step size of time granule. For example, `n = 2L` is 2 time units -
-#'   for `cal_isoweek$week(2L)` that would be 2 weeks (a fortnight).
+#' @param n The step size of time granule. For example, `n = 2L` is 2 time 
+#'   units, and `cal_isoweek$week(2L)` would represent 2 weeks (a fortnight).
 #' 
 #' @return A time granule object of class `mt_unit`
 #' 
@@ -82,6 +82,89 @@ mt_unit <- S7::new_class(
   #     paste0("@n must be length 1 <numeric> value, not length ", length(self@n), ".")
   #   }
   # }
+)
+
+#' Time vector classes
+#'
+#' @description
+#' The `mt_time` family are the S7 vector classes that store time points as a
+#' numeric count of chronons. `mt_time` is the (internal) base class carrying 
+#' the `chronon` property; the common modes of time are:
+#'
+#' * `mt_linear` - linear time points, typically produced with [linear_time()].
+#' * `mt_cyclical` - cyclical time points with additional `cycle` granule, 
+#'   typically produced with [cyclical_time()].
+#' * `mt_duration` - time durations, typically produced with [duration()].
+#'
+#' The underlying data can be either **integer** (discrete time) or **double**
+#' (continuous time). The `chronon` (and, for `mt_cyclical`, the `cycle`) are 
+#' time granules, the result from a [mt_unit] object.
+#'
+#' @param x A numeric vector of chronon counts (integer or double).
+#'
+#' @return An S7 class object (used for method dispatch), or a time vector when
+#'   called as a constructor.
+#'
+#' @seealso [mt_linear()], [mt_duration()], and [mt_cyclical()] to construct
+#'   time vectors, and [mt_unit] for the granule type stored in `chronon`/`cycle`.
+#'
+#' @name mt_time-class
+NULL
+
+# Lightweight S3 carrier for the mode of time (integer or double). It exists
+# *only* so S7 accepts either an integer or double inputs (an S7 base-type
+# class fixes a single base type).
+mt_data <- S7::new_S3_class(
+  "mt_time_data",
+  constructor = function(.data = integer()) {
+    structure(.data, class = "mt_time_data")
+  },
+  validator = function(self) {
+    if (!is.numeric(self)) {
+      cli::cli_abort("{.var self} must be an integer or double vector.", call. = FALSE)
+    }
+  }
+)
+
+granule_len1 <- function(value) {
+  if (length(value@n) != 1L) {
+    "must wrap a single time granule (its `@n` must be length 1)"
+  }
+}
+
+# The vector behaviour of `mt_time` (`[`, `c()`, `rep()`, comparisons, arithmetic) is
+# provided by S7 methods registered directly on the S7 classes below - see vctrs.R (the
+# base-R `S7_data()`-swap methods and comparisons) and arithmetic.R (native `+`/`-`/`*`/`/`
+# operator methods). The double-dispatch vctrs coercion generics (`vec_cast`/`vec_ptype2`)
+# ignore inheritance, so they are registered on the package-namespaced concrete class names
+# in `register_mt_vctrs()` (vctrs.R); `vec_restore`/`vec_math` are S7 methods on `mt_time`.
+
+#' @rdname mt_time-class
+#' @export
+mt_time <- S7::new_class(
+  "mt_time",
+  parent = mt_data,
+  properties = list(
+    chronon = S7::new_property(class = mt_unit, default = mt_unit(1L), validator = granule_len1)
+  )
+)
+
+#' @rdname mt_time-class
+#' @export
+mt_linear <- S7::new_class("mt_linear", parent = mt_time)
+
+#' @rdname mt_time-class
+#' @export
+mt_duration <- S7::new_class("mt_duration", parent = mt_time)
+
+#' @rdname mt_time-class
+#' @export
+mt_cyclical <- S7::new_class(
+  "mt_cyclical",
+  parent = mt_time,
+  properties = list(
+    cycle = S7::new_property(class = mt_unit, default = mt_unit(1L), validator = granule_len1)
+  )
 )
 
 #' Base S7 class for mixtime vector objects

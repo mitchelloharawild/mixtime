@@ -11,7 +11,7 @@ method(interval_pull, class_mixtime) <- function(x) {
   )
 }
 
-interval_pull.mt_linear <- function(x) {
+method(interval_pull, mt_time) <- function(x) {
   chronon <- attr(x, "chronon")
 
   interval <- list(chronon@n)

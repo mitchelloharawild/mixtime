@@ -64,78 +64,13 @@ duration <- function(
     if (is.null(discrete)) discrete <- is.integer(vec_data(raw))
     x <- as.numeric(data) * chronon_cardinality(chronon, from_chronon)
     if (discrete) x <- as.integer(floor(x))
-    return(new_mixtime(new_time(x, chronon = chronon, class = "mt_duration")))
+    return(new_mixtime(mt_duration(x, chronon = chronon)))
   }
 
   if (!is.numeric(data)) {
     cli::cli_abort("{.var data} must be a numeric vector.", call. = FALSE)
   }
-  new_mixtime(new_time(data, chronon = chronon, class = "mt_duration"))
-}
-
-#' @method vec_cast.integer mt_duration
-#' @export
-vec_cast.integer.mt_duration <- function(x, to, ...) {
-  vec_cast(vec_data(x), integer())
-}
-
-#' @method vec_cast.double mt_duration
-#' @export
-vec_cast.double.mt_duration <- function(x, to, ...) {
-  vec_cast(vec_data(x), double())
-}
-
-#' @importFrom vctrs vec_arith
-#' @method vec_arith mt_duration
-#' @export
-vec_arith.mt_duration <- function(op, x, y, ...) {
-  UseMethod("vec_arith.mt_duration", y)
-}
-
-#' @method vec_arith.mt_duration mt_duration
-#' @export
-vec_arith.mt_duration.mt_duration <- function(op, x, y, ...) {
-  if (!op %in% c("-", "+", "/")) {
-    cli::cli_abort("Only addition, subtraction, and division are supported between two durations.", call. = FALSE)
-  }
-
-  # Find common chronon for x and y as the basis for arithmetic operations.
-  x_chronon <- attr(x, "chronon")
-  y_chronon <- attr(y, "chronon")
-  tu <- chronon_common_impl(list(x_chronon, y_chronon))
-
-  # Scale magnitudes to common chronon units before performing arithmetic
-  x <- vec_data(x) * chronon_cardinality(tu, x_chronon)
-  y <- vec_data(y) * chronon_cardinality(tu, y_chronon)
-
-  res <- vec_arith_base(op, x, y, ...)
-  if (op == "/") {
-    # duration / duration = numeric ratio
-    return(res)
-  }
-
-  # Return a duration with the common chronon
-  new_time(res, chronon = tu, class = "mt_duration")
-}
-
-#' @method vec_arith.mt_duration numeric
-#' @export
-vec_arith.mt_duration.numeric <- function(op, x, y, ...) {
-  if (!op %in% c("+", "-", "*", "/")) {
-    stop("Only addition, subtraction, multiplication, and division supported for time durations", call. = FALSE)
-  }
-  res <- vec_arith_base(op, x, y, ...)
-  vec_restore(res, x)
-}
-
-#' @method vec_arith.numeric mt_duration
-#' @export
-vec_arith.numeric.mt_duration <- function(op, x, y, ...) {
-  if (!op %in% c("+", "-", "*")) {
-    stop("Only addition, subtraction, and multiplication supported for time durations", call. = FALSE)
-  }
-  res <- vec_arith_base(op, x, y, ...)
-  vec_restore(res, y)
+  new_mixtime(mt_duration(data, chronon = chronon))
 }
 
 #' Duration function factory

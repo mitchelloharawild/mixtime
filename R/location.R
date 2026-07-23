@@ -21,7 +21,7 @@
 #' @export
 loc_latitude <- S7::new_generic("loc_latitude", "x")
 S7::method(loc_latitude, mt_loc_unit) <- function(x) x@lat
-S7::method(loc_latitude, S7::new_S3_class("mt_time")) <- function(x) {
+S7::method(loc_latitude, mt_time) <- function(x) {
   rep_len(loc_latitude(attr(x, "chronon")), length(x))
 }
 S7::method(loc_latitude, class_mixtime) <- function(x) {
@@ -33,7 +33,7 @@ S7::method(loc_latitude, S7::class_any) <- function(x) NA_real_
 #' @export
 loc_longitude <- S7::new_generic("loc_longitude", "x")
 S7::method(loc_longitude, mt_loc_unit) <- function(x) x@lon
-S7::method(loc_longitude, S7::new_S3_class("mt_time")) <- function(x) {
+S7::method(loc_longitude, mt_time) <- function(x) {
   rep_len(loc_longitude(attr(x, "chronon")), length(x))
 }
 S7::method(loc_longitude, class_mixtime) <- function(x) {
@@ -45,7 +45,7 @@ S7::method(loc_longitude, S7::class_any) <- function(x) NA_real_
 #' @export
 loc_altitude <- S7::new_generic("loc_altitude", "x")
 S7::method(loc_altitude, mt_loc_unit) <- function(x) x@alt
-S7::method(loc_altitude, S7::new_S3_class("mt_time")) <- function(x) {
+S7::method(loc_altitude, mt_time) <- function(x) {
   rep_len(loc_altitude(attr(x, "chronon")), length(x))
 }
 S7::method(loc_altitude, class_mixtime) <- function(x) {
