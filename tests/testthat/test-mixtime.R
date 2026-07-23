@@ -82,6 +82,46 @@ test_that("Comparison - equality", {
   expect_equal(x == x, rep(TRUE, 3L))
 })
 
+test_that("Comparison - mixed granularity discrete intervals (#95)", {
+  # {1980} = [1980-01-01, 1980-12-31], {1980 Dec} = [1980-12-01, 1980-12-31]
+  y1980 <- year(1980L)
+  dec1980 <- yearmonth(as.integer((1980 - 1970) * 12 + 11))
+
+  expect_false(y1980 == dec1980)
+  expect_false(y1980 < dec1980)
+  expect_false(y1980 > dec1980)
+  expect_true(y1980 <= dec1980)   # same right endpoint (end of Dec 1980)
+  expect_false(y1980 >= dec1980)  # year starts earlier than December
+
+  # A month entirely before another year is strictly less than it
+  expect_true(yearmonth(as.integer((1979 - 1970) * 12)) < y1980)
+  # A month entirely after another year is strictly greater than it
+  expect_true(yearmonth(as.integer((1981 - 1970) * 12)) > y1980)
+})
+
+test_that("Comparison - identical granules compare directly", {
+  x <- yearmonth(648:650L)
+  y <- yearmonth(649:651L)
+  expect_equal(x < y, rep(TRUE, 3L))
+  expect_equal(x == yearmonth(648:650L), rep(TRUE, 3L))
+})
+
+test_that("Comparison - continuous linear time compares as points", {
+  x <- year(as.Date("2020-06-01"), discrete = FALSE)
+  y <- yearmonth(as.Date("2020-01-01"), discrete = FALSE)
+  expect_true(x > y)
+  expect_true(y < x)
+})
+
+test_that("Comparison - continuous point within a discrete span", {
+  point <- linear_time(as.Date("1980-06-15"), chronon = month(1L), discrete = FALSE)
+  y1980 <- year(1980L)
+  expect_true(point <= y1980)
+  expect_true(point >= y1980)
+  expect_false(point < y1980)
+  expect_false(point > y1980)
+})
+
 
 # ---------------------------------------------------------------------------
 #  Indexing and subsetting ([, [[)

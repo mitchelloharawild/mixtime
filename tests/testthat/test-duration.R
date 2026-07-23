@@ -106,3 +106,25 @@ test_that("discrete = TRUE truncates to whole units", {
 test_that("converting a duration to a finer chronon multiplies the magnitude", {
   expect_equal(as.numeric(duration(weeks(2L), cal_gregorian$day(1L))), 14)
 })
+
+test_that("Comparison - same chronon compares magnitudes directly", {
+  expect_true(days(3L) == days(3L))
+  expect_true(days(3L) < days(5L))
+  expect_false(days(3L) > days(5L))
+  expect_true(days(3L) != days(5L))
+  expect_equal(days(1:3) < days(2L), c(TRUE, FALSE, FALSE))
+})
+
+test_that("Comparison - different chronons compare in a common chronon", {
+  expect_true(weeks(1L) == days(7L))
+  expect_true(weeks(1L) > days(6L))
+  expect_true(days(8L) > weeks(1L))
+  expect_false(weeks(1L) < days(7L))
+  expect_true(weeks(1L) <= days(7L))
+})
+
+test_that("Comparison - a bare number is a duration in the other chronon", {
+  expect_true(days(3L) == 3)
+  expect_true(3 == days(3L))
+  expect_true(days(3L) < 5)
+})
