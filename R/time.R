@@ -103,16 +103,18 @@ S7::method(`[[`, mt_time) <- function(x, i, ...) {
   x
 }
 
+#' @method [<- mixtime::mt_time
 #' @export
-S7::method(`[<-`, mt_time) <- function(x, i, value) {
+`[<-.mixtime::mt_time` <- function(x, i, value) {
   data <- S7::S7_data(x)
   data[i] <- S7::S7_data(value)
   S7::S7_data(x) <- data
   x
 }
 
+#' @method [[<- mixtime::mt_time
 #' @export
-S7::method(`[[<-`, mt_time) <- function(x, i, value) {
+`[[<-.mixtime::mt_time` <- function(x, i, value) {
   data <- S7::S7_data(x)
   data[[i]] <- S7::S7_data(value)
   S7::S7_data(x) <- data

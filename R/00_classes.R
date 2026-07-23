@@ -100,7 +100,9 @@ mt_unit <- S7::new_class(
 #' (continuous time). The `chronon` (and, for `mt_cyclical`, the `cycle`) are 
 #' time granules, the result from a [mt_unit] object.
 #'
-#' @param x A numeric vector of chronon counts (integer or double).
+#' @param .data A numeric vector of chronon counts (integer or double).
+#' @param chronon,cycle Time granules ([mt_unit] objects) giving the unit of the
+#'   chronon counts and, for `mt_cyclical`, the length of the cycle.
 #'
 #' @return An S7 class object (used for method dispatch), or a time vector when
 #'   called as a constructor.
@@ -132,20 +134,18 @@ granule_len1 <- function(value) {
   }
 }
 
-# The vector behaviour of `mt_time` (`[`, `c()`, `rep()`, comparisons, arithmetic) is
-# provided by S7 methods registered directly on the S7 classes below - see vctrs.R (the
-# base-R `S7_data()`-swap methods and comparisons) and arithmetic.R (native `+`/`-`/`*`/`/`
-# operator methods). The double-dispatch vctrs coercion generics (`vec_cast`/`vec_ptype2`)
-# ignore inheritance, so they are registered on the package-namespaced concrete class names
-# in `register_mt_vctrs()` (vctrs.R); `vec_restore`/`vec_math` are S7 methods on `mt_time`.
-
 #' @rdname mt_time-class
+#' @usage NULL
 #' @export
 mt_time <- S7::new_class(
   "mt_time",
   parent = mt_data,
   properties = list(
-    chronon = S7::new_property(class = mt_unit, default = mt_unit(1L), validator = granule_len1)
+    chronon = S7::new_property(
+      class = mt_unit,
+      default = quote(mt_unit(1L)),
+      validator = granule_len1
+    )
   )
 )
 
@@ -163,7 +163,11 @@ mt_cyclical <- S7::new_class(
   "mt_cyclical",
   parent = mt_time,
   properties = list(
-    cycle = S7::new_property(class = mt_unit, default = mt_unit(1L), validator = granule_len1)
+    cycle = S7::new_property(
+      class = mt_unit,
+      default = quote(mt_unit(1L)),
+      validator = granule_len1
+    )
   )
 )
 

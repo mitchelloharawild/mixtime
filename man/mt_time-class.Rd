@@ -8,16 +8,17 @@
 \alias{mt_cyclical}
 \title{Time vector classes}
 \usage{
-mt_time(.data = integer(), chronon = <object>)
+mt_linear(.data = integer(), chronon = mt_unit(1L))
 
-mt_linear(.data = integer(), chronon = <object>)
+mt_duration(.data = integer(), chronon = mt_unit(1L))
 
-mt_duration(.data = integer(), chronon = <object>)
-
-mt_cyclical(.data = integer(), chronon = <object>, cycle = <object>)
+mt_cyclical(.data = integer(), chronon = mt_unit(1L), cycle = mt_unit(1L))
 }
 \arguments{
-\item{x}{A numeric vector of chronon counts (integer or double).}
+\item{.data}{A numeric vector of chronon counts (integer or double).}
+
+\item{chronon, cycle}{Time granules (\link{mt_unit} objects) giving the unit of the
+chronon counts and, for \code{mt_cyclical}, the length of the cycle.}
 }
 \value{
 An S7 class object (used for method dispatch), or a time vector when
