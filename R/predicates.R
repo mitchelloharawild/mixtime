@@ -109,3 +109,102 @@ method(time_is_determinate_at, mt_time) <- function(x, granule, ...) {
   out
 }
 method(time_is_duration, mt_duration) <- function(x) rep.int(TRUE, length(x))
+
+#' Test whether a granule is completed at a time point
+#'
+#' `time_is_complete_at()` tests, for each element of a `mixtime` vector, whether
+#' the coarser `granule` that element falls into is fully observed *by the vector
+#' as a whole* -- that is, whether every finer chronon making up that granule is
+#' present somewhere in `x`.
+#'
+#' Unlike [time_is_determinate_at()], completeness is a collective property: an
+#' element is `TRUE` only when the other elements needed to fill its granule are
+#' also present. For example, in `year(1L)` the months of `2020 Jan : 2020 Oct`
+#' are all `FALSE` (November and December are missing, so 2020 is incomplete),
+#' whereas in `2020 Jan : 2021 Mar` the twelve months of 2020 are `TRUE` (they
+#' complete 2020) while the three months of 2021 remain `FALSE`.
+#'
+#' A granule equal to `x`'s own chronon is completed by each point on its own
+#' (`TRUE`). A granule finer than `x` cannot be completed by coarser points
+#' (`FALSE`). Missing (`NA`) and infinite times give `NA`.
+#'
+#' Completeness is only defined within a single time granularity. Mixed-type
+#' `mixtime` vectors (e.g. months alongside days) are not yet supported and
+#' raise an error.
+#'
+#' @inheritParams time_is_determinate_at
+#'
+#' @return A logical vector the same length as `x`.
+#'
+#' @seealso [time_is_determinate_at()]
+#'
+#' @examples
+#' # 2020 Jan : 2020 Oct does not complete the year -> all FALSE
+#' time_is_complete_at(yearmonth(as.Date("2020-01-01")) + 0:9, cal_gregorian$year(1L))
+#'
+#' # 2020 Jan : 2021 Mar completes 2020 (TRUE) but not 2021 (FALSE)
+#' time_is_complete_at(yearmonth(as.Date("2020-01-01")) + 0:14, cal_gregorian$year(1L))
+#'
+#' @export
+time_is_complete_at <- S7::new_generic(
+  "time_is_complete_at", "x",
+  function(x, granule, ...) S7::S7_dispatch()
+)
+method(time_is_complete_at, class_mixtime) <- function(x, granule, ...) {
+  # Completeness is only defined within a single granularity: mixed types (e.g.
+  # months alongside days) would each fill different granules, which is not yet
+  # implemented. `x@x` holds one part per distinct time type.
+  if (length(x@x) > 1L) {
+    cli::cli_abort(
+      c(
+        "{.fn time_is_complete_at} does not yet support mixed-granularity {.cls mixtime} vectors.",
+        i = "To compute completeness within each granularity, include grouping over the `time_chronon()`."
+      ),
+      call = NULL
+    )
+  }
+  if (length(x@x) == 0L) return(logical())
+  time_is_complete_at(x@x[[1L]], granule, ...)
+}
+method(time_is_complete_at, class_any) <- function(x, granule, ...) {
+  time_is_complete_at(as_mixtime(x), granule, ...)
+}
+method(time_is_complete_at, mt_time) <- function(x, granule, ...) {
+  # Coerce a bare granule generator (e.g. cal_gregorian$year) into a unit.
+  if (!S7_inherits(granule, mt_unit)) granule <- granule(1L)
+  chronon <- attr(x, "chronon")
+  granule <- granule_inherit_props(granule, chronon)
+
+  xd <- vec_data(x)
+  out <- logical(length(x))
+  # A missing or infinite time completes no granule.
+  special <- is.na(x) | is.infinite(xd)
+  out[special] <- NA
+  keep <- !special
+  if (!any(keep)) return(out)
+
+  # Completeness only applies when x is finer than (or equal to) the granule: a
+  # granule finer than x's chronon cannot be filled by coarser points.
+  if (!chronon_nests_in(chronon, granule)) {
+    out[keep] <- FALSE
+    return(out)
+  }
+
+  # Chronon position of each observation and the granule instance it falls into.
+  pos <- floor(xd[keep])
+  g <- chronon_convert_impl(pos, chronon, granule, discrete = TRUE)
+  grp <- unique(g)
+
+  # A granule instance is complete when the distinct x chronons observed within
+  # it reach the number of x chronons that fill one granule (its cardinality).
+  expected <- chronon_cardinality(chronon, granule, at = grp)
+  observed <- vapply(
+    split(pos, match(g, grp)),
+    function(p) length(unique(p)),
+    integer(1L)
+  )
+  complete <- observed >= expected
+
+  out[keep] <- complete[match(g, grp)]
+  out
+}
