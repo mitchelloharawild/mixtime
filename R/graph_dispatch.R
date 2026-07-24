@@ -104,6 +104,21 @@ chronon_cardinality_graph <- function() {
   cache$cardinality_graph
 }
 
+# The fixed-cardinality graph only uses edges from chronon_cardinality_fixed()
+# methods, since these are the only relationships guaranteed to be constant
+# (context-independent) and therefore safely multiplied together along a path.
+chronon_cardinality_fixed_graph <- function() {
+  sig_fixed <- method_signatures(chronon_cardinality_fixed)
+  n <- length(sig_fixed)
+
+  cache <- .chronon_signature_cache
+  if (!identical(cache$cardinality_fixed_n, n)) {
+    cache$cardinality_fixed_n <- n
+    cache$cardinality_fixed_graph <- compile_signature_graph(unique(sig_fixed))
+  }
+  cache$cardinality_fixed_graph
+}
+
 S7_graph_dispatch <- function(graph, start, end) {
   int_node_start <- vec_match(S7_class_id(start), graph$chr_classes)
   int_node_end <- vec_match(S7_class_id(end), graph$chr_classes)

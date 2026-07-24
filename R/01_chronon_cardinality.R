@@ -141,3 +141,22 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   result@n
   # vec_data(result)
 }
+
+# #' @rdname chronon_cardinality_fixed
+method(chronon_cardinality_fixed, list(mt_unit, mt_unit)) <- function(x, y) {
+  # Check if x and y are the same class
+  if (S7_class_id(x) == S7_class_id(y)) {
+    return(1)
+  }
+
+  # No specific method defined between these classes.
+  # Attempt graph traversal using only registered fixed-cardinality edges,
+  # multiplying the unit-granule cardinalities along the path.
+  path <- S7_graph_dispatch(chronon_cardinality_fixed_graph(), y, x)
+
+  result <- 1
+  for (i in seq(2, length.out = length(path) - 1)) {
+    result <- result * chronon_cardinality_fixed(path[[i]](1L), path[[i - 1]](1L))
+  }
+  result
+}
