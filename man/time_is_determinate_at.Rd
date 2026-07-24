@@ -41,6 +41,3 @@ time_is_determinate_at(year(2020), cal_gregorian$month(1L))
 time_is_determinate_at(yearmonth(as.Date("2020-02-01")), cal_gregorian$year(1L))
 
 }
-\seealso{
-\code{\link[=time_components]{time_components()}}, \code{\link[=is_time_linear]{is_time_linear()}}
-}

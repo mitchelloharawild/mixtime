@@ -7,35 +7,53 @@
 #'
 #' @param x A time object (typically a `mixtime` vector).
 #' @param ... Additional arguments for methods.
-#' 
+#'
 #' @return A logical vector the same length as `x`.
-#' 
+#'
 #' @examples
 #' t <- c(yearmonth(0), month_of_year(0), months(0L))
-#' is_time_linear(t)
-#' is_time_cyclical(t)
-#' is_time_duration(t)
-#' 
+#' time_is_linear(t)
+#' time_is_cyclical(t)
+#' time_is_duration(t)
+#'
 #' @name is_time
 #' @export
-is_time_linear <- S7::new_generic("is_time_linear", "x")
-method(is_time_linear, class_mixtime) <- vecvec::vecvec_apply_fn(is_time_linear, logical())
-method(is_time_linear, class_any) <- function(x) rep.int(FALSE, length(x))
-method(is_time_linear, mt_linear) <- function(x) rep.int(TRUE, length(x))
+time_is_linear <- S7::new_generic("time_is_linear", "x")
+method(time_is_linear, class_mixtime) <- vecvec::vecvec_apply_fn(time_is_linear, logical())
+method(time_is_linear, class_any) <- function(x) rep.int(FALSE, length(x))
+method(time_is_linear, mt_linear) <- function(x) rep.int(TRUE, length(x))
 
 #' @rdname is_time
 #' @export
-is_time_cyclical <- S7::new_generic("is_time_cyclical", "x")
-method(is_time_cyclical, class_mixtime) <- vecvec::vecvec_apply_fn(is_time_cyclical, logical())
-method(is_time_cyclical, class_any) <- function(x) rep.int(FALSE, length(x))
-method(is_time_cyclical, mt_cyclical) <- function(x) rep.int(TRUE, length(x))
+time_is_cyclical <- S7::new_generic("time_is_cyclical", "x")
+method(time_is_cyclical, class_mixtime) <- vecvec::vecvec_apply_fn(time_is_cyclical, logical())
+method(time_is_cyclical, class_any) <- function(x) rep.int(FALSE, length(x))
+method(time_is_cyclical, mt_cyclical) <- function(x) rep.int(TRUE, length(x))
 
 #' @rdname is_time
 #' @export
-is_time_duration <- S7::new_generic("is_time_duration", "x")
-method(is_time_duration, class_mixtime) <- vecvec::vecvec_apply_fn(is_time_duration, logical())
-method(is_time_duration, class_any) <- function(x) rep.int(FALSE, length(x))
-method(is_time_duration, new_S4_class("Period", package = "lubridate")) <- function(x) rep.int(TRUE, length(x))
+time_is_duration <- S7::new_generic("time_is_duration", "x")
+method(time_is_duration, class_mixtime) <- vecvec::vecvec_apply_fn(time_is_duration, logical())
+method(time_is_duration, class_any) <- function(x) rep.int(FALSE, length(x))
+method(time_is_duration, new_S4_class("Period", package = "lubridate")) <- function(x) rep.int(TRUE, length(x))
+
+#' @rdname is_time
+#' @export
+is_time_linear <- function(x, ...) {
+  lifecycle::deprecate_stop("0.3.0", "is_time_linear()", "time_is_linear()")
+}
+
+#' @rdname is_time
+#' @export
+is_time_cyclical <- function(x, ...) {
+  lifecycle::deprecate_stop("0.3.0", "is_time_cyclical()", "time_is_cyclical()")
+}
+
+#' @rdname is_time
+#' @export
+is_time_duration <- function(x, ...) {
+  lifecycle::deprecate_stop("0.3.0", "is_time_duration()", "time_is_duration()")
+}
 
 #' Test whether time is determinate at a granule's precision
 #'
@@ -56,8 +74,6 @@ method(is_time_duration, new_S4_class("Period", package = "lubridate")) <- funct
 #' @param ... Additional arguments for methods.
 #'
 #' @return A logical vector the same length as `x`.
-#'
-#' @seealso [time_components()], [is_time_linear()]
 #'
 #' @examples
 #' # Discrete: a year has no determinate month
@@ -92,4 +108,4 @@ method(time_is_determinate_at, mt_time) <- function(x, granule, ...) {
   out[is.na(x) | is.infinite(vec_data(x))] <- NA
   out
 }
-method(is_time_duration, mt_duration) <- function(x) rep.int(TRUE, length(x))
+method(time_is_duration, mt_duration) <- function(x) rep.int(TRUE, length(x))

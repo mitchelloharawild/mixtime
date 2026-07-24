@@ -49,7 +49,7 @@ duration <- function(
   }
 
   # Convert an existing duration into the requested chronon
-  if (is_mixtime(data) && is_time_duration(data)[1L]) {
+  if (is_mixtime(data) && time_is_duration(data)[1L]) {
     if (length(data@x) > 1L) {
       cli::cli_abort(
         c(

@@ -124,7 +124,7 @@
     if (length(by) != 1L) {
       cli::cli_abort("{.var by} must be a single time duration", call. = FALSE)
     }
-    if (is_time_duration(by)) {
+    if (time_is_duration(by)) {
       by_size <- as.numeric(by)
       by <- attr(by, "chronon")
       by@n <- by@n * by_size

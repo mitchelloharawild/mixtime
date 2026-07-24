@@ -1,5 +1,11 @@
 # mixtime (development version)
 
+## Breaking changes
+
+* `is_time_linear()`, `is_time_cyclical()`, and `is_time_duration()` have been
+  renamed to `time_is_linear()`, `time_is_cyclical()`, and `time_is_duration()`
+  for consistency with semantic property functions.
+
 ## New features
 
 * Added `chronon_cardinality_fixed()`, a variant of `chronon_cardinality()`

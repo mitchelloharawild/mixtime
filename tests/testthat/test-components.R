@@ -13,7 +13,7 @@ test_that("lin() extracts linear components matching the helper functions", {
 
   expect_s3_class(res, "data.frame")
   expect_named(res, c("yr", "ym"))
-  expect_true(all(is_time_linear(res$yr)))
+  expect_true(all(time_is_linear(res$yr)))
   expect_identical(res$yr, year(t))
   expect_identical(res$ym, yearmonth(t))
 })
@@ -23,7 +23,7 @@ test_that("cyc() extracts cyclical components matching the helper functions", {
 
   res <- time_components(t, m = cyc(month, year), q = cyc(quarter, year))
 
-  expect_true(all(is_time_cyclical(res$m)))
+  expect_true(all(time_is_cyclical(res$m)))
   expect_identical(res$m, month_of_year(t))
   expect_identical(res$q, cyclical_time(t, chronon = quarter(1L), cycle = year(1L)))
 })

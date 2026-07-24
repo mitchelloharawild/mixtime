@@ -17,8 +17,5 @@
   # Initialise tzdb package
   tzdb::tzdb_initialize()
 
-  # Register all methods
-  # lapply(attr(methods(class = "default"), "info")$generic, register_s3_method,
-  #        pkg = "mixtime", class = "mixtime", fun = dispatch_elements)
   invisible()
 }

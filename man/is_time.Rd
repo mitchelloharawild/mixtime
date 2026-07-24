@@ -2,11 +2,20 @@
 % Please edit documentation in R/predicates.R
 \name{is_time}
 \alias{is_time}
+\alias{time_is_linear}
+\alias{time_is_cyclical}
+\alias{time_is_duration}
 \alias{is_time_linear}
 \alias{is_time_cyclical}
 \alias{is_time_duration}
 \title{Check the time type of values}
 \usage{
+time_is_linear(x, ...)
+
+time_is_cyclical(x, ...)
+
+time_is_duration(x, ...)
+
 is_time_linear(x, ...)
 
 is_time_cyclical(x, ...)
@@ -30,8 +39,8 @@ type of time represented by each element.
 }
 \examples{
 t <- c(yearmonth(0), month_of_year(0), months(0L))
-is_time_linear(t)
-is_time_cyclical(t)
-is_time_duration(t)
+time_is_linear(t)
+time_is_cyclical(t)
+time_is_duration(t)
 
 }
