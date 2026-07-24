@@ -7,7 +7,7 @@ granularities (e.g. monthly and quarterly) in a single vector via
 ## Usage
 
 ``` r
-new_mixtime(x = new_time())
+new_mixtime(x = mt_linear())
 ```
 
 ## Arguments

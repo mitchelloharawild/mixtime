@@ -23,6 +23,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format_attr.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/circsum.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/class_mixtime.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.html</loc></url>
@@ -37,6 +38,9 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime-package.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime_location.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_cyclical_time_fn.html</loc></url>
@@ -48,7 +52,9 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_calendar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_chronon.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_components.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_cycle.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_determinate_at.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_abbreviation.html</loc></url>

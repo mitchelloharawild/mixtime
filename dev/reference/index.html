@@ -158,7 +158,7 @@
 
       <dl><dt>
 
-          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime::mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mt_time&gt;</i>)</a></code>
+          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime::mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime::mt_time&gt;</i>)</a></code>
 
         </dt>
         <dd>Generate sequences of mixtime values</dd>
@@ -169,6 +169,52 @@
 
         </dt>
         <dd>Round, floor and ceiling transformations for time objects</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="comparison-operators">Comparison operators<a class="anchor" aria-label="anchor" href="#comparison-operators"></a></h3>
+      <div class="section-desc"><p>Methods for comparing time vectors.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="mt_linear-compare.html">mt_linear-compare</a></code>
+
+        </dt>
+        <dd>Comparison operators for linear time (<code>mt_linear</code>)</dd>
+
+        <dt>
+
+          <code><a href="mt_duration-compare.html">mt_duration-compare</a></code>
+
+        </dt>
+        <dd>Comparison operators for durations (<code>mt_duration</code>)</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="time-components">Time Components<a class="anchor" aria-label="anchor" href="#time-components"></a></h3>
+      <div class="section-desc"><p>Functions for extracting and referring to linear and cyclical components of time.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="time_components.html">time_components()</a></code>
+
+        </dt>
+        <dd>Extract linear and cyclical time components</dd>
+
+        <dt>
+
+          <code><a href="component_helpers.html">lin()</a></code> <code><a href="component_helpers.html">cyc()</a></code>
+
+        </dt>
+        <dd>Linear and cyclical component helpers</dd>
       </dl></div><div class="section level2">
       <h2 id="calendar-systems">Calendar Systems<a class="anchor" aria-label="anchor" href="#calendar-systems"></a></h2>
 
@@ -383,7 +429,7 @@
         <dt>
 
           <code><a href="new_time.html">new_time()</a></code>
-
+          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
         </dt>
         <dd>Constructor for mixtime time vectors</dd>
 
@@ -407,6 +453,13 @@
 
         </dt>
         <dd>Check the time type of values</dd>
+
+        <dt>
+
+          <code><a href="time_is_determinate_at.html">time_is_determinate_at()</a></code>
+
+        </dt>
+        <dd>Test whether time is determinate at a granule's precision</dd>
 
         <dt>
 
@@ -479,6 +532,13 @@
 
         </dt>
         <dd>Base S7 class for creating new time units</dd>
+
+        <dt>
+
+          <code><a href="mt_time-class.html">mt_linear()</a></code> <code><a href="mt_time-class.html">mt_duration()</a></code> <code><a href="mt_time-class.html">mt_cyclical()</a></code>
+
+        </dt>
+        <dd>Time vector classes</dd>
       </dl></div><div class="section level2">
 
       <h3 id="calendar-arithmetic">Calendar arithmetic<a class="anchor" aria-label="anchor" href="#calendar-arithmetic"></a></h3>

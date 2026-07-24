@@ -18,8 +18,8 @@ mt_tz_unit(n = 1L, tz = naive_tz)
 
 - n:
 
-  The step size of time granule. For example, `n = 2L` is 2 time units -
-  for `cal_isoweek$week(2L)` that would be 2 weeks (a fortnight).
+  The step size of time granule. For example, `n = 2L` is 2 time units,
+  and `cal_isoweek$week(2L)` would represent 2 weeks (a fortnight).
 
 - lat:
 

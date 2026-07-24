@@ -45,6 +45,7 @@
 <div class="section level3">
 <h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
 <ul><li>Substantially faster performance by caching the granule cardinality graph (used by <code>chronon_convert()</code>, <code><a href="../reference/chronon_divmod.html">chronon_divmod()</a></code>, <code><a href="../reference/chronon_common.html">chronon_common()</a></code> and <code>time_parts()</code>) and tzdb names (used in operations with timezones).</li>
+<li>Reworked time vectors to be built with S7 rather than vctrs for improved double dispatch methods for arithmetic and other operations (<a href="https://github.com/mitchelloharawild/mixtime/issues/63" class="external-link">#63</a>).</li>
 </ul></div>
 </div>
     <div class="section level2">

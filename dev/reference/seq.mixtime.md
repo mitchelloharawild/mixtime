@@ -10,7 +10,7 @@ week, month of year).
 # S3 method for class '`mixtime::mixtime`'
 seq(...)
 
-# S3 method for class 'mt_time'
+# S3 method for class '`mixtime::mt_time`'
 seq(
   from,
   to,

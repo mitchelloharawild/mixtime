@@ -20,6 +20,9 @@
   [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)
   and `time_parts()`) and tzdb names (used in operations with
   timezones).
+- Reworked time vectors to be built with S7 rather than vctrs for
+  improved double dispatch methods for arithmetic and other operations
+  ([\#63](https://github.com/mitchelloharawild/mixtime/issues/63)).
 
 ## mixtime 0.2.0
 
