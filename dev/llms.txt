@@ -535,6 +535,8 @@ multiple time granularities.
   : Check the time type of values
 - [`time_is_determinate_at()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_determinate_at.md)
   : Test whether time is determinate at a granule's precision
+- [`time_is_complete_at()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_complete_at.md)
+  : Test whether a granule is completed at a time point
 - [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)
   [`chronon_common.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)
   : Find the common chronon of a time object
