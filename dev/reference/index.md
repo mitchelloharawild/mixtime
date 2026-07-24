@@ -220,7 +220,10 @@ multiple time granularities.
   : Convert a time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_mixtime.md)
   : Check if an object is a mixtime
-- [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
+- [`time_is_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
+  [`time_is_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
+  [`time_is_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
+  [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
   [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
   [`is_time_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
   : Check the time type of values

@@ -6,6 +6,12 @@ durations.
 ## Usage
 
 ``` r
+time_is_linear(x, ...)
+
+time_is_cyclical(x, ...)
+
+time_is_duration(x, ...)
+
 is_time_linear(x, ...)
 
 is_time_cyclical(x, ...)
@@ -36,10 +42,10 @@ the type of time represented by each element.
 
 ``` r
 t <- c(yearmonth(0), month_of_year(0), months(0L))
-is_time_linear(t)
+time_is_linear(t)
 #> [1]  TRUE FALSE FALSE
-is_time_cyclical(t)
+time_is_cyclical(t)
 #> [1] FALSE  TRUE FALSE
-is_time_duration(t)
+time_is_duration(t)
 #> [1] FALSE FALSE  TRUE
 ```

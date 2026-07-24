@@ -2,6 +2,19 @@
 
 ## mixtime (development version)
 
+### Breaking changes
+
+- [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
+  [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
+  and
+  [`is_time_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
+  have been renamed to
+  [`time_is_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
+  [`time_is_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
+  and
+  [`time_is_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
+  for consistency with semantic property functions.
+
 ### New features
 
 - Added

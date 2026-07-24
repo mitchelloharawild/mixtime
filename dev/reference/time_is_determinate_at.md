@@ -41,11 +41,6 @@ finer granules exactly (0% through 2020 is 0% through January), giving
 `TRUE`. Coarser-or-equal granules are always determinate. Missing (`NA`)
 and infinite times give `NA`.
 
-## See also
-
-[`time_components()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_components.md),
-[`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
-
 ## Examples
 
 ``` r
