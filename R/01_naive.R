@@ -1,7 +1,7 @@
 # A naive time granule property inherits from specified properties
 naive <- function(x = NA) structure(x, class = "mt_naive")
 
-#' @export
+#' @exportS3Method base::format mt_naive
 format.mt_naive <- function(x, ...) {
   paste0("naive [", NextMethod(), "]")
 }

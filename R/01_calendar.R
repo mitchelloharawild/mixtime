@@ -69,7 +69,7 @@ new_calendar <- function(..., inherit = NULL, class = character()) {
   cal
 }
 
-#' @export
+#' @exportS3Method base::print mt_calendar
 print.mt_calendar <- function(x, ...) {
   # Get calendar class (excluding mt_calendar base class)
   cal_classes <- setdiff(class(x), "mt_calendar")
