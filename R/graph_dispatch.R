@@ -144,6 +144,38 @@ S7_graph_dispatch <- function(graph, start, end) {
   graph$classes[int_path]
 }
 
+# Directed reachability: is `end` reachable from `start` by following edges in
+# the from -> to direction only? Used to test the fine -> coarse ordering of the
+# chronon_cardinality graph (undirected BFS above would ignore direction).
+directed_reachable <- function(from, to, start, end) {
+  frontier <- start
+  visited <- start
+  while (length(frontier) > 0L) {
+    reached <- to[from %in% frontier]
+    if (end %in% reached) return(TRUE)
+    frontier <- setdiff(reached, visited)
+    visited <- c(visited, frontier)
+  }
+  FALSE
+}
+
+# TRUE if `chronon` nests within `granule`, i.e. `granule` is equal to or a
+# coarser container of `chronon`. Edges in the chronon_cardinality graph point
+# fine -> coarse, so this holds exactly when `granule` is directed-reachable from
+# `chronon`. FALSE when the two granules have no registered relationship.
+chronon_nests_in <- function(chronon, granule) {
+  from_id <- S7_class_id(chronon)
+  to_id <- S7_class_id(granule)
+  if (from_id == to_id) return(TRUE)
+
+  graph <- chronon_cardinality_graph()
+  start <- match(from_id, graph$chr_classes)
+  end <- match(to_id, graph$chr_classes)
+  if (is.na(start) || is.na(end)) return(FALSE)
+
+  directed_reachable(graph$edge_from, graph$edge_to, start, end)
+}
+
 S7_class_id <- function(x) {
   if (inherits(x, "S7_object") && !inherits(x, "S7_class")) {
     x <- S7::S7_class(x)
