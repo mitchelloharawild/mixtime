@@ -69,6 +69,17 @@ reference:
   - time_round
   - time_floor
   - time_ceiling
+- subtitle: "Comparison operators"
+  desc: "Methods for comparing time vectors."
+  contents:
+  - mt_linear-compare
+  - mt_duration-compare
+- subtitle: "Time Components"
+  desc: "Functions for extracting and referring to linear and cyclical components of time."
+  contents:
+  - time_components
+  - lin
+  - cyc
 
 - title: "Calendar Systems"
   desc: "Calendar systems are composed of their associated time units. These define how time is divided and measured in different calendar systems."
@@ -148,6 +159,7 @@ reference:
   - mt_unit
   - mt_tz_unit
   - mt_loc_unit
+  - mt_time-class
 - subtitle: "Calendar arithmetic"
   contents:
   - chronon_cardinality
