@@ -69,62 +69,50 @@ time_format_default <- function(x) {
 time_format_impl <- function(x, format = time_format_default(x), ...) {
   # Obtain core time information
   chronon <- attr(x, "chronon")
-  cal <- time_calendar(chronon)
-  
-  # Extend evaluation calendar cycle calendar units
+
+  # Evaluation calendar: the chronon's own, extended with the cycle's units so
+  # cyclical granules (e.g. {cyc(month, year)}) can be named.
   cycle <- attr(x, "cycle")
-  if (!is.null(cycle)) {
-    cycle_units <- setdiff(names(cal_cyc <- time_calendar(cycle)), names(cal))
-    cal[cycle_units] <- cal_cyc[cycle_units]
-  }
+  calendar <- if (is.null(cycle)) time_calendar(chronon) else time_calendar(cycle)
 
   x_special <- is.na(x) | is.infinite(vec_data(x))
-  
-  # Create glue evaluation environment
-  as_tu <- function(x) {
-    if (!S7_inherits(x, mt_unit)) x <- x(1L)
-    granule_inherit_props(x, chronon)
-  }
+
+  # Create the glue evaluation environment by layering format-only helpers on top
+  # of the shared lin()/cyc() component mask: the attribute helpers (tz / loc /
+  # frac) and .time are added to the same calendar + lin/cyc vocabulary that
+  # time_components() evaluates against.
   env <- rlang::new_environment(
     data = c(
-      # The calendar units from chronon
-      cal,
+      component_mask(chronon, calendar),
+      list(
+        # Attribute helper functions
+        tz = tz_abbreviation,
+        loc = function(x) {
+          chronon <- attr(x, "chronon")
+          if (!S7_inherits(mt_loc_unit)) return("")
+          lat <- chronon@lat
+          lon <- chronon@lon
+          alt <- chronon@alt
+          lat_str <- sprintf("%.2f%s", abs(lat), if (lat >= 0) "N" else "S")
+          lon_str <- sprintf("%.2f%s", abs(lon), if (lon >= 0) "E" else "W")
+          if (alt != 0) {
+            paste0(lat_str, " ", lon_str, " ", sprintf("%.0fm", alt))
+          } else {
+            paste0(lat_str, " ", lon_str)
+          }
+        },
+        frac = function(x) {
+          # Apply time zone offset to x, with truncation for discrete time models.
+          x_tz <- tz_offset(x)
+          x <- vec_data(x)
+          if(is.integer(x)) x_tz <- trunc(x_tz)
+          x <- x + x_tz
+          sprintf("%.1f%%", (x - floor(x))*100)
+        },
 
-      # The label helper functions, returns time units and label options
-      lin = function(granule, ...) {
-        structure(list(as_tu(granule)), ...)
-      },
-      cyc = function(granule, cycle, ...) {
-        structure(list(as_tu(granule), as_tu(cycle)), ...)
-      },
-
-      # Attribute helper functions
-      tz = tz_abbreviation,
-      loc = function(x) {
-        chronon <- attr(x, "chronon")
-        if (!S7_inherits(mt_loc_unit)) return("")
-        lat <- chronon@lat
-        lon <- chronon@lon
-        alt <- chronon@alt
-        lat_str <- sprintf("%.2f%s", abs(lat), if (lat >= 0) "N" else "S")
-        lon_str <- sprintf("%.2f%s", abs(lon), if (lon >= 0) "E" else "W")
-        if (alt != 0) {
-          paste0(lat_str, " ", lon_str, " ", sprintf("%.0fm", alt))
-        } else {
-          paste0(lat_str, " ", lon_str)
-        }
-      },
-      frac = function(x) {
-        # Apply time zone offset to x, with truncation for discrete time models.
-        x_tz <- tz_offset(x)
-        x <- vec_data(x)
-        if(is.integer(x)) x_tz <- trunc(x_tz)
-        x <- x + x_tz
-        sprintf("%.1f%%", (x - floor(x))*100)
-      },
-        
-      # Attach .time for specialised usage (e.g. tz_abbreviation(.time))
-      list(.time = x)
+        # Attach .time for specialised usage (e.g. tz_abbreviation(.time))
+        .time = x
+      )
     ),
     parent = rlang::caller_env()
   )

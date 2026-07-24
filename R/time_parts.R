@@ -1,6 +1,3 @@
-# TODO: rename to components() or time_components()
-# The user-facing variant should accept a list/expression of lin() and cyc() similar to the format strings.
-
 # Compute numeric time parts from a time object
 #
 # `chronon_parts()` decomposes a time object into its numeric linear and cyclical
