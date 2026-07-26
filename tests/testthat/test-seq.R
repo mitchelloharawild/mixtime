@@ -224,3 +224,14 @@ test_that("seq.mixtime with duration by", {
   expect_equal(format(result[[1]]), format(date("2020-01-01")))
   expect_equal(format(result[[5]]), format(date("2020-01-09")))
 })
+test_that("seq.mixtime messages describe the granules involved", {
+  # Granules are S7 scalars, so their size comes from @n rather than vec_data()
+  expect_error(
+    seq(date("2020-01-01"), yearmonth("2020-06-01")),
+    "1 day"
+  )
+  expect_warning(
+    seq(date("2020-01-31"), by = months(1L), length.out = 3L),
+    "31 days"
+  )
+})

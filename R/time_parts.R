@@ -19,46 +19,55 @@
 chronon_parts <- function(x, linear = list(), cyclical = list()) {
   start_tu <- attr(x, "chronon")
 
-  # Apply time zone offset to x, with truncation for discrete time models.
-  x_tz <- tz_offset(x)
+  # Shift the time points into local time, truncating the offset for discrete
+  # time models so they remain whole chronons.
+  offset <- tz_offset(x)
   x <- vec_data(x)
-  if(is.integer(x)) x_tz <- trunc(x_tz)
-  x <- floor(x + x_tz)
+  x <- floor(x + if (is.integer(x)) trunc(offset) else offset)
 
-  # Find suitable graph path for repeated chronon_divmod() calls
-  # that computes all cyclical and linear parts.
-  path <- S7_graph_dispatch_multi(
+  # The two granules of a cyclical part: the chronon is the finer unit (the
+  # desired output unit) and the cycle the coarser unit it repeats within.
+  cyclical_chronon <- lapply(cyclical, `[[`, 1L)
+  cyclical_cycle   <- lapply(cyclical, `[[`, 2L)
+
+  # Parts are recognised by matching class ids against the node reached at each
+  # step of the traversal, so each set of targets is keyed by position in a
+  # vector of the class id it is matched on (NA where the match cannot apply).
+  linear_ids  <- vapply(linear, S7_class_id, character(1L))
+  chronon_ids <- vapply(cyclical_chronon, S7_class_id, character(1L))
+  cycle_ids   <- vapply(cyclical_cycle, S7_class_id, character(1L))
+
+  # Multi-unit cycles (e.g. a month within 15 months) repeat within a coarser
+  # granule of the *same* time unit, so their chronon and cycle resolve to one
+  # node: a self-loop in the class-keyed cardinality graph rather than a path
+  # through it. They ask the graph only to reach that node (a terminal, with no
+  # co-occurrence to enforce) and are matched on their chronon, since matching
+  # them on their cycle would pair them with the degenerate divmod of a granule
+  # with itself.
+  self_cycle <- chronon_ids == cycle_ids
+  self_cycle_ids <- chronon_ids
+  self_cycle_ids[!self_cycle] <- NA_character_
+  cycle_ids[self_cycle] <- NA_character_
+
+  # Find a suitable tree of chronon_divmod() steps that computes all cyclical
+  # and linear parts. Cross-unit cycles must reach both of their granules on one
+  # root-to-leaf path, while the other targets need only be reached.
+  tree <- S7_graph_dispatch_multi(
     graph      = chronon_cardinality_graph(),
     start      = start_tu,
-    terminals  = linear,
-    groups     = cyclical
-  )
-
-  # Identify linear/cyclical targets
-  # Linear: match on child node class id, keyed by position
-  linear_ids <- vapply(linear, S7_class_id, character(1L))
-
-  # Cyclical: match on (chronon class id, cycle class id) pairs, keyed by position.
-  # - chronon = x[[1]]: the finer unit (the desired output unit)
-  # - cycle   = x[[2]]: the coarser unit (the period of repetition)
-  cyclical_ids <- data.frame(
-    chronon = vapply(cyclical, function(x) S7_class_id(x[[1L]]), character(1L)),
-    cycle   = vapply(cyclical, function(x) S7_class_id(x[[2L]]), character(1L))
+    terminals  = c(linear, cyclical_chronon[self_cycle]),
+    groups     = cyclical[!self_cycle]
   )
 
   # Prepare results to be filled via recursive divmod execution
   linear_results   <- vector("list", length(linear))
   cyclical_results <- vector("list", length(cyclical))
 
-  # Handle initial case where the start_tu is a target linear part
-  start_id <- S7_class_id(start_tu)
-  if (!is.na(i <- vec_match(start_id, linear_ids))) {
-    linear_results[[i]] <- x + chronon_epoch(start_tu)
-  }
-
-  # Traverse the divmod path to compute parts.
-  traverse <- function(node, parent_tu, x) {
+  # Traverse the divmod path to compute parts. `parent_id` is the caller's
+  # `child_id`, so it is handed down rather than looked up again.
+  traverse <- function(node, parent_tu, parent_id, x) {
     child_tu <- node$node
+    child_id <- S7_class_id(child_tu)
 
     dm <- chronon_divmod(
       from = parent_tu,
@@ -66,62 +75,93 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
       x    = x
     )
 
-    child_id  <- S7_class_id(child_tu)
-    parent_id <- S7_class_id(parent_tu)
-
     # Collect linear result: div when child matches a linear target
-    linear_match <- which(child_id == linear_ids)
-    if (length(linear_match) > 0L) {
-      linear_results[linear_match] <<- list(dm$div + chronon_epoch(child_tu))
+    for (i in which(child_id == linear_ids)) {
+      linear_results[[i]] <<- count_in_granule(dm$div, child_tu, linear[[i]]) +
+        chronon_epoch(child_tu)
     }
 
-    # Recurse each child with $div as the new time point (now in child_tu units) 
-    cyclical_incomplete <- unlist(lapply(node$children, traverse, child_tu, dm$div))
-    
-    # Unwing recursion with backward conversion for cyclical parts:
-    # For any incomplete cyclical result whose chronon (finer unit) is coarser
-    # than parent_tu, accumulate: result <- result * cardinality + dm$mod
-    # using the cardinality at the current dm$div position.
-    for (i in cyclical_incomplete) {
-      chronon_id <- cyclical_ids$chronon[[i]]
-      cyclical_results[[i]] <<- cyclical_results[[i]] * chronon_cardinality(parent_tu, child_tu, dm$div) + dm$mod
+    # Complete multi-unit cycles rooted at this granule. `dm$div` is the time
+    # point in `child_tu` units (at the root, an identity divmod of `x`), so the
+    # position within the cycle is a single divmod away.
+    for (i in which(child_id == self_cycle_ids)) {
+      cyclical_results[[i]] <<- chronon_divmod(
+        from = cyclical_chronon[[i]],
+        to   = cyclical_cycle[[i]],
+        x    = count_in_granule(dm$div, child_tu, cyclical_chronon[[i]])
+      )$mod
     }
 
-    # Initialise new incomplete cyclical results started at this location
-    cycle_match <- which(child_id == cyclical_ids$cycle)
-    if (length(cycle_match) > 0L) {
-      cyclical_results[cycle_match] <<- list(dm$mod)
-      # Add any new incomplete cyclical targets started at this step
-      cyclical_incomplete <- c(cyclical_incomplete, cycle_match)
+    # Recurse each child with $div as the new time point (now in child_tu units)
+    incomplete <- unlist(lapply(node$children, traverse, child_tu, child_id, dm$div))
+
+    # Unwind recursion with backward conversion for cyclical parts: an
+    # incomplete result counts `child_tu` units so far, so re-expressing it in
+    # the finer `parent_tu` multiplies by the cardinality at the current `dm$div`
+    # position and adds this step's remainder. The cardinality is a property of
+    # this step alone, so it is found once for all of them.
+    if (length(incomplete) > 0L) {
+      cardinality <- chronon_cardinality(parent_tu, child_tu, dm$div)
+      for (i in incomplete) {
+        cyclical_results[[i]] <<- cyclical_results[[i]] * cardinality + dm$mod
+      }
+    }
+
+    # Cycles whose coarser granule is this node start counting here
+    starting <- which(child_id == cycle_ids)
+    if (length(starting) > 0L) {
+      cyclical_results[starting] <<- list(dm$mod)
+      incomplete <- c(incomplete, starting)
+    }
+
+    # Cyclical parts accumulate in `parent_tu`, the finest granule of their
+    # chronon's unit, so those completing here are rescaled to the size asked for.
+    complete <- chronon_ids[incomplete] == parent_id
+    for (i in incomplete[complete]) {
+      cyclical_results[[i]] <<- count_in_granule(
+        cyclical_results[[i]], parent_tu, cyclical_chronon[[i]]
+      )
     }
 
     # Return vector of which cyclical targets are still incomplete after this step
-    cyclical_incomplete[cyclical_ids$chronon[cyclical_incomplete] != parent_id]
+    incomplete[!complete]
   }
-  traverse(path, start_tu, x)
+  traverse(tree, start_tu, S7_class_id(start_tu), x)
 
   # Check if all targets were found
-  if (any(lin_missed <- vapply(linear_results, is.null, logical(1L)))) {
-    cli::cli_abort(
-      c(
-        "The following linear time parts could not be computed from the input time object:",
-        i = "{time_unit_plural(linear[lin_missed], 1L)} ({linear[lin_missed]})",
-        i = "All requested linear parts need to be included as granules for {.code linear_time()}"
-      ),
-      call = NULL
-    )
-  }
-  if (any(cyc_missed <- vapply(cyclical_results, is.null, logical(1L)))) {
-    cli::cli_abort(
-      c(
-        "The following cyclical time parts could not be computed from the input time object:",
-        i = "{time_unit_plural(cyclical[cyc_missed], 1L)} ({cyclical[cyc_missed][[1L]]$from} -> {cyclical[cyc_missed][[1L]]$to})",
-        i = "All requested cyclical parts need to be included as granules for {.code linear_time()}"
-      ),
-      call = NULL
-    )
-  }
+  abort_missing_parts(linear_results, linear, time_granule_label, "linear")
+  abort_missing_parts(cyclical_results, cyclical, cycle_label, "cyclical")
 
   # Return list of the same order as input
   list(linear = linear_results, cyclical = cyclical_results)
+}
+
+# Re-express `value`, a count of `from` granules, as a count of `to` granules of
+# the same time unit (e.g. months at the month node into quarters for
+# `month(3L)`). Nodes hold the finest granule of their time unit, so `to` is
+# never finer than `from` and the conversion is a division away.
+count_in_granule <- function(value, from, to) {
+  if (from@n == to@n) value else chronon_divmod(from, to, value)$div
+}
+
+# Abort when the traversal did not reach every requested part, describing those
+# it missed with `label()` applied to the corresponding element of `targets`.
+abort_missing_parts <- function(results, targets, label, type) {
+  found <- !vapply(results, is.null, logical(1L))
+  if (all(found)) return(invisible(NULL))
+
+  missed <- vapply(targets[!found], label, character(1L))
+  cli::cli_abort(
+    c(
+      "The following {type} time parts could not be computed from the input time object:",
+      i = "{missed}",
+      i = "All requested {type} parts need to be included as granules for {.code linear_time()}"
+    ),
+    call = NULL
+  )
+}
+
+# Describe a cyclical part for error messages, e.g. "1 month -> 15 months".
+cycle_label <- function(x) {
+  paste(time_granule_label(x[[1L]]), "->", time_granule_label(x[[2L]]))
 }

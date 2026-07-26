@@ -115,6 +115,22 @@ test_that("continuous time resolves finer components exactly (no NA)", {
   expect_equal(format(res$mth), "Jan 0.0%")
 })
 
+test_that("components are extracted at multi-unit granule sizes", {
+  d <- as.Date(c("2023-06-21", "2024-06-21", "2025-06-21", "2026-06-21"))
+
+  # Two-year granules: the calendar's own day -> year divmod converts to single
+  # years only, so the size is resolved by rescaling from the year granule.
+  res <- time_components(d, y = lin(cal_gregorian$year(2L)))
+  expect_equal(format(res$y), c("2022", "2024", "2024", "2026"))
+
+  # Quarters expressed as three months are counted in quarters, not months
+  res <- time_components(d, q = lin(cal_gregorian$month(3L)))
+  expect_equal(
+    vctrs::vec_data(vecvec::unvecvec(res$q)),
+    ((2023:2026 - 1970) * 12L + 5L) %/% 3L
+  )
+})
+
 test_that("time_components() errors informatively on misuse", {
   t <- yearmonth("2026-02-14")
 

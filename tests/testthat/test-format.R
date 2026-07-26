@@ -57,3 +57,15 @@ test_that("format() handles special values in cyclical time", {
   expect_equal(result[[2]], " NA")
   expect_equal(result[[3]], "Inf")
 })
+
+test_that("format() reports an unmatched granule in the format string", {
+  # Granules are S7 scalars, so their size comes from @n rather than vec_data()
+  expect_error(
+    mt_unit_display(
+      cal_gregorian$day(2L),
+      units = list(cal_gregorian$day(1L)),
+      parts = list(1L)
+    ),
+    "2 days"
+  )
+})
