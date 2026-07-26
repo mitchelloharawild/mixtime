@@ -106,8 +106,8 @@
     if (!identical(from_chronon, to_chronon)) {
       cli::cli_abort(c(
         "Incompatible time chronones in {.fn seq}.",
-        "i" = "{.arg from} has {.cls {paste(from_chronon, time_unit_plural(from_chronon, vec_data(from_chronon)))}} chronons.",
-        "i" = "{.arg to} has {.cls {paste(to_chronon, time_unit_plural(to_chronon, vec_data(to_chronon)))}} chronons."
+        "i" = "{.arg from} has {.cls {time_granule_label(from_chronon)}} chronons.",
+        "i" = "{.arg to} has {.cls {time_granule_label(to_chronon)}} chronons."
       ))
     }
   }
@@ -180,7 +180,7 @@
     if (any(if (by@n < 0) cycle_size >= seq_part else cycle_size <= seq_part, na.rm = TRUE)) {
       if (missing_on_invalid) {
         cli::cli_warn(c(
-          "The cycle offset ({seq_part + 1L} {time_unit_plural(chronon, seq_part + 1L)}) has produced time points that overflow the {time_unit_plural(by, 1L)} cycle.",
+          "The cycle offset ({time_granule_label(chronon, seq_part + 1L)}) has produced time points that overflow the {time_unit_plural(by, 1L)} cycle.",
           "!" = "Using the nearest valid time points in the cycle, {.code on_invalid = \"nearest\"} (the default).",
           "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
         ))

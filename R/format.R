@@ -20,14 +20,14 @@ mt_unit_display <- function(x, units, parts, ...) {
     }
   } else if (is_mt <- S7_inherits(x, mt_unit)) {
     xi <- vec_match(
-      data.frame(x = vec_data(x), tu = S7_class_id(x)),
+      data.frame(x = x@n, tu = S7_class_id(x)),
       data.frame(x = vapply(units, function(u) u@n, numeric(1L)), tu = vapply(units, S7_class_id, character(1L)))
     )
     # No matches found
     if (is.na(xi)) {
       cli::cli_abort(
         c(
-          "The calendar time unit of {x} {time_unit_plural(x, vec_data(x))} could not be found."
+          "The calendar time unit of {time_granule_label(x)} could not be found."
         ),
         call = NULL
       )

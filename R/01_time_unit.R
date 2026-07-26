@@ -124,3 +124,10 @@ time_unit_plural <- function(x, n = 2L) {
 #' @export
 time_unit_abbr <- S7::new_generic("time_unit_abbr", "x")
 method(time_unit_abbr, mt_unit) <- function(x) ""
+
+# A quantity of a time unit as text, e.g. "15 months". Defaults to describing
+# the granule itself (`month(15L)`), since `mt_unit` objects are S7 scalars
+# which neither paste() nor cli can interpolate directly. Vectorised over `n`.
+time_granule_label <- function(x, n = x@n) {
+  paste(n, time_unit_plural(x, n))
+}

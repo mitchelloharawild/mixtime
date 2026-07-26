@@ -52,11 +52,20 @@ method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
 #' @export
 chronon_format_duration <- new_generic("chronon_format_duration", "x")
 method(chronon_format_duration, mt_unit) <- function(x) {
-  paste0(
-    "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))}",
-    " ",
-    "{time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
-  )
+  "{duration_label(.time)}"
+}
+
+# A duration as text, e.g. "3 months" or "1.5 days". This is time_granule_label()
+# over the magnitudes of a duration vector, except that continuous (double)
+# durations show a fractional magnitude and always read as plural.
+duration_label <- function(x) {
+  n <- vec_data(x)
+  chronon <- chronon_common(x)
+  if (is.double(n)) {
+    paste(format(n, nsmall = 1L), time_unit_plural(chronon, 2L))
+  } else {
+    time_granule_label(chronon, n)
+  }
 }
 
 #' Default formatting strings for chronon attributes
