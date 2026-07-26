@@ -10,6 +10,20 @@ test_that("discrete time is indeterminate below its chronon", {
   expect_true(time_is_determinate_at(yearmonth(as.Date("2020-02-01")), cal_gregorian$year))
 })
 
+test_that("granules of the same time unit are compared by size", {
+  # A quarter, expressed as three months, cannot resolve the month within it.
+  q <- linear_time(0:2, chronon = cal_gregorian$month(3L))
+  expect_false(time_is_determinate_at(q, cal_gregorian$month(1L))[[1L]])
+  expect_true(time_is_determinate_at(q, cal_gregorian$month(3L))[[1L]])
+  expect_true(time_is_determinate_at(q, cal_gregorian$month(15L))[[1L]])
+
+  # ... and so cannot complete one either.
+  expect_identical(
+    time_is_complete_at(q, cal_gregorian$month(1L)),
+    rep(FALSE, 3L)
+  )
+})
+
 test_that("continuous time resolves finer granules exactly", {
   # 0% through 2020 is 0% through January -> determinate.
   expect_true(time_is_determinate_at(year(2020), cal_gregorian$month))
