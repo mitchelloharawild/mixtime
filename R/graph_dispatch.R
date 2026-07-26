@@ -319,18 +319,38 @@ S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = l
     groups    = int_groups
   )
 
-  # Computed once; captured by resolve_tree via closure
-  all_objects <- c(list(start), terminals, unlist(groups, recursive = FALSE))
-  all_ids     <- vapply(all_objects, S7_class_id, character(1L))
+  # Nodes are conversion waypoints rather than the granules asked for, so each
+  # resolves to the finest granule of its time unit: `start` for the unit the
+  # time points are measured in (which cannot be subdivided further), and a
+  # single unit elsewhere. Resolving to a requested granule instead would make a
+  # node as coarse as the coarsest granule requested of it, discarding the
+  # remainder that finer granules of the same unit need. Callers rescale each
+  # requested granule from its node, which relies on no node being coarser than
+  # a granule requested of it.
+  start_id <- S7_class_id(start)
+
+  # A granule the caller already supplied is reused when it is itself no coarser
+  # than a single unit: it needs no rebuilding and carries their tz / location.
+  supplied    <- c(terminals, unlist(groups, recursive = FALSE))
+  supplied_id <- vapply(supplied, S7_class_id, character(1L))
+  supplied_n  <- vapply(supplied, function(granule) granule@n, numeric(1L))
+
+  # Properties only need copying onto a constructed node when `start` holds one
+  # that is not naive (e.g. a time zone) for it to inherit.
+  start_informs <- any(!is.naive(props(start)[setdiff(names(props(start)), "n")]))
 
   resolve_tree <- function(node) {
     node_id <- chr_classes[[node$node]]
-    match_i <- match(node_id, all_ids)
+    finest <- which(supplied_id == node_id)
+    if (length(finest)) finest <- finest[[which.min(supplied_n[finest])]]
 
-    resolved <- if (!is.na(match_i)) {
-      all_objects[[match_i]]
+    resolved <- if (identical(node_id, start_id)) {
+      start
+    } else if (length(finest) && supplied_n[[finest]] <= 1) {
+      supplied[[finest]]
     } else {
-      graph$classes[[node$node]](1L)
+      granule <- graph$classes[[node$node]](1L)
+      if (start_informs) granule_inherit_props(granule, start) else granule
     }
 
     list(
