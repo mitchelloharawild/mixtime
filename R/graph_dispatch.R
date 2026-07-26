@@ -213,137 +213,81 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
   if (length(from) != length(to)) {
     return(integer(0))
   }
-  
+
   if (length(start) != 1 || length(end) != 1) {
     return(integer(0))
   }
-  
+
   if (length(from) == 0) {
     return(integer(0))
   }
-  
+
   # Convert to integers
   from <- as.integer(from)
   to <- as.integer(to)
   start <- as.integer(start)
   end <- as.integer(end)
-  
+
   # If start equals end, return just the start vertex
   if (start == end) {
     return(start)
   }
-  
-  # Find all unique vertices and create mapping
-  all_vertices <- unique(c(from, to, start, end))
-  num_vertices <- length(all_vertices)
-  
-  # Create mapping from vertex value to index (1-based)
-  vertex_to_index <- integer(max(all_vertices))
-  for (i in seq_along(all_vertices)) {
-    vertex_to_index[all_vertices[i]] <- i
+
+  # Edges are undirected, so each is walked in both directions. Interleaving the
+  # two directions of an edge (rather than listing every forward direction and
+  # then every reverse one) leaves each vertex's neighbours in edge order.
+  n <- max(from, to, start, end)
+  tail <- c(rbind(from, to))
+  head <- c(rbind(to, from))
+
+  # Compressed adjacency, built with whole-vector operations rather than an
+  # edge-by-edge loop: `nbr` holds every vertex's neighbours end to end, `deg`
+  # how many each has, and `off` where each vertex's run starts. The explicit
+  # second sort key keeps neighbours in edge order without relying on the sort
+  # being stable.
+  ord <- order(tail, seq_along(tail))
+  nbr <- head[ord]
+  deg <- tabulate(tail, nbins = n)
+  off <- c(0L, cumsum(deg))
+
+  visited <- logical(n)
+  parent <- integer(n)
+  visited[[start]] <- TRUE
+  frontier <- start
+
+  # Expand a whole BFS level per iteration: gathering the frontier's neighbour
+  # runs in one indexing operation makes the number of interpreted iterations
+  # proportional to the length of the path rather than to the size of the graph.
+  while (length(frontier) > 0L && !visited[[end]]) {
+    d <- deg[frontier]
+    adjacent <- nbr[rep.int(off[frontier], d) + sequence(d)]
+    origin <- rep.int(frontier, d)
+
+    # Keep each vertex's first unvisited occurrence, which is the one a queue
+    # popping the frontier in order would have reached first.
+    new <- !visited[adjacent] & !duplicated(adjacent)
+    frontier <- adjacent[new]
+    parent[frontier] <- origin[new]
+    visited[frontier] <- TRUE
   }
-  
-  # Check if start and end vertices exist in the graph
-  if (start > length(vertex_to_index) || end > length(vertex_to_index) ||
-      vertex_to_index[start] == 0 || vertex_to_index[end] == 0) {
+
+  # No path found
+  if (!visited[[end]]) {
     return(integer(0))
   }
-  
-  # Convert start and end to indices
-  start_idx <- vertex_to_index[start]
-  end_idx <- vertex_to_index[end]
-  
-  # Build adjacency list using indices
-  adj_list <- vector("list", num_vertices)
-  vertex_counts <- integer(num_vertices)
-  
-  # Count neighbors for pre-allocation
-  for (i in seq_along(from)) {
-    from_idx <- vertex_to_index[from[i]]
-    to_idx <- vertex_to_index[to[i]]
-    
-    vertex_counts[from_idx] <- vertex_counts[from_idx] + 1L
-    vertex_counts[to_idx] <- vertex_counts[to_idx] + 1L
+
+  # Reconstruct the path by walking parents back from `end`, filling a buffer
+  # from the right so it needs no growing.
+  path <- integer(n)
+  i <- n
+  node <- end
+  while (node != start) {
+    path[[i]] <- node
+    node <- parent[[node]]
+    i <- i - 1L
   }
-  
-  # Pre-allocate adjacency vectors
-  for (i in 1:num_vertices) {
-    adj_list[[i]] <- integer(vertex_counts[i])
-  }
-  
-  # Fill adjacency list
-  current_indices <- integer(num_vertices)
-  
-  for (i in seq_along(from)) {
-    from_idx <- vertex_to_index[from[i]]
-    to_idx <- vertex_to_index[to[i]]
-    
-    # Add edge from_idx -> to_idx
-    current_indices[from_idx] <- current_indices[from_idx] + 1L
-    adj_list[[from_idx]][current_indices[from_idx]] <- to_idx
-    
-    # Add edge to_idx -> from_idx (undirected)
-    current_indices[to_idx] <- current_indices[to_idx] + 1L
-    adj_list[[to_idx]][current_indices[to_idx]] <- from_idx
-  }
-  
-  # BFS implementation
-  queue <- integer(num_vertices)
-  queue_start <- 1L
-  queue_end <- 1L
-  
-  visited <- logical(num_vertices)
-  parent <- integer(num_vertices)
-  
-  # Initialize BFS
-  queue[queue_end] <- start_idx
-  queue_end <- queue_end + 1L
-  visited[start_idx] <- TRUE
-  parent[start_idx] <- 0L  # No parent for start
-  
-  # BFS main loop
-  while (queue_start < queue_end) {
-    current <- queue[queue_start]
-    queue_start <- queue_start + 1L
-    
-    # Check if we reached the destination
-    if (current == end_idx) {
-      # Reconstruct path
-      path_indices <- integer(0)
-      node <- end_idx
-      
-      # Build path backwards
-      while (node != 0L) {
-        path_indices <- c(node, path_indices)
-        node <- parent[node]
-      }
-      
-      # Convert indices back to original vertex values
-      path <- integer(length(path_indices))
-      for (i in seq_along(path_indices)) {
-        path[i] <- all_vertices[path_indices[i]]
-      }
-      
-      return(path)
-    }
-    
-    # Explore neighbors
-    neighbors <- adj_list[[current]]
-    
-    for (j in seq_along(neighbors)) {
-      neighbor <- neighbors[j]
-      
-      if (!visited[neighbor]) {
-        visited[neighbor] <- TRUE
-        parent[neighbor] <- current
-        queue[queue_end] <- neighbor
-        queue_end <- queue_end + 1L
-      }
-    }
-  }
-  
-  # No path found
-  return(integer(0))
+  path[[i]] <- start
+  path[i:n]
 }
 
 S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = list()) {
