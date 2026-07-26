@@ -181,7 +181,7 @@ directed_reachable <- function(from, to, start, end) {
 chronon_nests_in <- function(chronon, granule) {
   from_id <- S7_class_id(chronon)
   to_id <- S7_class_id(granule)
-  if (from_id == to_id) return(TRUE)
+  if (from_id == to_id) return(granule@n %% chronon@n == 0L)
 
   graph <- chronon_cardinality_graph()
   start <- match(from_id, graph$chr_classes)
