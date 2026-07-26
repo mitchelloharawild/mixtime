@@ -193,9 +193,13 @@ chronon_nests_in <- function(chronon, granule) {
 
 S7_class_id <- function(x) {
   if (inherits(x, "S7_object") && !inherits(x, "S7_class")) {
-    x <- S7::S7_class(x)
+    # An S7 object's class attribute already begins with its class id, so an
+    # instance needs neither a class lookup nor any property access.
+    return(class(x)[[1L]])
   }
-  paste(c(x@package, x@name), collapse = "::")
+  # A class not attached to a package is identified by its name alone.
+  package <- x@package
+  if (is.null(package)) x@name else paste0(package, "::", x@name)
 }
 
 traverse_methods <- function(x) {
