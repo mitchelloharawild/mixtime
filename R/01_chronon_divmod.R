@@ -30,13 +30,7 @@ chronon_divmod <- S7::new_generic("chronon_divmod", c("from", "to"))
 S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # No casting needed for identical time granules
   if (identical(S7_class_id(from), S7_class_id(to))) {
-    divisor <- to@n / from@n
-    return(
-      list(
-        div = vec_data(x) %/% divisor,
-        mod = vec_data(x) %% divisor
-      )
-    )
+    return(fdivmod(vec_data(x), to@n / from@n))
   }
 
   # Apply graph dispatch to find shortest path between from and to using
@@ -86,9 +80,5 @@ chronon_divmod_dispatch <- function(from, to, x) {
 
 ## Fallback to chronon_cardinality for regular time granules
 chronon_divmod_regular <- function(from, to, x) {
-  divisor <- chronon_cardinality(from, to)
-  list(
-    div = x %/% divisor,
-    mod = x %% divisor
-  )
+  fdivmod(x, chronon_cardinality(from, to))
 }

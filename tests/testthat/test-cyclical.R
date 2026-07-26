@@ -115,3 +115,24 @@ test_that("cyclical_time() discrete vs continuous modes work with timezones", {
   continuous_dow <- day_of_week(utc_time, discrete = FALSE)
   expect_equal(format(continuous_dow), "Mon 52.1%")
 })
+
+test_that("cyclical_time() formats cycles of several of the chronon's own unit", {
+  # The cycle is a multiple of the chronon's time unit, so the position within
+  # the cycle counts the chronon up to the cycle's cardinality.
+  expect_equal(
+    format(cyclical_time(1:10, month(1L), month(15L))),
+    paste0("M", 1:10)
+  )
+
+  # Positions wrap at the cardinality of the cycle (15 months)
+  expect_equal(
+    format(cyclical_time(13:17, month(1L), month(15L))),
+    paste0("M", c(13L, 14L, 0L, 1L, 2L))
+  )
+
+  # Days within a cycle of 10 days, labelled by the day cyclical labels
+  expect_equal(
+    format(cyclical_time(0:10, day(1L), day(10L))),
+    sprintf("D%02d", c(1:10, 1L))
+  )
+})

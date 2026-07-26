@@ -126,6 +126,71 @@ test_that("chronon_parts() correctly computes multi-step cyclical parts", {
   expect_equal(result$cyclical[[3L]], 33630L) # second-of-day
 })
 
+test_that("chronon_parts() returns parts at the requested granule size", {
+  # Tree nodes hold the finest granule of their time unit, so parts requested at
+  # a coarser size are rescaled from their node rather than returned unscaled.
+  x <- vecvec::unvecvec(linear_time(0:16, chronon = cal_gregorian$month(1L)))
+
+  # Linear: quarters, not months, since the epoch
+  result <- chronon_parts(x, linear = list(cal_gregorian$month(3L)))
+  expect_equal(result$linear[[1L]], (0:16) %/% 3L)
+
+  d <- as.Date("1970-01-01") + c(0L, 40L, 100L, 400L, 500L)
+  x <- vecvec::unvecvec(as_mixtime(d))
+
+  # Cyclical: quarter-of-year, reached by traversing from a day chronon
+  result <- chronon_parts(
+    x,
+    cyclical = list(list(cal_gregorian$month(3L), cal_gregorian$year(1L)))
+  )
+  expect_equal(result$cyclical[[1L]], c(0L, 0L, 1L, 0L, 1L))
+
+  # A coarser granule of the same unit must not anchor the node and cost the
+  # finer granules sharing it their remainder.
+  result <- chronon_parts(
+    x,
+    linear   = list(cal_gregorian$month(3L)),
+    cyclical = list(list(cal_gregorian$month(1L), cal_gregorian$month(15L)))
+  )
+  expect_equal(result$linear[[1L]], c(0L, 0L, 1L, 4L, 5L))
+  expect_equal(result$cyclical[[1L]], c(0L, 1L, 3L, 13L, 1L))
+})
+
+test_that("chronon_parts() correctly computes multi-unit cyclical parts", {
+  # A cycle of several of the chronon's own time unit (e.g. a month within 15
+  # months) is a self-loop in the class-keyed cardinality graph, not a path.
+
+  # Chronon of the cycle is the time vector's own chronon
+  x <- vecvec::unvecvec(linear_time(0:20, chronon = cal_gregorian$month(1L)))
+  result <- chronon_parts(
+    x,
+    cyclical = list(list(cal_gregorian$month(1L), cal_gregorian$month(15L)))
+  )
+  expect_equal(result$cyclical[[1L]], (0:20) %% 15L)
+
+  # Chronon of the cycle is reached by traversing from a finer chronon
+  d <- as.Date("1970-01-01") + c(0L, 40L, 100L, 400L, 500L)
+  x <- vecvec::unvecvec(as_mixtime(d))
+  result <- chronon_parts(
+    x,
+    cyclical = list(list(cal_gregorian$month(1L), cal_gregorian$month(15L)))
+  )
+  expect_equal(result$cyclical[[1L]], c(0L, 1L, 3L, 13L, 1L))
+
+  # Alongside the linear and (cross-unit) cyclical parts of the same traversal
+  result <- chronon_parts(
+    x,
+    linear   = list(cal_gregorian$year(1L)),
+    cyclical = list(
+      list(cal_gregorian$month(1L), cal_gregorian$month(15L)),
+      list(cal_gregorian$month(1L), cal_gregorian$year(1L))
+    )
+  )
+  expect_equal(result$linear[[1L]], c(1970L, 1970L, 1970L, 1971L, 1971L))
+  expect_equal(result$cyclical[[1L]], c(0L, 1L, 3L, 13L, 1L))
+  expect_equal(result$cyclical[[2L]], c(0L, 1L, 3L, 1L, 4L))
+})
+
 # ---- Mixed linear and cyclical ----------------------------------------------
 test_that("chronon_parts() returns correct linear and cyclical parts together", {
   # chronon_parts is internally applied to mt_time vectors, not mixed-type vectors

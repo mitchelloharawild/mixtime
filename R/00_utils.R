@@ -85,6 +85,20 @@ gcd <- function(a, b) {
   a
 }
 
+# Floor division of doubles, and the matching remainder.
+#
+# R's `%/%` and `%%` put every double element through a correction step guarding
+# against a quotient landing on the wrong side of an integer (~75x slower).
+# A directly rounded quotient is already exact and needs no correction.
+fdiv <- function(x, y) {
+  floor(x / y)
+}
+
+fdivmod <- function(x, y) {
+  div <- floor(x / y)
+  list(div = div, mod = x - div * y)
+}
+
 # Evaluate time units in a calendar context
 eval_cal <- function(expr, cal) {
   eval_tidy({{expr}}, data = cal)

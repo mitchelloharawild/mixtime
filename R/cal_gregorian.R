@@ -129,12 +129,12 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function
   z <- x_int + 719468L
   
   # (day) -> (year, month, day) arithmetic
-  era   <- (z >= 0L) * (z %/% 146097L) + (z < 0L) * ((z - 146096L) %/% 146097L)
+  era   <- (z >= 0L) * fdiv(z, 146097L) + (z < 0L) * fdiv(z - 146096L, 146097L)
   doe   <- z - era * 146097L                      # day-of-era [0, 146096]
-  yoe   <- (doe - doe %/% 1460L + doe %/% 36524L - doe %/% 146096L) %/% 365L
-  doy   <- doe - (365L * yoe + yoe %/% 4L - yoe %/% 100L + yoe %/% 400L)
-  mp    <- (5L * doy + 2L) %/% 153L               # month prime [0, 11]
-  day   <- doy - (153L * mp + 2L) %/% 5L          # day [0, 30]
+  yoe   <- fdiv(doe - fdiv(doe, 1460L) + fdiv(doe, 36524L) - fdiv(doe, 146096L), 365L)
+  doy   <- doe - (365L * yoe + fdiv(yoe, 4L) - fdiv(yoe, 100L) + fdiv(yoe, 400L))
+  mp    <- fdiv(5L * doy + 2L, 153L)              # month prime [0, 11]
+  day   <- doy - fdiv(153L * mp + 2L, 5L)         # day [0, 30]
   month <- mp + 3L - 12L * (mp >= 10L)            # month [1, 12]
   year  <- yoe + era * 400L + (month <= 2L)       # year (proleptic Gregorian)
 
@@ -143,11 +143,11 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$month)) <- function
   res_scale <- to@n
   # Importantly, updating the remainder days that now span multiple months
   if (res_scale != 1L) {
-    res <- chronon_cardinality(from, to, res %/% res_scale)
+    res <- chronon_cardinality(from, to, fdiv(res, res_scale))
   }
 
   list(
-    div = res %/% res_scale,
+    div = fdiv(res, res_scale),
     mod = (day + x_frac) / x_scale
   )
 }
@@ -159,18 +159,18 @@ method(chronon_divmod, list(cal_gregorian$month, cal_gregorian$day)) <- function
   x_int <- floor(x)
   x_frac <- x - x_int
 
-  year <- x_int %/% 12L + 1970L
+  year <- fdiv(x_int, 12L) + 1970L
   ly <- as.integer(is_leap_year(year))
-  month <- (x_int %% 12L) + 1L
+  month <- x_int - 12L * (year - 1970L) + 1L
 
   # Start of the month in days since epoch
   result <- 
     # Years since 1970
     365 * (year - 1970) +
     # Leap days since 1970
-    (year - 1968)%/%4 - (year - 1900)%/%100 + (year - 1600)%/%400 + 
+    fdiv(year - 1968, 4) - fdiv(year - 1900, 100) + fdiv(year - 1600, 400) +
     # Days this year before this month
-    (367 * month - 362)%/%12 +
+    fdiv(367 * month - 362, 12) +
     (month > 2) * (-2 + ly) - ly
 
   # Convert fractional months to fractional days using days in current month
@@ -202,11 +202,11 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(
   # Shift to days since 0000-03-01 (algorithm anchor)
   z     <- x_int + 719468L
 
-  era   <- (z >= 0L) * (z %/% 146097L) + (z < 0L) * ((z - 146096L) %/% 146097L)
+  era   <- (z >= 0L) * fdiv(z, 146097L) + (z < 0L) * fdiv(z - 146096L, 146097L)
   doe   <- z - era * 146097L                      # day-of-era [0, 146096]
-  yoe   <- (doe - doe %/% 1460L + doe %/% 36524L - doe %/% 146096L) %/% 365L
-  doy   <- doe - (365L * yoe + yoe %/% 4L - yoe %/% 100L + yoe %/% 400L)
-  mp    <- (5L * doy + 2L) %/% 153L               # month prime [0, 11]
+  yoe   <- fdiv(doe - fdiv(doe, 1460L) + fdiv(doe, 36524L) - fdiv(doe, 146096L), 365L)
+  doy   <- doe - (365L * yoe + fdiv(yoe, 4L) - fdiv(yoe, 100L) + fdiv(yoe, 400L))
+  mp    <- fdiv(5L * doy + 2L, 153L)              # month prime [0, 11]
   month <- mp + 3L - 12L * (mp >= 10L)            # month [1, 12]
   year  <- yoe + era * 400L + (month <= 2L)       # year (proleptic Gregorian)
 
