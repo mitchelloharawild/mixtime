@@ -73,6 +73,27 @@ mt_cast_from_numeric <- function(x, to, ...) {
   x
 }
 
+# A cyclical `cycle` is a *modulus*, not a unit of measure: it names the
+# equivalence relation the stored (absolute) chronon count is reduced by at
+# format and comparison time. Unlike a chronon - where the finest common granule
+# represents both operands losslessly - any granule common to two different
+# cycles has *fewer* distinct positions than either operand, so
+# `chronon_common_impl()` is not the applicable operation (week + year would give
+# a one-day cycle, collapsing every value to the same position). Two cyclical
+# vectors therefore combine only when they share a cycle, once naive properties
+# (tz / location) have been reconciled between them.
+cycle_common <- function(x, y) {
+  x <- granule_inherit_props(x, y)
+  y <- granule_inherit_props(y, x)
+  if (!identical(x, y)) return(NULL)
+  x
+}
+
+cycle_incompatible_details <- paste0(
+  "Cyclical time vectors can only be combined when they share a cycle.\n",
+  "Differing cycles can be held side by side in a `mixtime()` vector instead."
+)
+
 # --- time-to-time cast (same kind) ---
 mt_cast_time_time <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (S7_inherits(to, mt_duration)) {
@@ -81,6 +102,13 @@ mt_cast_time_time <- function(x, to, ..., x_arg = "", to_arg = "") {
     if (discrete) x <- as.integer(x)
     attributes(x) <- attributes(to)
     return(x)
+  }
+  if (S7_inherits(to, mt_cyclical) &&
+      is.null(cycle_common(attr(x, "cycle"), attr(to, "cycle")))) {
+    vctrs::stop_incompatible_cast(
+      x, to, x_arg = x_arg, to_arg = to_arg,
+      details = cycle_incompatible_details
+    )
   }
   x <- chronon_convert(x, attr(to, "chronon"), discrete = is.integer(to))
   attributes(x) <- attributes(to)
@@ -97,9 +125,18 @@ mt_ptype2_time_time <- function(x, y, ..., x_arg = "", y_arg = "") {
     vctrs::stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
   }
   if (x_cyc) {
+    # The chronon resolves to the finest common granule as usual, but the cycle
+    # must match on both sides - see `cycle_common()`.
+    cycle <- cycle_common(attr(x, "cycle"), attr(y, "cycle"))
+    if (is.null(cycle)) {
+      vctrs::stop_incompatible_type(
+        x, y, x_arg = x_arg, y_arg = y_arg,
+        details = cycle_incompatible_details
+      )
+    }
     return(mt_cyclical(
       chronon = chronon_common_impl(list(attr(x, "chronon"), attr(y, "chronon"))),
-      cycle = chronon_common_impl(list(attr(x, "cycle"), attr(y, "cycle")))
+      cycle = cycle
     ))
   }
   data <- vec_ptype2(vec_data(x), vec_data(y))

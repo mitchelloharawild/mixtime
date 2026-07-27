@@ -8,12 +8,21 @@
 
 ## New features
 
+* Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`, `>` and
+  `>=`, which previously errored. A cyclical value means a position within its
+  cycle rather than an instant, so comparison is made on that position: two
+  Wednesdays are equal regardless of which week they fall in.
+
 * Added `chronon_cardinality_fixed()`, a variant of `chronon_cardinality()`
   for time granule pairs whose relationship is a constant, context-independent
   number (e.g., 60 seconds in a minute) rather than dependent on an `at` time
   point (e.g., 28-31 days in a month).
 
 ## Bug fixes
+
+* Combining two cyclical time vectors with different cycles is now an error
+  rather than silently collapsing them. A cycle is a modulus rather than a unit
+  of measure, so unlike a chronon it has no meaningful common value.
 
 * Converting to a finer chronon now takes a path that only ever steps finer,
   instead of the shortest path through the registered calendar arithmetic
