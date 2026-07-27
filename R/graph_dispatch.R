@@ -212,7 +212,7 @@ traverse_methods <- function(x) {
 }
 
 
-bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(), end = integer()) {
+bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(), end = integer(), directed = FALSE) {
   # Input validation
   if (length(from) != length(to)) {
     return(integer(0))
@@ -237,12 +237,17 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
     return(start)
   }
 
-  # Edges are undirected, so each is walked in both directions. Interleaving the
-  # two directions of an edge (rather than listing every forward direction and
-  # then every reverse one) leaves each vertex's neighbours in edge order.
+  # Edges are walked in both directions unless `directed`. Interleaving the two
+  # directions of an edge (rather than listing every forward direction and then
+  # every reverse one) leaves each vertex's neighbours in edge order.
   n <- max(from, to, start, end)
-  tail <- c(rbind(from, to))
-  head <- c(rbind(to, from))
+  if (directed) {
+    tail <- from
+    head <- to
+  } else {
+    tail <- c(rbind(from, to))
+    head <- c(rbind(to, from))
+  }
 
   # Compressed adjacency, built with whole-vector operations rather than an
   # edge-by-edge loop: `nbr` holds every vertex's neighbours end to end, `deg`
