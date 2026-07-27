@@ -107,11 +107,11 @@ strings for time units that are shared across calendars (e.g.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "W{cyc(week,year)}"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">chronon_format_duration</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{duration_label(.time)}"</span>
 <span class="r-in"><span><span class="fu">chronon_format_duration</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{duration_label(.time)}"</span>
 <span class="r-in"><span><span class="fu">chronon_format_duration</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{duration_label(.time)}"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

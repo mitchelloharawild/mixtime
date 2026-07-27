@@ -25,6 +25,16 @@
   context-independent number (e.g., 60 seconds in a minute) rather than
   dependent on an `at` time point (e.g., 28-31 days in a month).
 
+### Bug fixes
+
+- Converting to a finer chronon now takes a path that only ever steps
+  finer, instead of the shortest path through the registered calendar
+  arithmetic methods. A path that steps coarser first has to express the
+  time point as a fraction of the coarser unit, and expanding that
+  fraction again assumes the unit subdivides evenly: quarters were
+  routed to days via years, making 2020 Q1 91.5 days long rather than
+  the 91 days of January to March.
+
 ### Improvements
 
 - Substantially faster performance by caching the granule cardinality
