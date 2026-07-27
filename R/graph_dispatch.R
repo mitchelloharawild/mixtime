@@ -137,12 +137,43 @@ S7_graph_dispatch <- function(graph, start, end) {
     )
   }
 
-  int_path <- bfs_shortest_path(
-    from = graph$edge_from,
-    to = graph$edge_to,
-    start = int_node_start,
-    end = int_node_end
-  )
+  # Prefer a monotone path, where every step moves the same way through the
+  # granularities: only coarser when converting to a coarser chronon, only finer
+  # when converting to a finer one. 
+  # 
+  # This is safer than shorter paths in both directions (e.g. 4 quarters in a
+  # year are not equally sized, so quarters -> years -> days is less safe than
+  # quarters -> months -> days).
+  int_path <- integer()
+  if (!is.null(graph$edge_fine)) {
+    int_path <- bfs_shortest_path(
+      from = graph$edge_fine,
+      to = graph$edge_coarse,
+      start = int_node_start,
+      end = int_node_end,
+      directed = TRUE
+    )
+    if (length(int_path) == 0L) {
+      int_path <- bfs_shortest_path(
+        from = graph$edge_coarse,
+        to = graph$edge_fine,
+        start = int_node_start,
+        end = int_node_end,
+        directed = TRUE
+      )
+    }
+  }
+
+  # Conversions between units that no monotone path connects (a week is neither
+  # finer nor coarser than a month) still need the unrestricted search.
+  if (length(int_path) == 0L) {
+    int_path <- bfs_shortest_path(
+      from = graph$edge_from,
+      to = graph$edge_to,
+      start = int_node_start,
+      end = int_node_end
+    )
+  }
 
   if (length(int_path) == 0L) {
     cli::cli_abort(
