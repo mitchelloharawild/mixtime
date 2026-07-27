@@ -156,7 +156,14 @@ method(chronon_cardinality_fixed, list(mt_unit, mt_unit)) <- function(x, y) {
 
   result <- 1
   for (i in seq(2, length.out = length(path) - 1)) {
-    result <- result * chronon_cardinality_fixed(path[[i]](1L), path[[i - 1]](1L))
+    fine <- path[[i]](1L)
+    coarse <- path[[i - 1]](1L)
+    # Allow the fixed cardinality method to be defined in either direction.
+    result <- result * if (is.null(chronon_cardinality_fixed@methods[[S7_class_id(fine)]][[S7_class_id(coarse)]])) {
+      1 / chronon_cardinality_fixed(coarse, fine)
+    } else {
+      chronon_cardinality_fixed(fine, coarse)
+    }
   }
   result
 }

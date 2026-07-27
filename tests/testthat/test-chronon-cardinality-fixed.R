@@ -6,6 +6,21 @@ test_that("chronon_cardinality_fixed() returns the unit-granule constant", {
   expect_error(chronon_cardinality_fixed(cal_gregorian$day(1L), cal_gregorian$month(1L)))
 })
 
+test_that("chronon_cardinality_fixed() traverses edges in either direction", {
+  # A coarser `x` than `y` walks the graph against the fine -> coarse direction
+  # its edges are registered in, giving the reciprocal.
+  expect_equal(chronon_cardinality_fixed(cal_gregorian$year(1L), cal_gregorian$quarter(1L)), 1 / 4)
+  expect_equal(chronon_cardinality_fixed(cal_time_civil$day(1L), cal_time_civil$hour(1L)), 1 / 24)
+
+  # Multi-step paths mix the two directions
+  expect_equal(chronon_cardinality_fixed(cal_time_civil$second(1L), cal_time_civil$day(1L)), 86400)
+  expect_equal(chronon_cardinality_fixed(cal_time_civil$day(1L), cal_time_civil$second(1L)), 1 / 86400)
+  expect_equal(chronon_cardinality_fixed(cal_gregorian$quarter(1L), cal_gregorian$month(1L)), 1 / 3)
+
+  # A pair with no path of fixed relationships is still an error, not a guess
+  expect_error(chronon_cardinality_fixed(cal_gregorian$month(1L), cal_gregorian$day(1L)))
+})
+
 test_that("chronon_cardinality() falls back to chronon_cardinality_fixed(), scaled by granule size", {
   expect_equal(chronon_cardinality(cal_time_civil$hour(1L), cal_time_civil$day(1L)), 24)
   expect_equal(chronon_cardinality(cal_time_civil$hour(2L), cal_time_civil$day(3L)), 24 * 3 / 2)
