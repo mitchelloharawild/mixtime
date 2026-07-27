@@ -30,23 +30,46 @@ vec_cast_to_mixtime <- function(x, to, ...) {
 
 #' @importFrom vctrs vec_proxy_order
 method(vec_proxy_order, class_mixtime) <- function(x, ...) {
-  if (length(x@x) > 1L) {
-    # Convert all time values to a common chronon
-    chronons <- lapply(x@x, function(v) attr(v, "chronon"))
-    chronon_type <- chronon_common_impl(chronons)
+  mode <- check_common_time_mode(x)
+  if (!length(x@x)) return(vec_proxy_order(vecvec::unvecvec(x)))
 
+  # The granules each part is reduced to, read before converting the parts below
+  # replaces them with bare chronon counts carrying neither granule.
+  chronon <- chronon_common_impl(lapply(x@x, function(v) attr(v, "chronon")))
+  cycle <- if (identical(mode, "cyclical")) check_common_cycle(x)
+
+  # Convert all time values to a common chronon, which a single part already is
+  if (length(x@x) > 1L) {
     x@x <- lapply(x@x, function(v) {
       if (is.integer(v)) v <- v + 0.5
-      chronon_convert(v, chronon_type)
+      chronon_convert(v, chronon)
     })
   }
+
+  if (!is.null(cycle)) {
+    # Cyclical values order by their position within the cycle, matching `==`
+    # and `<` on `mt_cyclical` (see `mt_cyclical-compare`) rather than the
+    # absolute chronon count stored underneath.
+    x@x <- lapply(x@x, function(v) cyclical_position(vec_data(v), chronon, cycle))
+  }
+
   vec_proxy_order(vecvec::unvecvec(x))
 }
 
 #' @importFrom vctrs vec_proxy_equal
 method(vec_proxy_equal, class_mixtime) <- function(x, ...) {
+  cycle <- if (identical(check_common_time_mode(x), "cyclical")) check_common_cycle(x)
   data_frame(
-    x = as.numeric(x),
+    # Cyclical values are equal when they share a position within the cycle,
+    # matching `==` on `mt_cyclical` (see `mt_cyclical-compare`) rather than the
+    # absolute chronon count stored underneath.
+    x = if (is.null(cycle)) {
+      as.numeric(x)
+    } else {
+      unvecvec(vecvec_apply(x, function(x) {
+        cyclical_position(vec_data(x), attr(x, "chronon"), cycle)
+      }))
+    },
     g = unvecvec(vecvec_apply(x, function(x) rep(rlang::hash(attr(x, "chronon")), length(x))))
   )
 }

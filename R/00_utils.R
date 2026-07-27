@@ -26,6 +26,58 @@ check_tz_name <- function(zone) {
   invisible(TRUE)
 }
 
+time_mode_label <- function(x) {
+  if (S7_inherits(x, mt_cyclical)) {
+    "cyclical"
+  } else if (S7_inherits(x, mt_duration)) {
+    "duration"
+  } else {
+    "linear"
+  }
+}
+
+# Operations that reduce a mixtime to mutually comparable values - comparison,
+# ordering, de-duplication - are only meaningful when every element shares one
+# mode of time: an absolute position (`mt_linear`), a position within a cycle
+# (`mt_cyclical`) and a magnitude (`mt_duration`) cannot be compared with one
+# another.
+#
+# Returns the shared mode, or `character(0)` for an empty mixtime.
+check_common_time_mode <- function(x) {
+  modes <- unique(vapply(x@x, time_mode_label, character(1L)))
+  if (length(modes) > 1L) {
+    cli::cli_abort(
+      c(
+        "Can't compare {.field {modes}} time in a single {.cls mixtime} vector.",
+        "i" = "Comparing, sorting and de-duplicating a {.cls mixtime} requires every element to share one mode of time."
+      ),
+      call = NULL
+    )
+  }
+  modes
+}
+
+# Cyclical time compares on its position within a cycle, so those positions are
+# comparable only when every element shares one cycle. A cycle is a modulus
+# rather than a unit of measure, so unlike a chronon there is no common value
+# two differing cycles could be reconciled to (see `cycle_common()`).
+#
+# Returns the shared cycle granule.
+check_common_cycle <- function(x) {
+  cycles <- lapply(x@x, function(x) attr(x, "cycle"))
+  cycle <- Reduce(function(x, y) if (is.null(x)) NULL else cycle_common(x, y), cycles)
+  if (is.null(cycle)) {
+    cli::cli_abort(
+      c(
+        "Can't compare cyclical time of differing cycles.",
+        "i" = "Found {.field {unique(vapply(cycles, time_granule_label, character(1L)))}}."
+      ),
+      call = NULL
+    )
+  }
+  cycle
+}
+
 #' Compute circular rolling sums
 #'
 #' Calculates rolling sums of length `k` for all contiguous subsequences
