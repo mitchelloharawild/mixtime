@@ -93,3 +93,48 @@ test_that("continuous cyclical time compares fractional positions", {
   later <- time_of_day(as.POSIXct("2020-01-02 09:45:00", tz = "UTC"), discrete = FALSE)
   expect_true(same[1] < later)
 })
+
+# Equality and ordering must agree with `==`/`<`, or `unique()` would keep two
+# Wednesdays that `==` reports as equal.
+test_that("unique(), duplicated() and sort() use the position within the cycle", {
+  d <- as.Date("2020-01-13") + 0:13
+  dow <- day_of_week(d)
+
+  expect_length(unique(dow), 7L)
+  expect_equal(format(unique(dow)), c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
+  expect_equal(duplicated(dow), rep(c(FALSE, TRUE), each = 7L))
+  expect_equal(anyDuplicated(dow), 8L)
+  expect_equal(
+    format(sort(rev(dow))),
+    rep(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), each = 2L)
+  )
+  expect_equal(vctrs::vec_match(dow, unique(dow)), rep(1:7, times = 2L))
+})
+
+test_that("de-duplication spans the parts of a mixtime sharing a cycle", {
+  x <- c(
+    day_of_year(as.Date(c("2020-02-01", "2021-02-01"))),
+    month_of_year(as.Date("2020-02-10"))
+  )
+
+  # the two 1 Februaries share a position; the month is a distinct chronon
+  expect_equal(duplicated(x), c(FALSE, TRUE, FALSE))
+  expect_equal(format(sort(x)), c("D32", "D32", "Feb"))
+})
+
+test_that("empty mixtime vectors and prototypes stay comparable", {
+  expect_length(vctrs::vec_proxy_order(day_of_week(integer(0))), 0L)
+  expect_length(vctrs::vec_proxy_order(vctrs::vec_ptype(day_of_week(0L))), 0L)
+  expect_length(unique(vctrs::vec_ptype(day_of_week(0L))), 0L)
+  expect_length(sort(day_of_week(integer(0))), 0L)
+})
+
+test_that("comparing a mixtime requires a single mode of time", {
+  mixed <- c(yearmonth(as.Date("2020-01-15")), days(1L))
+  expect_error(unique(mixed), "share one mode of time")
+  expect_error(sort(mixed), "share one mode of time")
+
+  cycles <- c(day_of_week("2020-01-15"), day_of_month("2020-01-15"))
+  expect_error(unique(cycles), "differing cycles")
+  expect_error(sort(cycles), "differing cycles")
+})

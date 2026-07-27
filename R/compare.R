@@ -285,3 +285,20 @@ method(`>`, list(class_any, mt_cyclical)) <- function(e1, e2) cyclical_compare("
 
 method(`>=`, list(mt_cyclical, class_any)) <- function(e1, e2) cyclical_compare(">=", e1, e2)
 method(`>=`, list(class_any, mt_cyclical)) <- function(e1, e2) cyclical_compare(">=", e1, e2)
+
+# Ordering and de-duplication of mixtime vectors
+method(xtfrm, class_mixtime) <- function(x) {
+  xtfrm(vec_proxy_order(x))
+}
+
+method(unique, class_mixtime) <- function(x, incomparables = FALSE, ...) {
+  vctrs::vec_unique(x)
+}
+
+method(duplicated, class_mixtime) <- function(x, incomparables = FALSE, ...) {
+  vctrs::vec_duplicate_id(x) != seq_along(x)
+}
+
+method(anyDuplicated, class_mixtime) <- function(x, incomparables = FALSE, ...) {
+  match(TRUE, duplicated(x), nomatch = 0L)
+}
