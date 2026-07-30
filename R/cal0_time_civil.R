@@ -79,7 +79,17 @@ method(time_unit_full, cal_time_civil$millisecond) <- function(x) "millisecond{?
 method(time_unit_abbr, cal_time_civil$millisecond) <- function(x) "ms"
 
 # Default formats
-method(chronon_format_linear, list(cal_time_civil$day, class_any)) <- function(x, cal) "{lin(year)}-{cyc(month,year)}-{cyc(day, month)}"
+method(chronon_format_linear, list(cal_time_civil$day, class_any)) <- function(x, cal) {
+  # `year`/`month` are only in `cal` when the chronon's timezone is
+  # resolvable (a Gregorian date is only defined relative to a timezone).
+  # Without them, defer to the generic mt_unit fallback rather than
+  # referencing calendar units that aren't actually in scope.
+  if (is.null(cal$year) || is.null(cal$month)) {
+    chronon_format_linear(S7::super(x, mt_unit), cal)
+  } else {
+    "{lin(year)}-{cyc(month,year)}-{cyc(day, month)}"
+  }
+}
 method(chronon_format_linear, list(cal_time_civil$hour, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}h")
 method(chronon_format_linear, list(cal_time_civil$minute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}")
 method(chronon_format_linear, list(cal_time_civil$second, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}")
