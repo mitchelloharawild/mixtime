@@ -174,15 +174,41 @@ test_that("the common chronon keeps a timezone the inputs agree on", {
   expect_equal(unique(tz_name(c(hrs, secs))), tz)
 })
 
-test_that("the common chronon of disagreeing timezones is naive", {
+test_that("the common chronon of disagreeing known timezones is UTC", {
   # A common chronon that claimed one of the input timezones would silently
-  # move the other input's time points.
+  # move the other input's time points. But both zones are real, resolvable
+  # zones, so the disagreement can be reconciled at UTC instead of discarding
+  # the timezone entirely (which left the common chronon unformattable).
   melb <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "Australia/Melbourne"))
   utc <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "UTC"))
   naive <- datetime(melb, tz = NA)
 
-  expect_true(is.na(tz_name(chronon_common(c(melb, utc)))))
+  expect_equal(tz_name(chronon_common(c(melb, utc))), "UTC")
   # Naive time cannot be represented in a timezone, so a naive input keeps the
   # common chronon naive rather than being adopted into the other's zone.
   expect_true(is.na(tz_name(chronon_common(c(melb, naive)))))
+})
+
+test_that("chronon_common() of mixed known timezones formats without error", {
+  # Regression test for tz-merge.md: mixing two real (but different) known
+  # zones used to collapse the common chronon to naive, and formatting
+  # through that naive chronon directly (as ggtime's axis breaks do) crashed.
+  london <- datetime(seq(
+    as.POSIXct("2026-07-30 06:00:00", tz = "Europe/London"),
+    by = "1 hour", length.out = 3
+  ))
+  melbourne <- datetime(seq(
+    as.POSIXct("2026-07-30 06:00:00", tz = "Australia/Melbourne"),
+    by = "1 hour", length.out = 3
+  ))
+  combined <- c(london, melbourne)
+
+  expect_equal(tz_name(chronon_common(combined)), "UTC")
+
+  x <- vecvec::unvecvec(mixtime(
+    as.numeric(combined),
+    chronon = chronon_common(combined),
+    discrete = FALSE
+  ))
+  expect_no_error(format(x))
 })
