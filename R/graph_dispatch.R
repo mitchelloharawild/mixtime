@@ -77,16 +77,37 @@ compile_signature_graph <- function(signatures) {
 .chronon_signature_cache <- new.env(parent = emptyenv())
 
 # The divmod graph only uses edges from direct chronon_divmod() methods and
-# fixed (context-independent) chronon_cardinality_fixed() methods. 
+# fixed (context-independent) chronon_cardinality_fixed() methods.
+#
+# Alongside connectivity, the graph also records which end of each edge is
+# finer, so S7_graph_dispatch() can prefer a monotone path. chronon_divmod()
+# signatures are direction-symmetric (methods are registered both fine -> coarse
+# and coarse -> fine, since a divmod can convert either way), so they cannot
+# supply this ordering - instead the ordering is provided by 
+# chronon_cardinality() and chronon_cardinality_fixed() signatures
 chronon_divmod_graph <- function() {
   sig_divmod <- method_signatures(chronon_divmod)
   sig_fixed <- method_signatures(chronon_cardinality_fixed)
-  n <- length(sig_divmod) + length(sig_fixed)
+  sig_cardinality <- method_signatures(chronon_cardinality)
+  n <- length(sig_divmod) + length(sig_fixed) + length(sig_cardinality)
 
   cache <- .chronon_signature_cache
   if (!identical(cache$divmod_n, n)) {
     cache$divmod_n <- n
-    cache$divmod_graph <- compile_signature_graph(unique(c(sig_divmod, sig_fixed)))
+    graph <- compile_signature_graph(unique(c(sig_divmod, sig_fixed)))
+
+    fine_graph <- compile_signature_graph(unique(c(sig_fixed, sig_cardinality)))
+    int_fine_nodes <- vec_match(fine_graph$chr_classes, graph$chr_classes)
+    edge_fine <- int_fine_nodes[fine_graph$edge_from]
+    edge_coarse <- int_fine_nodes[fine_graph$edge_to]
+    # Only edges whose classes both also appear in the divmod graph are
+    # usable to order its nodes; a chronon_cardinality() pair without a
+    # matching chronon_divmod() connection contributes nothing there.
+    keep <- !is.na(edge_fine) & !is.na(edge_coarse)
+    graph$edge_fine <- edge_fine[keep]
+    graph$edge_coarse <- edge_coarse[keep]
+
+    cache$divmod_graph <- graph
   }
   cache$divmod_graph
 }
