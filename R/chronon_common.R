@@ -67,7 +67,8 @@ S7::method(chronon_common, class_any) <- function(x, .ptype = NULL, ...) {
 chronon_common_impl <- function(chronons, .ptype = NULL) {
   # TODO: Validate that the supplied .ptype can represent all input chronons
   if (!is.null(.ptype)) return(.ptype)
-  
+
+  chronons <- unique(chronons)
   if (vec_size(chronons) == 1L) return(chronons[[1L]])
 
   # Search strategy:
