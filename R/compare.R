@@ -207,7 +207,7 @@ cyclical_position <- function(x, chronon, cycle) {
   pos <- chronon_parts(x, cyclical = list(list(chronon, cycle)))$cyclical[[1L]]
   xd <- S7_data(x)
   if (is.double(xd)) {
-    xd <- xd + tz_offset(x)
+    xd <- xd + tz_offset_impl(xd, attr(x, "chronon"))
     pos <- pos + (xd - floor(xd))
   }
   pos

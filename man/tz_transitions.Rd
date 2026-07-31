@@ -14,8 +14,13 @@ representing the start of the time range. The timezone is extracted from this ob
 representing the end of the time range.}
 }
 \value{
-A data frame containing information about timezone transitions
-in the specified range.
+A data frame with columns:
+\itemize{
+\item \code{time}: A \code{mixtime} linear time point (continuous, UTC seconds) giving
+the instant of the transition.
+\item \code{offset_before}, \code{offset_after}: \code{mixtime} durations (UTC seconds)
+giving the UTC offset immediately before and after the transition.
+}
 }
 \description{
 Returns all timezone transitions (e.g., daylight saving time changes) that

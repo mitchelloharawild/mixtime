@@ -21,8 +21,8 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
 
   # Shift the time points into local time, truncating the offset for discrete
   # time models so they remain whole chronons.
-  offset <- tz_offset(x)
   x <- vec_data(x)
+  offset <- tz_offset_impl(x, start_tu)
   x <- floor(x + if (is.integer(x)) trunc(offset) else offset)
 
   # The two granules of a cyclical part: the chronon is the finer unit (the

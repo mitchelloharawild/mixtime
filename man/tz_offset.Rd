@@ -12,7 +12,8 @@ tz_offset(x, ...)
 \item{...}{Additional arguments passed to methods.}
 }
 \value{
-A numeric vector of offsets from UTC in the same chronon (e.g. seconds for POSIXt, days for dates, etc.)
+A \code{mixtime} duration vector of offsets from UTC in the same chronon
+(e.g. seconds for POSIXt, days for dates, etc.)
 }
 \description{
 Returns the UTC offset for a given datetime in its specified timezone.

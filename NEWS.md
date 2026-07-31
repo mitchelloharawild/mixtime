@@ -6,6 +6,14 @@
   renamed to `time_is_linear()`, `time_is_cyclical()`, and `time_is_duration()`
   for consistency with semantic property functions.
 
+* `tz_offset()` now returns a `mixtime` duration vector instead of a plain
+  numeric vector, so offsets carry their chronon (and can be combined with
+  other durations) rather than being a bare count of seconds/days/etc.
+
+* `tz_transitions()` now returns `time` as a continuous `mixtime` linear time
+  point (UTC seconds) and `offset_before`/`offset_after` as `mixtime`
+  durations (UTC seconds), instead of plain numeric columns.
+
 ## New features
 
 * Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`, `>` and

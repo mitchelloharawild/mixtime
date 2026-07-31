@@ -35,7 +35,8 @@ S7::method(tz_name, S7::class_any) <- function(x) {
 #' @param x A time class coercible to POSIXt with an associated time zone.
 #' @param ... Additional arguments passed to methods.
 #'
-#' @return A numeric vector of offsets from UTC in the same chronon (e.g. seconds for POSIXt, days for dates, etc.)
+#' @return A `mixtime` duration vector of offsets from UTC in the same chronon
+#'   (e.g. seconds for POSIXt, days for dates, etc.)
 #' @export
 #'
 #' @examples
@@ -47,19 +48,22 @@ S7::method(tz_offset, S7::class_POSIXt) <- function(
   tz = tz_name(time_chronon(x)),
   ...
 ) {
-  get_tz_offset(x, tz)
+  duration(get_tz_offset(x, tz), chronon = cal_gregorian$second(1L, tz = tz))
 }
-S7::method(tz_offset, S7::class_Date) <- function(x, ...) rep.int(0, length(x))
+S7::method(tz_offset, S7::class_Date) <- function(x, ...) {
+  duration(rep.int(0, length(x)), chronon = cal_gregorian$day(1L))
+}
 method(tz_offset, class_mixtime) <- vecvec::vecvec_apply_fn(
   tz_offset,
-  numeric()
+  SIMPLIFY = TRUE
 )
 method(tz_offset, mt_time) <- function(
   x,
   tz = tz_name(attr(x, "chronon")),
   ...
 ) {
-  tz_offset_impl(as.numeric(x), attr(x, "chronon"), tz)
+  chronon <- attr(x, "chronon")
+  duration(tz_offset_impl(as.numeric(x), chronon, tz), chronon = chronon)
 }
 
 tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
@@ -129,8 +133,11 @@ tz_abbreviation <- function(x, tz = tz_name(x)) {
 #' @param end A POSIXct datetime object or something coercible to POSIXct,
 #'   representing the end of the time range.
 #'
-#' @return A data frame containing information about timezone transitions
-#'   in the specified range.
+#' @return A data frame with columns:
+#'   * `time`: A `mixtime` linear time point (continuous, UTC seconds) giving
+#'     the instant of the transition.
+#'   * `offset_before`, `offset_after`: `mixtime` durations (UTC seconds)
+#'     giving the UTC offset immediately before and after the transition.
 #'
 #' @examples
 #' # Get all DST transitions in 2024 for New York
@@ -141,8 +148,24 @@ tz_abbreviation <- function(x, tz = tz_name(x)) {
 #'
 #' @export
 tz_transitions <- function(start, end) {
-  start <- as.double(as.POSIXct(start))
-  end <- as.double(as.POSIXct(end))
+  start <- as.POSIXct(start)
   tz <- attr(start, "tzone") %||% Sys.timezone()
-  get_tz_transitions(start, end, tz)
+  end <- as.double(as.POSIXct(end))
+  start <- as.double(start)
+
+  transitions <- get_tz_transitions(start, end, tz)
+
+  transitions$time <- linear_time(
+    transitions$time,
+    chronon = cal_gregorian$second(1L, tz = "UTC"),
+    discrete = FALSE
+  )
+  transitions$offset_before <- duration(
+    transitions$offset_before, chronon = cal_gregorian$second(1L, tz = "UTC")
+  )
+  transitions$offset_after <- duration(
+    transitions$offset_after, chronon = cal_gregorian$second(1L, tz = "UTC")
+  )
+
+  transitions
 }
