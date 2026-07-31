@@ -128,3 +128,49 @@ test_that("Comparison - a bare number is a duration in the other chronon", {
   expect_true(3 == days(3L))
   expect_true(days(3L) < 5)
 })
+
+# ---------------------------------------------------------------------------
+# Converting a bare duration granule (pulled out of a mixtime's `@x`)
+# ---------------------------------------------------------------------------
+
+test_that("converting a bare duration granule agrees with converting its mixtime", {
+  d <- days(1:3)
+  expect_equal(
+    duration(d@x[[1L]], chronon = cal_gregorian$hour(1L), discrete = FALSE),
+    duration(d, chronon = cal_gregorian$hour(1L), discrete = FALSE)
+  )
+  expect_equal(
+    as.numeric(duration(d@x[[1L]], chronon = cal_gregorian$hour(1L), discrete = FALSE)),
+    c(24, 48, 72)
+  )
+})
+
+test_that("converting a bare duration granule round-trips through another chronon", {
+  d <- days(1:3)
+  back <- duration(
+    duration(d@x[[1L]], chronon = cal_gregorian$hour(1L), discrete = FALSE)@x[[1L]],
+    chronon = cal_gregorian$day(1L), discrete = FALSE
+  )
+  expect_equal(as.numeric(back), as.numeric(d))
+})
+
+test_that("discrete = FALSE on a bare duration granule yields a double", {
+  g <- days(1:3)@x[[1L]]
+  res <- duration(g, chronon = cal_gregorian$hour(1L), discrete = FALSE)
+  expect_false(is.integer(vctrs::vec_data(res@x[[1L]])))
+})
+
+test_that("duration() refuses a non-duration time granule", {
+  tp <- mixtime(as.Date("2023-01-01") + 0:2)
+  expect_error(
+    duration(tp@x[[1L]], chronon = cal_gregorian$hour(1L)),
+    "isn't a duration"
+  )
+})
+
+test_that("calendar-dependent duration conversion errors with a duration-specific message", {
+  expect_error(
+    duration(days(60), chronon = cal_gregorian$month(1L), discrete = FALSE),
+    "no anchor"
+  )
+})

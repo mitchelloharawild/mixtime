@@ -48,23 +48,52 @@ duration <- function(
     cli::cli_abort("{.var chronon} must be a time granule object.", call. = FALSE)
   }
 
-  # Convert an existing duration into the requested chronon
-  if (is_mixtime(data) && time_is_duration(data)[1L]) {
-    if (length(data@x) > 1L) {
-      cli::cli_abort(
-        c(
-          "{.fn duration} currently only supports converting durations with a single chronon.",
-          i = "To combine several chronons, combine several duration vectors with {.fun c}."
-        ),
-        call = NULL
-      )
+  # Convert an existing duration (mixtime or a bare duration granule) into
+  # the requested chronon
+  if (time_is_duration(data)[1L]) {
+    if (is_mixtime(data)) {
+      if (length(data@x) > 1L) {
+        cli::cli_abort(
+          c(
+            "{.fn duration} currently only supports converting durations with a single chronon.",
+            i = "To combine several chronons, combine several duration vectors with {.fun c}."
+          ),
+          call = NULL
+        )
+      }
+      raw <- data@x[[1L]]
+    } else {
+      raw <- data
     }
-    raw <- data@x[[1L]]
     from_chronon <- attr(raw, "chronon")
     if (is.null(discrete)) discrete <- is.integer(vec_data(raw))
-    x <- as.numeric(data) * chronon_cardinality(chronon, from_chronon)
+    cardinality <- tryCatch(
+      chronon_cardinality(chronon, from_chronon),
+      error = function(e) {
+        cli::cli_abort(
+          c(
+            "Can't convert a duration from {.val {time_unit_plural(from_chronon)}} to {.val {time_unit_plural(chronon)}}.",
+            i = "Their ratio depends on where in the calendar the duration falls, but a duration has no anchor to resolve that against.",
+            i = "Convert a {.cls mixtime} time point instead, which carries the calendar context this conversion needs."
+          ),
+          call = NULL,
+          parent = e
+        )
+      }
+    )
+    x <- as.numeric(raw) * cardinality
     if (discrete) x <- as.integer(floor(x))
     return(new_mixtime(mt_duration(x, chronon = chronon)))
+  }
+
+  if (S7_inherits(data, mt_time)) {
+    cli::cli_abort(
+      c(
+        "{.var data} already has chronon {.val {time_unit_plural(attr(data, 'chronon'))}}, but it isn't a duration.",
+        i = "{.fn duration} converts duration vectors; use {.fn mixtime} to convert time points."
+      ),
+      call = NULL
+    )
   }
 
   if (!is.numeric(data)) {
