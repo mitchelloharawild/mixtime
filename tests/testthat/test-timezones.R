@@ -212,3 +212,24 @@ test_that("chronon_common() of mixed known timezones formats without error", {
   ))
   expect_no_error(format(x))
 })
+
+test_that("tz_offset() of a POSIXct states one offset per element", {
+  # A POSIXct carries a single timezone for the whole vector, unlike the
+  # per-element timezone that `tz_name(time_chronon(x))` reports.
+  x <- as.POSIXct(c("2024-01-01", "2024-06-01"), tz = "Australia/Melbourne")
+  offset <- tz_offset(x)
+
+  expect_true(all(time_is_duration(offset)))
+  expect_equal(as.numeric(offset), c(39600, 36000))
+  expect_equal(tz_name(attr(offset@x[[1L]], "chronon")), "Australia/Melbourne")
+})
+
+test_that("tz_transitions() of a range with no transitions is an empty table", {
+  transitions <- tz_transitions(
+    as.POSIXct("2024-06-01", tz = "America/New_York"),
+    as.POSIXct("2024-06-15", tz = "America/New_York")
+  )
+
+  expect_equal(nrow(transitions), 0)
+  expect_named(transitions, c("time", "offset_before", "offset_after"))
+})
