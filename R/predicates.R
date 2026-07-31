@@ -35,6 +35,7 @@ method(time_is_cyclical, mt_cyclical) <- function(x) rep.int(TRUE, length(x))
 time_is_duration <- S7::new_generic("time_is_duration", "x")
 method(time_is_duration, class_mixtime) <- vecvec::vecvec_apply_fn(time_is_duration, logical())
 method(time_is_duration, class_any) <- function(x) rep.int(FALSE, length(x))
+method(time_is_duration, mt_duration) <- function(x) rep.int(TRUE, length(x))
 method(time_is_duration, new_S4_class("Period", package = "lubridate")) <- function(x) rep.int(TRUE, length(x))
 
 #' @rdname is_time
@@ -108,7 +109,6 @@ method(time_is_determinate_at, mt_time) <- function(x, granule, ...) {
   out[is.na(x) | is.infinite(vec_data(x))] <- NA
   out
 }
-method(time_is_duration, mt_duration) <- function(x) rep.int(TRUE, length(x))
 
 #' Test whether a granule is completed at a time point
 #'

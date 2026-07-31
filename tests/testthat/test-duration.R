@@ -174,3 +174,18 @@ test_that("calendar-dependent duration conversion errors with a duration-specifi
     "no anchor"
   )
 })
+
+test_that("zero-length durations can be built and converted", {
+  # The element-wise duration predicate is `NA` for a zero-length input, so
+  # zero-length magnitudes must be routed by class rather than by value.
+  expect_length(seconds(integer()), 0L)
+  expect_length(duration(numeric(), chronon = cal_gregorian$day(1L)), 0L)
+
+  empty <- duration(
+    seconds(integer())@x[[1L]],
+    chronon = cal_gregorian$hour(1L),
+    discrete = FALSE
+  )
+  expect_length(empty, 0L)
+  expect_equal(time_unit_plural(attr(empty@x[[1L]], "chronon")), "hours")
+})

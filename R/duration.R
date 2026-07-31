@@ -48,9 +48,9 @@ duration <- function(
     cli::cli_abort("{.var chronon} must be a time granule object.", call. = FALSE)
   }
 
-  # Convert an existing duration (mixtime or a bare duration granule) into
-  # the requested chronon
-  if (time_is_duration(data)[1L]) {
+  # Convert an existing duration (mixtime or a bare duration vector) into
+  # the requested chronon.
+  if (time_is_duration(data[1L])) {
     if (is_mixtime(data)) {
       if (length(data@x) > 1L) {
         cli::cli_abort(
