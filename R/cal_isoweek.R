@@ -158,7 +158,7 @@ method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(fro
 week.abb <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 week.name <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE) {
+method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, at = NULL, label = FALSE, abbreviate = TRUE) {
   # TODO: Add offset for different week starting days
   if (!label) {
     as.character(i + 1L)
@@ -168,7 +168,7 @@ method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(gra
     week.name[i + 1L]
   }
 }
-method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   # Weeks count with 1-indexing
   sprintf("%02d", i + 1L)
 }

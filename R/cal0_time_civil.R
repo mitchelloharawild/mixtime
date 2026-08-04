@@ -148,15 +148,15 @@ method(
 
 
 # Cyclical labels
-method(cyclical_labels, list(cal_time_civil$day, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_civil$day, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   # Days count with 1-indexing
   sprintf("%02d", i + 1L)
 }
-method(cyclical_labels, list(cal_time_civil$ampm, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_civil$ampm, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   # 0 is AM, 1 is PM
   c("AM", "PM")[i%%2 + 1L]
 }
-method(cyclical_labels, list(cal_time_civil$hour, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_civil$hour, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   if (S7_inherits(cycle, cal_time_civil$ampm)) {
     # 12 hours count with 12,1,2,...,11
     sprintf("%02d", (i-1L)%%12L + 1L)
@@ -165,15 +165,15 @@ method(cyclical_labels, list(cal_time_civil$hour, S7::class_any)) <- function(gr
     sprintf("%02d", i)
   }
 }
-method(cyclical_labels, list(cal_time_civil$minute, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_civil$minute, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   # Minutes count with 0-indexing
   sprintf("%02d", i)
 }
-method(cyclical_labels, list(cal_time_civil$second, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_civil$second, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   # Seconds count with 0-indexing
   sprintf("%02d", i)
 }
-method(cyclical_labels, list(cal_time_civil$millisecond, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_civil$millisecond, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   # Milliseconds are shown without decimals
   sprintf("%03d", i)
 }

@@ -210,11 +210,11 @@ method(linear_labels, cal_time_solar$illumination) <- function(granule, i) {
 # }
 
 solar_ampm_labels <- c("AM", "PM")
-method(cyclical_labels, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(granule, cycle, i, at = NULL) {
   solar_ampm_labels[i + 1L]
 }
 
-method(cyclical_labels, list(cal_time_solar$hour, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_solar$hour, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   if (S7_inherits(cycle, cal_time_civil$ampm)) {
     # 12 hours count with 12,1,2,...,11
     sprintf("%02d", (i-1L)%%12L + 1L)
@@ -223,18 +223,18 @@ method(cyclical_labels, list(cal_time_solar$hour, S7::class_any)) <- function(gr
     sprintf("%02d", i)
   }
 }
-method(cyclical_labels, list(cal_time_solar$minute, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_solar$minute, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   sprintf("%02d", i)
 }
-method(cyclical_labels, list(cal_time_solar$second, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_solar$second, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   sprintf("%02d", i)
 }
-method(cyclical_labels, list(cal_time_solar$degree, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_solar$degree, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   sprintf("%03d", (i - 180L*chronon_cardinality(cycle, cal_time_solar$day(1L))) %% 360L)
 }
-method(cyclical_labels, list(cal_time_solar$arcminute, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_solar$arcminute, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   sprintf("%02d", i)
 }
-method(cyclical_labels, list(cal_time_solar$arcsecond, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_time_solar$arcsecond, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   sprintf("%02d", i)
 }

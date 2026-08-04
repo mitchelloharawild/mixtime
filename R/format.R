@@ -35,7 +35,7 @@ mt_unit_display <- function(x, units, parts, ...) {
   }
   if (is_mt) {
     # Return cyclical labels for cyclical parts
-    if (xi > 1) return(cyclical_labels(units[[xi]], units[[xi-1L]], parts[[xi]], ...))
+    if (xi > 1) return(cyclical_labels(units[[xi]], units[[xi-1L]], parts[[xi]], at = NULL, ...))
     # Return linear labels for coarsest part
     return(as.character(parts[[xi]]))
   } else {
@@ -176,8 +176,8 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   )
   parts$cyclical <- .mapply(
     # TODO floor(x) shouldn't be necessary, fix chronon_parts()?
-    function(tu, x) rlang::exec(cyclical_labels, tu[[1L]], tu[[2L]], floor(x), !!!attributes(tu)), 
-    dots = list(res_split[["2"]], parts$cyclical), 
+    function(tu, x, at) rlang::exec(cyclical_labels, tu[[1L]], tu[[2L]], floor(x), at = at, !!!attributes(tu)),
+    dots = list(res_split[["2"]], parts$cyclical, parts$cyclical_at),
     MoreArgs = NULL
   )
 

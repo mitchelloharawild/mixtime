@@ -13,9 +13,11 @@
 #   e.g. `list(list(cal_gregorian$month(1L), cal_gregorian$year(1L)))` for
 #   month-of-year.
 #
-# @return A list with two elements mirroring the inputs:
+# @return A list with three elements:
 #   - `$linear`: a list of integer vectors, one per element of `linear`.
 #   - `$cyclical`: a list of integer vectors, one per element of `cyclical`.
+#   - `$cyclical_at`: a list of integer vectors, one per element of `cyclical`,
+#     giving the linear position of the cycle granule.
 chronon_parts <- function(x, linear = list(), cyclical = list()) {
   start_tu <- attr(x, "chronon")
 
@@ -62,6 +64,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   # Prepare results to be filled via recursive divmod execution
   linear_results   <- vector("list", length(linear))
   cyclical_results <- vector("list", length(cyclical))
+  cyclical_at      <- vector("list", length(cyclical))
 
   # Traverse the divmod path to compute parts. `parent_id` is the caller's
   # `child_id`, so it is handed down rather than looked up again.
@@ -85,11 +88,13 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     # point in `child_tu` units (at the root, an identity divmod of `x`), so the
     # position within the cycle is a single divmod away.
     for (i in which(child_id == self_cycle_ids)) {
-      cyclical_results[[i]] <<- chronon_divmod(
+      dm_self <- chronon_divmod(
         from = cyclical_chronon[[i]],
         to   = cyclical_cycle[[i]],
         x    = count_in_granule(dm$div, child_tu, cyclical_chronon[[i]])
-      )$mod
+      )
+      cyclical_results[[i]] <<- dm_self$mod
+      cyclical_at[[i]]      <<- dm_self$div
     }
 
     # Recurse each child with $div as the new time point (now in child_tu units)
@@ -111,6 +116,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     starting <- which(child_id == cycle_ids)
     if (length(starting) > 0L) {
       cyclical_results[starting] <<- list(dm$mod)
+      cyclical_at[starting]      <<- list(dm$div)
       incomplete <- c(incomplete, starting)
     }
 
@@ -133,7 +139,7 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   abort_missing_parts(cyclical_results, cyclical, cycle_label, "cyclical")
 
   # Return list of the same order as input
-  list(linear = linear_results, cyclical = cyclical_results)
+  list(linear = linear_results, cyclical = cyclical_results, cyclical_at = cyclical_at)
 }
 
 # Re-express `value`, a count of `from` granules, as a count of `to` granules of

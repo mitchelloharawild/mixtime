@@ -252,11 +252,11 @@ S7::method(linear_labels, cal_gregorian$year) <- function(granule, i, ...) {
 }
 
 ### Cyclical labels for Gregorian time granules
-method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(granule, cycle, i) {
+method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
   # Quarters count with 1-indexing
   as.character(i + 1L)
 }
-method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i, label = FALSE, abbreviate = TRUE) {
+method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- function(granule, cycle, i, at = NULL, label = FALSE, abbreviate = TRUE) {
   if (label) {
     (if (abbreviate) month.abb else month.name)[i+1L] 
   } else {

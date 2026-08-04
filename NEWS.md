@@ -14,6 +14,10 @@
   point (UTC seconds) and `offset_before`/`offset_after` as `mixtime`
   durations (UTC seconds), instead of plain numeric columns.
 
+* Added `at` argument to `cyclical_labels()`, which provides the linear position
+  of the cycle granule to allow appropriate labelling of irregular cycles, the 
+  same convention as `chronon_cardinality()`'s `at` argument (#100).
+
 ## New features
 
 * Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`, `>` and

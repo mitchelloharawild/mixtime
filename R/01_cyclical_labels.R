@@ -5,6 +5,11 @@
 #'
 #' @param granule A time granule object representing the granule (e.g., `month(1L)`)
 #' @param cycle A time granule object representing the cycle (e.g., `year(1L)`)
+# #' @param i Integer vector representing the position within the cycle.
+# #' @param at The linear position of the cycle granule, to allow methods to 
+# #'   produce labels specific to that particular cycle. This is most useful 
+# #'   for labelling irregular cycles. The `at` argument follows the same
+# #'   convention as the `at` in [chronon_cardinality()].
 #' @param ... Additional arguments for methods.
 #'
 #' @return Character vector of labels for the time point within the cycle.
