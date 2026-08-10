@@ -25,6 +25,8 @@ The following time units are available (\verb{cal_time_civil$}).
 \item \code{minute()}: Minute unit
 \item \code{second()}: Second unit
 \item \code{millisecond()}: Millisecond unit
+\item \code{microsecond()}: Microsecond unit
+\item \code{nanosecond()}: Nanosecond unit
 }
 }
 \examples{

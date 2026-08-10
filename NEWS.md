@@ -1,5 +1,19 @@
 # mixtime (development version)
 
+## New features
+
+* Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`, `>` and
+  `>=`, which previously errored. A cyclical value means a position within its
+  cycle rather than an instant, so comparison is made on that position: two
+  Wednesdays are equal regardless of which week they fall in.
+
+* Added `chronon_cardinality_fixed()`, a variant of `chronon_cardinality()`
+  for time granule pairs whose relationship is a constant, context-independent
+  number (e.g., 60 seconds in a minute) rather than dependent on an `at` time
+  point (e.g., 28-31 days in a month).
+
+* Added civil time microseconds and nanoseconds to `cal_time_civil` (#92).
+
 ## Breaking changes
 
 * `is_time_linear()`, `is_time_cyclical()`, and `is_time_duration()` have been
@@ -17,18 +31,6 @@
 * Added `at` argument to `cyclical_labels()`, which provides the linear position
   of the cycle granule to allow appropriate labelling of irregular cycles, the 
   same convention as `chronon_cardinality()`'s `at` argument (#100).
-
-## New features
-
-* Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`, `>` and
-  `>=`, which previously errored. A cyclical value means a position within its
-  cycle rather than an instant, so comparison is made on that position: two
-  Wednesdays are equal regardless of which week they fall in.
-
-* Added `chronon_cardinality_fixed()`, a variant of `chronon_cardinality()`
-  for time granule pairs whose relationship is a constant, context-independent
-  number (e.g., 60 seconds in a minute) rather than dependent on an `at` time
-  point (e.g., 28-31 days in a month).
 
 ## Bug fixes
 

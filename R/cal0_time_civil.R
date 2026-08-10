@@ -42,7 +42,9 @@ method(chronon_format_attr, mt_tz_unit) <- function(x) {
 #' - `minute()`: Minute unit
 #' - `second()`: Second unit
 #' - `millisecond()`: Millisecond unit
-#' 
+#' - `microsecond()`: Microsecond unit
+#' - `nanosecond()`: Nanosecond unit
+#'
 #' @seealso [`cal_time_civil`], [`cal_isoweek`]
 #' 
 #' @examples
@@ -61,6 +63,8 @@ cal_time_civil <- new_calendar(
   minute = new_class("tu_minute", parent = mt_tz_unit),
   second = new_class("tu_second", parent = mt_tz_unit),
   millisecond = new_class("tu_millisecond", parent = mt_tz_unit),
+  microsecond = new_class("tu_microsecond", parent = mt_tz_unit),
+  nanosecond = new_class("tu_nanosecond", parent = mt_tz_unit),
   class = "cal_time_civil"
 )
 
@@ -77,6 +81,10 @@ method(time_unit_full, cal_time_civil$second) <- function(x) "second{?/s}"
 method(time_unit_abbr, cal_time_civil$second) <- function(x) "s"
 method(time_unit_full, cal_time_civil$millisecond) <- function(x) "millisecond{?/s}"
 method(time_unit_abbr, cal_time_civil$millisecond) <- function(x) "ms"
+method(time_unit_full, cal_time_civil$microsecond) <- function(x) "microsecond{?/s}"
+method(time_unit_abbr, cal_time_civil$microsecond) <- function(x) "us"
+method(time_unit_full, cal_time_civil$nanosecond) <- function(x) "nanosecond{?/s}"
+method(time_unit_abbr, cal_time_civil$nanosecond) <- function(x) "ns"
 
 # Default formats
 method(chronon_format_linear, list(cal_time_civil$day, class_any)) <- function(x, cal) {
@@ -142,6 +150,22 @@ method(
 method(
   chronon_cardinality_fixed,
   list(cal_time_civil$millisecond, cal_time_civil$second)
+) <- function(x, y) {
+  1000L
+}
+
+## MICROSECONDs in MILLISECONDs
+method(
+  chronon_cardinality_fixed,
+  list(cal_time_civil$microsecond, cal_time_civil$millisecond)
+) <- function(x, y) {
+  1000L
+}
+
+## NANOSECONDs in MICROSECONDs
+method(
+  chronon_cardinality_fixed,
+  list(cal_time_civil$nanosecond, cal_time_civil$microsecond)
 ) <- function(x, y) {
   1000L
 }
