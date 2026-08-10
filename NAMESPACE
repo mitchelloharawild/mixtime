@@ -3,6 +3,7 @@
 S3method("[<-","mixtime::mt_time")
 S3method("[[<-","mixtime::mt_time")
 S3method(Summary,"mixtime::mixtime")
+S3method(all.equal,"mixtime::mt_time")
 S3method(base::format,mixtime_interval)
 S3method(base::format,mt_naive)
 S3method(base::print,mixtime_interval)

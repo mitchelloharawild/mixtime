@@ -302,3 +302,80 @@ method(duplicated, class_mixtime) <- function(x, incomparables = FALSE, ...) {
 method(anyDuplicated, class_mixtime) <- function(x, incomparables = FALSE, ...) {
   match(TRUE, duplicated(x), nomatch = 0L)
 }
+
+#' Tolerant comparison of mixtime time values
+#'
+#' @description
+#' [vecvec::class_vecvec]'s `all.equal()` method (which `mixtime` inherits,
+#' since a mixtime vector is a `vecvec`) handles length/`NA` mismatches and
+#' groups elements by their underlying storage slot, then compares each
+#' group's *raw* values with `all.equal()`. That raw comparison has no notion
+#' of chronon: two elements that are `==` (e.g. `days(1)` and `hours(24)`, or
+#' a `yearmonth` and an equivalent-instant `yearweek`) can end up stored with
+#' different chronons or magnitudes, and so are wrongly reported as unequal.
+#'
+#' This method fixes that at the per-slot level: elements already `==` (which
+#' is chronon-aware, see [mt_linear-compare]/[mt_duration-compare]) count as
+#' equal outright; for the rest, the discrepancy is measured as the duration
+#' between them in their common chronon. A time point has no "typical
+#' magnitude" to scale a *relative* tolerance against the way a plain number
+#' does, so - unlike [base::all.equal.numeric()] - `tolerance` is always
+#' absolute, in (possibly fractional) chronon units.
+#'
+#' @param target,current `mt_time` vectors of the same length to compare (as
+#'   passed down by [vecvec::class_vecvec]'s `all.equal()`).
+#' @param tolerance Numeric tolerance, as an absolute number of `target`'s
+#'   chronon units. Defaults to `sqrt(.Machine$double.eps)`, as for
+#'   [base::all.equal()].
+#' @param ... Ignored.
+#'
+#' @return `TRUE` if `target` and `current` are equal within `tolerance`,
+#'   otherwise a string describing the discrepancy.
+#'
+#' @examples
+#' all.equal(yearmonth(0), yearmonth(0))
+#' all.equal(yearmonth(0), yearmonth(1))
+#' all.equal(days(1), hours(24))
+#'
+#' @method all.equal mixtime::mt_time
+#' @export
+`all.equal.mixtime::mt_time` <- function(
+  target, current, tolerance = sqrt(.Machine$double.eps), ...
+) {
+  # `class_vecvec`'s all.equal() only filters *sparse* missingness (an NA
+  # vecvec index); an NA stored inline within a slot's own data (as here)
+  # still reaches us and needs handling directly - mirroring the NA check in
+  # `all.equal.numeric()`.
+  na_t <- is.na(target)
+  na_c <- tryCatch(is.na(current), error = function(e) NULL)
+  if (is.null(na_c)) {
+    return(sprintf(
+      "target is %s, current is %s",
+      class(target)[[1L]], class(current)[[1L]]
+    ))
+  }
+  if (!identical(na_t, na_c)) {
+    return(sprintf(
+      "'is.NA' value mismatch: %d in current, %d in target",
+      sum(na_c), sum(na_t)
+    ))
+  }
+
+  keep <- !na_t
+  eq <- tryCatch(target[keep] == current[keep], error = function(e) NULL)
+  if (is.null(eq)) {
+    return(sprintf(
+      "target is %s, current is %s",
+      class(target)[[1L]], class(current)[[1L]]
+    ))
+  }
+  if (all(eq)) return(TRUE)
+
+  d <- target[keep][!eq] - current[keep][!eq]
+  xy <- mean(abs(as.double(d)))
+  if (xy > tolerance) {
+    sprintf("Mean absolute difference: %s", format(xy))
+  } else {
+    TRUE
+  }
+}
