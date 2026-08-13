@@ -43,3 +43,4 @@ all.equal(yearmonth(0), yearmonth(1))
 all.equal(days(1), hours(24))
 
 }
+\keyword{internal}

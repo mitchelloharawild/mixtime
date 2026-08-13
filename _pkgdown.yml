@@ -74,6 +74,7 @@ reference:
   contents:
   - mt_linear-compare
   - mt_duration-compare
+  - mt_cyclical-compare
 - subtitle: "Time Components"
   desc: "Functions for extracting and referring to linear and cyclical components of time."
   contents:

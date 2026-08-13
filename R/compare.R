@@ -337,6 +337,7 @@ method(anyDuplicated, class_mixtime) <- function(x, incomparables = FALSE, ...) 
 #' all.equal(yearmonth(0), yearmonth(1))
 #' all.equal(days(1), hours(24))
 #'
+#' @keywords internal
 #' @method all.equal mixtime::mt_time
 #' @export
 `all.equal.mixtime::mt_time` <- function(
