@@ -152,6 +152,8 @@ cal_symmetry454
 #>   - minute
 #>   - second
 #>   - millisecond
+#>   - microsecond
+#>   - nanosecond
 ```
 
 In this case, the time unit for weeks exactly matches the ISO week unit,
@@ -733,11 +735,18 @@ The default method for
 simply uses the internal 0-indexed numeric representation of the time
 point.
 
+The position within the cycle is given by `i` and is 0-indexed
+(e.g. 0-11 for month of year). The linear position of the cycle itself
+is given by the `at` argument, which allows labels to vary between
+cycles. This is particularly useful for labelling irregular cycles
+(e.g. Hebrew months), however regular cycles (like Symmetry454 months)
+can ignore the `at` argument:
+
 ``` r
 
 # Labels for months of the year, essentially the same as Gregorian months in years.
 S7::method(cyclical_labels, list(cal_symmetry454$month, cal_symmetry454$year)) <-
-  function(granule, cycle, i, label = FALSE, abbreviate = FALSE, ...) {
+  function(granule, cycle, i, at = NULL, label = FALSE, abbreviate = FALSE, ...) {
     if (label) {
       # Index into R's localised month name objects (month.name and month.abb)
       if (abbreviate) month.abb[i + 1L] else month.name[i + 1L]
@@ -749,7 +758,7 @@ S7::method(cyclical_labels, list(cal_symmetry454$month, cal_symmetry454$year)) <
 
 # Labels for weeks of the month are simply 1-indexed (e.g. "W1", "W2", ...)
 S7::method(cyclical_labels, list(cal_symmetry454$week, cal_symmetry454$month)) <-
-  function(granule, cycle, i, ...) {
+  function(granule, cycle, i, at = NULL, ...) {
     as.character(i + 1L)
   }
 ```

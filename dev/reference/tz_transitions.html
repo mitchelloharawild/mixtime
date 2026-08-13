@@ -65,9 +65,11 @@ representing the end of the time range.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame containing information about timezone transitions
-in the specified range.</p>
-    </div>
+    <p>A data frame with columns:</p><ul><li><p><code>time</code>: A <code>mixtime</code> linear time point (continuous, UTC seconds) giving
+the instant of the transition.</p></li>
+<li><p><code>offset_before</code>, <code>offset_after</code>: <code>mixtime</code> durations (UTC seconds)
+giving the UTC offset immediately before and after the transition.</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -76,8 +78,9 @@ in the specified range.</p>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2024-01-01"</span>, tz <span class="op">=</span> <span class="st">"America/New_York"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2024-12-31"</span>, tz <span class="op">=</span> <span class="st">"America/New_York"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] time          offset_before offset_after </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       time    offset_before     offset_after</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2024-03-10 07:00:00 0.0% -18000.0 seconds -14400.0 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2024-11-03 06:00:00 0.0% -14400.0 seconds -18000.0 seconds</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

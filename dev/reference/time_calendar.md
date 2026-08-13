@@ -44,6 +44,8 @@ time_calendar(Sys.Date())
 #>   - minute
 #>   - second
 #>   - millisecond
+#>   - microsecond
+#>   - nanosecond
 
 # The calendar of a POSIXct object is also Gregorian
 time_calendar(Sys.time())
@@ -58,6 +60,8 @@ time_calendar(Sys.time())
 #>   - minute
 #>   - second
 #>   - millisecond
+#>   - microsecond
+#>   - nanosecond
 
 # The calendar of a yearweek object is the ISO week calendar
 time_calendar(yearweek(Sys.Date()))
@@ -71,6 +75,8 @@ time_calendar(yearweek(Sys.Date()))
 #>   - minute
 #>   - second
 #>   - millisecond
+#>   - microsecond
+#>   - nanosecond
 
 # A mixed time object returns a list of calendars
 time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
@@ -85,4 +91,6 @@ time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
 #>   - minute
 #>   - second
 #>   - millisecond
+#>   - microsecond
+#>   - nanosecond
 ```

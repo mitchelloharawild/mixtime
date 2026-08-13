@@ -7,6 +7,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/authors.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/index.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/news/index.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/all.equal.mixtime-mt_time.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/as_mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_gregorian.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/calendar_isoweek.html</loc></url>
@@ -38,6 +39,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime-package.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime_location.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.html</loc></url>
@@ -53,6 +55,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_calendar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_chronon.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_components.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_cycle.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_complete_at.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_determinate_at.html</loc></url>

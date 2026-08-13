@@ -234,7 +234,9 @@ lunar phases)</li>
 <span><span class="co">#&gt;   - hour</span></span>
 <span><span class="co">#&gt;   - minute</span></span>
 <span><span class="co">#&gt;   - second</span></span>
-<span><span class="co">#&gt;   - millisecond</span></span></code></pre></div>
+<span><span class="co">#&gt;   - millisecond</span></span>
+<span><span class="co">#&gt;   - microsecond</span></span>
+<span><span class="co">#&gt;   - nanosecond</span></span></code></pre></div>
 <p>In this case, the time unit for weeks exactly matches the ISO week
 unit, so we can reuse the existing <code>cal_isoweek$week</code> unit
 rather than defining a new one. This is because our implementation below
@@ -729,10 +731,16 @@ cyclical time points often have familiar labels (e.g. Jan, Feb, … for
 months in years) or are 1-indexed (e.g. 1, 2, … for days in a month).
 The default method for <code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code> simply uses the
 internal 0-indexed numeric representation of the time point.</p>
+<p>The position within the cycle is given by <code>i</code> and is
+0-indexed (e.g. 0-11 for month of year). The linear position of the
+cycle itself is given by the <code>at</code> argument, which allows
+labels to vary between cycles. This is particularly useful for labelling
+irregular cycles (e.g. Hebrew months), however regular cycles (like
+Symmetry454 months) can ignore the <code>at</code> argument:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Labels for months of the year, essentially the same as Gregorian months in years.</span></span>
 <span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">cyclical_labels</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">i</span>, <span class="va">label</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">abbreviate</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">i</span>, <span class="va">at</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">label</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">abbreviate</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">label</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="co"># Index into R's localised month name objects (month.name and month.abb)</span></span>
 <span>      <span class="kw">if</span> <span class="op">(</span><span class="va">abbreviate</span><span class="op">)</span> <span class="va">month.abb</span><span class="op">[</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">]</span> <span class="kw">else</span> <span class="va">month.name</span><span class="op">[</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">]</span></span>
@@ -744,7 +752,7 @@ internal 0-indexed numeric representation of the time point.</p>
 <span></span>
 <span><span class="co"># Labels for weeks of the month are simply 1-indexed (e.g. "W1", "W2", ...)</span></span>
 <span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">cyclical_labels</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">i</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">i</span>, <span class="va">at</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span></code></pre></div>
 <p>The other cyclical labels (e.g. day of week) are inherited from

@@ -404,6 +404,11 @@ Methods for comparing time vectors.
 
   Comparison operators for durations (`mt_duration`)
 
+- [`mt_cyclical-compare`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
+  :
+
+  Comparison operators for cyclical time (`mt_cyclical`)
+
 ### Time Components
 
 Functions for extracting and referring to linear and cyclical components
@@ -411,6 +416,8 @@ of time.
 
 - [`time_components()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_components.md)
   : Extract linear and cyclical time components
+- [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md)
+  : Compose a linear time vector from linear and cyclical components
 - [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
   [`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
   : Linear and cyclical component helpers

@@ -33,7 +33,7 @@ are combined in the time format string with glue substitutions:
 ``` r
 
 format(date(Sys.Date()), format = "{lin(year(1L))}-{cyc(month(1L), year(1L))}")
-#> [1] "2026-07"
+#> [1] "2026-08"
 ```
 
 The linear labels are produced by
@@ -51,7 +51,7 @@ are forwarded to the label helper functions. Common arguments include
 ``` r
 
 format(date(Sys.Date()), format = "{lin(year)} {cyc(month, year, label = TRUE, abbreviate = TRUE)}")
-#> [1] "2026 Jul"
+#> [1] "2026 Aug"
 ```
 
 Default format strings for each chronon (and cycle) are provided by
@@ -67,7 +67,7 @@ is `"{lin(year)}-{cyc(month, year)}"`:
 ``` r
 
 format(linear_time(Sys.Date(), chronon = cal_gregorian$month(1L)))
-#> [1] "2026 Jul"
+#> [1] "2026 Aug"
 ```
 
 The granules used in the format string are calendar-aware, so they
@@ -88,7 +88,7 @@ index:
 fmt_date  <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
 fmt_lunar <- "{with(cal_time_lunar, cyc(phase, month, emoji = TRUE))}"
 format(date(Sys.Date()), format = paste(fmt_date, fmt_lunar))
-#> [1] "2026-07-27 🌔"
+#> [1] "2026-08-13 🌑"
 ```
 
 This makes the relationship between the format string and the calendar
@@ -134,9 +134,9 @@ combinations of granules.
 
 # YYYY-MM-DD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
-#> [1] "2026-07-27"
+#> [1] "2026-08-13"
 format(Sys.Date(), format = "%Y-%m-%d")
-#> [1] "2026-07-27"
+#> [1] "2026-08-13"
 ```
 
 This simplifies the construction of less common time formats, for
@@ -148,9 +148,9 @@ example the year-day format (`YYYY-DDD`), which is
 
 # YYY-DDD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-D{cyc(day, year)}")
-#> [1] "2026-D208"
+#> [1] "2026-D225"
 format(Sys.Date(), format = "%Y-D%j")
-#> [1] "2026-D208"
+#> [1] "2026-D225"
 ```
 
 Format strings for non-Gregorian calendars are also more intuitive,
@@ -169,9 +169,9 @@ format(
   date(Sys.Date(), calendar = cal_isoweek),
   format = "{lin(year)}-W{cyc(week, year)}-{cyc(day, week, label = TRUE)}"
 )
-#> [1] "2026-W31-Mon"
+#> [1] "2026-W33-Thu"
 format(Sys.Date(), format = "%G-W%V-%a")
-#> [1] "2026-W31-Mon"
+#> [1] "2026-W33-Thu"
 ```
 
 The table below maps every `strftime`/`strptime` conversion

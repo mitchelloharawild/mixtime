@@ -2,6 +2,35 @@
 
 ## mixtime (development version)
 
+### New features
+
+- Added
+  [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md),
+  the inverse of
+  [`time_components()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_components.md):
+  builds a single `mixtime` time point from a set of
+  [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)/[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+  components, supplied either as `spec ~ value` formulas (e.g.
+  `time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3` for March 1980)
+  or as already-tagged linear/cyclical time vectors.
+
+- Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`,
+  `>` and `>=`, which previously errored. A cyclical value means a
+  position within its cycle rather than an instant, so comparison is
+  made on that position: two Wednesdays are equal regardless of which
+  week they fall in.
+
+- Added
+  [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md),
+  a variant of
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+  for time granule pairs whose relationship is a constant,
+  context-independent number (e.g., 60 seconds in a minute) rather than
+  dependent on an `at` time point (e.g., 28-31 days in a month).
+
+- Added civil time microseconds and nanoseconds to `cal_time_civil`
+  ([\#92](https://github.com/mitchelloharawild/mixtime/issues/92)).
+
 ### Breaking changes
 
 - [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
@@ -15,17 +44,30 @@
   [`time_is_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
   for consistency with semantic property functions.
 
-### New features
+- [`tz_offset()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_offset.md)
+  now returns a `mixtime` duration vector instead of a plain numeric
+  vector, so offsets carry their chronon (and can be combined with other
+  durations) rather than being a bare count of seconds/days/etc.
 
-- Added
-  [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md),
-  a variant of
-  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
-  for time granule pairs whose relationship is a constant,
-  context-independent number (e.g., 60 seconds in a minute) rather than
-  dependent on an `at` time point (e.g., 28-31 days in a month).
+- [`tz_transitions()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_transitions.md)
+  now returns `time` as a continuous `mixtime` linear time point (UTC
+  seconds) and `offset_before`/`offset_after` as `mixtime` durations
+  (UTC seconds), instead of plain numeric columns.
+
+- Added `at` argument to
+  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md),
+  which provides the linear position of the cycle granule to allow
+  appropriate labelling of irregular cycles, the same convention as
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)’s
+  `at` argument
+  ([\#100](https://github.com/mitchelloharawild/mixtime/issues/100)).
 
 ### Bug fixes
+
+- Combining two cyclical time vectors with different cycles is now an
+  error rather than silently collapsing them. A cycle is a modulus
+  rather than a unit of measure, so unlike a chronon it has no
+  meaningful common value.
 
 - Converting to a finer chronon now takes a path that only ever steps
   finer, instead of the shortest path through the registered calendar

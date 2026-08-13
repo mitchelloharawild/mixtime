@@ -35,23 +35,23 @@ A function used to create linear time points with a specific chronon.
 ym <- new_linear_time_fn(month(1L))
 ym(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 Jul
+#> [1] 2026 Aug
 
 # Linear time with 1 day granules as the chronon
 yd <- new_linear_time_fn(day(1L))
 yd(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-07-27
+#> [1] 2026-08-13
 
 # Linear time with 1 week granules as the chronon, using the ISO week calendar
 yw <- new_linear_time_fn(week(1L), default_calendar = cal_isoweek)
 yw(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 W31
+#> [1] 2026 W33
 
 # Linear time with 1 hour granules as the chronon
 ymd_h <- new_linear_time_fn(hour(1L))
 ymd_h(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-07-27 11h
+#> [1] 2026-08-13 15h
 ```
