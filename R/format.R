@@ -83,7 +83,7 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
   # time_components() evaluates against.
   env <- rlang::new_environment(
     data = c(
-      component_mask(chronon, calendar),
+      component_mask(calendar, chronon),
       list(
         # Attribute helper functions
         tz = tz_abbreviation,

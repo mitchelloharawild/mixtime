@@ -2,6 +2,12 @@
 
 ## New features
 
+* Added `time_compose()`, the inverse of `time_components()`: builds a single
+  `mixtime` time point from a set of `lin()`/`cyc()` components, supplied
+  either as `spec ~ value` formulas (e.g.
+  `time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3` for March 1980) or as
+  already-tagged linear/cyclical time vectors.
+
 * Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`, `>` and
   `>=`, which previously errored. A cyclical value means a position within its
   cycle rather than an instant, so comparison is made on that position: two

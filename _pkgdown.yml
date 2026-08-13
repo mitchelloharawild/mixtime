@@ -78,6 +78,7 @@ reference:
   desc: "Functions for extracting and referring to linear and cyclical components of time."
   contents:
   - time_components
+  - time_compose
   - lin
   - cyc
 

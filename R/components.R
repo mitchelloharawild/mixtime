@@ -132,7 +132,7 @@ cyc <- function(granule, cycle) {
 # cycle. All granules are extracted together in a single `chronon_parts()` call.
 component_parts <- function(x_time, specs, calendar) {
   chronon <- attr(x_time, "chronon")
-  mask <- component_mask(chronon, calendar)
+  mask <- component_mask(calendar, chronon)
 
   evaled <- lapply(specs, eval_component, mask = mask)
 
@@ -176,12 +176,20 @@ component_parts <- function(x_time, specs, calendar) {
       if (length(spec) == 2L) {
         # Cyclical: NA for an indeterminate component, and for a special
         # (NA / Inf) input which has no cyclical position.
-        vals <- if (ok) component_scatter(val, n, keep) else xd[rep(NA_integer_, n)]
+        vals <- if (ok) {
+          component_scatter(val, n, keep)
+        } else {
+          xd[rep(NA_integer_, n)]
+        }
         mt_cyclical(vals, chronon = spec[[1L]], cycle = spec[[2L]])
       } else {
         # Linear: NA for an indeterminate component; otherwise an infinite time
         # has an infinite count, so carry the input's +/-Inf (and NA) through.
-        vals <- if (ok) component_scatter(val, n, keep, special = xd) else xd[rep(NA_integer_, n)]
+        vals <- if (ok) {
+          component_scatter(val, n, keep, special = xd)
+        } else {
+          xd[rep(NA_integer_, n)]
+        }
         mt_linear(vals, chronon = spec[[1L]])
       }
     },
@@ -190,30 +198,38 @@ component_parts <- function(x_time, specs, calendar) {
   )
 }
 
-# Build the lin()/cyc() data-mask vocabulary for evaluating component specs in
-# the calendar of `chronon`. Units from `calendar` not already present in the
-# chronon's own calendar are overlaid (e.g. ISO `week` from `cal_isoweek`), so
-# cross-calendar components can be named.
-component_mask <- function(chronon, calendar) {
-  cal <- time_calendar(chronon)
-  extra <- setdiff(names(calendar), names(cal))
-  cal[extra] <- calendar[extra]
-
-  # Coerce a bare granule generator (e.g. `year`) into a sized time unit and
-  # inherit the chronon's properties (tz / location).
-  as_tu <- function(g) {
-    if (!S7_inherits(g, mt_unit)) g <- g(1L)
-    granule_inherit_props(g, chronon)
+# Build the lin()/cyc() data-mask shared by component-aware contexts.
+#
+# `chronon` (if specified) provides the primary source of time units that form
+# granules for the components, and `calendar` adds additional units not present
+# in the calendar of `chronon` (useful for cyclical granularities between
+# calendars, e.g. day-of-week).
+component_mask <- function(calendar, chronon = NULL) {
+  cal <- calendar
+  if (!is.null(chronon)) {
+    cal <- time_calendar(chronon)
+    extra <- setdiff(names(calendar), names(cal))
+    cal[extra] <- calendar[extra]
   }
 
-  # lin()/cyc() collect granule specs (length-1 = linear, length-2 = cyclical).
-  # `...` carries label options (e.g. abbreviate) attached as attributes; these
-  # are used when formatting and ignored by time_components().
+  as_tu <- function(g) {
+    if (!S7_inherits(g, mt_unit)) {
+      g <- g(1L)
+    }
+    if (!is.null(chronon)) {
+      g <- granule_inherit_props(g, chronon)
+    }
+    g
+  }
+
+  # `...` carries options (e.g. label arguments) attached as attribute
   c(
     cal,
     list(
       lin = function(granule, ...) structure(list(as_tu(granule)), ...),
-      cyc = function(granule, cycle, ...) structure(list(as_tu(granule), as_tu(cycle)), ...)
+      cyc = function(granule, cycle, ...) {
+        structure(list(as_tu(granule), as_tu(cycle)), ...)
+      }
     )
   )
 }
@@ -225,7 +241,10 @@ eval_component <- function(quo, mask) {
     eval_tidy(quo, data = mask),
     error = function(e) {
       msg <- conditionMessage(e)
-      if (grepl("week", msg, fixed = TRUE) && grepl("not found", msg, fixed = TRUE)) {
+      if (
+        grepl("week", msg, fixed = TRUE) &&
+          grepl("not found", msg, fixed = TRUE)
+      ) {
         cli::cli_abort(
           c(
             msg,
@@ -244,7 +263,12 @@ eval_component <- function(quo, mask) {
 # (special) positions are filled from `special`, a length-n template that
 # defaults to NA of `val`'s type; linear components pass the input data so that
 # +/-Inf carries through unchanged (and NA stays NA).
-component_scatter <- function(val, n, keep, special = val[rep(NA_integer_, n)]) {
+component_scatter <- function(
+  val,
+  n,
+  keep,
+  special = val[rep(NA_integer_, n)]
+) {
   if (all(keep)) {
     return(val)
   }
