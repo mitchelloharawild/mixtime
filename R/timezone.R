@@ -48,7 +48,10 @@ S7::method(tz_offset, S7::class_POSIXt) <- function(
   tz = tz_name(time_chronon(x)),
   ...
 ) {
-  duration(get_tz_offset(x, tz), chronon = cal_gregorian$second(1L))
+  duration(
+    get_tz_offset(x, tz),
+    chronon = cal_gregorian$second(1L, tz = tz[1L])
+  )
 }
 S7::method(tz_offset, S7::class_Date) <- function(x, ...) {
   duration(rep.int(0, length(x)), chronon = cal_gregorian$day(1L))
@@ -161,10 +164,12 @@ tz_transitions <- function(start, end) {
     discrete = FALSE
   )
   transitions$offset_before <- duration(
-    transitions$offset_before, chronon = cal_gregorian$second(1L, tz = "UTC")
+    transitions$offset_before,
+    chronon = cal_gregorian$second(1L, tz = "UTC")
   )
   transitions$offset_after <- duration(
-    transitions$offset_after, chronon = cal_gregorian$second(1L, tz = "UTC")
+    transitions$offset_after,
+    chronon = cal_gregorian$second(1L, tz = "UTC")
   )
 
   transitions
