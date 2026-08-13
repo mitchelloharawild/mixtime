@@ -43,7 +43,9 @@ method_signatures <- function(generic) {
 
 S7_signature_id <- function(sig) {
   # If the argument is an S7 class, return the class identifiers (package and name)
-  if (!is.list(sig)) return(S7_class_id(sig))
+  if (!is.list(sig)) {
+    return(S7_class_id(sig))
+  }
 
   # Iterate within the signature to access S7 classes
   lapply(sig, S7_signature_id)
@@ -83,7 +85,7 @@ compile_signature_graph <- function(signatures) {
 # finer, so S7_graph_dispatch() can prefer a monotone path. chronon_divmod()
 # signatures are direction-symmetric (methods are registered both fine -> coarse
 # and coarse -> fine, since a divmod can convert either way), so they cannot
-# supply this ordering - instead the ordering is provided by 
+# supply this ordering - instead the ordering is provided by
 # chronon_cardinality() and chronon_cardinality_fixed() signatures
 chronon_divmod_graph <- function() {
   sig_divmod <- method_signatures(chronon_divmod)
@@ -120,7 +122,10 @@ chronon_cardinality_graph <- function() {
   cache <- .chronon_signature_cache
   if (!identical(cache$cardinality_n, n)) {
     cache$cardinality_n <- n
-    cache$cardinality_graph <- compile_signature_graph(unique(c(sig_card, sig_fixed)))
+    cache$cardinality_graph <- compile_signature_graph(unique(c(
+      sig_card,
+      sig_fixed
+    )))
   }
   cache$cardinality_graph
 }
@@ -160,8 +165,8 @@ S7_graph_dispatch <- function(graph, start, end) {
 
   # Prefer a monotone path, where every step moves the same way through the
   # granularities: only coarser when converting to a coarser chronon, only finer
-  # when converting to a finer one. 
-  # 
+  # when converting to a finer one.
+  #
   # This is safer than shorter paths in both directions (e.g. 4 quarters in a
   # year are not equally sized, so quarters -> years -> days is less safe than
   # quarters -> months -> days).
@@ -219,7 +224,9 @@ directed_reachable <- function(from, to, start, end) {
   visited <- start
   while (length(frontier) > 0L) {
     reached <- to[from %in% frontier]
-    if (end %in% reached) return(TRUE)
+    if (end %in% reached) {
+      return(TRUE)
+    }
     frontier <- setdiff(reached, visited)
     visited <- c(visited, frontier)
   }
@@ -230,17 +237,30 @@ directed_reachable <- function(from, to, start, end) {
 # coarser container of `chronon`. Edges in the chronon_cardinality graph point
 # fine -> coarse, so this holds exactly when `granule` is directed-reachable from
 # `chronon`. FALSE when the two granules have no registered relationship.
-chronon_nests_in <- function(chronon, granule) {
+chronon_nests_in_graph <- function(chronon, granule, graph) {
   from_id <- S7_class_id(chronon)
   to_id <- S7_class_id(granule)
-  if (from_id == to_id) return(granule@n %% chronon@n == 0L)
+  if (from_id == to_id) {
+    return(granule@n %% chronon@n == 0L)
+  }
 
-  graph <- chronon_cardinality_graph()
   start <- match(from_id, graph$chr_classes)
   end <- match(to_id, graph$chr_classes)
-  if (is.na(start) || is.na(end)) return(FALSE)
+  if (is.na(start) || is.na(end)) {
+    return(FALSE)
+  }
 
   directed_reachable(graph$edge_from, graph$edge_to, start, end)
+}
+
+# Checks if the any cardinality relationships nest the chronon in granule
+chronon_nests_in <- function(chronon, granule) {
+  chronon_nests_in_graph(chronon, granule, chronon_cardinality_graph())
+}
+
+# Checks if the fixed cardinality relationships nest the chronon in granule
+chronon_nests_in_fixed <- function(chronon, granule) {
+  chronon_nests_in_graph(chronon, granule, chronon_cardinality_fixed_graph())
 }
 
 S7_class_id <- function(x) {
@@ -264,7 +284,13 @@ traverse_methods <- function(x) {
 }
 
 
-bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(), end = integer(), directed = FALSE) {
+bfs_shortest_path <- function(
+  from = integer(),
+  to = integer(),
+  start = integer(),
+  end = integer(),
+  directed = FALSE
+) {
   # Input validation
   if (length(from) != length(to)) {
     return(integer(0))
@@ -351,7 +377,113 @@ bfs_shortest_path <- function(from = integer(), to = integer(), start = integer(
   path[i:n]
 }
 
-S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = list()) {
+# Longest simple path from `start` to `end` following directed edges `from -> to`.
+#
+# Intended to be used with the DAG formed by chronon_cardinality methods. The
+# longest path is useful for resolving invalid time points with clamping.
+dag_longest_path <- function(
+  from = integer(),
+  to = integer(),
+  start = integer(),
+  end = integer()
+) {
+  if (length(from) != length(to)) {
+    return(integer())
+  }
+  if (length(start) != 1L || length(end) != 1L) {
+    return(integer())
+  }
+  if (length(from) == 0L) {
+    return(integer())
+  }
+
+  from <- as.integer(from)
+  to <- as.integer(to)
+  start <- as.integer(start)
+  end <- as.integer(end)
+  if (start == end) {
+    return(start)
+  }
+
+  n <- max(from, to, start, end)
+
+  reachable <- function(seed, tail, head) {
+    visited <- logical(n)
+    visited[[seed]] <- TRUE
+    frontier <- seed
+    while (length(frontier) > 0L) {
+      nbrs <- head[tail %in% frontier]
+      nbrs <- unique(nbrs[!visited[nbrs]])
+      visited[nbrs] <- TRUE
+      frontier <- nbrs
+    }
+    visited
+  }
+
+  # Restrict to the sub-DAG of nodes lying on some start -> end path: irrelevant branches
+  # can't affect the longest path and would otherwise need visiting during the DP below.
+  fwd <- reachable(start, from, to)
+  if (!fwd[[end]]) {
+    return(integer())
+  }
+  bwd <- reachable(end, to, from)
+  on_path <- fwd & bwd
+  keep <- on_path[from] & on_path[to]
+  sub_from <- from[keep]
+  sub_to <- to[keep]
+
+  # Kahn's topological sort of the sub-DAG (start always has in-degree 0 within it: an edge
+  # into start would imply a path start -> ... -> start, i.e. a cycle).
+  nodes <- which(on_path)
+  in_degree <- tabulate(sub_to, nbins = n)
+  queue <- nodes[in_degree[nodes] == 0L]
+  topo <- integer(0L)
+  while (length(queue) > 0L) {
+    v <- queue[[1L]]
+    queue <- queue[-1L]
+    topo <- c(topo, v)
+    nbrs <- sub_to[sub_from == v]
+    for (nb in nbrs) {
+      in_degree[[nb]] <- in_degree[[nb]] - 1L
+      if (in_degree[[nb]] == 0L) queue <- c(queue, nb)
+    }
+  }
+
+  # Longest-path DP: relax every edge once, in topological order.
+  dist <- rep(-Inf, n)
+  dist[[start]] <- 0L
+  parent <- integer(n)
+  for (v in topo) {
+    if (!is.finite(dist[[v]])) {
+      next
+    }
+    nbrs <- sub_to[sub_from == v]
+    for (nb in nbrs) {
+      if (dist[[v]] + 1L > dist[[nb]]) {
+        dist[[nb]] <- dist[[v]] + 1L
+        parent[[nb]] <- v
+      }
+    }
+  }
+  if (!is.finite(dist[[end]])) {
+    return(integer())
+  }
+
+  path <- end
+  node <- end
+  while (node != start) {
+    node <- parent[[node]]
+    path <- c(node, path)
+  }
+  path
+}
+
+S7_graph_dispatch_multi <- function(
+  graph,
+  start,
+  terminals = list(),
+  groups = list()
+) {
   chr_classes <- graph$chr_classes
 
   int_start <- vec_match(S7_class_id(start), chr_classes)
@@ -364,16 +496,18 @@ S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = l
 
   # groups: lists of nodes that must all co-occur on the same root-to-leaf path
   int_groups <- lapply(groups, function(group) {
-    if (!is.list(group)) group <- list(group)
+    if (!is.list(group)) {
+      group <- list(group)
+    }
     vec_match(vapply(group, S7_class_id, character(1L)), chr_classes)
   })
 
   int_tree <- steiner_tree_paths(
-    from      = graph$edge_from,
-    to        = graph$edge_to,
-    start     = int_start,
+    from = graph$edge_from,
+    to = graph$edge_to,
+    start = int_start,
     terminals = int_terminals,
-    groups    = int_groups
+    groups = int_groups
   )
 
   # Nodes are conversion waypoints rather than the granules asked for, so each
@@ -388,18 +522,22 @@ S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = l
 
   # A granule the caller already supplied is reused when it is itself no coarser
   # than a single unit: it needs no rebuilding and carries their tz / location.
-  supplied    <- c(terminals, unlist(groups, recursive = FALSE))
+  supplied <- c(terminals, unlist(groups, recursive = FALSE))
   supplied_id <- vapply(supplied, S7_class_id, character(1L))
-  supplied_n  <- vapply(supplied, function(granule) granule@n, numeric(1L))
+  supplied_n <- vapply(supplied, function(granule) granule@n, numeric(1L))
 
   # Properties only need copying onto a constructed node when `start` holds one
   # that is not naive (e.g. a time zone) for it to inherit.
-  start_informs <- any(!is.naive(props(start)[setdiff(names(props(start)), "n")]))
+  start_informs <- any(
+    !is.naive(props(start)[setdiff(names(props(start)), "n")])
+  )
 
   resolve_tree <- function(node) {
     node_id <- chr_classes[[node$node]]
     finest <- which(supplied_id == node_id)
-    if (length(finest)) finest <- finest[[which.min(supplied_n[finest])]]
+    if (length(finest)) {
+      finest <- finest[[which.min(supplied_n[finest])]]
+    }
 
     resolved <- if (identical(node_id, start_id)) {
       start
@@ -411,7 +549,7 @@ S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = l
     }
 
     list(
-      node     = resolved,
+      node = resolved,
       children = lapply(node$children, resolve_tree)
     )
   }
@@ -422,14 +560,21 @@ S7_graph_dispatch_multi <- function(graph, start, terminals = list(), groups = l
 # Groups are inserted first (chained BFS ensuring co-occurrence on one path).
 # Terminals are only inserted if not already present in the tree.
 steiner_tree_paths <- function(
-    from      = integer(),
-    to        = integer(),
-    start     = integer(),
-    terminals = integer(),
-    groups    = list()) {
-  if (length(from) != length(to)) return(list())
-  if (length(start) != 1L)        return(list())
-  if (length(from) == 0L)         return(list())
+  from = integer(),
+  to = integer(),
+  start = integer(),
+  terminals = integer(),
+  groups = list()
+) {
+  if (length(from) != length(to)) {
+    return(list())
+  }
+  if (length(start) != 1L) {
+    return(list())
+  }
+  if (length(from) == 0L) {
+    return(list())
+  }
 
   # Collect all nodes currently present in the tree
   tree_nodes <- function(tree) {
@@ -440,40 +585,62 @@ steiner_tree_paths <- function(
   # then chain BFS segments: start -> g1 -> g2 -> ...
   group_path <- function(group) {
     if (length(group) == 1L) {
-      return(bfs_shortest_path(from = from, to = to, start = start, end = group))
+      return(bfs_shortest_path(
+        from = from,
+        to = to,
+        start = start,
+        end = group
+      ))
     }
-    depths <- vapply(group, function(node) {
-      p <- bfs_shortest_path(from = from, to = to, start = start, end = node)
-      if (length(p) == 0L) Inf else length(p) - 1L
-    }, numeric(1L))
+    depths <- vapply(
+      group,
+      function(node) {
+        p <- bfs_shortest_path(from = from, to = to, start = start, end = node)
+        if (length(p) == 0L) Inf else length(p) - 1L
+      },
+      numeric(1L)
+    )
     ordered_group <- group[order(depths)]
 
     waypoints <- c(start, ordered_group)
     path <- integer(0)
     for (i in seq_len(length(waypoints) - 1L)) {
       segment <- bfs_shortest_path(
-        from  = from, to = to,
-        start = waypoints[[i]], end = waypoints[[i + 1L]]
+        from = from,
+        to = to,
+        start = waypoints[[i]],
+        end = waypoints[[i + 1L]]
       )
-      if (length(segment) == 0L) return(integer(0))
+      if (length(segment) == 0L) {
+        return(integer(0))
+      }
       path <- c(path, if (i == 1L) segment else segment[-1L])
     }
     path
   }
 
   insert_path <- function(tree, path) {
-    if (length(path) == 0L) return(tree)
+    if (length(path) == 0L) {
+      return(tree)
+    }
 
     node <- path[[1L]]
     rest <- path[-1L]
 
-    child_idx <- which(vapply(tree$children, function(c) c$node == node, logical(1L)))
+    child_idx <- which(vapply(
+      tree$children,
+      function(c) c$node == node,
+      logical(1L)
+    ))
 
     if (length(child_idx) == 0L) {
       new_child <- insert_path(list(node = node, children = list()), rest)
       tree$children <- c(tree$children, list(new_child))
     } else {
-      tree$children[[child_idx]] <- insert_path(tree$children[[child_idx]], rest)
+      tree$children[[child_idx]] <- insert_path(
+        tree$children[[child_idx]],
+        rest
+      )
     }
 
     tree
@@ -492,7 +659,12 @@ steiner_tree_paths <- function(
   # 2. Insert terminals only if not already in the tree
   for (terminal in terminals) {
     if (!terminal %in% tree_nodes(tree)) {
-      path <- bfs_shortest_path(from = from, to = to, start = start, end = terminal)
+      path <- bfs_shortest_path(
+        from = from,
+        to = to,
+        start = start,
+        end = terminal
+      )
       if (length(path) > 1L) {
         tree <- insert_path(tree, path[-1L])
       }
@@ -503,7 +675,10 @@ steiner_tree_paths <- function(
 }
 
 S7_graph_glb <- function(graph, chronons) {
-  int_chronons <- vec_match(vapply(chronons, S7_class_id, character(1L)), graph$chr_classes)
+  int_chronons <- vec_match(
+    vapply(chronons, S7_class_id, character(1L)),
+    graph$chr_classes
+  )
 
   int_glb <- greatest_lower_bound(
     from = graph$edge_from,
@@ -511,7 +686,7 @@ S7_graph_glb <- function(graph, chronons) {
     nodes = int_chronons
   )
 
-  if(rlang::is_empty(int_glb)) {
+  if (rlang::is_empty(int_glb)) {
     stop(
       "One or more of the provided chronons do not share a common chronon.",
       call. = FALSE
@@ -524,15 +699,19 @@ S7_graph_glb <- function(graph, chronons) {
 
 # Finds the greatest lower bound that contains all `nodes` in a graph defined by
 # directed edges from `from` to `to`.
-greatest_lower_bound <- function(from = integer(), to = integer(), nodes = integer()) {
+greatest_lower_bound <- function(
+  from = integer(),
+  to = integer(),
+  nodes = integer()
+) {
   if (length(nodes) == 1) {
     return(nodes)
   }
   all_nodes <- unique(c(from, to))
-  
+
   # Build parent map: each node -> set of its parents
   parent_map <- split(from, to)
-  
+
   # Helper: Function to get all ancestors (including self) for a node
   get_ancestors <- function(node) {
     stack <- node
@@ -553,19 +732,20 @@ greatest_lower_bound <- function(from = integer(), to = integer(), nodes = integ
     }
     ancestors
   }
-  
+
   # Find all ancestors for each node in 'nodes'
   ancestors_list <- lapply(nodes, get_ancestors)
-  
+
   # The GLB are the nodes that are common to all ancestor sets
   common_ancestors <- Reduce(intersect, ancestors_list)
-  
-  if (length(common_ancestors) == 0)
-    return(integer(0)) # No common ancestor
-  
+
+  if (length(common_ancestors) == 0) {
+    return(integer(0))
+  } # No common ancestor
+
   # Among common ancestors, pick the one that is farthest from root (i.e., closest to nodes)
   # For this, compute for each such node the minimal distance to any of the target nodes
-  
+
   node_depth <- function(target, candidate) {
     # Walk down from candidate to target
     # We'll perform BFS from candidate to target
@@ -584,7 +764,10 @@ greatest_lower_bound <- function(from = integer(), to = integer(), nodes = integ
       if (length(new_children) > 0) {
         queue <- c(queue, new_children)
         new_depths <- depth_map[[as.character(current)]] + 1
-        depth_map <- c(depth_map, `names<-`(rep(new_depths, length(new_children)), new_children))
+        depth_map <- c(
+          depth_map,
+          `names<-`(rep(new_depths, length(new_children)), new_children)
+        )
         visited <- c(visited, new_children)
       }
     }
@@ -593,14 +776,17 @@ greatest_lower_bound <- function(from = integer(), to = integer(), nodes = integ
 
   distance_to_nodes <- function(candidate) {
     # For each node in the set, find the length of the path from candidate to node
-    min(vapply(nodes, node_depth, numeric(1L), candidate = candidate), na.rm = TRUE)
+    min(
+      vapply(nodes, node_depth, numeric(1L), candidate = candidate),
+      na.rm = TRUE
+    )
   }
-  
+
   # For each common ancestor, compute max depth to any node in 'nodes'.
   # Take the one with *minimal* (i.e., greatest lower bound, or furthest from root)
   depths <- vapply(common_ancestors, distance_to_nodes, numeric(1L))
   # The greatest lower bound is the one with minimal distance to its furthest descendant in 'nodes'
   glb <- common_ancestors[which.min(depths)]
-  
+
   as.integer(glb)
 }

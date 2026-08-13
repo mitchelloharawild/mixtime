@@ -1,18 +1,42 @@
 # --- shared helpers ---------------------------------------------------------------
 
-# Shift a time point by a duration: returns the raw chronon-count shift (in the time's own
-# chronon) that corresponds to `dur`, evaluated at the time point's position (so that
-# variable-length granules advance correctly).
+# Shift a time point by a duration
+#
+# Shifts involving time and duration chronons with irregular cardinalities are
+# computed with calendar-field arithmetic, clamping any components that are
+# invalid (e.g. 2026-01-31 + months(1) -> 2026-02-28, not 2026-03-03).
 duration_shift <- function(time, dur) {
   time_data <- S7_data(time)
   time_chronon <- time@chronon
   dur_chronon <- dur@chronon
-  # `at` must be in units of the coarser chronon (the duration's), not the time's chronon
-  at <- floor(chronon_convert_impl(time_data, time_chronon, dur_chronon, discrete = FALSE))
-  cardinality <- chronon_cardinality(time_chronon, dur_chronon, at = at)
-  shift <- S7_data(dur) * cardinality
+
+  if (chronon_needs_clamping(time_chronon, dur_chronon)) {
+    path <- chronon_longest_path(time_chronon, dur_chronon)
+    decomposed <- chronon_decompose(as.numeric(time_data), path)
+    div <- decomposed$div[[length(path)]] + S7_data(dur)
+    new_time_data <- as.numeric(
+      chronon_recompose(div, decomposed$mod, path)$value
+    )
+  } else {
+    at <- chronon_convert_impl(
+      as.numeric(time_data),
+      time_chronon,
+      dur_chronon,
+      discrete = FALSE
+    )
+    new_time_data <- chronon_convert_impl(
+      at + S7_data(dur),
+      dur_chronon,
+      time_chronon,
+      discrete = FALSE
+    )
+  }
+
+  shift <- as.numeric(new_time_data) - time_data
   # Preserve integer type for discrete time points
-  if (is.integer(time_data)) shift <- as.integer(round(shift))
+  if (is.integer(time_data)) {
+    shift <- as.integer(round(shift))
+  }
   shift
 }
 
@@ -26,7 +50,9 @@ duration_combine <- function(e1, e2, op) {
   yd <- S7_data(e2) * chronon_cardinality(tu, y_chronon)
   res <- op(xd, yd)
   # duration / duration = numeric ratio; otherwise a duration with the common chronon
-  if (identical(op, `/`)) return(res)
+  if (identical(op, `/`)) {
+    return(res)
+  }
   mt_duration(res, chronon = tu)
 }
 
@@ -48,7 +74,10 @@ S7::method(vec_math, mt_time) <- function(.fn, .x, ...) {
     res <- vctrs::vec_math_base(.fn, .x, ...)
     return(vec_restore(res, .x))
   }
-  stop(sprintf("Math function '%s' not supported for continuous time", .fn), call. = FALSE)
+  stop(
+    sprintf("Math function '%s' not supported for continuous time", .fn),
+    call. = FALSE
+  )
 }
 
 # --- differences in time produce durations in the common chronon --------------
@@ -76,7 +105,10 @@ method(`+`, list(mt_time, mt_duration)) <- function(e1, e2) {
 }
 
 method(`-`, list(mt_time, mt_duration)) <- function(e1, e2) {
-  S7_data(e1) <- S7_data(e1) - duration_shift(e1, e2)
+  # Negate the duration itself to keep duration_shift() simpler
+  S7_data(e2) <- -S7_data(e2)
+
+  S7_data(e1) <- S7_data(e1) + duration_shift(e1, e2)
   e1
 }
 
@@ -92,9 +124,15 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 
 # --- combining durations (resulting in common chronon durations) --------------
 
-method(`+`, list(mt_duration, mt_duration)) <- function(e1, e2) duration_combine(e1, e2, `+`)
-method(`-`, list(mt_duration, mt_duration)) <- function(e1, e2) duration_combine(e1, e2, `-`)
-method(`/`, list(mt_duration, mt_duration)) <- function(e1, e2) duration_combine(e1, e2, `/`)
+method(`+`, list(mt_duration, mt_duration)) <- function(e1, e2) {
+  duration_combine(e1, e2, `+`)
+}
+method(`-`, list(mt_duration, mt_duration)) <- function(e1, e2) {
+  duration_combine(e1, e2, `-`)
+}
+method(`/`, list(mt_duration, mt_duration)) <- function(e1, e2) {
+  duration_combine(e1, e2, `/`)
+}
 
 # --- implicit chronons (time and numeric) -------------------------------------
 
@@ -155,10 +193,16 @@ method(`+`, list(S7::class_any, mt_time)) <- function(e1, e2) {
   )
 }
 method(`*`, list(mt_time, S7::class_any)) <- function(e1, e2) {
-  cli::cli_abort("Multiplication is only supported between a duration and a number.", call. = FALSE)
+  cli::cli_abort(
+    "Multiplication is only supported between a duration and a number.",
+    call. = FALSE
+  )
 }
 method(`*`, list(S7::class_any, mt_time)) <- function(e1, e2) {
-  cli::cli_abort("Multiplication is only supported between a duration and a number.", call. = FALSE)
+  cli::cli_abort(
+    "Multiplication is only supported between a duration and a number.",
+    call. = FALSE
+  )
 }
 method(`/`, list(mt_time, S7::class_any)) <- function(e1, e2) {
   cli::cli_abort(
@@ -180,11 +224,19 @@ method(`/`, list(S7::class_any, mt_time)) <- function(e1, e2) {
 # the chronon_convert result is a wall-clock value (the offset was added then canceled).
 # Subtracting the TZ offset at that position restores the true UTC-equivalent value.
 tz_wall_clock_to_utc <- function(value, from_chronon, to_chronon) {
-  if (!S7_inherits(from_chronon, mt_tz_unit)) return(value)
+  if (!S7_inherits(from_chronon, mt_tz_unit)) {
+    return(value)
+  }
   from_tz <- tz_name(from_chronon)
-  if (is.na(from_tz) || from_tz == "UTC") return(value)
+  if (is.na(from_tz) || from_tz == "UTC") {
+    return(value)
+  }
   # Same granule class: offset already cancelled correctly (no correction needed)
-  if (identical(S7::S7_class(from_chronon)@name, S7::S7_class(to_chronon)@name)) return(value)
+  if (
+    identical(S7::S7_class(from_chronon)@name, S7::S7_class(to_chronon)@name)
+  ) {
+    return(value)
+  }
   # Coarser granule: subtract the TZ offset at the wall-clock position
   tzo <- get_tz_offset(as.double(value), from_tz)
   value - tzo

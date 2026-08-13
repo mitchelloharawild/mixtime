@@ -224,6 +224,25 @@ test_that("seq.mixtime with duration by", {
   expect_equal(format(result[[1]]), format(date("2020-01-01")))
   expect_equal(format(result[[5]]), format(date("2020-01-09")))
 })
+test_that("seq.mixtime by a coarser granule of the same unit works (day(7L) etc.)", {
+  # chronon and by share the same time unit (day), just different `n` - not a calendar-field
+  # shift, so no clamping is involved.
+  result <- seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))
+  expect_equal(format(result), c("2020-01-01", "2020-01-08", "2020-01-15", "2020-01-22", "2020-01-29"))
+})
+
+test_that("seq.mixtime by = '1 month' clamps day-of-month but preserves time-of-day", {
+  # Regression test: clamping used to flatten day-of-month and time-of-day into one
+  # remainder, so overflowing into a shorter month also destroyed the time-of-day.
+  result <- suppressWarnings(seq(datetime("2026-01-31 14:30:00"), length.out = 2, by = "1 month"))
+  expect_equal(format(result[[2]]), "2026-02-28 14:30:00")
+})
+
+test_that("seq.mixtime on_invalid = 'overflow' lets the day-of-month overflow into the next month", {
+  result <- seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
+  expect_equal(format(result), c("2020-01-31", "2020-03-02", "2020-03-31"))
+})
+
 test_that("seq.mixtime messages describe the granules involved", {
   # Granules are S7 scalars, so their size comes from @n rather than vec_data()
   expect_error(
