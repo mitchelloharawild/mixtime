@@ -37,9 +37,29 @@ test_that("circsum handles edge cases", {
 
 test_that("circsum handles invalid inputs", {
   expect_equal(circsum(c(1, 2, 3), 0), numeric(0))
-  expect_equal(circsum(c(1, 2, 3), -1), numeric(0))
   expect_equal(circsum(c(1, 2, 3), 2, 0), numeric(0))
-  expect_equal(circsum(c(1, 2, 3), 2, -1), numeric(0))
+})
+
+test_that("circsum treats a negative step as reversed direction", {
+  expect_equal(circsum(c(1, 2, 3, 4, 5), 1, -1), c(1, 5, 4, 3, 2))
+  expect_equal(circsum(c(1, 2, 3), 1, -1), c(1, 3, 2))
+  expect_equal(circsum(c(1, 2, 3), 2, -1), c(3, 4, 5))
+})
+
+test_that("circsum treats a negative size as a trailing (end-anchored) window", {
+  # size = -k at position i sums x[i - k + 1 .. i] instead of x[i .. i + k - 1]
+  # - the same window widths and sums as a positive size, just anchored at
+  # the other end. With `step = 1`, this is exactly a trailing rolling sum.
+  expect_equal(circsum(c(1, 2, 3, 4, 5), -2, 1), c(6, 3, 5, 7, 9))
+  expect_equal(circsum(c(1, 2, 3, 4, 5), -2, 1), rev(circsum(rev(c(1, 2, 3, 4, 5)), 2, 1)))
+
+  # size = 1 is its own start and end - sign of size doesn't matter
+  expect_equal(circsum(c(1, 2, 3), -1, 1), circsum(c(1, 2, 3), 1, 1))
+  expect_equal(circsum(c(1, 2, 3), -1, -1), circsum(c(1, 2, 3), 1, -1))
+
+  # Negative size and step (the default) together: windows both trail their
+  # position *and* are visited backwards.
+  expect_equal(circsum(c(1, 2, 3, 4, 5), -2), circsum(c(1, 2, 3, 4, 5), -2, -2))
 })
 
 test_that("circsum step parameter works correctly", {

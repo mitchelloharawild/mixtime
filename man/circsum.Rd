@@ -9,9 +9,12 @@ circsum(x, size, step = size)
 \arguments{
 \item{x}{A numeric vector to compute circular sums over.}
 
-\item{size}{Integer; the window size (number of consecutive elements to sum).}
+\item{size}{Integer; the window size (number of consecutive elements to
+sum). A negative size anchors the window at its end, with the window
+counting backwards.}
 
-\item{step}{Integer; the step size (the increment in starting index for each sum).}
+\item{step}{Integer; the step size (the increment in starting index for
+each sum). A negative step walks the windows backwards around the circle.}
 }
 \value{
 A numeric vector containing the sum of each contiguous subsequence
@@ -31,5 +34,14 @@ circsum(c(1, 2, 3, 4), 2)
 # Window of 3 elements
 circsum(c(1, 2, 3, 4, 5), 3)
 # Returns: 6 10 9 8 12 (1+2+3, 4+5+1, 2+3+4, 5+1+2, 3+4+5)
+
+# Negative step walks the same windows backwards
+circsum(c(1, 2, 3, 4, 5), 1, -1)
+# Returns: 1 5 4 3 2
+
+# Negative size anchors each window at its end instead of its start - a
+# trailing rather than leading rolling sum
+circsum(c(1, 2, 3, 4, 5), -2, 1)
+# Returns: 6 3 5 7 9 (5+1, 1+2, 2+3, 3+4, 4+5)
 
 }
