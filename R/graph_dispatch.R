@@ -233,34 +233,80 @@ directed_reachable <- function(from, to, start, end) {
   FALSE
 }
 
-# TRUE if `chronon` nests within `granule`, i.e. `granule` is equal to or a
-# coarser container of `chronon`. Edges in the chronon_cardinality graph point
-# fine -> coarse, so this holds exactly when `granule` is directed-reachable from
-# `chronon`. FALSE when the two granules have no registered relationship.
-chronon_nests_in_graph <- function(chronon, granule, graph) {
-  from_id <- S7_class_id(chronon)
-  to_id <- S7_class_id(granule)
-  if (from_id == to_id) {
-    return(granule@n %% chronon@n == 0L)
+# TRUE if `chronon` nests within `granule` (no `chronon` block ever splits
+# across a `granule` boundary). Defers to the exact ratio check when a fixed
+# path connects the classes; over an irregular-only path, only `n = 1` is
+# provably safe (per-`at` divisibility isn't exhaustively checkable), so
+# `n > 1` errors instead of guessing.
+chronon_nests_in <- function(chronon, granule) {
+  if (S7_class_id(chronon) == S7_class_id(granule)) {
+    return(chronon_nests_in_same_unit(chronon, granule))
+  }
+  if (chronon_fixed_reachable(chronon, granule)) {
+    return(chronon_nests_in_fixed_ratio(chronon, granule))
   }
 
-  start <- match(from_id, graph$chr_classes)
-  end <- match(to_id, graph$chr_classes)
-  if (is.na(start) || is.na(end)) {
+  if (!chronon_graph_reachable(chronon_cardinality_graph(), chronon, granule)) {
     return(FALSE)
   }
-
-  directed_reachable(graph$edge_from, graph$edge_to, start, end)
+  if (chronon@n != 1L) {
+    cli::cli_abort(
+      c(
+        "Cannot determine whether {time_granule_label(chronon)} nest within {time_granule_label(granule)}.",
+        "x" = "{S7_class_id(chronon)} and {S7_class_id(granule)} are only connected by an irregular (context-dependent) cardinality, and nesting for a multi-unit chronon of one of these classes can depend on where in the calendar it falls.",
+        "i" = "This is only resolvable for a single-unit ({.code n = 1}) chronon."
+      ),
+      call = NULL
+    )
+  }
+  TRUE
 }
 
-# Checks if the any cardinality relationships nest the chronon in granule
-chronon_nests_in <- function(chronon, granule) {
-  chronon_nests_in_graph(chronon, granule, chronon_cardinality_graph())
+# Same-class nesting: TRUE iff `granule@n %% chronon@n == 0`.
+chronon_nests_in_same_unit <- function(chronon, granule) {
+  granule@n %% chronon@n == 0L
 }
 
-# Checks if the fixed cardinality relationships nest the chronon in granule
+# TRUE if `granule`'s class is reachable from `chronon`'s class along
+# `graph`'s fine -> coarse edges.
+chronon_graph_reachable <- function(graph, chronon, granule) {
+  start <- match(S7_class_id(chronon), graph$chr_classes)
+  end <- match(S7_class_id(granule), graph$chr_classes)
+  !is.na(start) &&
+    !is.na(end) &&
+    directed_reachable(graph$edge_from, graph$edge_to, start, end)
+}
+
+# TRUE if `chronon`'s and `granule`'s classes are connected only by
+# chronon_cardinality_fixed() edges.
+chronon_fixed_reachable <- function(chronon, granule) {
+  chronon_graph_reachable(chronon_cardinality_fixed_graph(), chronon, granule)
+}
+
+# Ratio-only nesting check, assuming chronon_fixed_reachable(chronon,
+# granule) already holds: nests iff `ratio * granule@n %% chronon@n == 0`,
+# where `ratio` is fixed units of `chronon` per unit of `granule` (e.g. 12
+# months/year). Split out so chronon_nests_in() can reuse it without
+# repeating the reachability check.
+chronon_nests_in_fixed_ratio <- function(chronon, granule) {
+  ratio <- chronon_cardinality_fixed(
+    S7::S7_class(chronon)(1L),
+    S7::S7_class(granule)(1L)
+  )
+  (ratio * granule@n) %% chronon@n == 0L
+}
+
+# TRUE if `chronon` nests within `granule` using only fixed (`at`-independent)
+# cardinality relationships.
 chronon_nests_in_fixed <- function(chronon, granule) {
-  chronon_nests_in_graph(chronon, granule, chronon_cardinality_fixed_graph())
+  if (S7_class_id(chronon) == S7_class_id(granule)) {
+    return(chronon_nests_in_same_unit(chronon, granule))
+  }
+
+  if (!chronon_fixed_reachable(chronon, granule)) {
+    return(FALSE)
+  }
+  chronon_nests_in_fixed_ratio(chronon, granule)
 }
 
 S7_class_id <- function(x) {
