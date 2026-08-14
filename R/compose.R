@@ -272,11 +272,11 @@ compose_recompose <- function(chain, discrete) {
     )
     bad <- offset_i[keep] < 0 | offset_i[keep] >= cardinality
     if (any(bad, na.rm = TRUE)) {
-      max_valid <- cardinality[which(bad)[1L]] - 1
+      bad_i <- which(bad)[1L]
       cli::cli_abort(
         c(
-          "{.val {offset_i[keep][which(bad)[1L]]}} is not a valid {time_granule_label(chronon_i, 1)} within that {time_granule_label(running_chronon, 1)}.",
-          i = "Valid values are {.val {0}} to {.val {max_valid}} (before adjusting for display)."
+          "{.val {offset_i[keep][bad_i] + 1L}} is not a valid {time_granule_label(chronon_i, 1)} within that {time_granule_label(running_chronon, 1)}.",
+          i = "Valid values are {.val {1}} to {.val {cardinality[bad_i]}}."
         ),
         call = NULL
       )
