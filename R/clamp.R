@@ -92,10 +92,9 @@ chronon_decompose <- function(x, path) {
 
 # Backward walk: reconstruct a path[[1]]-unit value from `div`/`mod`
 # (chronon_decompose()'s output, `div` possibly shifted). Clamps each irregular
-# hop's whole-unit remainder to its paired coarser count's valid range;
-# `reverse` clamps to the lower bound for descending shifts. `clamped` flags
-# where clamping changed a value (for warning on overflow).
-chronon_recompose <- function(div, mod, path, clamp = TRUE, reverse = FALSE) {
+# hop's whole-unit remainder to its paired coarser count's valid range.
+# `clamped` flags where clamping changed a value (for warning on overflow).
+chronon_recompose <- function(div, mod, path, clamp = TRUE) {
   n <- length(path)
   value <- div
   clamped <- rep(FALSE, length(value))
@@ -104,7 +103,7 @@ chronon_recompose <- function(div, mod, path, clamp = TRUE, reverse = FALSE) {
     if (clamp && !chronon_hop_is_regular(path[[i - 1L]], path[[i]])) {
       card <- chronon_cardinality(path[[i - 1L]], path[[i]], at = value)
       m_int <- floor(m)
-      m_clamped <- (if (reverse) pmax else pmin)(card - 1, m_int)
+      m_clamped <- pmin(card - 1, m_int)
       clamped <- clamped | (m_clamped != m_int)
       m <- m_clamped + (m - m_int)
     }

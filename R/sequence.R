@@ -223,8 +223,7 @@
         res,
         seq_mod,
         path,
-        clamp = on_invalid == "nearest",
-        reverse = by@n < 0
+        clamp = on_invalid == "nearest"
       )
 
       if (missing_on_invalid && any(recomposed$clamped, na.rm = TRUE)) {
