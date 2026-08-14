@@ -333,3 +333,12 @@ test_that("datetime() - date() uses the date's timezone for its day boundary", {
   result_utc <- t - date(t, tz = "UTC", discrete = TRUE)
   expect_equal(as.double(result_utc), 84600)
 })
+
+test_that("datetime() with a timezone can be shifted by durations with a regular cardinality", {
+  d <- datetime("2026-06-03 02:30:00", tz = "Australia/Melbourne")
+
+  expect_equal(format(d + hours(1L)), "2026-06-03 03:30:00 AEST")
+  expect_equal(format(d + days(1L)), "2026-06-04 02:30:00 AEST")
+  expect_equal(format(d - hours(1L)), "2026-06-03 01:30:00 AEST")
+  expect_equal(format(hours(1L) + d), "2026-06-03 03:30:00 AEST")
+})

@@ -18,6 +18,7 @@ duration_shift <- function(time, dur) {
       chronon_recompose(div, decomposed$mod, path)$value
     )
   } else {
+    dur_chronon <- granule_inherit_props(dur_chronon, time_chronon)
     at <- chronon_convert_impl(
       as.numeric(time_data),
       time_chronon,
