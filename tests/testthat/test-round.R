@@ -265,6 +265,38 @@ test_that("time_floor/time_ceiling/time_round work for civil datetime rounded to
   expect_equal(time_round(now_civ,   granule = cal_gregorian$hour(1L)), fl_exp)
 })
 
+test_that("time_floor/time_ceiling work for civil datetime rounded to quarter across a UTC offset", {
+  # Quarters have a variable number of days, so the timezone offset can't be
+  # converted exactly into quarter units (only approximated by an average
+  # quarter length) - it must be applied while still in seconds. Regression
+  # test for a bug where the boundary landed ~760s away from local midnight.
+  melb <- datetime(as.POSIXct("2015-02-15", tz = "Australia/Melbourne"),
+                    tz = "Australia/Melbourne")
+  expect_equal(
+    time_floor(melb, granule = cal_gregorian$quarter(1L)),
+    datetime(as.POSIXct("2015-01-01 00:00:00", tz = "Australia/Melbourne"),
+             tz = "Australia/Melbourne")
+  )
+  expect_equal(
+    time_ceiling(melb, granule = cal_gregorian$quarter(1L)),
+    datetime(as.POSIXct("2015-04-01 00:00:00", tz = "Australia/Melbourne"),
+             tz = "Australia/Melbourne")
+  )
+
+  ny <- datetime(as.POSIXct("2015-02-15", tz = "America/New_York"),
+                 tz = "America/New_York")
+  expect_equal(
+    time_floor(ny, granule = cal_gregorian$quarter(1L)),
+    datetime(as.POSIXct("2015-01-01 00:00:00", tz = "America/New_York"),
+             tz = "America/New_York")
+  )
+  expect_equal(
+    time_ceiling(ny, granule = cal_gregorian$quarter(1L)),
+    datetime(as.POSIXct("2015-04-01 00:00:00", tz = "America/New_York"),
+             tz = "America/New_York")
+  )
+})
+
 test_that("time_floor/time_ceiling/time_round work for civil datetime early in the day", {
   # 2020-06-22 02:15:00 AEST → rounds DOWN to 2020-06-22 00:00 (< 12h into day)
   t_utc   <- as.POSIXct("2020-06-21 16:15:00", tz = "UTC")
