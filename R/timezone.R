@@ -93,6 +93,36 @@ tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
   offset_s
 }
 
+# Shift a `chronon`-native numeric value from UTC into the local wall-clock
+# domain of `tz`, expressed as if it were UTC. `chronon_divmod()`,
+# `chronon_decompose()`/`chronon_recompose()`, and `chronon_convert_impl()`
+# (when called with `tz = "UTC"`) are all tz-blind and work in this shifted
+# domain - see `time_round_impl()` and `seq.mixtime::mt_time()`.
+tz_to_local <- function(x, chronon, tz) {
+  x + tz_offset_impl(x, chronon, tz = tz)
+}
+
+# Undo `tz_to_local()`, recovering the true (UTC) `chronon` value. A second
+# pass re-evaluates the offset at the candidate raw instant rather than
+# reusing the forward offset, since a value that falls in a DST gap/overlap
+# can have a different offset there than at its own local-shifted value.
+#
+# TODO(perf): this approximates gap/overlap resolution with two
+# `tz_offset_impl()` round trips (each its own `chronon_convert_impl()` +
+# `get_tz_offset()` C call). The vendored `date`/`tzdb` library already has a
+# purpose-built, single-lookup primitive for exactly this -
+# `date::time_zone::to_sys(local_time, choose::earliest|latest)` (see
+# tzdb's `include/date/tz.h`) - which is what `as.POSIXct()` itself relies on.
+# Wiring up a new cpp11-registered resolver around that would both halve the
+# lookup cost and replace this two-sample approximation with the library's
+# real resolution logic, at the cost of touching `src/` (new registered
+# function, regenerated `src/cpp11.cpp`/`R/cpp11.R` bindings, recompile).
+# Left as pure R for now since the 2x cost is negligible at realistic
+# `seq()`/`time_round()` sizes.
+tz_to_utc <- function(x, chronon, tz) {
+  x - tz_offset_impl(x - tz_offset_impl(x, chronon, tz = tz), chronon, tz = tz)
+}
+
 #' Get timezone abbreviation
 #'
 #' Returns the timezone abbreviation (e.g., "EST", "PDT") for a given datetime

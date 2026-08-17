@@ -85,7 +85,7 @@ time_round_impl <- function(x, granule, round_fn) {
   res <- chronon_convert(x, chronon)
 
   # Apply timezone offsets (UTC -> tz) while still in the exact native unit
-  res <- res + tz_offset_impl(res, chronon, tz = tz_name(by))
+  res <- tz_to_local(res, chronon, tz_name(by))
 
   # Convert the (now local wall-clock) instant into the granule's units and round it
   res <- chronon_convert_impl(res, from = chronon, to = by, discrete = FALSE, tz = "UTC")
@@ -95,11 +95,7 @@ time_round_impl <- function(x, granule, round_fn) {
   res <- chronon_convert_impl(res, from = by, to = chronon, discrete = FALSE, tz = "UTC")
 
   # Undo timezone offsets (tz -> UTC)
-  # Second pass of tz offset for DST changes between `x` and the boundary
-  res <- res - tz_offset_impl(
-    res - tz_offset_impl(res, chronon, tz = tz_name(by)),
-    chronon, tz = tz_name(by)
-  )
+  res <- tz_to_utc(res, chronon, tz_name(by))
 
   if (is.integer(x)) res <- as.integer(res)
   attributes(res) <- attributes(x)

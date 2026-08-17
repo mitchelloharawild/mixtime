@@ -168,14 +168,26 @@
     align_value <- NULL
     # Increment by 1 since the time point chronon is rebased with `by`
     arg <- list(by = 1L)
+    # `chronon_divmod()`/`chronon_decompose()` work on a UTC(-shaped) numeric
+    # value, but for the clamped path a `by` boundary (e.g. "start of month")
+    # is defined on the local wall clock, so shift into local time first for
+    # that case - the same convention `chronon_parts()` uses. Regular
+    # (fixed-cardinality) `by` granules like hour/day are stepped as raw
+    # durations instead (matching e.g. `seq.POSIXt()`), so they're left alone.
+    to_by_domain <- if (is.null(path)) {
+      function(x) x
+    } else {
+      function(x) tz_to_local(x, chronon, tz_name(by))
+    }
     if (!missing_from) {
       # Convert `from` into `by` chronons
-      divmod <- chronon_divmod(chronon, by, as.numeric(from))
+      from_local <- to_by_domain(as.numeric(from))
+      divmod <- chronon_divmod(chronon, by, from_local)
       arg$from <- divmod$div
 
       # Left aligned sequencing
       seq_part <- divmod$mod
-      align_value <- from
+      align_value <- from_local
     }
     if (!missing_to) {
       # Shift `to` left to account for `from` alignment
@@ -184,13 +196,14 @@
       }
 
       # Convert `to` into `by` chronons
-      divmod <- chronon_divmod(chronon, by, as.numeric(to))
+      to_local <- to_by_domain(as.numeric(to))
+      divmod <- chronon_divmod(chronon, by, to_local)
       arg$to <- divmod$div
 
       # Right aligned sequencing if from isn't provided
       if (is.null(seq_part)) {
         seq_part <- divmod$mod
-        align_value <- to
+        align_value <- to_local
       }
     }
     if (!is.null(length.out)) {
@@ -218,7 +231,7 @@
       ) +
         seq_part
     } else {
-      seq_mod <- chronon_decompose(as.numeric(align_value), path)$mod
+      seq_mod <- chronon_decompose(align_value, path)$mod
       recomposed <- chronon_recompose(
         res,
         seq_mod,
@@ -233,7 +246,10 @@
           "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
         ))
       }
-      res <- recomposed$value
+      # `chronon_recompose()` stays in the local-shifted domain used by
+      # `align_value` above - undo the shift to recover the true `chronon`
+      # value.
+      res <- tz_to_utc(recomposed$value, chronon, tz_name(by))
     }
 
     # Restore integer type for discrete time input
