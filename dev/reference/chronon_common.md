@@ -50,17 +50,17 @@ A time granule object representing the common chronon.
 chronon_common(c(yearmonth(Sys.Date()), date(Sys.Date())))
 #> <mixtime::tu_day>
 #>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#>  @ tz: chr NA
 
 # The common chronon between a Gregorian month and an ISO week is a day
 chronon_common(c(yearmonth(Sys.Date()), yearweek(Sys.Date())))
 #> <mixtime::tu_day>
 #>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#>  @ tz: chr NA
 
 # The common chronon between a ISO week and an hour is an hour
 chronon_common(c(yearweek(Sys.Date()), linear_time(Sys.time(), hour(1L))))
 #> <mixtime::tu_hour>
 #>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#>  @ tz: chr NA
 ```

@@ -65,7 +65,7 @@ new_time(
 #> Warning: `new_time()` was deprecated in mixtime 0.2.0.
 #> ℹ Please use `mt_linear()` instead.
 #> <mixtime::mt_linear[1]>
-#> [1] 2026-08-13 0.0%
+#> [1] 2026-08-17 0.0%
 
 # Create a discrete mixtime time vector for the current date and time
 new_time(
@@ -74,7 +74,7 @@ new_time(
   class = "mt_linear"
 )
 #> <mixtime::mt_linear[1]>
-#> [1] 2026-08-13 15:19:36
+#> [1] 2026-08-17 14:02:20
 
 # Create a discrete mixtime time vector for the time of day (cyclical time)
 new_time(
@@ -86,5 +86,5 @@ new_time(
 #> Warning: `new_time()` was deprecated in mixtime 0.2.0.
 #> ℹ Please use `mt_cyclical()` instead.
 #> <mixtime::mt_cyclical[1]>
-#> [1] 15:19:36
+#> [1] 14:02:20
 ```

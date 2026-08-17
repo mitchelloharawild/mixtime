@@ -61,11 +61,14 @@ that wraps around the vector as if arranged in a circle.</p>
 
 
 <dt id="arg-size">size<a class="anchor" aria-label="anchor" href="#arg-size"></a></dt>
-<dd><p>Integer; the window size (number of consecutive elements to sum).</p></dd>
+<dd><p>Integer; the window size (number of consecutive elements to
+sum). A negative size anchors the window at its end, with the window
+counting backwards.</p></dd>
 
 
 <dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
-<dd><p>Integer; the step size (the increment in starting index for each sum).</p></dd>
+<dd><p>Integer; the step size (the increment in starting index for
+each sum). A negative step walks the windows backwards around the circle.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -86,6 +89,17 @@ combinations until the pattern between <code>x</code> and <code>step</code> repe
 <span class="r-in"><span><span class="fu">circsum</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  6 10  9  8 12</span>
 <span class="r-in"><span><span class="co"># Returns: 6 10 9 8 12 (1+2+3, 4+5+1, 2+3+4, 5+1+2, 3+4+5)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Negative step walks the same windows backwards</span></span></span>
+<span class="r-in"><span><span class="fu">circsum</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 5 4 3 2</span>
+<span class="r-in"><span><span class="co"># Returns: 1 5 4 3 2</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Negative size anchors each window at its end instead of its start - a</span></span></span>
+<span class="r-in"><span><span class="co"># trailing rather than leading rolling sum</span></span></span>
+<span class="r-in"><span><span class="fu">circsum</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>, <span class="op">-</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 3 5 7 9</span>
+<span class="r-in"><span><span class="co"># Returns: 6 3 5 7 9 (5+1, 1+2, 2+3, 3+4, 4+5)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
