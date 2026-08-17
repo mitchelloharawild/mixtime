@@ -20,6 +20,18 @@
 
 * Added civil time microseconds and nanoseconds to `cal_time_civil` (#92).
 
+* Added `linear_labels()` and `cyclical_labels()`, an authoring interface for
+  declaring a calendar granule's label scheme once and getting both text
+  *formatting* and its `time_parse()`-ready inverse, text *parsing*
+  (`linear_labels_parse()`/`cyclical_labels_parse()`), registered together so
+  the two directions can't drift apart. Covers plain numeric labels, named
+  labels from a lookup table (`vocab_table()`), irregular cycles where the
+  raw-index-to-name mapping isn't a constant shift (`transform`, e.g. a leap
+  month that splits one name into two), and a full `format`/`parse` escape
+  hatch for labels that aren't index-shaped at all (e.g. "2BC"). See
+  `?cyclical_labels`. `validate_label_scheme()` checks a scheme's
+  format/parse round-trip, most useful for a hand-written `transform`.
+
 ## Breaking changes
 
 * `is_time_linear()`, `is_time_cyclical()`, and `is_time_duration()` have been
@@ -38,7 +50,131 @@
   of the cycle granule to allow appropriate labelling of irregular cycles, the 
   same convention as `chronon_cardinality()`'s `at` argument (#100).
 
+* `linear_labels()` and `cyclical_labels()`, the S7 generics that turn a
+  granule's position into label text, have been renamed to
+  `linear_labels_format()` and `cyclical_labels_format()`. The bare names are
+  now the authoring interface described above; a hand-written
+  `method(linear_labels_format, ...) <-`/`method(cyclical_labels_format, ...) <-`
+  is still the escape hatch for a granule that only ever needs formatting,
+  never parsing.
+
 ## Bug fixes
+
+* `cal_gregorian`'s day<->month conversion (`chronon_cardinality()` and
+  `chronon_divmod()`) now supports a month chronon of *any* non-zero size
+  (previously capped at `abs(n) < 12`, e.g. `month(13L)`/`years(1L) +
+  months(6L)`-scale steps errored with "Month chronons >= 12 are not yet
+  supported"), and fixes two correctness bugs uncovered while generalising
+  it, both specific to a multi-month (`abs(n) > 1`) chronon:
+  `chronon_divmod(day, month)`'s `mod` used to be the offset into the
+  *calendar* month containing the input day, which silently dropped any
+  whole months already elapsed earlier in a wider window (e.g. `seq(date(
+  "2020-02-15"), by = "2 months")` produced `2020-01-15, 2020-03-15, ...`,
+  a full window early, instead of `2020-02-15, 2020-04-15, ...`); and
+  `chronon_divmod(day, month)`'s `div` used to be `fdiv(res, res_scale)`
+  unconditionally, which only agrees with `chronon_cardinality()`'s window
+  anchor (`at * n`, always counting the window forward regardless of sign)
+  when `res_scale > 0` - for a negative multi-month `to` it instead picked
+  the window running backwards from the input day. Both the `>= 12` cap and
+  the old `circsum()`-tabulated approach it came from are gone: day counts
+  for a window are now a difference of two calls to a new O(1)
+  `month_start_days()` helper (the same closed-form leap-year arithmetic
+  `chronon_divmod(year, day)` already used, reused here anchored to a month
+  instead of a year), so the cost no longer scales with the chronon's `n`.
+
+* `chronon_nests_in_fixed()` (and so `chronon_needs_clamping()`, which it
+  backs) previously ignored `@n` entirely for a cross-class pair, treating
+  e.g. `month(5L)` and `month(2L)` identically as long as month and year were
+  connected at all - so it reported `month(5L)` as nesting inside `year(1L)`
+  even though 12 months/year isn't a whole multiple of 5. Fixed to check the
+  same divisibility the identical-class case already did, generalised across
+  a fixed-cardinality chain (multiplying `chronon_cardinality_fixed()` along
+  it, e.g. 3 months/quarter * 4 quarters/year = 12 months/year).
+
+* `chronon_nests_in()` previously ignored `@n` entirely for any cross-class
+  pair, reporting e.g. both `month(5L)` as nesting inside `year(1L)` (wrong -
+  12 months/year isn't a whole multiple of 5, so a 5-month block never lands
+  on a year boundary) and `day(2L)` as nesting inside `month(1L)` (also wrong
+  in general - whether a 2-day block straddles a month boundary depends on
+  the parity of that month's start day-of-epoch). Fixed to match
+  `chronon_nests_in_fixed()`'s exact answer whenever a fixed (context-
+  independent) path connects the two classes (that path's ratio is constant,
+  so if it doesn't divide evenly, no other path could make it nest either).
+  For a pair connected only by an irregular (context-dependent) path, a
+  single-unit (`n = 1`) chronon still always nests (it's never split across a
+  boundary), but any other `n` now errors instead of silently assuming it
+  nests - checking every `at` in the cycle isn't generally possible, since
+  cycle length isn't a declared, inspectable property of
+  `chronon_cardinality()` methods. `chronon_needs_clamping()` (which uses
+  both functions together) is unaffected in practice - it now no longer
+  fires for a fixed-reachable, non-dividing pair like `month(5L)`/`year(1L)`,
+  but no built-in calendar arithmetic exercises that combination.
+
+* `seq()` on a `linear_time` with a `by` whose magnitude doesn't divide
+  evenly into the coarser calendar unit it's ultimately anchored to (e.g.
+  `by = months(5L)`, `by = months(13L)`, `by = "18 months"` - none of 5, 13,
+  18 divide 12) now errors instead of silently producing calendar-drifted
+  output. `seq()`'s clamped path decomposes `from` once and then advances by
+  whole-number offsets in a single pass, which assumes every `by`-sized block
+  has the same shape - only true when `by`'s magnitude divides evenly into
+  that coarser unit (checked with the fixed `chronon_nests_in_fixed()` fix
+  above). When it doesn't, blocks land on a different month-of-year each
+  step and the output silently drifts (e.g. `seq(date("2020-01-31"), by =
+  months(18L), length.out = 4)` used to give `2020-01-31, 2021-08-03,
+  2023-01-31, 2024-08-02` - only every second step agreeing with repeated
+  `date + months(18L)`, which is unaffected by this and already correct).
+  Supporting this case properly (matching what repeated `+`/`-` already do)
+  is left for later; `by = months(1L)/(2L)/(3L)/(4L)/(6L)/(12L)` and `by =
+  years(n)` are all unaffected, and `+`/`-` were never affected (each call
+  re-decomposes the current instant rather than batching an offset from a
+  single decomposition).
+
+* `linear_time + duration` and `linear_time - duration` across chronons of
+  different granularity (e.g. `date() + months()`, `date() + years()`), and
+  `seq()` on a `linear_time` with a coarser `by` (e.g. `seq(date, by = "1
+  month")`), now use calendar-field arithmetic: the duration's/`by`'s own
+  chronon is advanced by its magnitude, decomposing along the *longest*
+  available chain of calendar boundaries (e.g. day -> month -> year, not a
+  shorter direct day -> year edge) so that only the specific invalid
+  component (e.g. day-of-month) is clamped to the target period's valid
+  range, and every other component - including time-of-day - is preserved
+  exactly (e.g. `date("2020-01-31") + months(1)` is now `2020-02-29`, not
+  `2020-03-02`; `date("2024-02-29") + years(1)` now agrees with
+  `+ months(12)`, both giving `2025-02-28`). Previously the shift was
+  approximated as `n * cardinality_at_start`, which only happened to be exact
+  for `n == 1` additions within same-length periods, and compounded error for
+  larger `n` (`date("2026-03-25") + months(6)` was `2026-09-27`, two days
+  late; twelve months never returned to the same day of the same month a year
+  later). See `_dev/clamping.md` for the design and remaining open questions.
+
+* Fixed `linear_time + duration`/`- duration` erroring with "Cannot convert
+  from timezone-naive chronon to timezone-aware chronon" whenever a
+  timezone-aware time point (e.g. `datetime(tz = "Australia/Melbourne")`) was
+  shifted by a duration with a regular (fixed-cardinality) relationship to the
+  time's chronon, such as `hours()`, `minutes()`, `seconds()`, or `days()`
+  (`months()`/`years()` were unaffected, as they use the calendar-clamping
+  path above). This was a regression from the change above: the shift's
+  non-clamping path round-trips the time through the duration's chronon and
+  back, and the return leg needs the duration's chronon to carry the time's
+  timezone first, the same way `seq()` already does.
+
+* Fixed `seq()` on a `linear_time` with a negative-magnitude `by` (e.g.
+  `seq(date("2020-03-31"), by = "-1 month", length.out = 3)`,
+  `by = months(-1L)`) erroring with `'from' must be a finite number`, and,
+  once that was fixed, clamping to the wrong end of the target period for
+  descending sequences (`2020-03-31, 2020-03-02, 2020-01-31` instead of
+  `2020-03-31, 2020-02-29, 2020-01-31`). Also fixes `seq()`/calendar-field
+  arithmetic silently landing on the wrong date for any multi-unit calendar
+  `by`/duration whose target chronon isn't `n = 1` (e.g. `by = "2 months"`).
+  The negative-`by` error was `circsum()` (the internal circular rolling-sum
+  helper backing days-in-a-month lookups) rejecting a negative `size`/`step`
+  outright; it now gives both a real meaning instead - a negative `step`
+  walks the same windows backwards, and a negative `size` anchors a window
+  at its end instead of its start (a trailing rather than leading rolling
+  sum) - which a negative-`n` month chronon needs directly. The multi-unit
+  case was a stray reassignment in `R/cal_gregorian.R`'s day<->month
+  conversion left over from an unrelated rebase, corrupting results for any
+  target month-chronon whose multiplier wasn't exactly 1.
 
 * Combining two cyclical time vectors with different cycles is now an error
   rather than silently collapsing them. A cycle is a modulus rather than a unit
@@ -50,6 +186,24 @@
   fraction of the coarser unit, and expanding that fraction again assumes the
   unit subdivides evenly: quarters were routed to days via years, making
   2020 Q1 91.5 days long rather than the 91 days of January to March.
+
+* Fixed comparisons (`==`, `<`, etc.) between a timezone-aware `mt_linear`/
+  `mt_cyclical` time point and a naive one, and `c()`/`vec_c()` combining two
+  such values, giving numerically wrong results, e.g. `linear_time(
+  "2015-02-01 10:00:00", hour(1L, tz = "Australia/Melbourne")) < datetime(
+  "2015-02-01 00:00:00")` incorrectly returned `TRUE`, and combining a
+  timezone-aware "02:00" with a naive "02:00" produced two different instants
+  under the hood despite sharing a (naive) common chronon. Both operations
+  convert their operands into a shared common chronon that correctly comes
+  out naive when the operands disagree on timezone (see `chronon_common()`),
+  but converting an operand *into* that common chronon silently re-inherited
+  the operand's own timezone back (one conversion at a time), so a
+  timezone-aware operand ended up at its true (UTC) absolute instant while a
+  naive operand was left as-is - two different bases being compared/combined
+  as if they were the same. `chronon_common()`'s naive result is now hardened
+  so it can no longer be re-inherited into, and every operand converted into
+  it lands on bare wall-clock time instead, the same way `datetime(x, tz =
+  NA)` already strips a timezone for a single value.
 
 ## Improvements
 

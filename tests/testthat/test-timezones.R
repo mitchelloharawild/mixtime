@@ -196,6 +196,21 @@ test_that("the common chronon of disagreeing known timezones is UTC", {
   expect_true(is.na(tz_name(chronon_common(c(melb, naive)))))
 })
 
+test_that("combining a zoned time with a naive one is consistently wall-clock", {
+  # Regression test: `c()` on a zoned + a naive element with the same
+  # wall-clock reading used to silently convert the zoned element to its true
+  # (UTC) absolute instant while leaving the naive element untouched, landing
+  # both in the same combined chronon (naive, since they disagree) but on two
+  # different numeric bases.
+  zoned <- linear_time("2024-04-07 02:00:00", hour(1L, tz = "Australia/Melbourne"))
+  naive <- linear_time("2024-04-07 02:00:00", hour(1L))
+
+  combined <- c(zoned, naive)
+
+  expect_true(is.na(tz_name(chronon_common(combined))))
+  expect_equal(as.numeric(vecvec::unvecvec(combined)), c(475682, 475682))
+})
+
 test_that("chronon_common() of mixed known timezones formats without error", {
   # Regression test for tz-merge.md: mixing two real (but different) known
   # zones used to collapse the common chronon to naive, and formatting
@@ -241,4 +256,25 @@ test_that("tz_transitions() of a range with no transitions is an empty table", {
 
   expect_equal(nrow(transitions), 0)
   expect_named(transitions, c("time", "offset_before", "offset_after"))
+})
+
+test_that("comparing a zoned time against a naive one uses wall-clock time", {
+  # Regression test: comparison used to convert the zoned operand to its true
+  # (UTC) absolute instant while leaving the naive operand untouched, mixing
+  # two different bases and producing numerically wrong results. Both sides
+  # should instead be compared at face value, as `datetime(x, tz = NA)`
+  # already does for a single value (wall-clock time is preserved, not the
+  # absolute instant).
+  zoned <- linear_time("2015-02-01 10:00:00", hour(1L, tz = "Australia/Melbourne"))
+  naive <- datetime("2015-02-01 00:00:00")
+
+  expect_true(zoned > naive)
+  expect_false(zoned < naive)
+  expect_false(zoned == naive)
+
+  # Same-zone comparisons must keep comparing true absolute instants (not be
+  # affected by the wall-clock stripping used for naive/zoned comparisons).
+  melb <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "Australia/Melbourne"))
+  utc <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "UTC"))
+  expect_true(melb < utc)
 })

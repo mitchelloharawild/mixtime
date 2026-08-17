@@ -48,3 +48,14 @@ granule_inherit_shared_props <- function(x, parents) {
   props(shared) <- shared_props
   granule_inherit_props(x, shared)
 }
+
+# Convert a chronon's *default*-naive properties (the classed `mt_naive`
+# sentinel, e.g. an unset `tz`) into an explicit NA of the same underlying
+# type (e.g. `datetime(x, tz = NA)`'s naive result)
+granule_harden_naive <- function(x) {
+  props <- props(x)
+  naive_props <- is.naive(props)
+  props[naive_props] <- lapply(props[naive_props], unclass)
+  props(x) <- props
+  x
+}
