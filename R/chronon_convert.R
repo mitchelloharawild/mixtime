@@ -2,27 +2,27 @@
 #'
 #' @param x A linear time object (of class `mt_linear`)
 #' @param to The target chronon to convert to (a time granule object)
-#' @param discrete If `TRUE`, the number of target chronons since Unix epoch 
+#' @param discrete If `TRUE`, the number of target chronons since Unix epoch
 #' @param ... Additional arguments for methods.
-#' that `x` falls into is returned as an integer. If `FALSE`, a fractional 
+#' that `x` falls into is returned as an integer. If `FALSE`, a fractional
 #' number of target chronons is returned (analagous to time using a continuous
 #' time model).
-#' 
+#'
 #' @return A numeric or integer representing the time since Unix epoch in terms of the target
 #' chronon's precision.
-#' 
+#'
 #' @examples
-#' 
+#'
 #' # Convert from months since epoch to years since epoch
 #' chronon_convert(yearmonth(Sys.Date()), cal_gregorian$year(1L))
-#' 
+#'
 #' # Convert from days since epoch to months since epoch
 #' chronon_convert(Sys.Date(), cal_gregorian$month(1L))
 #' chronon_convert(Sys.Date(), cal_gregorian$month(1L), discrete = TRUE)
-#' 
+#'
 #' # Convert from seconds since epoch to hours since epoch
 #' chronon_convert(Sys.time(), cal_gregorian$hour(1L))
-#' 
+#'
 #' @noRd
 #' @keywords internal
 chronon_convert <- S7::new_generic("chronon_convert", "x")
@@ -44,24 +44,23 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
       )
     }
   }
-  
+
   # Find path along convertable time units
   path <- S7_graph_dispatch(chronon_divmod_graph(), from, to)
 
   # Convert to target tz naive time for standard chronon boundaries
-  # Skipped if:  
+  # Skipped if:
   # * target tz is UTC (since that matches the internal representation)
   is_tz_utc <- identical(tz_name(to), "UTC") || identical(tz, "UTC")
   # * target is not a timezone-aware mt_tz_unit
   is_tz_aware <- is_tz_conv && !is.na(tz_name(to))
 
   if (!is_tz_utc && is_tz_aware) {
-    tzo <- tz_offset_impl(x, chronon = from, tz = tz_name(to))
-    x <- x + tzo
+    x <- tz_to_local(x, from, tz_name(to))
   } else if (is_tz_conv && is.na(tz_name(to)) && !is.na(tz_name(from))) {
-    # Converting from tz-aware to tz-naive - remove offset
-    tzo <- tz_offset_impl(x, chronon = from, tz = tz_name(from))
-    x <- x + tzo
+    # Converting from tz-aware to tz-naive - shift into the local wall-clock
+    # domain the naive `to` chronon will read `x` as.
+    x <- tz_to_local(x, from, tz_name(from))
   }
 
   # Convert between time points
@@ -75,33 +74,42 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
     path[[length(path)]] <- to
     prop_to <- S7::prop_names(to)
     # Initialise intermediate classes with 1L and adjacent properties
-    path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(tu){
-      # Ideally inherit from `to`, but if incomplete inherit from `from`
-      granule_inherit_props(granule_inherit_props(tu(1L), to), from)
-    })
-  
+    path[c(-1, -length(path))] <- lapply(
+      path[c(-1, -length(path))],
+      function(tu) {
+        # Ideally inherit from `to`, but if incomplete inherit from `from`
+        granule_inherit_props(granule_inherit_props(tu(1L), to), from)
+      }
+    )
+
     # Convert chronons along the path
     not_na <- !is.na(x)
-    for (i in seq(2, length.out = length(path)-1)) {
-      res <- chronon_divmod_dispatch(path[[i-1L]], path[[i]], x[not_na])
+    for (i in seq(2, length.out = length(path) - 1)) {
+      res <- chronon_divmod_dispatch(path[[i - 1L]], path[[i]], x[not_na])
       x[not_na] <- res$div
       nz_mod <- res$mod != 0
-      part <- chronon_cardinality(path[[i-1L]], path[[i]], floor(res$div[nz_mod]))
-      x[not_na][nz_mod] <- x[not_na][nz_mod] + res$mod[nz_mod]/part
+      part <- chronon_cardinality(
+        path[[i - 1L]],
+        path[[i]],
+        floor(res$div[nz_mod])
+      )
+      x[not_na][nz_mod] <- x[not_na][nz_mod] + res$mod[nz_mod] / part
     }
   }
 
-  # Convert back to absolute time for time zoned data
-  # Skipped if target tz is:
-  # * NA (since that indicates a timezone-naive chronon)
-  # * UTC (since that matches the internal representation)
+  # Undo the pre-conversion shift, for time zoned data.
+  # Skipped if:
+  # * target tz is NA (since that indicates a timezone-naive chronon)
+  # * target tz is UTC (since that matches the internal representation)
   if (!is_tz_utc && is_tz_aware) {
-    f <- if (discrete) as.integer else identity
-    x <- x - f(chronon_convert_impl(tzo, from, to, discrete = FALSE, tz = "UTC"))
+    x <- tz_to_utc(x, to, tz_name(to))
   }
 
-  if (discrete) x <- as.integer(floor(x))
-  
+  if (discrete) {
+    # Nudge by a few ULPs to avoid floating-point errors from tz round trip
+    x <- as.integer(floor(x + 8 * .Machine$double.eps * pmax(abs(x), 1)))
+  }
+
   x
 }
 
@@ -109,8 +117,16 @@ method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, ...) {
   chronon_convert_impl(vec_data(x), attr(x, "chronon"), to, discrete)
 }
 
-method(chronon_convert, class_mixtime) <- vecvec::vecvec_apply_fn(chronon_convert, SIMPLIFY = TRUE)
+method(chronon_convert, class_mixtime) <- vecvec::vecvec_apply_fn(
+  chronon_convert,
+  SIMPLIFY = TRUE
+)
 
-method(chronon_convert, S7::class_any) <- function(x, to, discrete = FALSE, ...) {
+method(chronon_convert, S7::class_any) <- function(
+  x,
+  to,
+  discrete = FALSE,
+  ...
+) {
   chronon_convert_impl(as.numeric(x), chronon_common(x), to, discrete)
 }
