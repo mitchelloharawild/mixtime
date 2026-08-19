@@ -258,6 +258,109 @@ test_that("tz_transitions() of a range with no transitions is an empty table", {
   expect_named(transitions, c("time", "offset_before", "offset_after"))
 })
 
+test_that("tz_to_utc() discrete rounding keeps fractional-offset midnights on the right day", {
+  # Regression test for the discrete branch of tz_to_utc(): naively flooring
+  # `x - tzo` (rather than `floor(x) - trunc(tzo)`) lets the fractional parts
+  # of the local-shifted value and the re-derived offset interact and borrow
+  # across a day boundary, silently landing on the wrong calendar day. This
+  # only shows up for zones with a fractional-hour UTC offset, right near
+  # local midnight, so whole-hour zones (as used elsewhere in this file)
+  # don't exercise it.
+
+  # Asia/Kolkata: UTC+5:30, just after local midnight
+  kolkata <- as.POSIXct("2024-06-15 00:00:30", tz = "Asia/Kolkata")
+  expect_equal(format(date(kolkata, tz = "Asia/Kolkata")), "2024-06-15 IST")
+
+  # Pacific/Chatham: UTC+12:45, just after local midnight
+  chatham <- as.POSIXct("2024-06-15 00:10:00", tz = "Pacific/Chatham")
+  expect_equal(format(date(chatham, tz = "Pacific/Chatham")), "2024-06-15 +1245")
+
+  # Pacific/Marquesas: UTC-9:30, just before local midnight
+  marquesas <- as.POSIXct("2024-06-15 23:50:00", tz = "Pacific/Marquesas")
+  expect_equal(format(date(marquesas, tz = "Pacific/Marquesas")), "2024-06-15 -0930")
+
+  # America/New_York: UTC-4:00 (EDT), just before local midnight
+  new_york <- as.POSIXct("2024-06-15 23:59:30", tz = "America/New_York")
+  expect_equal(format(date(new_york, tz = "America/New_York")), "2024-06-15 EDT")
+})
+
+test_that("tz_to_utc() discrete rounding resolves DST gap/overlap to the correct local day", {
+  # The offset used by tz_to_utc() is re-derived at the candidate raw instant
+  # (a second `tz_offset_impl()` pass), rather than reused from the forward
+  # shift, precisely so a value near a DST transition doesn't pick up the
+  # wrong side of it.
+
+  # America/New_York spring-forward gap, 2024-03-10: 02:00 -> 03:00, and the
+  # fall-back overlap, 2024-11-03: 02:00 occurs twice
+  new_york <- as.POSIXct(
+    c(
+      "2024-03-09 23:59:58",
+      "2024-03-10 00:00:02",
+      "2024-03-10 23:59:58",
+      "2024-03-11 00:00:02",
+      "2024-11-02 23:59:58",
+      "2024-11-03 23:59:58",
+      "2024-11-04 00:00:02"
+    ),
+    tz = "America/New_York"
+  )
+  expect_equal(
+    format(date(new_york, tz = "America/New_York")),
+    c(
+      "2024-03-09 EST",
+      "2024-03-10 EST",
+      "2024-03-10 EST",
+      "2024-03-11 EDT",
+      "2024-11-02 EDT",
+      "2024-11-03 EDT",
+      "2024-11-04 EST"
+    )
+  )
+
+  # Australia/Melbourne fall-back day itself (2015-04-05)
+  melbourne <- as.POSIXct(
+    c("2015-04-04 23:59:58", "2015-04-05 23:59:58", "2015-04-06 00:00:02"),
+    tz = "Australia/Melbourne"
+  )
+  expect_equal(
+    format(date(melbourne, tz = "Australia/Melbourne")),
+    c("2015-04-04 AEDT", "2015-04-05 AEST", "2015-04-06 AEST")
+  )
+})
+
+test_that("tz_to_utc() discrete rounding survives the shift/unshift ULP chain", {
+  # The shift/unshift pair in chronon_convert_impl() (tz_to_local() before
+  # the path conversion, tz_to_utc() after it) chains enough floating-point
+  # operations that a value exactly on a `to`-boundary can land a few ULPs
+  # below it. A bare floor() in the discrete branch then drops a whole unit -
+  # this hit Europe/London specifically (seq() starting one second before
+  # `from`), fixed with a small ULP-relative nudge before flooring.
+  w <- cal_isoweek$week(1L)
+  zones <- c(
+    "UTC",
+    "Etc/GMT-10",
+    "Australia/Melbourne",
+    "America/New_York",
+    "Asia/Kolkata",
+    "Europe/London"
+  )
+
+  for (tz in zones) {
+    from <- time_floor(
+      datetime(as.POSIXct("2015-06-01", tz = tz)),
+      cal_isoweek$week(1L, tz = tz)
+    )
+    to <- time_ceiling(
+      datetime(as.POSIXct("2015-06-22", tz = tz)),
+      cal_isoweek$week(1L, tz = tz)
+    )
+    s <- seq(from, to, by = cal_isoweek$week(1L, tz = tz))
+
+    expect_equal(as.numeric(s[1]), as.numeric(from), info = tz)
+    expect_length(s, 5)
+  }
+})
+
 test_that("comparing a zoned time against a naive one uses wall-clock time", {
   # Regression test: comparison used to convert the zoned operand to its true
   # (UTC) absolute instant while leaving the naive operand untouched, mixing

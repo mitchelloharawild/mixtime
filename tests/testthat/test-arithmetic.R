@@ -77,7 +77,7 @@ test_that("date() - months() clamps an overflowing day-of-month to the earlier m
 # deliberately does *not* use it: it decomposes along the *longest* available path
 # (day -> month -> year, not the shortcut edge) so that day-of-month is the component
 # that gets clamped, exactly as it is for days <-> months. This is what keeps
-# `+ years(1L)` and `+ months(12L)` in agreement - see _dev/clamping.md.
+# `+ years(1L)` and `+ months(12L)` in agreement.
 # ---------------------------------------------------------------------------
 
 test_that("date() + years(1L) advances to the same day next year", {

@@ -119,8 +119,22 @@ tz_to_local <- function(x, chronon, tz) {
 # function, regenerated `src/cpp11.cpp`/`R/cpp11.R` bindings, recompile).
 # Left as pure R for now since the 2x cost is negligible at realistic
 # `seq()`/`time_round()` sizes.
-tz_to_utc <- function(x, chronon, tz) {
-  x - tz_offset_impl(x - tz_offset_impl(x, chronon, tz = tz), chronon, tz = tz)
+tz_to_utc <- function(x, chronon, tz, discrete = FALSE) {
+  tzo <- tz_offset_impl(
+    x - tz_offset_impl(x, chronon, tz = tz),
+    chronon,
+    tz = tz
+  )
+
+  if (discrete) {
+    # floor(x) - trunc(tzo) keeps the whole-unit correction separate from the
+    # local-bucket alignment, so a fractional offset can't borrow across a
+    # unit boundary and land the result a whole unit off.
+    nudge <- 8 * .Machine$double.eps * pmax(abs(x), 1)
+    as.integer(floor(x + nudge) - trunc(tzo))
+  } else {
+    x - tzo
+  }
 }
 
 #' Get timezone abbreviation

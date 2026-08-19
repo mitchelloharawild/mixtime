@@ -102,11 +102,10 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
   # * target tz is NA (since that indicates a timezone-naive chronon)
   # * target tz is UTC (since that matches the internal representation)
   if (!is_tz_utc && is_tz_aware) {
-    x <- tz_to_utc(x, to, tz_name(to))
-  }
-
-  if (discrete) {
-    # Nudge by a few ULPs to avoid floating-point errors from tz round trip
+    x <- tz_to_utc(x, to, tz_name(to), discrete = discrete)
+  } else if (discrete) {
+    # Nudge by a few ULPs to avoid floating-point errors accumulated along
+    # the path conversion landing just below an exact unit boundary.
     x <- as.integer(floor(x + 8 * .Machine$double.eps * pmax(abs(x), 1)))
   }
 
