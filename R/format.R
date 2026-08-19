@@ -43,30 +43,30 @@ mt_unit_display <- function(x, units, parts, ...) {
   }
 }
 
-time_format_default <- function(x) {
-  chronon <- attr(x, "chronon")
+time_format_default <- function(x, attr = TRUE) {
+  chronon <- base::attr(x, "chronon")
 
   if (S7_inherits(x, mt_duration)) {
     return(chronon_format_duration(chronon))
   }
 
-  cycle <- attr(x, "cycle")
+  cycle <- base::attr(x, "cycle")
   fmt <- if (is.null(cycle)) {
     chronon_format_linear(chronon)
   } else {
     chronon_format_cyclical(chronon, cycle)
   }
-  
+
   # Add fractional
   if (is.double(x)) fmt <- paste(fmt, "{frac(.time)}")
-  
+
   # Add format attributes (e.g. tz or location)
-  fmt <- paste0(fmt, chronon_format_attr(chronon))
+  if (attr) fmt <- paste0(fmt, chronon_format_attr(chronon))
 
   fmt
 }
 
-time_format_impl <- function(x, format = time_format_default(x), ...) {
+time_format_impl <- function(x, format = time_format_default(x, attr = attr), ..., attr = TRUE) {
   # Obtain core time information
   chronon <- attr(x, "chronon")
 
@@ -198,8 +198,8 @@ time_format_impl <- function(x, format = time_format_default(x), ...) {
 }
 
 #' @export
-S7::method(format, mt_time) <- function(x, ...) {
-  time_format_impl(x, ...)
+S7::method(format, mt_time) <- function(x, ..., attr = TRUE) {
+  time_format_impl(x, ..., attr = attr)
 }
 
 #' @export
