@@ -330,28 +330,30 @@ method(chronon_divmod, list(cal_gregorian$year, cal_gregorian$day)) <- function(
 }
 
 ## Time labels
-### Linear labels for eras
-S7::method(linear_labels, cal_gregorian$year) <- function(granule, i, ...) {
+bc_ad_format <- function(granule, i, ...) {
   ifelse(i <= 0L, paste0(-i + 1L, "BC"), i)
 }
+bc_ad_parse <- function(granule, ...) {
+  list(
+    pattern = "\\d+(?:BC)?",
+    decode = function(text, at = NULL) {
+      bc <- grepl("BC$", text)
+      n <- as.integer(sub("BC$", "", text))
+      # This override bypasses linear_labels_parse()'s default method, so
+      # (unlike a linear_labels() scheme) it must undo the epoch shift
+      # chronon_parts() applies for display itself -- see
+      # linear_labels_format()'s "Epoch shift" section.
+      ifelse(bc, 1L - n, n) - chronon_epoch(granule)
+    }
+  )
+}
+method(linear_labels_format, cal_gregorian$year) <- bc_ad_format
+method(linear_labels_parse, cal_gregorian$year) <- bc_ad_parse
 
 ### Cyclical labels for Gregorian time granules
-method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- function(
-  granule,
-  cycle,
-  i,
-  at = NULL
-) {
-  # Quarters count with 1-indexing
-  as.character(i + 1L)
-}
-method(
-  cyclical_labels,
-  list(cal_gregorian$month, cal_gregorian$year)
-) <- function(granule, cycle, i, at = NULL, label = FALSE, abbreviate = TRUE) {
-  if (label) {
-    (if (abbreviate) month.abb else month.name)[i + 1L]
-  } else {
-    sprintf("%02d", i + 1L)
-  }
-}
+method(cyclical_labels, list(cal_gregorian$quarter, S7::class_any)) <- label_scheme(start = 1L)
+method(cyclical_labels, list(cal_gregorian$month, cal_gregorian$year)) <- label_scheme(
+  start = 1L,
+  width = 2L,
+  vocab = vocab_table(`en-GB` = list(wide = month.name, abbreviated = month.abb))
+)

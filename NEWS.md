@@ -55,8 +55,7 @@
   `linear_labels_format()` and `cyclical_labels_format()`. The bare names are
   now the authoring interface described above; a hand-written
   `method(linear_labels_format, ...) <-`/`method(cyclical_labels_format, ...) <-`
-  is still the escape hatch for a granule that only ever needs formatting,
-  never parsing.
+  is still available for granules that only ever needs formatting (no parsing).
 
 ## Bug fixes
 

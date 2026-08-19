@@ -49,8 +49,8 @@ method(time_unit_abbr, cal_time_lunar$phase) <- function(x) "LP"
 
 # Default formats
 method(chronon_format_linear, list(cal_time_lunar$month, class_any)) <- function(x, cal) "L{lin(month)}"
-method(chronon_format_linear, list(cal_time_lunar$phase, class_any)) <- function(x, cal) "L{lin(month)} {cyc(phase,month)}"
-method(chronon_format_cyclical, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(x, y) "{cyc(phase,month)}"
+method(chronon_format_linear, list(cal_time_lunar$phase, class_any)) <- function(x, cal) "L{lin(month)} {cyc(phase,month,label=TRUE)}"
+method(chronon_format_cyclical, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(x, y) "{cyc(phase,month,label=TRUE)}"
 
 # Epoch for lunations
 method(chronon_epoch, cal_time_lunar$month) <- function(x) 953L
@@ -84,17 +84,12 @@ method(chronon_divmod, list(cal_time_lunar$phase, cal_time_civil$second)) <- fun
 lunar_phase_abbr <- c("NM", "WxC", "FQ", "WxG", "FM", "WnG", "LQ", "WnC")
 lunar_phase_full <- c("new moon", "waxing crescent", "first quarter", "waxing gibbous", "full moon", "waning gibbous", "last quarter", "waning crescent")
 lunar_phase_emoji <- c("\U0001F311", "\U0001F312", "\U0001F313", "\U0001F314", "\U0001F315", "\U0001F316", "\U0001F317", "\U0001F318")
-method(cyclical_labels, list(cal_time_lunar$phase, cal_time_lunar$month)) <- function(granule, cycle, i, at = NULL, label = TRUE, abbreviate = TRUE, emoji = l10n_info()[["UTF-8"]], intermediate = TRUE) {
-  i <- i + 1L
-  if (label) {
-    if (emoji) {
-      lunar_phase_emoji[i]
-    } else if (abbreviate) {
-      lunar_phase_abbr[i]
-    } else {
-      lunar_phase_full[i]
-    }
-  } else {
-    as.character(i)
-  }
-}
+
+method(cyclical_labels, list(cal_time_lunar$phase, cal_time_lunar$month)) <- label_scheme(
+  start = 1L,
+  vocab = vocab_table(`en-GB` = list(
+    wide = lunar_phase_full,
+    abbreviated = lunar_phase_abbr,
+    emoji = lunar_phase_emoji
+  ))
+)

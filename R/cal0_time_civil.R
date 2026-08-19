@@ -1,20 +1,24 @@
 naive_tz <- naive(NA_character_)
 
 #' @param tz The timezone name for the unit (valid units can be found with `[tzdb::tzdb_names()]`)
-#' 
+#'
 #' @rdname mt_unit
 #' @export
 mt_tz_unit <- new_class(
-  "mt_tz_unit", 
+  "mt_tz_unit",
   parent = mt_unit,
   properties = list(tz = new_property(S7::class_character, default = naive_tz)),
-  constructor = function (n = 1L, tz = naive_tz) {
+  constructor = function(n = 1L, tz = naive_tz) {
     # Allow for logical NA for convenience
-    if (is.na(tz) && !identical(tz, naive_tz)) tz <- NA_character_
+    if (is.na(tz) && !identical(tz, naive_tz)) {
+      tz <- NA_character_
+    }
     S7::new_object(mt_unit(n = n), tz = tz)
   },
   validator = function(self) {
-    if (!is.na(self@tz)) check_tz_name(self@tz)
+    if (!is.na(self@tz)) {
+      check_tz_name(self@tz)
+    }
     NULL
   }
 )
@@ -33,10 +37,10 @@ method(chronon_format_attr, mt_tz_unit) <- function(x) {
 #' used with [linear_time()] to create custom time representations.
 #'
 #' @return A time granule object for the civil time system.
-#' 
+#'
 #' @details
 #' The following time units are available (`cal_time_civil$`).
-#' 
+#'
 #' - `day()`: Day unit
 #' - `hour()`: Hour unit
 #' - `minute()`: Minute unit
@@ -46,14 +50,14 @@ method(chronon_format_attr, mt_tz_unit) <- function(x) {
 #' - `nanosecond()`: Nanosecond unit
 #'
 #' @seealso [`cal_time_civil`], [`cal_isoweek`]
-#' 
+#'
 #' @examples
 #' # Create a custom time representation using civil time granules
 #' hms <- new_cyclical_time_fn(
 #'   chronon = second(1L),
 #'   cycle = hour(1L)
 #' )
-#' 
+#'
 #' @name calendar_time_civil
 #' @export
 cal_time_civil <- new_calendar(
@@ -79,15 +83,24 @@ method(time_unit_full, cal_time_civil$minute) <- function(x) "minute{?/s}"
 method(time_unit_abbr, cal_time_civil$minute) <- function(x) "m"
 method(time_unit_full, cal_time_civil$second) <- function(x) "second{?/s}"
 method(time_unit_abbr, cal_time_civil$second) <- function(x) "s"
-method(time_unit_full, cal_time_civil$millisecond) <- function(x) "millisecond{?/s}"
+method(time_unit_full, cal_time_civil$millisecond) <- function(x) {
+  "millisecond{?/s}"
+}
 method(time_unit_abbr, cal_time_civil$millisecond) <- function(x) "ms"
-method(time_unit_full, cal_time_civil$microsecond) <- function(x) "microsecond{?/s}"
+method(time_unit_full, cal_time_civil$microsecond) <- function(x) {
+  "microsecond{?/s}"
+}
 method(time_unit_abbr, cal_time_civil$microsecond) <- function(x) "us"
-method(time_unit_full, cal_time_civil$nanosecond) <- function(x) "nanosecond{?/s}"
+method(time_unit_full, cal_time_civil$nanosecond) <- function(x) {
+  "nanosecond{?/s}"
+}
 method(time_unit_abbr, cal_time_civil$nanosecond) <- function(x) "ns"
 
 # Default formats
-method(chronon_format_linear, list(cal_time_civil$day, class_any)) <- function(x, cal) {
+method(chronon_format_linear, list(cal_time_civil$day, class_any)) <- function(
+  x,
+  cal
+) {
   # `year`/`month` are only in `cal` when the chronon's timezone is
   # resolvable (a Gregorian date is only defined relative to a timezone).
   # Without them, defer to the generic mt_unit fallback rather than
@@ -98,13 +111,53 @@ method(chronon_format_linear, list(cal_time_civil$day, class_any)) <- function(x
     "{lin(year)}-{cyc(month,year)}-{cyc(day, month)}"
   }
 }
-method(chronon_format_linear, list(cal_time_civil$hour, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}h")
-method(chronon_format_linear, list(cal_time_civil$minute, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}")
-method(chronon_format_linear, list(cal_time_civil$second, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}")
-method(chronon_format_linear, list(cal_time_civil$millisecond, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}")
-method(chronon_format_cyclical, list(cal_time_civil$millisecond, cal_time_civil$day)) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}"
-method(chronon_format_cyclical, list(cal_time_civil$second, cal_time_civil$day)) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}"
-method(chronon_format_cyclical, list(cal_time_civil$minute, cal_time_civil$day)) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}"
+method(chronon_format_linear, list(cal_time_civil$hour, class_any)) <- function(
+  x,
+  cal
+) {
+  paste(chronon_format_linear(cal$day(1L), cal), "{cyc(hour, day)}h")
+}
+method(
+  chronon_format_linear,
+  list(cal_time_civil$minute, class_any)
+) <- function(x, cal) {
+  paste(
+    chronon_format_linear(cal$day(1L), cal),
+    "{cyc(hour, day)}:{cyc(minute, hour)}"
+  )
+}
+method(
+  chronon_format_linear,
+  list(cal_time_civil$second, class_any)
+) <- function(x, cal) {
+  paste(
+    chronon_format_linear(cal$day(1L), cal),
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}"
+  )
+}
+method(
+  chronon_format_linear,
+  list(cal_time_civil$millisecond, class_any)
+) <- function(x, cal) {
+  paste(
+    chronon_format_linear(cal$day(1L), cal),
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}"
+  )
+}
+method(
+  chronon_format_cyclical,
+  list(cal_time_civil$millisecond, cal_time_civil$day)
+) <- function(x, y) {
+  "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}"
+}
+method(
+  chronon_format_cyclical,
+  list(cal_time_civil$second, cal_time_civil$day)
+) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}"
+method(
+  chronon_format_cyclical,
+  list(cal_time_civil$minute, cal_time_civil$day)
+) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}"
 
 ## HOURs in DAYs
 method(
@@ -172,32 +225,61 @@ method(
 
 
 # Cyclical labels
-method(cyclical_labels, list(cal_time_civil$day, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  # Days count with 1-indexing
-  sprintf("%02d", i + 1L)
-}
-method(cyclical_labels, list(cal_time_civil$ampm, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  # 0 is AM, 1 is PM
-  c("AM", "PM")[i%%2 + 1L]
-}
-method(cyclical_labels, list(cal_time_civil$hour, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
+method(
+  cyclical_labels,
+  list(cal_time_civil$day, S7::class_any)
+) <- label_scheme(start = 1L, width = 2L)
+
+method(
+  cyclical_labels,
+  list(cal_time_civil$ampm, S7::class_any)
+) <- label_scheme(
+  start = 0L,
+  vocab = vocab_table(
+    `en-GB` = list(wide = c("AM", "PM"), abbreviated = c("AM", "PM"))
+  ),
+  transform = list(
+    encode = function(i, at = NULL) i + 1L,
+    decode = function(d, at = NULL) d - 1L
+  )
+)
+
+# Hours need custom methods for the 12-hour clock's "12,1,2,...,11" wraparound
+method(
+  cyclical_labels_format,
+  list(cal_time_civil$hour, S7::class_any)
+) <- function(granule, cycle, i, at = NULL, ...) {
   if (S7_inherits(cycle, cal_time_civil$ampm)) {
     # 12 hours count with 12,1,2,...,11
-    sprintf("%02d", (i-1L)%%12L + 1L)
+    sprintf("%02d", (i - 1L) %% 12L + 1L)
   } else {
     # 24 hours count with 0-indexing
     sprintf("%02d", i)
   }
 }
-method(cyclical_labels, list(cal_time_civil$minute, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  # Minutes count with 0-indexing
-  sprintf("%02d", i)
+method(
+  cyclical_labels_parse,
+  list(cal_time_civil$hour, S7::class_any)
+) <- function(granule, cycle, ...) {
+  list(
+    pattern = "\\d+",
+    decode = function(text, at = NULL) {
+      d <- as.integer(text)
+      if (S7_inherits(cycle, cal_time_civil$ampm)) d %% 12L else d
+    }
+  )
 }
-method(cyclical_labels, list(cal_time_civil$second, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  # Seconds count with 0-indexing
-  sprintf("%02d", i)
-}
-method(cyclical_labels, list(cal_time_civil$millisecond, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  # Milliseconds are shown without decimals
-  sprintf("%03d", i)
-}
+
+# Minutes/seconds/milliseconds count with 0-indexing -- plain numeric (tier 1).
+method(
+  cyclical_labels,
+  list(cal_time_civil$minute, S7::class_any)
+) <- label_scheme(start = 0L, width = 2L)
+method(
+  cyclical_labels,
+  list(cal_time_civil$second, S7::class_any)
+) <- label_scheme(start = 0L, width = 2L)
+method(
+  cyclical_labels,
+  list(cal_time_civil$millisecond, S7::class_any)
+) <- label_scheme(start = 0L, width = 3L)

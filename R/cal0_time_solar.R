@@ -191,7 +191,7 @@ method(chronon_divmod, list(cal_time_solar$illumination, cal_time_solar$second))
 
 ## Time labels
 ### Linear labels for solar days (re-use Gregorian dates)
-S7::method(linear_labels, cal_time_solar$day) <- function(granule, i, ...) {
+S7::method(linear_labels_format, cal_time_solar$day) <- function(granule, i, ...) {
   return(format(.Date(i * granule@n)))
 }
 
@@ -201,21 +201,25 @@ solar_illumination_phases <- c(
   "astronomical dawn", "nautical dawn", "civil dawn", "day",
   "civil dusk", "nautical dusk", "astronomical dusk", "night"
 )
-method(linear_labels, cal_time_solar$illumination) <- function(granule, i) {
+method(linear_labels_format, cal_time_solar$illumination) <- function(granule, i, ...) {
   solar_illumination_phases[floor((i * granule@n)%%8) + 1L]
 }
 
-# method(cyclical_labels, list(cal_time_solar$illumination, cal_time_solar$day)) <- function(granule, cycle, i) {
+# method(cyclical_labels_format, list(cal_time_solar$illumination, cal_time_solar$day)) <- function(granule, cycle, i) {
 #   solar_illumination_phases[i + 1L]
 # }
 
-solar_ampm_labels <- c("AM", "PM")
-method(cyclical_labels, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(granule, cycle, i, at = NULL) {
-  solar_ampm_labels[i + 1L]
-}
+method(cyclical_labels, list(cal_time_solar$ampm, cal_time_solar$day)) <- label_scheme(
+  start = 0L,
+  vocab = vocab_table(`en-GB` = list(wide = c("AM", "PM"), abbreviated = c("AM", "PM"))),
+  transform = list(
+    encode = function(i, at = NULL) i + 1L,
+    decode = function(d, at = NULL) d - 1L
+  )
+)
 
-method(cyclical_labels, list(cal_time_solar$hour, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  if (S7_inherits(cycle, cal_time_civil$ampm)) {
+method(cyclical_labels_format, list(cal_time_solar$hour, S7::class_any)) <- function(granule, cycle, i, at = NULL, ...) {
+  if (S7_inherits(cycle, cal_time_solar$ampm)) {
     # 12 hours count with 12,1,2,...,11
     sprintf("%02d", (i-1L)%%12L + 1L)
   } else {
@@ -223,18 +227,33 @@ method(cyclical_labels, list(cal_time_solar$hour, S7::class_any)) <- function(gr
     sprintf("%02d", i)
   }
 }
-method(cyclical_labels, list(cal_time_solar$minute, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  sprintf("%02d", i)
+method(cyclical_labels_parse, list(cal_time_solar$hour, S7::class_any)) <- function(granule, cycle, ...) {
+  list(
+    pattern = "\\d+",
+    decode = function(text, at = NULL) {
+      d <- as.integer(text)
+      if (S7_inherits(cycle, cal_time_solar$ampm)) d %% 12L else d
+    }
+  )
 }
-method(cyclical_labels, list(cal_time_solar$second, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  sprintf("%02d", i)
-}
-method(cyclical_labels, list(cal_time_solar$degree, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
+
+# Minutes/seconds count with 0-indexing -- plain numeric (tier 1).
+method(cyclical_labels, list(cal_time_solar$minute, S7::class_any)) <- label_scheme(start = 0L, width = 2L)
+method(cyclical_labels, list(cal_time_solar$second, S7::class_any)) <- label_scheme(start = 0L, width = 2L)
+
+method(cyclical_labels_format, list(cal_time_solar$degree, S7::class_any)) <- function(granule, cycle, i, at = NULL, ...) {
   sprintf("%03d", (i - 180L*chronon_cardinality(cycle, cal_time_solar$day(1L))) %% 360L)
 }
-method(cyclical_labels, list(cal_time_solar$arcminute, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  sprintf("%02d", i)
+method(cyclical_labels_parse, list(cal_time_solar$degree, S7::class_any)) <- function(granule, cycle, ...) {
+  list(
+    pattern = "\\d+",
+    decode = function(text, at = NULL) {
+      shift <- 180L * chronon_cardinality(cycle, cal_time_solar$day(1L))
+      (as.integer(text) + shift) %% 360L
+    }
+  )
 }
-method(cyclical_labels, list(cal_time_solar$arcsecond, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  sprintf("%02d", i)
-}
+
+# Arcminutes/arcseconds count with 0-indexing -- plain numeric (tier 1).
+method(cyclical_labels, list(cal_time_solar$arcminute, S7::class_any)) <- label_scheme(start = 0L, width = 2L)
+method(cyclical_labels, list(cal_time_solar$arcsecond, S7::class_any)) <- label_scheme(start = 0L, width = 2L)

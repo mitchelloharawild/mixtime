@@ -35,7 +35,7 @@ The `granule` and `cycle` arguments accept time granules from a calendar, for ex
 format(date(Sys.Date()), format = "{lin(year(1L))}-{cyc(month(1L), year(1L))}")
 ```
 
-The linear labels are produced by `linear_labels()`, and the cyclical labels are produced by `cyclical_labels()`. When formatting mixtime vectors, additional arguments passed to `lin()` and `cyc()` are forwarded to the label helper functions. Common arguments include `label = TRUE` to get named labels (e.g. "January"), and `abbreviate = TRUE` for short names (e.g. "Jan" instead of "January").
+The linear labels are produced by `linear_labels_format()`, and the cyclical labels are produced by `cyclical_labels_format()` -- see `linear_labels()`/`cyclical_labels()` for how a calendar declares these (and their text-parsing inverse) in one step. When formatting mixtime vectors, additional arguments passed to `lin()` and `cyc()` are forwarded to the label helper functions. Common arguments include `label = TRUE` to get named labels (e.g. "January"), and `abbreviate = TRUE` for short names (e.g. "Jan" instead of "January").
 
 ```{r}
 format(date(Sys.Date()), format = "{lin(year)} {cyc(month, year, label = TRUE, abbreviate = TRUE)}")
@@ -64,11 +64,11 @@ format(
 ```
 -->
 
-For example, the lunar phase can be added to a date format string by including the `phase` granule from the `cal_time_lunar` calendar. We can also set `emoji = TRUE` to get a lunar phase emoji instead of a numeric index:
+For example, the lunar phase can be added to a date format string by including the `phase` granule from the `cal_time_lunar` calendar. We can also set `type = "emoji"` to get a lunar phase emoji instead of the named phase:
 
 ```{r}
 fmt_date  <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
-fmt_lunar <- "{with(cal_time_lunar, cyc(phase, month, emoji = TRUE))}"
+fmt_lunar <- "{with(cal_time_lunar, cyc(phase, month, label = TRUE, type = \"emoji\"))}"
 format(date(Sys.Date()), format = paste(fmt_date, fmt_lunar))
 ```
 
@@ -133,7 +133,7 @@ The table below maps every `strftime`/`strptime` conversion specification to its
 | `%j` | `{cyc(day, year)}` | Day of year (001–366) |
 | `%H` | `{cyc(hour, day)}` | Hour, 24-hour clock (00–23) |
 | `%I` | `{cyc(hour, ampm)}` | Hour, 12-hour clock (01–12) |
-| `%p` | `{cyc(ampm, day)}` | AM/PM indicator |
+| `%p` | `{cyc(ampm, day, label = TRUE)}` | AM/PM indicator |
 | `%M` | `{cyc(minute, hour)}` | Minute (00–59) |
 | `%S` | `{cyc(second, minute)}` | Second as integer (00–61) |
 | `%A` | `{cyc(day, cal_isoweek$week, label = TRUE)}` | Full weekday name (e.g. Monday) |

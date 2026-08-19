@@ -303,9 +303,9 @@ test_that("conversion handles dates before Unix epoch", {
   expect_equal(format(yearmonth(as.Date("1969-06-15"))), "1969 Jun")
 })
 
-test_that("cyclical_labels for months work correctly", {
+test_that("cyclical_labels_format for months work correctly", {
   # The method should return abbreviated month names
-  labels <- cyclical_labels(cal_gregorian$month(1L), cal_gregorian$year(1L), 0:11, label = TRUE, abbreviate = TRUE)
+  labels <- cyclical_labels_format(cal_gregorian$month(1L), cal_gregorian$year(1L), 0:11, label = TRUE, abbreviate = TRUE)
   expect_equal(labels, month.abb)
 })
 

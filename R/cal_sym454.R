@@ -83,23 +83,18 @@ S7::method(
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}-{cyc(day(1L), week(1L), label=TRUE, abbreviate=TRUE)}"
 
 ## Time labels
-S7::method(linear_labels, cal_sym454$year) <- function(granule, i, ...) {
-  ifelse(i <= 0L, paste0(-i + 1L, "BC"), i)
-}
-S7::method(cyclical_labels, list(cal_sym454$month, cal_sym454$year)) <-
-  function(granule, cycle, i, label = FALSE, abbreviate = FALSE, ...) {
-    if (label) {
-      # Index into R's localised month name objects (month.name and month.abb)
-      if (abbreviate) month.abb[i + 1L] else month.name[i + 1L]
-    } else {
-      # Use i + 1L for 1-indexing months (so January is 1, February is 2, ...)
-      sprintf("%02d", i + 1L)
-    }
-  }
-S7::method(cyclical_labels, list(cal_sym454$week, cal_sym454$month)) <-
-  function(granule, cycle, i, ...) {
-    as.character(i + 1L)
-  }
+# Same "1BC"/"1"/"2"/... era scheme as `cal_gregorian$year` -- reuse its
+# format/parse functions (they only ever touch `granule` generically via
+# chronon_epoch(), so they work unmodified for the sym454 year class too).
+method(linear_labels_format, cal_sym454$year) <- bc_ad_format
+method(linear_labels_parse, cal_sym454$year) <- bc_ad_parse
+method(cyclical_labels, list(cal_sym454$month, cal_sym454$year)) <- label_scheme(
+  start = 1L,
+  width = 2L,
+  vocab = vocab_table(`en-GB` = list(wide = month.name, abbreviated = month.abb))
+)
+# Weeks count with 1-indexing
+method(cyclical_labels, list(cal_sym454$week, cal_sym454$month)) <- label_scheme(start = 1L)
 
 # Calendar arithmetic
 ## Epochs

@@ -158,17 +158,10 @@ method(chronon_divmod, list(cal_isoweek$year, cal_isoweek$week)) <- function(fro
 week.abb <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 week.name <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- function(granule, cycle, i, at = NULL, label = FALSE, abbreviate = TRUE) {
-  # TODO: Add offset for different week starting days
-  if (!label) {
-    as.character(i + 1L)
-  } else if (abbreviate) {
-    week.abb[i + 1L]
-  } else {
-    week.name[i + 1L]
-  }
-}
-method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- function(granule, cycle, i, at = NULL) {
-  # Weeks count with 1-indexing
-  sprintf("%02d", i + 1L)
-}
+# TODO: Add offset for different week starting days
+method(cyclical_labels, list(cal_isoweek$day, cal_isoweek$week)) <- label_scheme(
+  start = 1L,
+  vocab = vocab_table(`en-GB` = list(wide = week.name, abbreviated = week.abb))
+)
+# Weeks count with 1-indexing
+method(cyclical_labels, list(cal_isoweek$week, S7::class_any)) <- label_scheme(start = 1L, width = 2L)
