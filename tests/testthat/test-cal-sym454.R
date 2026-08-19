@@ -76,3 +76,32 @@ test_that("Divmod of the Symmetric454 calendar: cal_sym454", {
     list(div = c(0L, 0L, 2L, 3L, 5L), mod = c(0L, 3L, 0L, 6L, 6L))
   )
 })
+
+test_that("Divmod of the Symmetric454 calendar (month -> week) agrees with cardinality, including leap-year December", {
+  # month -> week is the forward direction of the tests above. Its result
+  # (the week-index a month starts on) must equal the cumulative sum of
+  # week -> month cardinalities. This must hold across a leap-year December
+  # (months 549:552 = Oct 2015..Jan 2016; 2015 is a Sym454 leap year), where
+  # a previous bug double-counted December's own leap week, making its
+  # starting week (and everything from Jan 2016 onwards) one week too late.
+  months_idx <- 548:554
+  fwd <- with(cal_sym454, chronon_divmod(month(1L), week(1L), months_idx))$div
+  card <- with(cal_sym454, chronon_cardinality(week(1L), month(1L), at = 0:554))
+  expected <- cumsum(c(0L, card))[months_idx + 1L]
+  expect_equal(fwd, expected)
+
+  # Same check for multi-month (quarter) units spanning the same leap-year
+  # December -- quarter 183 = Oct/Nov/Dec 2015, quarter 184 = Jan/Feb/Mar 2016.
+  expect_equal(
+    with(cal_sym454, chronon_divmod(month(3L), week(1L), 182:185))$div,
+    c(2374L, 2387L, 2401L, 2414L)
+  )
+
+  # Systematic check across 1970-2028: every month's forward divmod must
+  # agree with the cumulative cardinality, not just leap-year Decembers.
+  months_idx <- 0:700
+  fwd <- with(cal_sym454, chronon_divmod(month(1L), week(1L), months_idx))$div
+  card <- with(cal_sym454, chronon_cardinality(week(1L), month(1L), at = months_idx))
+  expected <- cumsum(c(0L, card))[seq_along(months_idx)]
+  expect_equal(fwd, expected)
+})

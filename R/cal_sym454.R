@@ -262,7 +262,7 @@ S7::method(chronon_divmod, list(cal_sym454$month, cal_sym454$week)) <-
       ifelse(m < 2976L,  30L + leaps_cycle_79(m - 2028L),
                          44L + leaps_cycle_45(m - 2976L)))))
     }
-    x_cyc <- x + 2531L + month_size  # right align multi-month units
+    x_cyc <- x * month_size + 2531L
     n_leaps <- leaps_symmetry454(x_cyc) - 37L # number of leaps after 1970 Jan
     
     # 3. Combine complete cycles, partial cycles, and leap week adjustments 
