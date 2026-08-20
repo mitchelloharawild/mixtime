@@ -1,6 +1,6 @@
 #' Base S7 class for creating new time units
 #' 
-#' This class is the primative class for time units, and should 
+#' This class is the primitive class for time units, and should
 #' be extended from when creating new time units. A new class
 #' is typically created with S7 using: 
 #' `S7::new_class("tu_***", parent = mt_tz_unit)`

@@ -485,7 +485,7 @@ The default formatting for time vectors is defined by `chronon_format_linear()` 
 
 There are two types of granule labels useful for these time format strings:
 
-* `lin(<time granule>)` - Granule labels for linear time grnaules, usually the largest granule (e.g. `lin(year(1L))`). These labels are produced by `linear_labels()`.
+* `lin(<time granule>)` - Granule labels for linear time granules, usually the largest granule (e.g. `lin(year(1L))`). These labels are produced by `linear_labels()`.
 * `cyc(<time granule>, <cycle granule>)` - Granule labels for cyclical time granules, where the labels are relative to the cycle (e.g. `cyc(month(1L), year(1L))` is the month within the year). These labels are produced by `cyclical_labels()`.
 
 The `<time granule>` and `<cycle granule>` placeholders in the format string must evaluate to a time granule from a calendar time unit. For convenience, using time units (e.g. `lin(year)`) default to a size 1 time granule (e.g. `lin(year(1L))`), and the calendar is inferred from the time vector being formatted. It is also possible to explicitly specify the calendar (e.g. `lin(cal_symmetry454$year(1L))`), which allows time formats to use granules from different calendars.

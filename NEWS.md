@@ -2,11 +2,31 @@
 
 ## New features
 
+* Added `time_components()`, which decomposes a time vector into its
+  constituent parts using `dplyr::mutate()`-like semantics: named `lin()`/
+  `cyc()` expressions (the same vocabulary used in `format()` strings) are
+  resolved together in a single decomposition of `x`, returning a data frame
+  of linear (`lin()`) and cyclical (`cyc()`) component time vectors (e.g.
+  `time_components(yearmonth(x), yr = lin(year), mth = cyc(month, year))`).
+
 * Added `time_compose()`, the inverse of `time_components()`: builds a single
   `mixtime` time point from a set of `lin()`/`cyc()` components, supplied
   either as `spec ~ value` formulas (e.g.
   `time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3` for March 1980) or as
   already-tagged linear/cyclical time vectors.
+
+* Added `time_is_determinate_at()`, which tests whether a time point resolves
+  a given (typically finer) granule exactly: a discrete time point never
+  determines a finer granule (a year has no determinate month), while a
+  continuous time point tracks progress within its chronon and so always does
+  (0% through 2020 is 0% through January).
+
+* Added `time_is_complete_at()`, which tests, for each element of a time
+  vector, whether the coarser granule it falls into is fully observed *by the
+  vector as a whole* - unlike `time_is_determinate_at()`, completeness is a
+  collective property: an element is `TRUE` only when the other elements
+  needed to fill out its granule are also present elsewhere in the vector
+  (e.g. a year is only complete once all twelve of its months are present).
 
 * Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`, `>` and
   `>=`, which previously errored. A cyclical value means a position within its
@@ -29,8 +49,17 @@
   raw-index-to-name mapping isn't a constant shift (`transform`, e.g. a leap
   month that splits one name into two), and a full `format`/`parse` escape
   hatch for labels that aren't index-shaped at all (e.g. "2BC"). See
-  `?cyclical_labels`. `validate_label_scheme()` checks a scheme's
-  format/parse round-trip, most useful for a hand-written `transform`.
+  `?cyclical_labels`. A scheme is built with `label_scheme()` and assigned
+  directly as a `linear_labels()`/`cyclical_labels()` method (e.g.
+  `method(cyclical_labels, list(granule, cycle)) <- label_scheme(...)`).
+  `validate_label_scheme()` checks a scheme's format/parse round-trip, most
+  useful for a hand-written `transform`.
+
+## Deprecated
+
+* `new_time()`, the low-level constructor for `mt_time` vectors, is deprecated
+  in favour of calling the concrete time class constructors directly:
+  `mt_linear()`, `mt_duration()`, and `mt_cyclical()`.
 
 ## Breaking changes
 

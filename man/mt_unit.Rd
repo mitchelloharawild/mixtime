@@ -32,7 +32,7 @@ Default: 0 (sea level).}
 A time granule object of class \code{mt_unit}
 }
 \description{
-This class is the primative class for time units, and should
+This class is the primitive class for time units, and should
 be extended from when creating new time units. A new class
 is typically created with S7 using:
 \code{S7::new_class("tu_***", parent = mt_tz_unit)}

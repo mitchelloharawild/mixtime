@@ -125,7 +125,7 @@ yearweek(demo_date) + 0:10
 date(demo_date) + 0:6
 ```
 
-The mixtime package allows time of different granulities to be combined in a single vector.
+The mixtime package allows time of different granularities to be combined in a single vector.
 
 ```{r}
 c(
