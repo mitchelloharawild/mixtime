@@ -22,10 +22,13 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   start_tu <- attr(x, "chronon")
 
   # Shift the time points into local time, truncating the offset for discrete
-  # time models so they remain whole chronons.
+  # time models so they remain whole chronons. A continuous time model keeps
+  # its fractional position instead of flooring it away here.
   x <- vec_data(x)
+  discrete <- is.integer(x)
   offset <- tz_offset_impl(x, start_tu)
-  x <- floor(x + if (is.integer(x)) trunc(offset) else offset)
+  x <- x + if (discrete) trunc(offset) else offset
+  if (discrete) x <- floor(x)
 
   # The two granules of a cyclical part: the chronon is the finer unit (the
   # desired output unit) and the cycle the coarser unit it repeats within.
@@ -51,6 +54,30 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   self_cycle_ids[!self_cycle] <- NA_character_
   cycle_ids[self_cycle] <- NA_character_
 
+  # Prepare results to be filled via recursive divmod execution
+  linear_results   <- vector("list", length(linear))
+  cyclical_results <- vector("list", length(cyclical))
+  cyclical_at      <- vector("list", length(cyclical))
+
+  # Resolve parts with finer granules than the chronon for continuous time data
+  cycle_is_root <- !self_cycle &
+    cycle_ids == S7_class_id(start_tu) &
+    vapply(cyclical_cycle, function(cy) cy@n == start_tu@n, logical(1L))
+  if (any(cycle_is_root)) {
+    whole <- if (discrete) x else floor(x)
+    for (i in which(cycle_is_root)) {
+      chronon_i <- cyclical_chronon[[i]]
+      cyclical_results[[i]] <- if (discrete) {
+        rep(NA_integer_, length(x))
+      } else {
+        chronon_divmod(start_tu, chronon_i, x)$div -
+          chronon_divmod(start_tu, chronon_i, whole)$div
+      }
+      cyclical_at[[i]] <- whole
+    }
+    cycle_ids[cycle_is_root] <- NA_character_
+  }
+
   # Find a suitable tree of chronon_divmod() steps that computes all cyclical
   # and linear parts. Cross-unit cycles must reach both of their granules on one
   # root-to-leaf path, while the other targets need only be reached.
@@ -58,13 +85,8 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
     graph      = chronon_cardinality_graph(),
     start      = start_tu,
     terminals  = c(linear, cyclical_chronon[self_cycle]),
-    groups     = cyclical[!self_cycle]
+    groups     = cyclical[!self_cycle & !cycle_is_root]
   )
-
-  # Prepare results to be filled via recursive divmod execution
-  linear_results   <- vector("list", length(linear))
-  cyclical_results <- vector("list", length(cyclical))
-  cyclical_at      <- vector("list", length(cyclical))
 
   # Traverse the divmod path to compute parts. `parent_id` is the caller's
   # `child_id`, so it is handed down rather than looked up again.
