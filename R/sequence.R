@@ -227,7 +227,7 @@
         res,
         by,
         chronon,
-        discrete = is.integer(res)
+        discrete = is.integer(ptype)
       ) +
         seq_part
     } else {
