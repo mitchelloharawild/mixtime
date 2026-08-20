@@ -30,6 +30,10 @@ chronon_divmod <- S7::new_generic("chronon_divmod", c("from", "to"))
 S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
   # No casting needed for identical time granules
   if (identical(S7_class_id(from), S7_class_id(to))) {
+    # Shortcut to skip divmod for identical granule divmod ops
+    if (identical(from@n, to@n)) {
+      return(list(div = vec_data(x), mod = 0L))
+    }
     return(fdivmod(vec_data(x), to@n / from@n))
   }
 
