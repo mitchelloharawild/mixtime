@@ -43,6 +43,15 @@ mt_unit_display <- function(x, units, parts, ...) {
   }
 }
 
+# Decodes one mt_glue_fmt() `{lin(...)}`/`{cyc(...)}` token with attributes
+format_token_spec <- function(tok) {
+  list(
+    chronon = tok[[1L]],
+    cycle = if (length(tok) == 2L) tok[[2L]] else NULL,
+    attrs = attributes(tok) %||% list()
+  )
+}
+
 time_format_default <- function(x, attr = TRUE) {
   chronon <- base::attr(x, "chronon")
 
@@ -170,13 +179,19 @@ time_format_impl <- function(x, format = time_format_default(x, attr = attr), ..
 
   # Apply labels
   parts$linear <- .mapply(
-    function(tu, x) rlang::exec(linear_labels_format, tu[[1L]], x, !!!attributes(tu)), 
-    dots = list(res_split[["1"]], parts$linear), 
+    function(tu, x) {
+      spec <- format_token_spec(tu)
+      rlang::exec(linear_labels_format, spec$chronon, x, !!!spec$attrs)
+    },
+    dots = list(res_split[["1"]], parts$linear),
     MoreArgs = NULL
   )
   parts$cyclical <- .mapply(
     # TODO floor(x) shouldn't be necessary, fix chronon_parts()?
-    function(tu, x, at) rlang::exec(cyclical_labels_format, tu[[1L]], tu[[2L]], floor(x), at = at, !!!attributes(tu)),
+    function(tu, x, at) {
+      spec <- format_token_spec(tu)
+      rlang::exec(cyclical_labels_format, spec$chronon, spec$cycle, floor(x), at = at, !!!spec$attrs)
+    },
     dots = list(res_split[["2"]], parts$cyclical, parts$cyclical_at),
     MoreArgs = NULL
   )
