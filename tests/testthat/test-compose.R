@@ -86,8 +86,51 @@ test_that("Inf in the anchor carries through as an infinite count", {
   expect_equal(as.numeric(vecvec::unvecvec(r)), c(3726, Inf, -Inf))
 })
 
-test_that("errors when no lin() anchor is supplied", {
-  expect_error(time_compose(cyc(month, year) ~ 3), "exactly one")
+test_that("a single cyc() with no lin() anchor composes a cyclical time point", {
+  r <- time_compose(cyc(month, year) ~ 3)
+
+  expect_true(time_is_cyclical(r))
+  expect_equal(format(r), "Mar")
+  expect_equal(
+    as.numeric(vecvec::unvecvec(r)),
+    as.numeric(vecvec::unvecvec(month_of_year(as.Date("1970-03-01"))))
+  )
+})
+
+test_that("a chained cyc() sequence with no lin() anchor composes a cyclical time point", {
+  # Rooted at cyc(month, year); day 15 of month 3 collapses to (day, year).
+  r <- time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
+
+  expect_true(time_is_cyclical(r))
+  expect_equal(format(r), "D74")
+  expect_equal(
+    as.numeric(vecvec::unvecvec(r)),
+    as.numeric(vecvec::unvecvec(day_of_year(as.Date("1970-03-15"))))
+  )
+})
+
+test_that("cyclical time_compose() output round-trips through time_compose() again", {
+  # 1981, a non-leap year, keeps day-of-year 74 on 15 March.
+  anchored <- time_compose(lin(year) ~ 1981, cyc(month, year) ~ 3, cyc(day, month) ~ 15)
+  cyclical <- time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
+
+  r <- time_compose(lin(year) ~ 1981, cyclical)
+  expect_equal(format(r), format(anchored))
+})
+
+test_that("errors when every cyc() component's cycle is itself supplied (no coarsest link)", {
+  # Neither component is coarser than the other, so neither can root the chain.
+  expect_error(
+    time_compose(cyc(day, month) ~ 15, cyc(month, day) ~ 1),
+    "coarsest link"
+  )
+})
+
+test_that("errors on disconnected cyc()-only chains with no lin() anchor", {
+  expect_error(
+    time_compose(cyc(month, year) ~ 3, cyc(quarter, year) ~ 1),
+    "disconnected"
+  )
 })
 
 test_that("errors when multiple lin() anchors are supplied", {

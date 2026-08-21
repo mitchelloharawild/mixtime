@@ -6,12 +6,17 @@
 #' or an already-tagged linear/cyclical time vector (e.g. produced by
 #' [linear_time()], [cyclical_time()], or a [time_components()] column).
 #'
-#' Exactly one `lin()` component (the **anchor**) must be supplied. It fixes
-#' the absolute (non-repeating) position at some granule (e.g. the year).
-#' Every other component must be a `cyc()` component that connects, without
-#' gaps or branches, from the anchor down to the target chronon. Each cycle of
-#' `cyc()` must equal the chronon of another supplied component exactly, forming
-#' a single chain.
+#' A `lin()` component (the **anchor**), when supplied, fixes the absolute
+#' position at some granule (e.g. the year). Every other component must be
+#' `cyc()`, chaining without gaps or branches from the anchor down to the
+#' target chronon: each cycle must equal another component's chronon exactly.
+#'
+#' With no `lin()` anchor, every component must be `cyc()`, chained the same
+#' way but rooted at whichever component's cycle isn't itself another
+#' component's chronon. The result is cyclical time tagged with that root's
+#' cycle: `cyc(month, year) ~ 3` alone matches `month_of_year()` for any
+#' March; chaining `cyc(day, month) ~ 15` onto it collapses to one (day,
+#' year) pair, day-of-year 74, matching `day_of_year()` for 15 March.
 #'
 #' Values of linear and cyclical components are specified on the right-hand-side
 #' of the formula. A `lin()` value is the real-world count (e.g. the literal
@@ -28,9 +33,9 @@
 #'   `cyc()` formulas. Defaults to [cal_gregorian].
 #' @inheritParams linear_time
 #'
-#' @return A `mixtime` linear time vector, at the finest chronon reached by
-#'   the supplied chain (or the anchor's own chronon, if no `cyc()` components
-#'   were supplied).
+#' @return A `mixtime` time vector, at the finest chronon reached by the
+#'   chain (or the root's own chronon, if only one component is given).
+#'   Linear with a `lin()` anchor, cyclical otherwise.
 #'
 #' @seealso [time_components()] for the inverse operation, [lin()]/[cyc()] for
 #'   the component vocabulary shared with [time_components()] and [format()].
@@ -41,6 +46,13 @@
 #'
 #' # A lin() anchor alone is a valid (coarser) time point
 #' time_compose(lin(year) ~ 1980)
+#'
+#' # No lin() anchor: composes cyclical time
+#' time_compose(cyc(month, year) ~ 3)
+#'
+#' # Chaining collapses to one (chronon, cycle) pair: day 15 of month 3
+#' # becomes day-of-year 74
+#' time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
 #'
 #' # Round-tripping through time_components()
 #' parts <- time_components(as.Date("2024-03-15"), yr = lin(year), mth = cyc(month, year))
@@ -73,7 +85,7 @@ time_compose <- function(..., discrete = TRUE, calendar = cal_gregorian) {
   })
 
   chain <- compose_chain(comps)
-  compose_recompose(chain, discrete = discrete)
+  compose_recompose(chain$chain, discrete = discrete, cycle = chain$cycle)
 }
 
 # Turn one `...` element into a normalized component: a plain
@@ -151,40 +163,76 @@ compose_tag <- function(x, calendar) {
   }
 }
 
-# Validate identifiability and return the ordered chain of normalized
-# components from the lin() anchor to the target (finest) chronon: exactly
-# one anchor, and every cyc() component connects (by exact chronon equality --
-# same unit and same `n`) without gaps, duplicates or branches.
+# Returns list(chain, cycle): chain is the ordered root-to-finest component
+# list; cycle is NULL for a lin() anchor, or the root's cycle for cyclical
+# time (no lin() given).
+#
+# A lin() anchor, if supplied, must be the only one; every cyc() then chains
+# from it via exact chronon equality, without gaps or branches. With no
+# lin(), every component must be cyc(), rooted at whichever one's cycle
+# isn't supplied as another component's chronon; its own within-cycle
+# offset seeds the chain as an absolute count (mt_cyclical's convention,
+# see compose_tag()).
 compose_chain <- function(comps) {
-  is_anchor <- vapply(comps, function(x) is.null(x$cycle), logical(1L))
-  n_anchor <- sum(is_anchor)
+  is_lin <- vapply(comps, function(x) is.null(x$cycle), logical(1L))
+  n_lin <- sum(is_lin)
 
-  if (n_anchor == 0L) {
-    cli::cli_abort(
-      c(
-        "{.fn time_compose} needs exactly one {.fn lin} component to anchor the time point.",
-        i = "None was supplied; every component was {.fn cyc}."
-      ),
-      call = NULL
-    )
-  }
-  if (n_anchor > 1L) {
+  if (n_lin > 1L) {
     labels <- vapply(
-      comps[is_anchor],
+      comps[is_lin],
       function(x) time_granule_label(x$chronon, 1),
       character(1L)
     )
     cli::cli_abort(
       c(
-        "{.fn time_compose} needs exactly one {.fn lin} anchor, but {n_anchor} were supplied ({paste(labels, collapse = ', ')}).",
+        "{.fn time_compose} needs exactly one {.fn lin} anchor, but {n_lin} were supplied ({paste(labels, collapse = ', ')}).",
         i = "Keep one as the anchor and express the rest as {.fn cyc} components relative to it."
       ),
       call = NULL
     )
   }
 
-  anchor <- comps[[which(is_anchor)]]
-  links <- comps[!is_anchor]
+  if (n_lin == 1L) {
+    is_root <- is_lin
+    root_cycle <- NULL
+  } else {
+    supplied_chronons <- lapply(comps, `[[`, "chronon")
+    is_root <- vapply(
+      comps,
+      function(x) !any(vapply(supplied_chronons, identical, logical(1L), y = x$cycle)),
+      logical(1L)
+    )
+    n_root <- sum(is_root)
+
+    if (n_root == 0L) {
+      cli::cli_abort(
+        c(
+          "{.fn time_compose} needs a {.fn lin} anchor, or a {.fn cyc} chain with a coarsest link, but every {.fn cyc} component's cycle is itself another's chronon.",
+          i = "Add a {.fn lin} anchor, or drop one of the components."
+        ),
+        call = NULL
+      )
+    }
+    if (n_root > 1L) {
+      labels <- vapply(
+        comps[is_root],
+        function(x) paste0(time_granule_label(x$chronon, 1), "/", time_granule_label(x$cycle, 1)),
+        character(1L)
+      )
+      cli::cli_abort(
+        c(
+          "Without a {.fn lin} anchor, {.fn time_compose} needs a single connected {.fn cyc} chain, but {n_root} disconnected chain{?s} were supplied ({paste(labels, collapse = ', ')}).",
+          i = "Add a {.fn lin} anchor to combine them, or keep only one chain."
+        ),
+        call = NULL
+      )
+    }
+
+    root_cycle <- comps[[which(is_root)]]$cycle
+  }
+
+  anchor <- comps[[which(is_root)]]
+  links <- comps[!is_root]
   used <- logical(length(links))
 
   chain <- list(anchor)
@@ -238,14 +286,44 @@ compose_chain <- function(comps) {
     )
   }
 
-  chain
+  list(chain = chain, cycle = root_cycle)
 }
+
+# A minimal, unformatted condition compose_recompose() throws instead of
+# cli::cli_abort() when `quiet = TRUE`. Built once and reused (its message
+# is never inspected by anyone that opts into `quiet`) rather than
+# constructed per call. `time_parse()`'s per-row retry loop
+# (time_parse_attempt(), R/parse.R) is the only place that opts in: it
+# always discards the abort's text (failures are reported later, in bulk, by
+# time_parse_warn_failures()), but composes one row at a time to isolate
+# genuine failures, so it pays whatever this costs once per invalid row.
+# cli_abort()'s glue/cli formatting cost (~8-20ms/call, see _dev/parse.md)
+# is fine as a one-off but not there; stop()+tryCatch on a bare condition
+# costs ~20µs. (The remaining per-call cost after this swap is
+# chronon_divmod()/chronon_cardinality() S7 dispatch, not the condition --
+# see "Base per-row regex/compose cost" in _dev/parse.md, unaddressed.)
+# Signalled with stop(), same as cli_abort(), so existing
+# tryCatch(error = ...) callers keep working unchanged.
+compose_invalid_condition <- structure(
+  class = c("mixtime_compose_invalid", "error", "condition"),
+  list(message = "invalid time component", call = NULL)
+)
 
 # Walk the validated chain coarse -> fine, reconstructing the absolute count
 # at each link from the base of its coarser period (chronon_divmod()'s
 # coarse -> fine `div`, which is always an exact base with no remainder) plus
 # the link's own within-cycle offset.
-compose_recompose <- function(chain, discrete) {
+#
+# `chain[[1L]]` seeds `running_count`/`running_chronon` directly, whether it
+# is a lin() anchor (`cycle` NULL) or, for cyclical time, the chain's root
+# cyc() component (see compose_chain()). `cycle` then tags the result
+# mt_cyclical instead of mt_linear via mixtime().
+#
+# `quiet = TRUE` swaps the cardinality-invalid abort below for the cheap
+# compose_invalid_condition() instead of cli::cli_abort() -- see that
+# object's comment. Only time_parse() opts in; time_compose() (the
+# user-facing, one-off caller) keeps today's styled, informative abort.
+compose_recompose <- function(chain, discrete, cycle = NULL, quiet = FALSE) {
   anchor <- chain[[1L]]
   running_chronon <- anchor$chronon
   running_count <- anchor$value
@@ -253,13 +331,27 @@ compose_recompose <- function(chain, discrete) {
 
   for (link in chain[-1L]) {
     chronon_i <- link$chronon
-    offset_i <- link$value
 
     base_i <- chronon_divmod(
       from = running_chronon,
       to = chronon_i,
       x = running_count[keep]
     )$div
+
+    # `link$value` is usually a plain offset vector (from a `spec ~ value`
+    # formula, or an already-tagged mixtime component). time_parse() instead
+    # supplies a closure `function(at) -> offset` for a decoded cyc() token,
+    # since decoding it may depend on `at` -- the coarser instance's resolved
+    # position -- which has only just become available above. `at` is built
+    # full-length (NA outside `keep`) so the closure sees the same shape a
+    # plain offset vector would, and everything below stays unchanged.
+    offset_i <- if (is.function(link$value)) {
+      at <- rep(NA_real_, length(running_count))
+      at[keep] <- base_i
+      link$value(at)
+    } else {
+      link$value
+    }
 
     # `at` is the raw, epoch-relative count in terms of the coarser
     # (running) chronon -- the same convention chronon_cardinality() methods
@@ -272,6 +364,9 @@ compose_recompose <- function(chain, discrete) {
     )
     bad <- offset_i[keep] < 0 | offset_i[keep] >= cardinality
     if (any(bad, na.rm = TRUE)) {
+      if (quiet) {
+        stop(compose_invalid_condition)
+      }
       bad_i <- which(bad)[1L]
       cli::cli_abort(
         c(
@@ -300,6 +395,7 @@ compose_recompose <- function(chain, discrete) {
   mixtime(
     running_count + chronon_epoch(running_chronon),
     chronon = running_chronon,
+    cycle = cycle,
     discrete = discrete
   )
 }

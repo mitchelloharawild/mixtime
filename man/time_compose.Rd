@@ -22,9 +22,9 @@ allowing representation of fractional time granules (continuous time model).}
 \code{cyc()} formulas. Defaults to \link{cal_gregorian}.}
 }
 \value{
-A \code{mixtime} linear time vector, at the finest chronon reached by
-the supplied chain (or the anchor's own chronon, if no \code{cyc()} components
-were supplied).
+A \code{mixtime} time vector, at the finest chronon reached by the
+chain (or the root's own chronon, if only one component is given).
+Linear with a \code{lin()} anchor, cyclical otherwise.
 }
 \description{
 \code{time_compose()} is the inverse of \code{\link[=time_components]{time_components()}}: given a set of
@@ -34,12 +34,17 @@ or an already-tagged linear/cyclical time vector (e.g. produced by
 \code{\link[=linear_time]{linear_time()}}, \code{\link[=cyclical_time]{cyclical_time()}}, or a \code{\link[=time_components]{time_components()}} column).
 }
 \details{
-Exactly one \code{lin()} component (the \strong{anchor}) must be supplied. It fixes
-the absolute (non-repeating) position at some granule (e.g. the year).
-Every other component must be a \code{cyc()} component that connects, without
-gaps or branches, from the anchor down to the target chronon. Each cycle of
-\code{cyc()} must equal the chronon of another supplied component exactly, forming
-a single chain.
+A \code{lin()} component (the \strong{anchor}), when supplied, fixes the absolute
+position at some granule (e.g. the year). Every other component must be
+\code{cyc()}, chaining without gaps or branches from the anchor down to the
+target chronon: each cycle must equal another component's chronon exactly.
+
+With no \code{lin()} anchor, every component must be \code{cyc()}, chained the same
+way but rooted at whichever component's cycle isn't itself another
+component's chronon. The result is cyclical time tagged with that root's
+cycle: \code{cyc(month, year) ~ 3} alone matches \code{month_of_year()} for any
+March; chaining \code{cyc(day, month) ~ 15} onto it collapses to one (day,
+year) pair, day-of-year 74, matching \code{day_of_year()} for 15 March.
 
 Values of linear and cyclical components are specified on the right-hand-side
 of the formula. A \code{lin()} value is the real-world count (e.g. the literal
@@ -54,6 +59,13 @@ time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3, cyc(day, month) ~ 15)
 
 # A lin() anchor alone is a valid (coarser) time point
 time_compose(lin(year) ~ 1980)
+
+# No lin() anchor: composes cyclical time
+time_compose(cyc(month, year) ~ 3)
+
+# Chaining collapses to one (chronon, cycle) pair: day 15 of month 3
+# becomes day-of-year 74
+time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
 
 # Round-tripping through time_components()
 parts <- time_components(as.Date("2024-03-15"), yr = lin(year), mth = cyc(month, year))
