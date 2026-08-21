@@ -27,6 +27,14 @@
 #'
 #' @return A logical vector.
 #'
+#' @usage
+#' e1 == e2
+#' e1 != e2
+#' e1 < e2
+#' e1 <= e2
+#' e1 > e2
+#' e1 >= e2
+#'
 #' @name mt_linear-compare
 NULL
 
@@ -112,6 +120,14 @@ method(`>=`, list(class_any, mt_linear)) <- function(e1, e2) linear_compare(">="
 #'
 #' @return A logical vector.
 #'
+#' @usage
+#' e1 == e2
+#' e1 != e2
+#' e1 < e2
+#' e1 <= e2
+#' e1 > e2
+#' e1 >= e2
+#'
 #' @name mt_duration-compare
 NULL
 
@@ -194,6 +210,14 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #'   such as plain numeric vectors sharing the other operand's chronon).
 #'
 #' @return A logical vector.
+#'
+#' @usage
+#' e1 == e2
+#' e1 != e2
+#' e1 < e2
+#' e1 <= e2
+#' e1 > e2
+#' e1 >= e2
 #'
 #' @name mt_cyclical-compare
 NULL

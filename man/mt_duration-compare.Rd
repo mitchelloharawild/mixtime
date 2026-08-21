@@ -3,6 +3,14 @@
 \name{mt_duration-compare}
 \alias{mt_duration-compare}
 \title{Comparison operators for durations (\code{mt_duration})}
+\usage{
+e1 == e2
+e1 != e2
+e1 < e2
+e1 <= e2
+e1 > e2
+e1 >= e2
+}
 \arguments{
 \item{e1, e2}{\code{mt_duration} vectors (or values castable to one, such as plain
 numeric vectors interpreted in the other operand's chronon).}

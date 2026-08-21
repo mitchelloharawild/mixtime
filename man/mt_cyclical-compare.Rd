@@ -3,6 +3,14 @@
 \name{mt_cyclical-compare}
 \alias{mt_cyclical-compare}
 \title{Comparison operators for cyclical time (\code{mt_cyclical})}
+\usage{
+e1 == e2
+e1 != e2
+e1 < e2
+e1 <= e2
+e1 > e2
+e1 >= e2
+}
 \arguments{
 \item{e1, e2}{\code{mt_cyclical} vectors sharing a cycle (or values castable to one,
 such as plain numeric vectors sharing the other operand's chronon).}

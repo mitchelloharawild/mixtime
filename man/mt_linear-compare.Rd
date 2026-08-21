@@ -3,6 +3,14 @@
 \name{mt_linear-compare}
 \alias{mt_linear-compare}
 \title{Comparison operators for linear time (\code{mt_linear})}
+\usage{
+e1 == e2
+e1 != e2
+e1 < e2
+e1 <= e2
+e1 > e2
+e1 >= e2
+}
 \arguments{
 \item{e1, e2}{\code{mt_linear} vectors (or values castable to one, such as
 plain numeric vectors sharing the other operand's chronon).}
