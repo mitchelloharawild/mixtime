@@ -330,3 +330,76 @@ test_that("regex = TRUE still needs doubled braces to write a literal '{n}' quan
   expect_equal(format(time_parse("2024-02-15", fmt, regex = TRUE)), "2024 Feb")
   expect_error(time_parse("2024-02-1", fmt, regex = TRUE), class = "mixtime_parse_no_match")
 })
+
+test_that("parse_format() records its regex mode as an attribute", {
+  expect_equal(attr(parse_format("{lin(year)}"), "regex"), FALSE)
+  expect_equal(attr(parse_format("{lin(year)}", regex = TRUE), "regex"), TRUE)
+  expect_equal(
+    as.character(parse_format("{lin(year)}", "{cyc(month, year)}")),
+    c("{lin(year)}", "{cyc(month, year)}")
+  )
+})
+
+test_that("a format's regex attribute (from parse_format()) doesn't override time_parse()'s regex argument", {
+  fmt <- parse_format("{lin(year)}.{cyc(month, year)}.{cyc(day, month)}", regex = TRUE)
+
+  # regex = TRUE is baked into `fmt` as an attribute, but time_parse() only
+  # looks at its own `regex` argument, so "." is still matched literally by
+  # default and "2024x02x15" doesn't match.
+  expect_error(
+    time_parse("2024x02x15", fmt),
+    class = "mixtime_parse_no_match"
+  )
+  # Passing regex = TRUE explicitly is what's needed for "." to match as a
+  # wildcard.
+  expect_equal(format(time_parse("2024x02x15", fmt, regex = TRUE)), "2024-02-15")
+})
+
+test_that("chronon_parse_linear()/chronon_parse_cyclical() candidates are built with parse_format()", {
+  # cal_gregorian$day's candidates use regex = TRUE for tolerant separators
+  expect_true(attr(chronon_parse_linear(cal_gregorian$day(1L)), "regex"))
+  expect_false(attr(chronon_parse_cyclical(cal_gregorian$month(1L), cal_gregorian$year(1L)), "regex"))
+})
+
+test_that("chronon_parse_linear()/chronon_parse_cyclical() tolerate irregular separators and casing", {
+  # These candidates are all built with parse_format(..., regex = TRUE), so
+  # regex = TRUE must be passed to time_parse() explicitly - the attribute
+  # on the format vector no longer does this automatically.
+
+  # Gregorian day: mixed separators/whitespace and D/M/Y vs. M/D/Y vs. Y/M/D
+  fmt_day <- chronon_parse_linear(cal_gregorian$day(1L))
+  expect_equal(format(time_parse("2024-02-15", fmt_day, regex = TRUE)), "2024-02-15")
+  expect_equal(format(time_parse("2024/02/15", fmt_day, regex = TRUE)), "2024-02-15")
+  expect_equal(format(time_parse("15 Feb 2024", fmt_day, regex = TRUE)), "2024-02-15")
+  expect_equal(format(time_parse("Feb 15, 2024", fmt_day, regex = TRUE)), "2024-02-15")
+
+  # Gregorian month: label/numeric and either order, various separators
+  fmt_month <- chronon_parse_linear(cal_gregorian$month(1L))
+  expect_equal(format(time_parse("2024 Feb", fmt_month, regex = TRUE)), "2024 Feb")
+  expect_equal(format(time_parse("Feb/2024", fmt_month, regex = TRUE)), "2024 Feb")
+
+  # ISO week: "W" designator is optional and case-insensitive
+  fmt_week <- chronon_parse_cyclical(cal_isoweek$week(1L), cal_isoweek$year(1L))
+  expect_equal(
+    time_parse("w03", fmt_week, calendar = cal_isoweek, regex = TRUE),
+    time_parse("W03", fmt_week, calendar = cal_isoweek, regex = TRUE)
+  )
+  expect_equal(
+    time_parse("3", fmt_week, calendar = cal_isoweek, regex = TRUE),
+    time_parse("W03", fmt_week, calendar = cal_isoweek, regex = TRUE)
+  )
+
+  # ISO week linear: separator between year/week and week/day is flexible
+  fmt_isoday <- chronon_parse_linear(cal_isoweek$day(1L))
+  expect_equal(
+    time_parse("2024-W07-Mon", fmt_isoday, calendar = cal_isoweek, regex = TRUE),
+    time_parse("2024 w07 Monday", fmt_isoday, calendar = cal_isoweek, regex = TRUE)
+  )
+
+  # Symmetry454 day: Y-M-W-D and D-W-M-Y agree
+  fmt_sym454day <- chronon_parse_linear(cal_sym454$day(1L))
+  expect_equal(
+    time_parse("2024-Jan-W2-3", fmt_sym454day, calendar = cal_sym454, regex = TRUE),
+    time_parse("3rd-W2-Jan-2024", fmt_sym454day, calendar = cal_sym454, regex = TRUE)
+  )
+})

@@ -57,31 +57,60 @@ method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
 method(chronon_epoch, cal_gregorian$year) <- function(x) 1970L
 
 # Default formats
-method(chronon_format_linear, list(cal_gregorian$year, class_any)) <- function(
-  x,
-  cal
-) {
-  "{lin(year)}"
-}
-method(
-  chronon_format_linear,
-  list(cal_gregorian$quarter, class_any)
-) <- function(x, cal) "{lin(year)} Q{cyc(quarter,year)}"
-method(chronon_format_linear, list(cal_gregorian$month, class_any)) <- function(
-  x,
-  cal
-) {
-  "{lin(year)} {cyc(month,year,label=TRUE,abbreviate=TRUE)}"
-}
-method(
-  chronon_format_linear,
-  list(cal_gregorian$day, S7::new_S3_class("cal_gregorian"))
-) <- function(x, cal) "{lin(year)}-{cyc(month,year)}-{cyc(day,month)}"
+method(chronon_format_linear, list(cal_gregorian$year, class_any)) <- 
+  function(x, cal) "{lin(year)}"
+method(chronon_format_linear, list(cal_gregorian$quarter, class_any)) <- 
+  function(x, cal) "{lin(year)} Q{cyc(quarter,year)}"
+method(chronon_format_linear, list(cal_gregorian$month, class_any)) <- 
+  function(x, cal) "{lin(year)} {cyc(month,year,label=TRUE,abbreviate=TRUE)}"
+method(chronon_format_linear,
+  list(cal_gregorian$day, S7::new_S3_class("cal_gregorian"))) <- 
+  function(x, cal) "{lin(year)}-{cyc(month,year)}-{cyc(day,month)}"
 
+method(chronon_format_cyclical, 
+  list(cal_gregorian$month, cal_gregorian$year)) <-
+  function(x, y) "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
+
+# Candidate parsing formats
+method(chronon_parse_linear, list(cal_gregorian$month, class_any)) <-
+  function(x, cal) {
+    parse_format(
+      # e.g. "2024-03", "2024 Mar", "2024, March"
+      "{lin(year)}[-/,\\s]+{cyc(month,year)}",
+      # e.g. "03-2024", "Mar 2024", "March, 2024"
+      "{cyc(month,year)}[-/,\\s]+{lin(year)}",
+      regex = TRUE
+    )
+  }
+method(chronon_parse_linear, list(cal_gregorian$quarter, class_any)) <-
+  function(x, cal) {
+    parse_format(
+      # e.g. "2024 Q1", "2024-Q1", "2024/1"
+      "{lin(year)}[-/,\\s]+[Qq]?{cyc(quarter,year)}",
+      # e.g. "Q1 2024", "Q1, 2024", "1 2024"
+      "[Qq]?{cyc(quarter,year)}[-/,\\s]+{lin(year)}",
+      regex = TRUE
+    )
+  }
 method(
-  chronon_format_cyclical,
-  list(cal_gregorian$month, cal_gregorian$year)
-) <- function(x, y) "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
+  chronon_parse_linear,
+  list(cal_gregorian$day, S7::new_S3_class("cal_gregorian"))
+) <- function(x, cal) {
+  parse_format(
+    # e.g. "2024-03-15", "2024 Mar 15", "2024, March, 15th"
+    "{lin(year)}[-/,\\s]+{cyc(month,year)}[-/,\\s]+{cyc(day,month)}(?:st|nd|rd|th)?",
+    # e.g. "15-03-2024", "15th Mar 2024", "15 March, 2024"
+    "{cyc(day,month)}(?:st|nd|rd|th)?[-/,\\s]+{cyc(month,year)}[-/,\\s]+{lin(year)}",
+    # e.g. "03-15-2024", "Mar 15th, 2024", "March 15, 2024"
+    "{cyc(month,year)}[-/,\\s]+{cyc(day,month)}(?:st|nd|rd|th)?[-/,\\s]+{lin(year)}",
+    regex = TRUE
+  )
+}
+method(chronon_parse_cyclical, list(cal_gregorian$month, cal_gregorian$year)) <-
+  function(x, y) {
+    # e.g. "3", "Mar", "March"
+    parse_format("{cyc(month,year)}")
+  }
 
 ### Calendar algebra methods for Gregorian time units
 method(

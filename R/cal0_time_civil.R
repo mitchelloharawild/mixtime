@@ -159,6 +159,116 @@ method(
   list(cal_time_civil$minute, cal_time_civil$day)
 ) <- function(x, y) "{cyc(hour, day)}:{cyc(minute, hour)}"
 
+# Candidate parsing formats
+method(chronon_parse_linear, list(cal_time_civil$hour, class_any)) <- function(
+  x,
+  cal
+) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour, day)}h",
+      "T{cyc(hour, day)}h",
+      " {cyc(hour, ampm)} {cyc(ampm, day, label = TRUE)}",
+      "T{cyc(hour, ampm)} {cyc(ampm, day, label = TRUE)}"
+    ),
+    c(
+      "[ T]{cyc(hour, day)}h",
+      "[ T]{cyc(hour, ampm)} {cyc(ampm, day, label = TRUE)}"
+    )
+  )
+}
+method(
+  chronon_parse_linear,
+  list(cal_time_civil$minute, class_any)
+) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour, day)}:{cyc(minute, hour)}",
+      "T{cyc(hour, day)}:{cyc(minute, hour)}",
+      " {cyc(hour, ampm)}:{cyc(minute, hour)} {cyc(ampm, day, label = TRUE)}",
+      "T{cyc(hour, ampm)}:{cyc(minute, hour)} {cyc(ampm, day, label = TRUE)}"
+    ),
+    c(
+      "[ T]{cyc(hour, day)}:{cyc(minute, hour)}",
+      "[ T]{cyc(hour, ampm)}:{cyc(minute, hour)} {cyc(ampm, day, label = TRUE)}"
+    )
+  )
+}
+method(
+  chronon_parse_linear,
+  list(cal_time_civil$second, class_any)
+) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}",
+      "T{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}",
+      " {cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)} {cyc(ampm, day, label = TRUE)}",
+      "T{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)} {cyc(ampm, day, label = TRUE)}"
+    ),
+    c(
+      "[ T]{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}",
+      "[ T]{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)} {cyc(ampm, day, label = TRUE)}"
+    )
+  )
+}
+method(
+  chronon_parse_linear,
+  list(cal_time_civil$millisecond, class_any)
+) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}",
+      "T{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}",
+      " {cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)} {cyc(ampm, day, label = TRUE)}",
+      "T{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)} {cyc(ampm, day, label = TRUE)}"
+    ),
+    c(
+      "[ T]{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}\\.{cyc(millisecond, second)}",
+      "[ T]{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}\\.{cyc(millisecond, second)} {cyc(ampm, day, label = TRUE)}"
+    )
+  )
+}
+method(
+  chronon_parse_cyclical,
+  list(cal_time_civil$hour, cal_time_civil$day)
+) <- function(x, y) {
+  parse_format(
+    "{cyc(hour, day)}h",
+    "{cyc(hour, ampm)} {cyc(ampm, day, label = TRUE)}"
+  )
+}
+method(
+  chronon_parse_cyclical,
+  list(cal_time_civil$minute, cal_time_civil$day)
+) <- function(x, y) {
+  parse_format(
+    "{cyc(hour, day)}:{cyc(minute, hour)}",
+    "{cyc(hour, ampm)}:{cyc(minute, hour)} {cyc(ampm, day, label = TRUE)}"
+  )
+}
+method(
+  chronon_parse_cyclical,
+  list(cal_time_civil$second, cal_time_civil$day)
+) <- function(x, y) {
+  parse_format(
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}",
+    "{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)} {cyc(ampm, day, label = TRUE)}"
+  )
+}
+method(
+  chronon_parse_cyclical,
+  list(cal_time_civil$millisecond, cal_time_civil$day)
+) <- function(x, y) {
+  parse_format(
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}",
+    "{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)} {cyc(ampm, day, label = TRUE)}"
+  )
+}
+
 ## HOURs in DAYs
 method(
   chronon_cardinality_fixed,

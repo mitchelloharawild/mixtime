@@ -96,6 +96,40 @@ method(cyclical_labels, list(cal_sym454$month, cal_sym454$year)) <- label_scheme
 # Weeks count with 1-indexing
 method(cyclical_labels, list(cal_sym454$week, cal_sym454$month)) <- label_scheme(start = 1L)
 
+# Candidate parsing formats
+method(chronon_parse_linear, list(cal_sym454$month, class_any)) <- function(x, cal) {
+  parse_format(
+    # e.g. "2024-01", "2024 Jan", "2024, January"
+    "{lin(year)}[-/,\\s]+{cyc(month,year)}",
+    # e.g. "01-2024", "Jan 2024", "January, 2024"
+    "{cyc(month,year)}[-/,\\s]+{lin(year)}",
+    regex = TRUE
+  )
+}
+method(
+  chronon_parse_linear,
+  list(cal_sym454$day, S7::new_S3_class("cal_sym454"))
+) <- function(x, cal) {
+  parse_format(
+    # e.g. "2024-Jan-W2-3", "2024 January w2 3rd"
+    "{lin(year)}[-/,\\s]+{cyc(month,year)}[-/,\\s]+[Ww]?{cyc(week,month)}[-/,\\s]+{cyc(day,week)}(?:st|nd|rd|th)?",
+    # e.g. "3rd-W2-Jan-2024", "3, w2, January 2024"
+    "{cyc(day,week)}(?:st|nd|rd|th)?[-/,\\s]+[Ww]?{cyc(week,month)}[-/,\\s]+{cyc(month,year)}[-/,\\s]+{lin(year)}",
+    regex = TRUE
+  )
+}
+method(chronon_parse_cyclical, list(cal_sym454$month, cal_sym454$year)) <- function(x, y) {
+  # e.g. "1", "Jan", "January"
+  parse_format("{cyc(month,year)}")
+}
+method(chronon_parse_cyclical, list(cal_sym454$week, cal_sym454$month)) <- function(x, y) {
+  parse_format(
+    # e.g. "2", "W2", "w02"
+    "[Ww]?{cyc(week,month)}",
+    regex = TRUE
+  )
+}
+
 # Calendar arithmetic
 ## Epochs
 method(chronon_epoch, cal_sym454$year) <- function(x) 1970L

@@ -54,6 +54,37 @@ method(chronon_format_linear, list(cal_isoweek$day, S7::new_S3_class("cal_isowee
 method(chronon_format_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y) "{cyc(day,week,label=TRUE)}"
 method(chronon_format_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y) "W{cyc(week,year)}"
 
+# Candidate parsing formats
+method(chronon_parse_linear, list(cal_isoweek$week, class_any)) <- function(x, cal) {
+  parse_format(
+    # e.g. "2024-W01", "2024W01", "2024 w1"
+    "{lin(year)}[-\\s]*[Ww]{cyc(week,year)}",
+    # e.g. "W01-2024", "w1 2024"
+    "[Ww]{cyc(week,year)}[-\\s]+{lin(year)}",
+    regex = TRUE
+  )
+}
+method(chronon_parse_linear, list(cal_isoweek$day, S7::new_S3_class("cal_isoweek"))) <- function(x, cal) {
+  parse_format(
+    # e.g. "2024-W01-3", "2024W01 Wed", "2024 w1 Wednesday"
+    "{lin(year)}[-\\s]*[Ww]{cyc(week,year)}[-\\s]+{cyc(day,week)}",
+    # e.g. "Wed W01-2024", "3 w1 2024"
+    "{cyc(day,week)}[-\\s]+[Ww]{cyc(week,year)}[-\\s]+{lin(year)}",
+    regex = TRUE
+  )
+}
+method(chronon_parse_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- function(x, y) {
+  # e.g. "3", "Wed", "Wednesday"
+  parse_format("{cyc(day,week)}")
+}
+method(chronon_parse_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y) {
+  parse_format(
+    # e.g. "1", "W1", "w01"
+    "[Ww]?{cyc(week,year)}",
+    regex = TRUE
+  )
+}
+
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
   if(y@n != 1L) {
     cli::cli_abort("The number of weeks in multi-year chronons is not yet supported.")

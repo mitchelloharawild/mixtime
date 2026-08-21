@@ -118,12 +118,53 @@ method(chronon_format_linear, list(cal_time_solar$arcminute, class_any)) <- func
 method(chronon_format_linear, list(cal_time_solar$arcsecond, class_any)) <- function(x, cal) paste(chronon_format_linear(cal$day(1L), cal), "{cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'{cyc(arcsecond,arcminute)}\"")
 method(chronon_format_linear, list(cal_time_solar$illumination, class_any)) <- function(x, cal) "{lin(day)} {lin(illumination)}"
 
+# Candidate parsing formats
+method(chronon_parse_linear, list(cal_time_solar$hour, class_any)) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour,day)}h",
+      " {cyc(hour,ampm)} {cyc(ampm,day,label=TRUE)}"
+    )
+  )
+}
+method(chronon_parse_linear, list(cal_time_solar$minute, class_any)) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour,day)}:{cyc(minute,hour)}",
+      " {cyc(hour,ampm)}:{cyc(minute,hour)} {cyc(ampm,day,label=TRUE)}"
+    )
+  )
+}
+method(chronon_parse_linear, list(cal_time_solar$second, class_any)) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour,day)}:{cyc(minute,hour)}:{cyc(second,minute)}",
+      " {cyc(hour,ampm)}:{cyc(minute,hour)}:{cyc(second,minute)} {cyc(ampm,day,label=TRUE)}"
+    )
+  )
+}
+method(chronon_parse_linear, list(cal_time_solar$degree, class_any)) <- function(x, cal) {
+  parse_format_time_of_day(cal, " {cyc(degree,day)}\u00b0")
+}
+method(chronon_parse_linear, list(cal_time_solar$arcminute, class_any)) <- function(x, cal) {
+  parse_format_time_of_day(cal, " {cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'")
+}
+method(chronon_parse_linear, list(cal_time_solar$arcsecond, class_any)) <- function(x, cal) {
+  parse_format_time_of_day(cal, " {cyc(degree,day)}\u00b0{cyc(arcminute,degree)}'{cyc(arcsecond,arcminute)}\"")
+}
+
 # Solar time
 method(chronon_cardinality_fixed, list(cal_time_solar$ampm, cal_time_solar$day)) <- function(x, y) {
   2L
 }
 method(chronon_cardinality_fixed, list(cal_time_solar$hour, cal_time_solar$day)) <- function(x, y) {
   24L
+}
+method(chronon_cardinality_fixed, list(cal_time_solar$hour, cal_time_solar$ampm)) <- function(x, y) {
+  12L
 }
 method(chronon_cardinality_fixed, list(cal_time_solar$minute, cal_time_solar$hour)) <- function(x, y) {
   60L
