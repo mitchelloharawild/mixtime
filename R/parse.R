@@ -41,6 +41,14 @@
 #'   per-token `locale = ...`. `NULL` defers to each token's own scheme.
 #' @param discrete Whether the result is discrete (integer chronon counts)
 #'   or continuous (fractional). See [linear_time()].
+#' @param regex If `FALSE` (the default), the literal text surrounding
+#'   `{lin(...)}`/`{cyc(...)}` tokens is matched exactly (regex
+#'   metacharacters are escaped, and runs of spaces tolerate any amount of
+#'   surrounding whitespace). If `TRUE`, that surrounding text is instead
+#'   used verbatim as a regular expression, e.g. `"[/-]"` to accept either
+#'   `/` or `-` as a separator, or `".*?"` to skip free text. Capturing groups
+#'    are reserved for the `{lin(...)}`/`{cyc(...)}` tokens, so any `(...)`
+#'    grouping you write is treated as non-capturing `(?:...)` groups.
 #'
 #' @return A `mixtime` time vector, the same length as `x`. Linear if
 #'   `format` includes a `{lin(...)}` token, cyclical otherwise.
@@ -74,6 +82,16 @@
 #'   )
 #' )
 #'
+#' # regex = TRUE: match "/" or "-" as the separator, and tolerate a
+#' # trailing comment after the date. The `( .*)?` group is automatically
+#' # treated as non-capturing, so it doesn't disturb the {lin(...)}/
+#' # {cyc(...)} token matches.
+#' time_parse(
+#'   c("2024-02-15", "2024/02/15 (approx)"),
+#'   "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
+#'   regex = TRUE
+#' )
+#'
 #' @export
 time_parse <- function(
   x,
@@ -81,7 +99,8 @@ time_parse <- function(
   na = c("", "NA"),
   calendar = cal_gregorian,
   locale = NULL,
-  discrete = TRUE
+  discrete = TRUE,
+  regex = FALSE
 ) {
   x <- as.character(x)
   n <- length(x)
@@ -92,7 +111,7 @@ time_parse <- function(
 
   env <- rlang::caller_env()
   # Validate each format's shape and resolve its chain order once, up front.
-  compiled_list <- lapply(format, time_parse_compile, calendar = calendar, locale = locale, env = env)
+  compiled_list <- lapply(format, time_parse_compile, calendar = calendar, locale = locale, env = env, regex = regex)
 
   is_missing <- is.na(x) | x %in% na
   attempt <- !is_missing
@@ -227,7 +246,7 @@ time_parse_attempt <- function(compiled, x_try, matches, discrete) {
 }
 
 # Tokenize `format` into an anchored extraction regex plus its lin()/cyc() specs.
-time_parse_compile <- function(format, calendar, locale, env) {
+time_parse_compile <- function(format, calendar, locale, env, regex = FALSE) {
   mask_env <- rlang::new_environment(data = component_mask(calendar), parent = env)
   fmt <- mt_glue_fmt(format, env = mask_env)
   is_spec <- vapply(fmt, is.list, logical(1L))
@@ -251,6 +270,11 @@ time_parse_compile <- function(format, calendar, locale, env) {
     if (is_spec[[i]]) {
       spec_i <- spec_i + 1L
       fragments[[i]] <- paste0("(", specs[[spec_i]]$pattern, ")")
+    } else if (regex) {
+      # Verbatim regex: no escaping, no whitespace tolerance. Capturing
+      # groups are rewritten to non-capturing so they can't shift the
+      # positional group indices used below (see time_parse_no_capture()).
+      fragments[[i]] <- time_parse_no_capture(fmt[[i]])
     } else {
       fragments[[i]] <- time_parse_escape_literal(fmt[[i]])
     }
@@ -286,6 +310,40 @@ time_parse_compile <- function(format, calendar, locale, env) {
 time_parse_escape_literal <- function(text) {
   esc <- gsub("([.|()\\^{}+$*?\\[\\]\\\\])", "\\\\\\1", text, perl = TRUE)
   gsub(" +", "\\\\s+", esc)
+}
+
+# Rewrite a user's verbatim regex (regex = TRUE) so every capturing group it
+# opens becomes non-capturing (?:...). The positional groups in the
+# compiled pattern are reserved for {lin(...)}/{cyc(...)} tokens
+# (time_parse_attempt() picks out each spec's text by group index), so a
+# stray user capturing group would silently shift them out of alignment;
+# rewriting means there's nothing for the caller to get right.
+#
+# `(` is left alone (already special/non-capturing) when it's escaped
+# (`\(`), inside a `[...]` character class (where it's a literal char, not a
+# group), or already followed by `?` (covers `(?:`, `(?=`, `(?!`, `(?<=`,
+# `(?<!`, `(?<name>`).
+time_parse_no_capture <- function(text) {
+  if (!nzchar(text)) return(text)
+  chars <- strsplit(text, "", fixed = TRUE)[[1L]]
+  n <- length(chars)
+  in_class <- FALSE
+  escaped <- FALSE
+  for (i in seq_len(n)) {
+    ch <- chars[[i]]
+    if (escaped) {
+      escaped <- FALSE
+    } else if (ch == "\\") {
+      escaped <- TRUE
+    } else if (in_class) {
+      if (ch == "]") in_class <- FALSE
+    } else if (ch == "[") {
+      in_class <- TRUE
+    } else if (ch == "(" && !(i < n && chars[[i + 1L]] == "?")) {
+      chars[[i]] <- "(?:"
+    }
+  }
+  paste0(chars, collapse = "")
 }
 
 # Decode each spec's text column and hand the result to compose_recompose().

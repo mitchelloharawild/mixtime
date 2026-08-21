@@ -10,7 +10,8 @@ time_parse(
   na = c("", "NA"),
   calendar = cal_gregorian,
   locale = NULL,
-  discrete = TRUE
+  discrete = TRUE,
+  regex = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,15 @@ per-token \code{locale = ...}. \code{NULL} defers to each token's own scheme.}
 
 \item{discrete}{Whether the result is discrete (integer chronon counts)
 or continuous (fractional). See \code{\link[=linear_time]{linear_time()}}.}
+
+\item{regex}{If \code{FALSE} (the default), the literal text surrounding
+\code{{lin(...)}}/\code{{cyc(...)}} tokens is matched exactly (regex
+metacharacters are escaped, and runs of spaces tolerate any amount of
+surrounding whitespace). If \code{TRUE}, that surrounding text is instead
+used verbatim as a regular expression, e.g. \code{"[/-]"} to accept either
+\code{/} or \code{-} as a separator, or \code{".*?"} to skip free text. Capturing groups
+are reserved for the \code{{lin(...)}}/\code{{cyc(...)}} tokens, so any \code{(...)}
+grouping you write is treated as non-capturing \verb{(?:...)} groups.}
 }
 \value{
 A \code{mixtime} time vector, the same length as \code{x}. Linear if
@@ -87,6 +97,16 @@ time_parse(
     "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}",
     "{cyc(day, month)}/{cyc(month, year)}/{lin(year)}"
   )
+)
+
+# regex = TRUE: match "/" or "-" as the separator, and tolerate a
+# trailing comment after the date. The `( .*)?` group is automatically
+# treated as non-capturing, so it doesn't disturb the {lin(...)}/
+# {cyc(...)} token matches.
+time_parse(
+  c("2024-02-15", "2024/02/15 (approx)"),
+  "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
+  regex = TRUE
 )
 
 }

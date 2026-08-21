@@ -248,3 +248,85 @@ test_that("continuous (discrete = FALSE) parsing keeps a fractional chronon", {
   expect_true(is.double(vecvec::unvecvec(r)))
   expect_equal(format(r), "1980-03-15 0.0%")
 })
+
+test_that("regex = FALSE (default) treats literal metacharacters literally", {
+  # "." between tokens is a literal dot, not a "match any char" wildcard.
+  fmt <- "{lin(year)}.{cyc(month, year)}.{cyc(day, month)}"
+
+  expect_equal(format(time_parse("2024.02.15", fmt)), "2024-02-15")
+  expect_error(time_parse("2024x02x15", fmt), class = "mixtime_parse_no_match")
+})
+
+test_that("regex = TRUE uses literal template text as a regular expression", {
+  # Same "." separator, now matched as a wildcard rather than escaped.
+  fmt <- "{lin(year)}.{cyc(month, year)}.{cyc(day, month)}"
+
+  expect_equal(format(time_parse("2024x02x15", fmt, regex = TRUE)), "2024-02-15")
+})
+
+test_that("regex = TRUE supports character classes for alternative separators", {
+  fmt <- "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}"
+
+  expect_equal(format(time_parse("2024-02-15", fmt, regex = TRUE)), "2024-02-15")
+  expect_equal(format(time_parse("2024/02/15", fmt, regex = TRUE)), "2024-02-15")
+})
+
+test_that("regex = TRUE supports trailing free text via a wildcard", {
+  fmt <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}.*"
+
+  expect_equal(
+    format(time_parse("2024-02-15 (approx)", fmt, regex = TRUE)),
+    "2024-02-15"
+  )
+})
+
+test_that("regex = TRUE does not collapse whitespace runs (unlike the default escaping)", {
+  fmt <- "{lin(year)} {cyc(month, year)} {cyc(day, month)}"
+
+  # Default: any run of spaces is tolerated.
+  expect_equal(format(time_parse("2024   02   15", fmt)), "2024-02-15")
+  # regex = TRUE: the literal " " is matched exactly, so extra spaces don't fit.
+  expect_error(
+    time_parse("2024   02   15", fmt, regex = TRUE),
+    class = "mixtime_parse_no_match"
+  )
+  expect_equal(format(time_parse("2024 02 15", fmt, regex = TRUE)), "2024-02-15")
+})
+
+test_that("regex = TRUE treats a user's capturing group as non-capturing", {
+  # A plain "(...)" group here would otherwise shift the positional group
+  # indices used to extract the {lin(...)}/{cyc(...)} tokens' text out of
+  # alignment; it must be silently treated as "(?:...)" instead.
+  fmt <- "{lin(year)}(-){cyc(month, year)}-{cyc(day, month)}"
+
+  expect_equal(format(time_parse("2024-02-15", fmt, regex = TRUE)), "2024-02-15")
+})
+
+test_that("regex = TRUE: an auto-converted capturing group composes with alternation and optionality", {
+  fmt <- "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?"
+
+  expect_equal(format(time_parse("2024-02-15", fmt, regex = TRUE)), "2024-02-15")
+  expect_equal(
+    format(time_parse("2024/02/15 (approx)", fmt, regex = TRUE)),
+    "2024-02-15"
+  )
+})
+
+test_that("regex = TRUE leaves already-special groups (non-capturing, lookaround) untouched", {
+  fmt_noncapture <- "{lin(year)}(?:-){cyc(month, year)}-{cyc(day, month)}"
+  fmt_lookahead <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}(?=$)"
+
+  expect_equal(format(time_parse("2024-02-15", fmt_noncapture, regex = TRUE)), "2024-02-15")
+  expect_equal(format(time_parse("2024-02-15", fmt_lookahead, regex = TRUE)), "2024-02-15")
+})
+
+test_that("regex = TRUE still needs doubled braces to write a literal '{n}' quantifier", {
+  # mt_glue_fmt() treats a single "{...}" as an expression to evaluate, so a
+  # literal regex quantifier like "\\d{2}" must be written with doubled
+  # braces to survive as text. Trailing "\\d{2}" here isn't captured by a
+  # cyc() token, so the parsed chronon stops at month.
+  fmt <- "{lin(year)}-{cyc(month, year)}-\\d{{2}}"
+
+  expect_equal(format(time_parse("2024-02-15", fmt, regex = TRUE)), "2024 Feb")
+  expect_error(time_parse("2024-02-1", fmt, regex = TRUE), class = "mixtime_parse_no_match")
+})
