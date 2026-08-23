@@ -186,10 +186,10 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #' within the cycle - the same reduction [format()] displays - and compares
 #' those:
 #'
-#' - `day_of_week("2020-01-15") == day_of_week("2020-01-22")` is `TRUE`, since
-#'   both are a Wednesday.
-#' - `day_of_year("2020-01-15") == day_of_year("2021-01-15")` is `TRUE`, since
-#'   both are the 15th day of their year.
+#' - `day_of_week(date("2020-01-15")) == day_of_week(date("2020-01-22"))` is
+#'   `TRUE`, since both are a Wednesday.
+#' - `day_of_year(date("2020-01-15")) == day_of_year(date("2021-01-15"))` is
+#'   `TRUE`, since both are the 15th day of their year.
 #'
 #' Both operands must share a `cycle`: a cycle is a modulus rather than a unit,
 #' so there is no meaningful common cycle between (say) a weekday and a

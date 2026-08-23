@@ -60,14 +60,14 @@ one week, with years as the granule. Defaults to ISO 8601 week calendar.
 
 These functions adapt to the calendar system of the input data. For example:
 \itemize{
-\item \code{year("2025-12-29")} returns a Gregorian year
-\item \code{year(yearweek("2025-12-29"))} returns an ISO week-based year
+\item \code{year(date("2025-12-29"))} returns a Gregorian year
+\item \code{year(yearweek(date("2025-12-29")))} returns an ISO week-based year
 }
 
 You can also explicitly specify a calendar using the \code{calendar} argument:
 
 \preformatted{
-year(yearweek("2025-12-29"), calendar = cal_isoweek)
+year(date("2025-12-29"), calendar = cal_isoweek)
 }
 }
 

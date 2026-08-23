@@ -2,6 +2,12 @@
 
 ## New features
 
+* Added `time_parse()`, the inverse of `format()`: parses text back into a
+  time point using the same `{lin(...)}`/`{cyc(...)}` template `format()`
+  uses. Default parse strings are specified with `chronon_parse_linear()` and 
+  `chronon_parse_cyclical()` (with the `parse_format()` helper), mirroring how
+  `chronon_format_*()` methods specify their default format.
+
 * Added `time_components()`, which decomposes a time vector into its
   constituent parts using `dplyr::mutate()`-like semantics: named `lin()`/
   `cyc()` expressions (the same vocabulary used in `format()` strings) are
@@ -62,6 +68,12 @@
   `mt_linear()`, `mt_duration()`, and `mt_cyclical()`.
 
 ## Breaking changes
+
+* `mixtime()` (and `linear_time()`, `cyclical_time()`, and convenience functions
+  like `yearmonth()` and `day_of_week()`) now parse character `data` with
+  `time_parse()`. Parsing is now tighter and chronon-specific: text must
+  match the requested chronon's own format (e.g. `yearmonth("2026 Feb")` now
+  works, but `yearmonth("2026-02-14")`, now errors).
 
 * `is_time_linear()`, `is_time_cyclical()`, and `is_time_duration()` have been
   renamed to `time_is_linear()`, `time_is_cyclical()`, and `time_is_duration()`

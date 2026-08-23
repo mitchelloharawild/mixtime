@@ -1,16 +1,16 @@
 test_that("Cyclical time handles text parsing with set timezones", {
   # Test that day_of_week preserves the correct day in the specified timezone
-  result <- day_of_week("2020-01-01", tz = "America/Los_Angeles")
-  
+  result <- day_of_week(date("2020-01-01", tz = "America/Los_Angeles"))
+
   # 2020-01-01 is a Wednesday
   expect_equal(format(result), "Wed PST")
-  
+
   # Test with UTC
-  result_utc <- day_of_week("2020-01-01")
+  result_utc <- day_of_week(date("2020-01-01"))
   expect_equal(format(result_utc), "Wed")
-  
+
   # Test with Europe/Berlin (same date, so same day of week)
-  result_berlin <- day_of_week("2020-01-01", tz = "Europe/Berlin")
+  result_berlin <- day_of_week(date("2020-01-01", tz = "Europe/Berlin"))
   expect_equal(format(result_berlin), "Wed CET")
 })
 

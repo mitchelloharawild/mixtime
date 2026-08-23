@@ -6,113 +6,121 @@
 \usage{
 time_parse(
   x,
-  format,
+  chronon = NULL,
+  cycle = NULL,
+  format = NULL,
+  regex = FALSE,
   na = c("", "NA"),
-  calendar = cal_gregorian,
+  calendar = NULL,
   locale = NULL,
-  discrete = TRUE,
-  regex = FALSE
+  discrete = TRUE
 )
 }
 \arguments{
 \item{x}{A character vector to parse.}
 
+\item{chronon}{Target time granule for the result, and (with \code{cycle}) the
+source of \code{format} candidates when \code{format} is \code{NULL}. Its attributes
+(e.g. \code{tz}) fill in whatever \code{format} leaves unset, and the result is
+converted onto it if \code{format} reaches a different chronon.}
+
+\item{cycle}{Target cycle granule, pairing with \code{chronon} for a cyclical
+result. Requires \code{chronon}.}
+
 \item{format}{A glue-style format string of \code{\link[=lin]{lin()}}/\code{\link[=cyc]{cyc()}} tokens, e.g.
-\code{"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"}; see
-\code{vignette("time-format-strings")} for the token syntax. Or a character
-vector of several formats to try: each is matched against every value in
-\code{x}, and whichever format parses the most values is used for the whole
-vector (ties keep the earliest-listed format); that format's unparsed
-values become \code{NA} (with a warning). If no format matches the \emph{shape} of
-even a single value in \code{x}, \code{time_parse()} aborts instead. The same
-template \code{\link[=format]{format()}} uses to produce text; \code{time_parse(format(x, fmt), fmt)} round-trips back to \code{x}.}
+\code{"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"} (see
+\code{vignette("time-format-strings")}), or several to try: whichever parses
+the most values of \code{x} is used for the whole vector (ties keep the
+earliest-listed format), and its unparsed values become \code{NA} (with a
+warning). Aborts if no format matches the shape of even one value.
+\code{time_parse(format(x, fmt), format = fmt)} round-trips back to \code{x}.
+\code{NULL} (the default) derives candidates from \code{chronon}/\code{cycle} via
+\code{\link[=chronon_parse_linear]{chronon_parse_linear()}}/\code{\link[=chronon_parse_cyclical]{chronon_parse_cyclical()}}; requires \code{chronon}.}
 
-\item{na}{Character vector of strings to treat as missing (\code{NA}),
-checked before matching \code{format}. \code{x} values that are already \code{NA} are
-always treated as missing. Unlike a value that fails to match \code{format},
-a missing value is not counted in the parsing-failure warning.}
+\item{regex}{If \code{FALSE} (the default), literal text surrounding tokens is
+matched exactly. If \code{TRUE}, it's instead used verbatim as a regular
+expression, e.g. \code{"[/-]"} to accept either \code{/} or \code{-} as a separator;
+\code{(...)} groups you write are treated as non-capturing, since capturing
+groups are reserved for the tokens. Ignored when \code{format} is derived
+from \code{chronon}, which carries its own regex mode.}
 
-\item{calendar}{Calendar used to resolve granule names in \code{format}.
-Defaults to \link{cal_gregorian}.}
+\item{na}{Strings to treat as missing (\code{NA}), checked before matching
+\code{format}. Not counted in the parsing-failure warning, unlike a value
+that fails to match \code{format}.}
+
+\item{calendar}{Calendar used to resolve granule names in \code{format}, and
+to disambiguate \code{chronon}'s \code{\link[=chronon_parse_linear]{chronon_parse_linear()}} candidates when
+\code{format} is \code{NULL}. \code{NULL} (the default) uses \code{time_calendar(cycle)} or
+\code{time_calendar(chronon)}, whichever is supplied, else \link{cal_gregorian}.}
 
 \item{locale}{Default locale for named (\code{label = TRUE}) tokens that don't
-specify their own, e.g. \code{cyc(month, year, label = TRUE)} without a
-per-token \code{locale = ...}. \code{NULL} defers to each token's own scheme.}
+specify their own. \code{NULL} defers to each token's own scheme.}
 
 \item{discrete}{Whether the result is discrete (integer chronon counts)
 or continuous (fractional). See \code{\link[=linear_time]{linear_time()}}.}
-
-\item{regex}{If \code{FALSE} (the default), the literal text surrounding
-\code{{lin(...)}}/\code{{cyc(...)}} tokens is matched exactly (regex
-metacharacters are escaped, and runs of spaces tolerate any amount of
-surrounding whitespace). If \code{TRUE}, that surrounding text is instead
-used verbatim as a regular expression, e.g. \code{"[/-]"} to accept either
-\code{/} or \code{-} as a separator, or \code{".*?"} to skip free text. Capturing groups
-are reserved for the \code{{lin(...)}}/\code{{cyc(...)}} tokens, so any \code{(...)}
-grouping you write is treated as non-capturing \verb{(?:...)} groups.}
 }
 \value{
 A \code{mixtime} time vector, the same length as \code{x}. Linear if
-\code{format} includes a \code{{lin(...)}} token, cyclical otherwise.
+\code{format} includes a \code{{lin(...)}} token (or \code{cycle} is \code{NULL}),
+cyclical otherwise.
 }
 \description{
 \code{time_parse()} is the inverse of \code{\link[=format]{format()}}: given text and the same
-\code{{lin(...)}}/\code{{cyc(...)}} template \code{format} uses, it reconstructs the
-time points that would have produced that text. The output chronon is
-whichever is finest among the tokens reached by \code{format}, exactly as for
-\code{\link[=time_compose]{time_compose()}}, which does the actual reconstruction once each token's
-text has been decoded.
+\code{{lin(...)}}/\code{{cyc(...)}} template \code{format} uses, it reconstructs the time
+points that would have produced that text, via \code{\link[=time_compose]{time_compose()}}.
 }
 \details{
-A \code{format} with a \code{{lin(...)}} token parses to linear time. A \code{format} of
-\code{{cyc(...)}} tokens only parses to cyclical time, e.g. \code{time_parse("Feb", "{cyc(month, year, label = TRUE)}")} recovers the same kind of value as
-\code{\link[=month_of_year]{month_of_year()}}. See \code{\link[=time_compose]{time_compose()}} for the chain rules.
+A \code{format} with a \code{{lin(...)}} token parses to linear time; one of only
+\code{{cyc(...)}} tokens parses to cyclical time, e.g. \code{time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")} recovers the same kind of
+value as \code{\link[=month_of_year]{month_of_year()}}.
 
-Two tokens do the extraction and decoding for each \code{{lin(...)}}/
-\code{{cyc(...)}} in \code{format}: \code{\link[=linear_labels_parse]{linear_labels_parse()}} and
-\code{\link[=cyclical_labels_parse]{cyclical_labels_parse()}}, the parsing counterparts of
-\code{\link[=linear_labels_format]{linear_labels_format()}}/\code{\link[=cyclical_labels_format]{cyclical_labels_format()}} a calendar author
-declares together via \code{\link[=label_scheme]{label_scheme()}}. A granule with no scheme falls
-back to plain numeric parsing.
+Granule-specific extraction and decoding labels for each token is done by
+\code{\link[=linear_labels_parse]{linear_labels_parse()}}/\code{\link[=cyclical_labels_parse]{cyclical_labels_parse()}}.
 }
 \examples{
-time_parse("2024-02-15", "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
+time_parse("2024-02-15", format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
 time_parse(
   "15 Feb 2024",
-  "{cyc(day, month)} {cyc(month, year, label = TRUE)} {lin(year)}"
+  format = "{cyc(day, month)} {cyc(month, year, label = TRUE)} {lin(year)}"
 )
 
 # One bad value becomes NA (with a warning) instead of aborting the batch
-time_parse(c("2024-02-15", "not a date"), "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
+time_parse(
+  c("2024-02-15", "not a date"),
+  format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
+)
 
 # No {lin(...)} token: parses to cyclical time
-time_parse("Feb", "{cyc(month, year, label = TRUE)}")
+time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")
 
 # Several formats: whichever parses the most values is used for the whole
 # vector; here none of the "Y-M-D" format's values match, so the "D/M/Y"
 # format (which matches both) is used instead
 time_parse(
   c("15/02/2024", "20/03/2024"),
-  c(
+  format = c(
     "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}",
     "{cyc(day, month)}/{cyc(month, year)}/{lin(year)}"
   )
 )
 
-# regex = TRUE: match "/" or "-" as the separator, and tolerate a
-# trailing comment after the date. The `( .*)?` group is automatically
-# treated as non-capturing, so it doesn't disturb the {lin(...)}/
-# {cyc(...)} token matches.
+# regex = TRUE: match "/" or "-" as the separator, 
+# and tolerate a trailing comment after the date.
 time_parse(
   c("2024-02-15", "2024/02/15 (approx)"),
-  "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
+  format = "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
   regex = TRUE
 )
+
+# Default format strings from the target chronon, and results with `tz`.
+time_parse("2024-02-15 09:00:00", chronon = cal_gregorian$second(1L, tz = "America/Los_Angeles"))
 
 }
 \seealso{
 \code{\link[=format]{format()}} for the inverse direction, \code{\link[=time_compose]{time_compose()}} for
 composing a time point from already-decoded components,
-\code{\link[=label_scheme]{label_scheme()}} for declaring how a granule's labels parse, and
-\code{vignette("time-format-strings")} for the format string syntax.
+\code{\link[=label_scheme]{label_scheme()}} for declaring how a granule's labels parse,
+\code{\link[=chronon_parse_linear]{chronon_parse_linear()}}/\code{\link[=chronon_parse_cyclical]{chronon_parse_cyclical()}} for the candidate
+formats derived from \code{chronon}/\code{cycle}, and \code{vignette("time-format-strings")}
+for the format string syntax.
 }

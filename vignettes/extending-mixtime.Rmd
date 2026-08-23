@@ -581,7 +581,7 @@ method(chronon_parse_linear, list(cal_symmetry454$month, S7::class_any)) <- func
 With this method in place, `time_parse()` can recover a Symmetry454 month from either the labelled or numeric form:
 
 ```{r}
-time_parse(c("1970-Jan", "1970-03"), chronon_parse_linear(cal_symmetry454$month(1L)))
+time_parse(c("1970-Jan", "1970-03"), format = chronon_parse_linear(cal_symmetry454$month(1L)))
 ```
 
 `parse_format()` also accepts a `regex` argument, which marks its candidates' surrounding (non-token) text as regular expression syntax rather than literal text to match exactly - useful for irregular formats, e.g. `"[/-]"` to accept either `/` or `-` as a separator. This is a niche need; most candidates leave it at the default. See the `regex` argument of `time_parse()` for details.

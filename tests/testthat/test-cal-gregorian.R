@@ -343,23 +343,23 @@ test_that("chronon_divmod day->year is correct for sub-day times on Dec 31", {
   # 14:24 instead of midnight.  All times on Dec 31 must return the correct year.
 
   # The old boundary: 14:24:00 on Dec 31 2007 would (wrongly) return 2008
-  expect_equal(format(year("2007-12-31 14:23:59")), "2007")
-  expect_equal(format(year("2007-12-31 14:24:00")), "2007")
-  expect_equal(format(year("2007-12-31 14:24:01")), "2007")
+  expect_equal(format(year(datetime("2007-12-31 14:23:59"))), "2007")
+  expect_equal(format(year(datetime("2007-12-31 14:24:00"))), "2007")
+  expect_equal(format(year(datetime("2007-12-31 14:24:01"))), "2007")
 
   # Full day of Dec 31 in a non-leap year
-  expect_equal(format(year("2007-12-31 00:00:00")), "2007")
-  expect_equal(format(year("2007-12-31 23:59:59")), "2007")
+  expect_equal(format(year(datetime("2007-12-31 00:00:00"))), "2007")
+  expect_equal(format(year(datetime("2007-12-31 23:59:59"))), "2007")
 
   # Full day of Dec 31 in a leap year
-  expect_equal(format(year("2008-12-31 14:23:59")), "2008")
-  expect_equal(format(year("2008-12-31 14:24:00")), "2008")
-  expect_equal(format(year("2008-12-31 14:24:01")), "2008")
-  expect_equal(format(year("2008-12-31 23:59:59")), "2008")
+  expect_equal(format(year(datetime("2008-12-31 14:23:59"))), "2008")
+  expect_equal(format(year(datetime("2008-12-31 14:24:00"))), "2008")
+  expect_equal(format(year(datetime("2008-12-31 14:24:01"))), "2008")
+  expect_equal(format(year(datetime("2008-12-31 23:59:59"))), "2008")
 
   # Midnight tick into the new year must return the new year
-  expect_equal(format(year("2008-01-01 00:00:00")), "2008")
-  expect_equal(format(year("2025-01-01 00:00:00")), "2025")
+  expect_equal(format(year(datetime("2008-01-01 00:00:00"))), "2008")
+  expect_equal(format(year(datetime("2025-01-01 00:00:00"))), "2025")
 
   # Vector: every hour of 2007-12-31 should be 2007
   hours <- seq(
@@ -374,17 +374,17 @@ test_that("chronon_divmod day->month is correct for sub-day times on Dec 31", {
   # Companion regression test for the day->month path, which shares the same
   # fractional-day bug.
 
-  expect_equal(format(yearmonth("2007-12-31 14:23:59")), "2007 Dec")
-  expect_equal(format(yearmonth("2007-12-31 14:24:00")), "2007 Dec")
-  expect_equal(format(yearmonth("2007-12-31 14:24:01")), "2007 Dec")
-  expect_equal(format(yearmonth("2007-12-31 23:59:59")), "2007 Dec")
+  expect_equal(format(yearmonth(datetime("2007-12-31 14:23:59"))), "2007 Dec")
+  expect_equal(format(yearmonth(datetime("2007-12-31 14:24:00"))), "2007 Dec")
+  expect_equal(format(yearmonth(datetime("2007-12-31 14:24:01"))), "2007 Dec")
+  expect_equal(format(yearmonth(datetime("2007-12-31 23:59:59"))), "2007 Dec")
 
   # Same checks for a leap-year December
-  expect_equal(format(yearmonth("2008-12-31 14:24:00")), "2008 Dec")
-  expect_equal(format(yearmonth("2008-12-31 23:59:59")), "2008 Dec")
+  expect_equal(format(yearmonth(datetime("2008-12-31 14:24:00"))), "2008 Dec")
+  expect_equal(format(yearmonth(datetime("2008-12-31 23:59:59"))), "2008 Dec")
 
   # Midnight tick into January
-  expect_equal(format(yearmonth("2008-01-01 00:00:00")), "2008 Jan")
+  expect_equal(format(yearmonth(datetime("2008-01-01 00:00:00"))), "2008 Jan")
 
   # Vector: every hour of 2007-12-31 should be 2007 Dec
   hours <- seq(

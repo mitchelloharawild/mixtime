@@ -158,14 +158,14 @@ linear_time <- function(
 #' 
 #' @section Calendar flexibility:
 #' These functions adapt to the calendar system of the input data. For example:
-#' 
-#' - `year("2025-12-29")` returns a Gregorian year
-#' - `year(yearweek("2025-12-29"))` returns an ISO week-based year
-#' 
+#'
+#' - `year(date("2025-12-29"))` returns a Gregorian year
+#' - `year(yearweek(date("2025-12-29")))` returns an ISO week-based year
+#'
 #' You can also explicitly specify a calendar using the `calendar` argument:
-#' 
+#'
 #' \preformatted{
-#' year(yearweek("2025-12-29"), calendar = cal_isoweek)
+#' year(date("2025-12-29"), calendar = cal_isoweek)
 #' }
 #' 
 #' @section Custom linear time representations:

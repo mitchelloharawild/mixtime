@@ -110,18 +110,6 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
     cycle <- granule_inherit_props(cycle, chronon)
   }
 
-  # Parse text data
-  if (is.character(data)) {
-    # TODO - Use chronon specific parsers (#20)
-    tz <- tz_name(chronon)
-    data <- as.POSIXct(data, tz = if(is.na(tz)) "UTC" else tz)
-  }
-  
-  # Apply origin offset for numeric data
-  if (!is_mixtime(data) && is.numeric(data) && (epoch <- chronon_epoch(chronon)) != 0L) {
-    data <- data - epoch
-  }
-
   # Validate time granules
   if (!inherits(chronon, "mixtime::mt_unit")) {
     cli::cli_abort("{.var chronon} must be a time granule object.", call. = FALSE)
@@ -130,13 +118,23 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
     cli::cli_abort("{.var cycle} must be a time granule object.", call. = FALSE)
   }
 
-  # Cast from Date, POSIXct, etc.
-  if (!is.numeric(data) || !is.null(attributes(data))) {
-    data <- chronon_convert(
-      data,
-      chronon,
-      discrete = discrete
-    )
+  # Parse text data
+  if (is.character(data)) {
+    return(time_parse(data, chronon = chronon, cycle = cycle, discrete = discrete))
+  } else {
+    # Apply origin offset for numeric data
+    if (!is_mixtime(data) && is.numeric(data) && (epoch <- chronon_epoch(chronon)) != 0L) {
+      data <- data - epoch
+    }
+
+    # Cast from Date, POSIXct, etc.
+    if (!is.numeric(data) || !is.null(attributes(data))) {
+      data <- chronon_convert(
+        data,
+        chronon,
+        discrete = discrete
+      )
+    }
   }
 
   new_mixtime(

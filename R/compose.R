@@ -289,26 +289,6 @@ compose_chain <- function(comps) {
   list(chain = chain, cycle = root_cycle)
 }
 
-# A minimal, unformatted condition compose_recompose() throws instead of
-# cli::cli_abort() when `quiet = TRUE`. Built once and reused (its message
-# is never inspected by anyone that opts into `quiet`) rather than
-# constructed per call. `time_parse()`'s per-row retry loop
-# (time_parse_attempt(), R/parse.R) is the only place that opts in: it
-# always discards the abort's text (failures are reported later, in bulk, by
-# time_parse_warn_failures()), but composes one row at a time to isolate
-# genuine failures, so it pays whatever this costs once per invalid row.
-# cli_abort()'s glue/cli formatting cost (~8-20ms/call, see _dev/parse.md)
-# is fine as a one-off but not there; stop()+tryCatch on a bare condition
-# costs ~20µs. (The remaining per-call cost after this swap is
-# chronon_divmod()/chronon_cardinality() S7 dispatch, not the condition --
-# see "Base per-row regex/compose cost" in _dev/parse.md, unaddressed.)
-# Signalled with stop(), same as cli_abort(), so existing
-# tryCatch(error = ...) callers keep working unchanged.
-compose_invalid_condition <- structure(
-  class = c("mixtime_compose_invalid", "error", "condition"),
-  list(message = "invalid time component", call = NULL)
-)
-
 # Walk the validated chain coarse -> fine, reconstructing the absolute count
 # at each link from the base of its coarser period (chronon_divmod()'s
 # coarse -> fine `div`, which is always an exact base with no remainder) plus
@@ -319,11 +299,8 @@ compose_invalid_condition <- structure(
 # cyc() component (see compose_chain()). `cycle` then tags the result
 # mt_cyclical instead of mt_linear via mixtime().
 #
-# `quiet = TRUE` swaps the cardinality-invalid abort below for the cheap
-# compose_invalid_condition() instead of cli::cli_abort() -- see that
-# object's comment. Only time_parse() opts in; time_compose() (the
-# user-facing, one-off caller) keeps today's styled, informative abort.
-compose_recompose <- function(chain, discrete, cycle = NULL, quiet = FALSE) {
+# `strict = FALSE` produces NA for invalid rows rather than aborting
+compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
   anchor <- chain[[1L]]
   running_chronon <- anchor$chronon
   running_count <- anchor$value
@@ -364,8 +341,18 @@ compose_recompose <- function(chain, discrete, cycle = NULL, quiet = FALSE) {
     )
     bad <- offset_i[keep] < 0 | offset_i[keep] >= cardinality
     if (any(bad, na.rm = TRUE)) {
-      if (quiet) {
-        stop(compose_invalid_condition)
+      if (!strict) {
+        # Drop the invalid rows out of the chain quietly as NA
+        bad[is.na(bad)] <- TRUE
+        idx <- which(keep)
+
+        new_count <- running_count
+        new_count[idx[!bad]] <- base_i[!bad] + offset_i[keep][!bad]
+        new_count[idx[bad]] <- NA_real_
+        running_count <- new_count
+        keep[idx[bad]] <- FALSE
+        running_chronon <- chronon_i
+        next
       }
       bad_i <- which(bad)[1L]
       cli::cli_abort(

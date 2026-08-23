@@ -1,109 +1,140 @@
 #' Parse text into a time point
 #'
 #' `time_parse()` is the inverse of [format()]: given text and the same
-#' `{lin(...)}`/`{cyc(...)}` template `format` uses, it reconstructs the
-#' time points that would have produced that text. The output chronon is
-#' whichever is finest among the tokens reached by `format`, exactly as for
-#' [time_compose()], which does the actual reconstruction once each token's
-#' text has been decoded.
+#' `{lin(...)}`/`{cyc(...)}` template `format` uses, it reconstructs the time
+#' points that would have produced that text, via [time_compose()].
 #'
-#' A `format` with a `{lin(...)}` token parses to linear time. A `format` of
-#' `{cyc(...)}` tokens only parses to cyclical time, e.g. `time_parse("Feb",
-#' "{cyc(month, year, label = TRUE)}")` recovers the same kind of value as
-#' [month_of_year()]. See [time_compose()] for the chain rules.
+#' A `format` with a `{lin(...)}` token parses to linear time; one of only
+#' `{cyc(...)}` tokens parses to cyclical time, e.g. `time_parse("Feb",
+#' format = "{cyc(month, year, label = TRUE)}")` recovers the same kind of
+#' value as [month_of_year()].
 #'
-#' Two tokens do the extraction and decoding for each `{lin(...)}`/
-#' `{cyc(...)}` in `format`: [linear_labels_parse()] and
-#' [cyclical_labels_parse()], the parsing counterparts of
-#' [linear_labels_format()]/[cyclical_labels_format()] a calendar author
-#' declares together via [label_scheme()]. A granule with no scheme falls
-#' back to plain numeric parsing.
+#' Granule-specific extraction and decoding labels for each token is done by
+#' [linear_labels_parse()]/[cyclical_labels_parse()].
 #'
 #' @param x A character vector to parse.
+#' @param chronon Target time granule for the result, and (with `cycle`) the
+#'   source of `format` candidates when `format` is `NULL`. Its attributes
+#'   (e.g. `tz`) fill in whatever `format` leaves unset, and the result is
+#'   converted onto it if `format` reaches a different chronon.
+#' @param cycle Target cycle granule, pairing with `chronon` for a cyclical
+#'   result. Requires `chronon`.
 #' @param format A glue-style format string of [lin()]/[cyc()] tokens, e.g.
-#'   `"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"`; see
-#'   `vignette("time-format-strings")` for the token syntax. Or a character
-#'   vector of several formats to try: each is matched against every value in
-#'   `x`, and whichever format parses the most values is used for the whole
-#'   vector (ties keep the earliest-listed format); that format's unparsed
-#'   values become `NA` (with a warning). If no format matches the *shape* of
-#'   even a single value in `x`, `time_parse()` aborts instead. The same
-#'   template [format()] uses to produce text; `time_parse(format(x, fmt),
-#'   fmt)` round-trips back to `x`.
-#' @param na Character vector of strings to treat as missing (`NA`),
-#'   checked before matching `format`. `x` values that are already `NA` are
-#'   always treated as missing. Unlike a value that fails to match `format`,
-#'   a missing value is not counted in the parsing-failure warning.
-#' @param calendar Calendar used to resolve granule names in `format`.
-#'   Defaults to [cal_gregorian].
+#'   `"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"` (see
+#'   `vignette("time-format-strings")`), or several to try: whichever parses
+#'   the most values of `x` is used for the whole vector (ties keep the
+#'   earliest-listed format), and its unparsed values become `NA` (with a
+#'   warning). Aborts if no format matches the shape of even one value.
+#'   `time_parse(format(x, fmt), format = fmt)` round-trips back to `x`.
+#'   `NULL` (the default) derives candidates from `chronon`/`cycle` via
+#'   [chronon_parse_linear()]/[chronon_parse_cyclical()]; requires `chronon`.
+#' @param regex If `FALSE` (the default), literal text surrounding tokens is
+#'   matched exactly. If `TRUE`, it's instead used verbatim as a regular
+#'   expression, e.g. `"[/-]"` to accept either `/` or `-` as a separator;
+#'   `(...)` groups you write are treated as non-capturing, since capturing
+#'   groups are reserved for the tokens. Ignored when `format` is derived
+#'   from `chronon`, which carries its own regex mode.
+#' @param na Strings to treat as missing (`NA`), checked before matching
+#'   `format`. Not counted in the parsing-failure warning, unlike a value
+#'   that fails to match `format`.
+#' @param calendar Calendar used to resolve granule names in `format`, and
+#'   to disambiguate `chronon`'s [chronon_parse_linear()] candidates when
+#'   `format` is `NULL`. `NULL` (the default) uses `time_calendar(cycle)` or
+#'   `time_calendar(chronon)`, whichever is supplied, else [cal_gregorian].
 #' @param locale Default locale for named (`label = TRUE`) tokens that don't
-#'   specify their own, e.g. `cyc(month, year, label = TRUE)` without a
-#'   per-token `locale = ...`. `NULL` defers to each token's own scheme.
+#'   specify their own. `NULL` defers to each token's own scheme.
 #' @param discrete Whether the result is discrete (integer chronon counts)
 #'   or continuous (fractional). See [linear_time()].
-#' @param regex If `FALSE` (the default), the literal text surrounding
-#'   `{lin(...)}`/`{cyc(...)}` tokens is matched exactly (regex
-#'   metacharacters are escaped, and runs of spaces tolerate any amount of
-#'   surrounding whitespace). If `TRUE`, that surrounding text is instead
-#'   used verbatim as a regular expression, e.g. `"[/-]"` to accept either
-#'   `/` or `-` as a separator, or `".*?"` to skip free text. Capturing groups
-#'    are reserved for the `{lin(...)}`/`{cyc(...)}` tokens, so any `(...)`
-#'    grouping you write is treated as non-capturing `(?:...)` groups.
 #'
 #' @return A `mixtime` time vector, the same length as `x`. Linear if
-#'   `format` includes a `{lin(...)}` token, cyclical otherwise.
+#'   `format` includes a `{lin(...)}` token (or `cycle` is `NULL`),
+#'   cyclical otherwise.
 #'
 #' @seealso [format()] for the inverse direction, [time_compose()] for
 #'   composing a time point from already-decoded components,
-#'   [label_scheme()] for declaring how a granule's labels parse, and
-#'   `vignette("time-format-strings")` for the format string syntax.
+#'   [label_scheme()] for declaring how a granule's labels parse,
+#'   [chronon_parse_linear()]/[chronon_parse_cyclical()] for the candidate
+#'   formats derived from `chronon`/`cycle`, and `vignette("time-format-strings")`
+#'   for the format string syntax.
 #'
 #' @examples
-#' time_parse("2024-02-15", "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
+#' time_parse("2024-02-15", format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
 #' time_parse(
 #'   "15 Feb 2024",
-#'   "{cyc(day, month)} {cyc(month, year, label = TRUE)} {lin(year)}"
+#'   format = "{cyc(day, month)} {cyc(month, year, label = TRUE)} {lin(year)}"
 #' )
 #'
 #' # One bad value becomes NA (with a warning) instead of aborting the batch
-#' time_parse(c("2024-02-15", "not a date"), "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
+#' time_parse(
+#'   c("2024-02-15", "not a date"),
+#'   format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
+#' )
 #'
 #' # No {lin(...)} token: parses to cyclical time
-#' time_parse("Feb", "{cyc(month, year, label = TRUE)}")
+#' time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")
 #'
 #' # Several formats: whichever parses the most values is used for the whole
 #' # vector; here none of the "Y-M-D" format's values match, so the "D/M/Y"
 #' # format (which matches both) is used instead
 #' time_parse(
 #'   c("15/02/2024", "20/03/2024"),
-#'   c(
+#'   format = c(
 #'     "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}",
 #'     "{cyc(day, month)}/{cyc(month, year)}/{lin(year)}"
 #'   )
 #' )
 #'
-#' # regex = TRUE: match "/" or "-" as the separator, and tolerate a
-#' # trailing comment after the date. The `( .*)?` group is automatically
-#' # treated as non-capturing, so it doesn't disturb the {lin(...)}/
-#' # {cyc(...)} token matches.
+#' # regex = TRUE: match "/" or "-" as the separator, 
+#' # and tolerate a trailing comment after the date.
 #' time_parse(
 #'   c("2024-02-15", "2024/02/15 (approx)"),
-#'   "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
+#'   format = "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
 #'   regex = TRUE
 #' )
+#'
+#' # Default format strings from the target chronon, and results with `tz`.
+#' time_parse("2024-02-15 09:00:00", chronon = cal_gregorian$second(1L, tz = "America/Los_Angeles"))
 #'
 #' @export
 time_parse <- function(
   x,
-  format,
+  chronon = NULL,
+  cycle = NULL,
+  format = NULL,
+  regex = FALSE,
   na = c("", "NA"),
-  calendar = cal_gregorian,
+  calendar = NULL,
   locale = NULL,
-  discrete = TRUE,
-  regex = FALSE
+  discrete = TRUE
 ) {
   x <- as.character(x)
   n <- length(x)
+
+  if (!is.null(cycle) && is.null(chronon)) {
+    cli::cli_abort("{.arg cycle} requires {.arg chronon} to also be supplied.", call = NULL)
+  }
+
+  if (is.null(calendar)) {
+    calendar <- if (!is.null(cycle)) {
+      time_calendar(cycle)
+    } else if (!is.null(chronon)) {
+      time_calendar(chronon)
+    } else {
+      cal_gregorian
+    }
+  }
+
+  if (is.null(format)) {
+    if (is.null(chronon)) {
+      cli::cli_abort("Either {.arg chronon} or {.arg format} must be supplied.", call = NULL)
+    }
+    format <- if (is.null(cycle)) {
+      chronon_parse_linear(chronon, calendar)
+    } else {
+      chronon_parse_cyclical(chronon, cycle)
+    }
+    regex <- attr(format, "regex") %||% FALSE
+  }
   format <- as.character(format)
   if (length(format) == 0L) {
     cli::cli_abort("{.arg format} must have length 1 or more.", call = NULL)
@@ -119,11 +150,15 @@ time_parse <- function(
   m <- length(x_try)
 
   if (n == 0L) {
-    return(time_parse_na(compiled_list[[1L]]$chain, compiled_list[[1L]]$cycle, discrete, 1L)[0L])
+    result <- time_parse_na(compiled_list[[1L]]$chain, compiled_list[[1L]]$cycle, discrete, 1L)
+    if (!is.null(chronon)) result <- time_parse_recast(result, chronon, cycle, discrete)
+    return(result[0L])
   }
   if (m == 0L) {
     # Every value is missing: no data to choose a format by.
-    return(time_parse_na(compiled_list[[1L]]$chain, compiled_list[[1L]]$cycle, discrete, 1L)[rep(1L, n)])
+    result <- time_parse_na(compiled_list[[1L]]$chain, compiled_list[[1L]]$cycle, discrete, 1L)
+    if (!is.null(chronon)) result <- time_parse_recast(result, chronon, cycle, discrete)
+    return(result[rep(1L, n)])
   }
 
   # Keep whichever format parses the most values; ties keep the earliest.
@@ -143,7 +178,10 @@ time_parse <- function(
     matches <- time_parse_matches(compiled, x_try)
     match_count <- sum(matches$matched)
     # Match count upper-bounds parse count, so this can't beat the best yet.
-    if (match_count == 0L || (!is.null(best) && match_count <= best$ok_count)) {
+    if (match_count == 0L ||
+        (!is.null(best) &&
+         (match_count < best$ok_count ||
+          (match_count == best$ok_count && f > best$format)))) {
       next
     }
 
@@ -191,7 +229,8 @@ time_parse <- function(
   perm[idx_good] <- seq_along(idx_good)
   perm[idx_bad] <- length(idx_good) + seq_along(idx_bad)
 
-  combined[perm]
+  result <- combined[perm]
+  if (is.null(chronon)) result else time_parse_recast(result, chronon, cycle, discrete)
 }
 
 # Regex-match `x_try` against a compiled format, without decoding/composing.
@@ -206,15 +245,11 @@ time_parse_attempt <- function(compiled, x_try, matches, discrete) {
   m <- length(x_try)
   row_matched <- matches$matched
   groups <- matches$groups
-  text_cols <- lapply(seq_along(compiled$specs), function(k) {
-    vapply(
-      seq_len(m),
-      function(i) if (row_matched[[i]]) groups[[i]][[k + 1L]] else NA_character_,
-      character(1L)
-    )
-  })
+  n_specs <- length(compiled$specs)
 
-  ok <- row_matched
+  groups[!row_matched] <- list(rep(NA_character_, n_specs + 1L))
+  mat <- matrix(unlist(groups, use.names = FALSE), nrow = n_specs + 1L)
+  text_cols <- lapply(seq_len(n_specs), function(k) mat[k + 1L, ])
 
   res <- tryCatch(
     list(value = time_parse_compose(compiled$specs, text_cols, compiled$chain_order, compiled$cycle, discrete)),
@@ -222,9 +257,11 @@ time_parse_attempt <- function(compiled, x_try, matches, discrete) {
   )
 
   if (is.null(res$error)) {
-    value <- res$value[row_matched]
+    ok <- row_matched & !is.na(res$value)
+    value <- res$value[ok]
   } else {
     # One bad row aborts the vectorized attempt; retry row by row to find it.
+    ok <- row_matched
     row_values <- vector("list", m)
     n_ok <- 0L
     for (i in which(row_matched)) {
@@ -232,7 +269,7 @@ time_parse_attempt <- function(compiled, x_try, matches, discrete) {
         list(value = time_parse_compose(compiled$specs, lapply(text_cols, `[`, i), compiled$chain_order, compiled$cycle, discrete)),
         error = function(e) list(error = e)
       )
-      if (is.null(row_res$error)) {
+      if (is.null(row_res$error) && !is.na(row_res$value)) {
         n_ok <- n_ok + 1L
         row_values[[n_ok]] <- row_res$value
       } else {
@@ -362,7 +399,7 @@ time_parse_compose <- function(specs, text_cols, chain_order, cycle, discrete) {
       list(chronon = spec$chronon, cycle = spec$cycle, value = function(at) spec$decode(text, at))
     }
   })
-  compose_recompose(comps, discrete = discrete, cycle = cycle, quiet = TRUE)
+  compose_recompose(comps, discrete = discrete, cycle = cycle, strict = FALSE)
 }
 
 # An all-`NA` result at the chain's finest chronon, built via compose_recompose().
@@ -373,6 +410,39 @@ time_parse_na <- function(shape_chain, cycle, discrete, k) {
     chain[[j]]$value <- function(at) rep(NA_real_, length(at))
   }
   compose_recompose(chain, discrete = discrete, cycle = cycle)
+}
+
+# Cast a time_parse() result onto the caller-requested chronon/cycle, filling
+# in whichever of its properties (tz, lat/lon, ...) were left unset
+time_parse_recast <- function(x, chronon, cycle, discrete) {
+  inner <- x@x[[1L]]
+  from <- attr(inner, "chronon")
+  chronon <- granule_inherit_props(chronon, from)
+  if (!is.null(cycle)) cycle <- granule_inherit_props(cycle, chronon)
+
+  data <- vctrs::vec_data(vecvec::unvecvec(x))
+
+  # A tz-naive parse has no absolute instant to convert from - reinterpret it
+  # as local wall-clock time in the target tz before any granule conversion.
+  if (
+    S7::S7_inherits(from, mt_tz_unit) && S7::S7_inherits(chronon, mt_tz_unit) &&
+      is.na(tz_name(from)) && !is.na(tz_name(chronon))
+  ) {
+    from <- granule_inherit_props(from, mt_tz_unit(tz = tz_name(chronon)))
+    if (tz_name(from) != "UTC") data <- tz_to_utc(data, from, tz_name(from), discrete = discrete)
+  }
+
+  if (!identical(chronon, from)) {
+    data <- chronon_convert_impl(data, from, chronon, discrete)
+  }
+
+  new_mixtime(
+    if (is.null(cycle)) {
+      mt_linear(data, chronon = chronon)
+    } else {
+      mt_cyclical(data, chronon = chronon, cycle = cycle)
+    }
+  )
 }
 
 time_parse_warn_failures <- function(bad, show = 5L) {

@@ -119,7 +119,7 @@ tz_to_local <- function(x, chronon, tz) {
 # function, regenerated `src/cpp11.cpp`/`R/cpp11.R` bindings, recompile).
 # Left as pure R for now since the 2x cost is negligible at realistic
 # `seq()`/`time_round()` sizes.
-tz_to_utc <- function(x, chronon, tz, discrete = FALSE) {
+tz_to_utc <- function(x, chronon, tz, discrete = FALSE, boundary = TRUE) {
   tzo <- tz_offset_impl(
     x - tz_offset_impl(x, chronon, tz = tz),
     chronon,
@@ -127,11 +127,25 @@ tz_to_utc <- function(x, chronon, tz, discrete = FALSE) {
   )
 
   if (discrete) {
-    # floor(x) - trunc(tzo) keeps the whole-unit correction separate from the
-    # local-bucket alignment, so a fractional offset can't borrow across a
-    # unit boundary and land the result a whole unit off.
-    nudge <- 8 * .Machine$double.eps * pmax(abs(x), 1)
-    as.integer(floor(x + nudge) - trunc(tzo))
+    if (boundary) {
+      # A boundary conversion (`chronon_convert_impl()`'s multi-hop path) has
+      # already resolved which `chronon` bucket the local-shifted value falls
+      # into via a real divmod - the offset is spent, so only a leftover
+      # *whole*-unit remainder (never seen with real-world offsets, but kept
+      # for safety) still needs correcting; floor(x) - trunc(tzo) keeps that
+      # correction separate from the local-bucket alignment so a fractional
+      # offset can't borrow across a unit boundary and land a whole unit off.
+      nudge <- 8 * .Machine$double.eps * pmax(abs(x), 1)
+      as.integer(floor(x + nudge) - trunc(tzo))
+    } else {
+      # No divmod happened between the matching tz_to_local() shift and this
+      # call (e.g. a same-chronon or pure-ratio conversion), so the offset is
+      # still fully outstanding in `x` and must be subtracted whole, before
+      # flooring - not floored away first and only partly corrected after.
+      shifted <- x - tzo
+      nudge <- 8 * .Machine$double.eps * pmax(abs(shifted), 1)
+      as.integer(floor(shifted + nudge))
+    }
   } else {
     x - tzo
   }

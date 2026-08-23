@@ -58,7 +58,7 @@ test_that("columns follow the ... order and support automatic naming", {
 })
 
 test_that("special values (NA) propagate to all components", {
-  t <- yearmonth(c("2026-02-14", NA, "2027-03-01"))
+  t <- yearmonth(date(c("2026-02-14", NA, "2027-03-01")))
 
   res <- time_components(t, yr = lin(year), m = cyc(month, year))
 
@@ -81,7 +81,7 @@ test_that("Inf inputs give infinite linear and NA cyclical components", {
 })
 
 test_that("mixed-granularity mixtimes decompose each part correctly", {
-  mx <- c(yearmonth("2026-02-14"), yearquarter("2026-08-01"))
+  mx <- c(yearmonth(date("2026-02-14")), yearquarter(date("2026-08-01")))
 
   res <- time_components(mx, yr = lin(year), q = cyc(quarter, year))
 
@@ -132,7 +132,7 @@ test_that("components are extracted at multi-unit granule sizes", {
 })
 
 test_that("time_components() errors informatively on misuse", {
-  t <- yearmonth("2026-02-14")
+  t <- yearmonth(date("2026-02-14"))
 
   expect_error(time_components(t), "at least one component")
   expect_error(

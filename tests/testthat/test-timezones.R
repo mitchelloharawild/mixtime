@@ -202,8 +202,11 @@ test_that("combining a zoned time with a naive one is consistently wall-clock", 
   # (UTC) absolute instant while leaving the naive element untouched, landing
   # both in the same combined chronon (naive, since they disagree) but on two
   # different numeric bases.
-  zoned <- linear_time("2024-04-07 02:00:00", hour(1L, tz = "Australia/Melbourne"))
-  naive <- linear_time("2024-04-07 02:00:00", hour(1L))
+  zoned <- linear_time(
+    datetime("2024-04-07 02:00:00", tz = "Australia/Melbourne"),
+    hour(1L, tz = "Australia/Melbourne")
+  )
+  naive <- linear_time(datetime("2024-04-07 02:00:00"), hour(1L))
 
   combined <- c(zoned, naive)
 
@@ -368,7 +371,10 @@ test_that("comparing a zoned time against a naive one uses wall-clock time", {
   # should instead be compared at face value, as `datetime(x, tz = NA)`
   # already does for a single value (wall-clock time is preserved, not the
   # absolute instant).
-  zoned <- linear_time("2015-02-01 10:00:00", hour(1L, tz = "Australia/Melbourne"))
+  zoned <- linear_time(
+    datetime("2015-02-01 10:00:00", tz = "Australia/Melbourne"),
+    hour(1L, tz = "Australia/Melbourne")
+  )
   naive <- datetime("2015-02-01 00:00:00")
 
   expect_true(zoned > naive)
