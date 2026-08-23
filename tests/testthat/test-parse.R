@@ -662,3 +662,47 @@ test_that("chronon_parse_linear() for solar time-of-day chronons also accepts a 
     12 * 3600
   )
 })
+
+# time_parse_impl() is the implementation behind time_parse(), returning a
+# simple time vector (mt_linear/mt_cyclical) rather than a mixtime(); it
+# exists so callers like vec_cast() (see mt_cast_from_character() in
+# vctrs.R) can parse without paying for a mixtime() round-trip.
+test_that("time_parse_impl() returns a simple time vector, and time_parse() is a mixtime() wrapper around it", {
+  fmt <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
+
+  r <- time_parse_impl(c("2024-02-15", "2020-01-01"), format = fmt)
+  expect_true(S7::S7_inherits(r, mt_linear))
+  expect_false(is_mixtime(r))
+
+  wrapped <- time_parse(c("2024-02-15", "2020-01-01"), format = fmt)
+  expect_true(is_mixtime(wrapped))
+  expect_equal(wrapped, new_mixtime(r))
+  expect_equal(format(wrapped), format(r))
+})
+
+test_that("time_parse_impl() returns a simple cyclical vector for a cyc()-only format", {
+  r <- time_parse_impl("Feb", format = "{cyc(month, year, label = TRUE)}")
+  expect_true(S7::S7_inherits(r, mt_cyclical))
+  expect_false(is_mixtime(r))
+})
+
+test_that("time_parse_impl() recasts onto a simple vector when chronon is supplied", {
+  fmt <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
+  r <- time_parse_impl("2024-02-15", format = fmt, chronon = cal_gregorian$month(1L))
+  expect_true(S7::S7_inherits(r, mt_linear))
+  expect_false(is_mixtime(r))
+  expect_equal(format(r), "2024 Feb")
+})
+
+test_that("time_parse_impl() edge cases (empty/all-missing input) also stay unwrapped", {
+  fmt <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
+
+  r0 <- time_parse_impl(character(0), format = fmt)
+  expect_false(is_mixtime(r0))
+  expect_equal(length(r0), 0L)
+
+  rna <- time_parse_impl(NA_character_, format = fmt)
+  expect_false(is_mixtime(rna))
+  expect_equal(length(rna), 1L)
+  expect_true(is.na(rna))
+})

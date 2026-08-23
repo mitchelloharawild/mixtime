@@ -96,6 +96,18 @@ mt_cast_from_numeric <- function(x, to, ...) {
   x
 }
 
+mt_cast_from_character <- function(x, to, ...) {
+  cycle <- if (S7_inherits(to, mt_cyclical)) attr(to, "cycle") else NULL
+  data <- vec_data(time_parse_impl(
+    x,
+    chronon = attr(to, "chronon"),
+    cycle = cycle,
+    discrete = is.integer(vec_data(to))
+  ))
+  attributes(data) <- attributes(to)
+  data
+}
+
 # A cyclical `cycle` is a *modulus*, not a unit of measure: it names the
 # equivalence relation the stored (absolute) chronon count is reduced by at
 # format and comparison time. Unlike a chronon - where the finest common granule
@@ -195,6 +207,9 @@ register_mt_vctrs <- function() {
   # A linear time vector can be cast to Date / POSIXct.
   register_s3_method("vctrs", "vec_cast.Date", "mixtime::mt_linear", mt_cast_to_Date)
   register_s3_method("vctrs", "vec_cast.POSIXct", "mixtime::mt_linear", mt_cast_to_POSIXct)
+
+  register_s3_method("vctrs", "vec_cast", "mixtime::mt_linear.character", mt_cast_from_character)
+  register_s3_method("vctrs", "vec_cast", "mixtime::mt_cyclical.character", mt_cast_from_character)
 
   # Durations combine with bare numbers.
   dur <- "mixtime::mt_duration"

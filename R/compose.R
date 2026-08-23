@@ -85,7 +85,7 @@ time_compose <- function(..., discrete = TRUE, calendar = cal_gregorian) {
   })
 
   chain <- compose_chain(comps)
-  compose_recompose(chain$chain, discrete = discrete, cycle = chain$cycle)
+  new_mixtime(compose_recompose(chain$chain, discrete = discrete, cycle = chain$cycle))
 }
 
 # Turn one `...` element into a normalized component: a plain
@@ -297,7 +297,7 @@ compose_chain <- function(comps) {
 # `chain[[1L]]` seeds `running_count`/`running_chronon` directly, whether it
 # is a lin() anchor (`cycle` NULL) or, for cyclical time, the chain's root
 # cyc() component (see compose_chain()). `cycle` then tags the result
-# mt_cyclical instead of mt_linear via mixtime().
+# mt_cyclical instead of mt_linear.
 #
 # `strict = FALSE` produces NA for invalid rows rather than aborting
 compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
@@ -379,10 +379,9 @@ compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
       running_count <- as.integer(running_count)
     }
   }
-  mixtime(
-    running_count + chronon_epoch(running_chronon),
-    chronon = running_chronon,
-    cycle = cycle,
-    discrete = discrete
-  )
+  if (is.null(cycle)) {
+    mt_linear(running_count, chronon = running_chronon)
+  } else {
+    mt_cyclical(running_count, chronon = running_chronon, cycle = cycle)
+  }
 }

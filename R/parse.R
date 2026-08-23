@@ -107,6 +107,36 @@ time_parse <- function(
   locale = NULL,
   discrete = TRUE
 ) {
+  new_mixtime(time_parse_impl(
+    x,
+    chronon = chronon,
+    cycle = cycle,
+    format = format,
+    regex = regex,
+    na = na,
+    calendar = calendar,
+    locale = locale,
+    discrete = discrete,
+    env = rlang::caller_env()
+  ))
+}
+
+# The implementation of time_parse(), returning a simple time vector
+# (mt_linear/mt_cyclical) rather than a mixtime() - e.g. for vec_cast()
+# methods (see mt_cast_from_character() in vctrs.R) that need the parsed
+# result unwrapped rather than paying for a mixtime() round-trip.
+time_parse_impl <- function(
+  x,
+  chronon = NULL,
+  cycle = NULL,
+  format = NULL,
+  regex = FALSE,
+  na = c("", "NA"),
+  calendar = NULL,
+  locale = NULL,
+  discrete = TRUE,
+  env = rlang::caller_env()
+) {
   x <- as.character(x)
   n <- length(x)
 
@@ -140,7 +170,6 @@ time_parse <- function(
     cli::cli_abort("{.arg format} must have length 1 or more.", call = NULL)
   }
 
-  env <- rlang::caller_env()
   # Validate each format's shape and resolve its chain order once, up front.
   compiled_list <- lapply(format, time_parse_compile, calendar = calendar, locale = locale, env = env, regex = regex)
 
@@ -412,15 +441,15 @@ time_parse_na <- function(shape_chain, cycle, discrete, k) {
   compose_recompose(chain, discrete = discrete, cycle = cycle)
 }
 
-# Cast a time_parse() result onto the caller-requested chronon/cycle, filling
-# in whichever of its properties (tz, lat/lon, ...) were left unset
+# Cast a time_parse_impl() result (a simple mt_linear/mt_cyclical vector) onto
+# the caller-requested chronon/cycle, filling in whichever of its properties
+# (tz, lat/lon, ...) were left unset.
 time_parse_recast <- function(x, chronon, cycle, discrete) {
-  inner <- x@x[[1L]]
-  from <- attr(inner, "chronon")
+  from <- attr(x, "chronon")
   chronon <- granule_inherit_props(chronon, from)
   if (!is.null(cycle)) cycle <- granule_inherit_props(cycle, chronon)
 
-  data <- vctrs::vec_data(vecvec::unvecvec(x))
+  data <- vctrs::vec_data(x)
 
   # A tz-naive parse has no absolute instant to convert from - reinterpret it
   # as local wall-clock time in the target tz before any granule conversion.
@@ -436,13 +465,11 @@ time_parse_recast <- function(x, chronon, cycle, discrete) {
     data <- chronon_convert_impl(data, from, chronon, discrete)
   }
 
-  new_mixtime(
-    if (is.null(cycle)) {
-      mt_linear(data, chronon = chronon)
-    } else {
-      mt_cyclical(data, chronon = chronon, cycle = cycle)
-    }
-  )
+  if (is.null(cycle)) {
+    mt_linear(data, chronon = chronon)
+  } else {
+    mt_cyclical(data, chronon = chronon, cycle = cycle)
+  }
 }
 
 time_parse_warn_failures <- function(bad, show = 5L) {
