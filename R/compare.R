@@ -28,13 +28,14 @@
 #' @return A logical vector.
 #'
 #' @usage
-#' e1 == e2
-#' e1 != e2
-#' e1 < e2
-#' e1 <= e2
-#' e1 > e2
-#' e1 >= e2
+#' \S4method{==}{mt_linear}(e1, e2)
+#' \S4method{!=}{mt_linear}(e1, e2)
+#' \S4method{<}{mt_linear}(e1, e2)
+#' \S4method{<=}{mt_linear}(e1, e2)
+#' \S4method{>}{mt_linear}(e1, e2)
+#' \S4method{>=}{mt_linear}(e1, e2)
 #'
+#' @aliases ==,mt_linear-method !=,mt_linear-method <,mt_linear-method <=,mt_linear-method >,mt_linear-method >=,mt_linear-method
 #' @name mt_linear-compare
 NULL
 
@@ -121,13 +122,14 @@ method(`>=`, list(class_any, mt_linear)) <- function(e1, e2) linear_compare(">="
 #' @return A logical vector.
 #'
 #' @usage
-#' e1 == e2
-#' e1 != e2
-#' e1 < e2
-#' e1 <= e2
-#' e1 > e2
-#' e1 >= e2
+#' \S4method{==}{mt_duration}(e1, e2)
+#' \S4method{!=}{mt_duration}(e1, e2)
+#' \S4method{<}{mt_duration}(e1, e2)
+#' \S4method{<=}{mt_duration}(e1, e2)
+#' \S4method{>}{mt_duration}(e1, e2)
+#' \S4method{>=}{mt_duration}(e1, e2)
 #'
+#' @aliases ==,mt_duration-method !=,mt_duration-method <,mt_duration-method <=,mt_duration-method >,mt_duration-method >=,mt_duration-method
 #' @name mt_duration-compare
 NULL
 
@@ -212,13 +214,14 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #' @return A logical vector.
 #'
 #' @usage
-#' e1 == e2
-#' e1 != e2
-#' e1 < e2
-#' e1 <= e2
-#' e1 > e2
-#' e1 >= e2
+#' \S4method{==}{mt_cyclical}(e1, e2)
+#' \S4method{!=}{mt_cyclical}(e1, e2)
+#' \S4method{<}{mt_cyclical}(e1, e2)
+#' \S4method{<=}{mt_cyclical}(e1, e2)
+#' \S4method{>}{mt_cyclical}(e1, e2)
+#' \S4method{>=}{mt_cyclical}(e1, e2)
 #'
+#' @aliases ==,mt_cyclical-method !=,mt_cyclical-method <,mt_cyclical-method <=,mt_cyclical-method >,mt_cyclical-method >=,mt_cyclical-method
 #' @name mt_cyclical-compare
 NULL
 

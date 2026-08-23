@@ -76,7 +76,7 @@ seq(yearquarter("2020 Q1"), length.out = 5, by = 3)
 
 # Linear time sequences with string intervals
 seq(date("2020-01-01"), date("2020-12-31"), by = "1 month")
-seq(yearmonth("2020 Jan")), yearmonth("2025 Jan"), by = "1 year")
+seq(yearmonth("2020 Jan"), yearmonth("2025 Jan"), by = "1 year")
 seq(date("2020-01-01"), length.out = 10, by = "2 weeks")
 
 # Linear time sequences incrementing by time granules

@@ -2,14 +2,20 @@
 % Please edit documentation in R/compare.R
 \name{mt_linear-compare}
 \alias{mt_linear-compare}
+\alias{==,mt_linear-method}
+\alias{!=,mt_linear-method}
+\alias{<,mt_linear-method}
+\alias{<=,mt_linear-method}
+\alias{>,mt_linear-method}
+\alias{>=,mt_linear-method}
 \title{Comparison operators for linear time (\code{mt_linear})}
 \usage{
-e1 == e2
-e1 != e2
-e1 < e2
-e1 <= e2
-e1 > e2
-e1 >= e2
+\S4method{==}{mt_linear}(e1, e2)
+\S4method{!=}{mt_linear}(e1, e2)
+\S4method{<}{mt_linear}(e1, e2)
+\S4method{<=}{mt_linear}(e1, e2)
+\S4method{>}{mt_linear}(e1, e2)
+\S4method{>=}{mt_linear}(e1, e2)
 }
 \arguments{
 \item{e1, e2}{\code{mt_linear} vectors (or values castable to one, such as

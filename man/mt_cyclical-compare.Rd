@@ -2,14 +2,20 @@
 % Please edit documentation in R/compare.R
 \name{mt_cyclical-compare}
 \alias{mt_cyclical-compare}
+\alias{==,mt_cyclical-method}
+\alias{!=,mt_cyclical-method}
+\alias{<,mt_cyclical-method}
+\alias{<=,mt_cyclical-method}
+\alias{>,mt_cyclical-method}
+\alias{>=,mt_cyclical-method}
 \title{Comparison operators for cyclical time (\code{mt_cyclical})}
 \usage{
-e1 == e2
-e1 != e2
-e1 < e2
-e1 <= e2
-e1 > e2
-e1 >= e2
+\S4method{==}{mt_cyclical}(e1, e2)
+\S4method{!=}{mt_cyclical}(e1, e2)
+\S4method{<}{mt_cyclical}(e1, e2)
+\S4method{<=}{mt_cyclical}(e1, e2)
+\S4method{>}{mt_cyclical}(e1, e2)
+\S4method{>=}{mt_cyclical}(e1, e2)
 }
 \arguments{
 \item{e1, e2}{\code{mt_cyclical} vectors sharing a cycle (or values castable to one,
