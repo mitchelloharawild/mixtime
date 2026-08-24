@@ -2,7 +2,41 @@
 
 ## mixtime (development version)
 
+## mixtime 0.3.0
+
 ### New features
+
+- Added
+  [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md),
+  the inverse of [`format()`](https://rdrr.io/r/base/format.html):
+  parses text back into a time point using the same
+  `{lin(...)}`/`{cyc(...)}` template
+  [`format()`](https://rdrr.io/r/base/format.html) uses. Default parse
+  strings are specified with
+  [`chronon_parse_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_parse.md)
+  and
+  [`chronon_parse_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_parse.md)
+  (with the
+  [`parse_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/parse_format.md)
+  helper), mirroring how `chronon_format_*()` methods specify their
+  default format.
+
+- Added
+  [`time_components()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_components.md),
+  which decomposes a time vector into its constituent parts using
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)-like
+  semantics: named
+  [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)/
+  [`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+  expressions (the same vocabulary used in
+  [`format()`](https://rdrr.io/r/base/format.html) strings) are resolved
+  together in a single decomposition of `x`, returning a data frame of
+  linear
+  ([`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md))
+  and cyclical
+  ([`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md))
+  component time vectors (e.g.
+  `time_components(yearmonth(x), yr = lin(year), mth = cyc(month, year))`).
 
 - Added
   [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md),
@@ -13,6 +47,25 @@
   components, supplied either as `spec ~ value` formulas (e.g.
   `time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3` for March 1980)
   or as already-tagged linear/cyclical time vectors.
+
+- Added
+  [`time_is_determinate_at()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_determinate_at.md),
+  which tests whether a time point resolves a given (typically finer)
+  granule exactly: a discrete time point never determines a finer
+  granule (a year has no determinate month), while a continuous time
+  point tracks progress within its chronon and so always does (0%
+  through 2020 is 0% through January).
+
+- Added
+  [`time_is_complete_at()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_complete_at.md),
+  which tests, for each element of a time vector, whether the coarser
+  granule it falls into is fully observed *by the vector as a whole* -
+  unlike
+  [`time_is_determinate_at()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_determinate_at.md),
+  completeness is a collective property: an element is `TRUE` only when
+  the other elements needed to fill out its granule are also present
+  elsewhere in the vector (e.g. a year is only complete once all twelve
+  of its months are present).
 
 - Cyclical time vectors can now be compared with `==`, `!=`, `<`, `<=`,
   `>` and `>=`, which previously errored. A cyclical value means a
@@ -32,24 +85,56 @@
   ([\#92](https://github.com/mitchelloharawild/mixtime/issues/92)).
 
 - Added
-  [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_labels.md)
+  [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
   and
-  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md),
+  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md),
   an authoring interface for declaring a calendar granule’s label scheme
-  once and getting both text *formatting* and its `time_parse()`-ready
+  once and getting both text *formatting* and its
+  [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md)-ready
   inverse, text *parsing*
-  (`linear_labels_parse()`/`cyclical_labels_parse()`), registered
-  together so the two directions can’t drift apart. Covers plain numeric
-  labels, named labels from a lookup table (`vocab_table()`), irregular
-  cycles where the raw-index-to-name mapping isn’t a constant shift
-  (`transform`, e.g. a leap month that splits one name into two), and a
-  full `format`/`parse` escape hatch for labels that aren’t index-shaped
-  at all (e.g. “2BC”). See
-  [`?cyclical_labels`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md).
+  ([`linear_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)/[`cyclical_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)),
+  registered together so the two directions can’t drift apart. Covers
+  plain numeric labels, named labels from a lookup table
+  ([`vocab_table()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/vocab_table.md)),
+  irregular cycles where the raw-index-to-name mapping isn’t a constant
+  shift (`transform`, e.g. a leap month that splits one name into two),
+  and a full `format`/`parse` escape hatch for labels that aren’t
+  index-shaped at all (e.g. “2BC”). See
+  [`?cyclical_labels`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md).
+  A scheme is built with
+  [`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
+  and assigned directly as a
+  [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)/[`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
+  method (e.g.
+  `method(cyclical_labels, list(granule, cycle)) <- label_scheme(...)`).
   `validate_label_scheme()` checks a scheme’s format/parse round-trip,
   most useful for a hand-written `transform`.
 
+### Deprecated
+
+- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md),
+  the low-level constructor for `mt_time` vectors, is deprecated in
+  favour of calling the concrete time class constructors directly:
+  [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
+  [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
+  and
+  [`mt_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md).
+
 ### Breaking changes
+
+- [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  (and
+  [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time.md),
+  [`cyclical_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time.md),
+  and convenience functions like
+  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
+  and
+  [`day_of_week()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.md))
+  now parse character `data` with
+  [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md).
+  Parsing is now tighter and chronon-specific: text must match the
+  requested chronon’s own format (e.g. `yearmonth("2026 Feb")` now
+  works, but `yearmonth("2026-02-14")`, now errors).
 
 - [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
   [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
@@ -73,23 +158,26 @@
   (UTC seconds), instead of plain numeric columns.
 
 - Added `at` argument to
-  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md),
+  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md),
   which provides the linear position of the cycle granule to allow
   appropriate labelling of irregular cycles, the same convention as
   [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)’s
   `at` argument
   ([\#100](https://github.com/mitchelloharawild/mixtime/issues/100)).
 
-- [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_labels.md)
+- [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
   and
-  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md),
+  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md),
   the S7 generics that turn a granule’s position into label text, have
-  been renamed to `linear_labels_format()` and
-  `cyclical_labels_format()`. The bare names are now the authoring
-  interface described above; a hand-written
+  been renamed to
+  [`linear_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)
+  and
+  [`cyclical_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md).
+  The bare names are now the authoring interface described above; a
+  hand-written
   `method(linear_labels_format, ...) <-`/`method(cyclical_labels_format, ...) <-`
-  is still the escape hatch for a granule that only ever needs
-  formatting, never parsing.
+  is still available for granules that only ever needs formatting (no
+  parsing).
 
 ### Bug fixes
 
@@ -478,9 +566,9 @@ granularity data.
     and
     [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
     for time unit text.
-  - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_labels.md)
+  - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
     and
-    [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md)
+    [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
     for time labels (e.g. Jan, Feb, … for months of year).
   - [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
     and

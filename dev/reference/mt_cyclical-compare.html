@@ -4,10 +4,10 @@ within its cycle (e.g. day_of_week() means a weekday, not a particular
 Wednesday). Comparison therefore reduces both operands to their position
 within the cycle - the same reduction format() displays - and compares
 those:
-day_of_week(&quot;2020-01-15&quot;) == day_of_week(&quot;2020-01-22&quot;) is TRUE, since
-both are a Wednesday.
-day_of_year(&quot;2020-01-15&quot;) == day_of_year(&quot;2021-01-15&quot;) is TRUE, since
-both are the 15th day of their year.
+day_of_week(date(&quot;2020-01-15&quot;)) == day_of_week(date(&quot;2020-01-22&quot;)) is
+TRUE, since both are a Wednesday.
+day_of_year(date(&quot;2020-01-15&quot;)) == day_of_year(date(&quot;2021-01-15&quot;)) is
+TRUE, since both are the 15th day of their year.
 
 
 Both operands must share a cycle: a cycle is a modulus rather than a unit,
@@ -28,10 +28,10 @@ within its cycle (e.g. day_of_week() means a weekday, not a particular
 Wednesday). Comparison therefore reduces both operands to their position
 within the cycle - the same reduction format() displays - and compares
 those:
-day_of_week(&quot;2020-01-15&quot;) == day_of_week(&quot;2020-01-22&quot;) is TRUE, since
-both are a Wednesday.
-day_of_year(&quot;2020-01-15&quot;) == day_of_year(&quot;2021-01-15&quot;) is TRUE, since
-both are the 15th day of their year.
+day_of_week(date(&quot;2020-01-15&quot;)) == day_of_week(date(&quot;2020-01-22&quot;)) is
+TRUE, since both are a Wednesday.
+day_of_year(date(&quot;2020-01-15&quot;)) == day_of_year(date(&quot;2021-01-15&quot;)) is
+TRUE, since both are the 15th day of their year.
 
 
 Both operands must share a cycle: a cycle is a modulus rather than a unit,
@@ -55,7 +55,7 @@ is not treated as circular."><meta property="og:image" content="https://pkg.mitc
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,10 +90,10 @@ is not treated as circular."><meta property="og:image" content="https://pkg.mitc
 within its cycle (e.g. <code><a href="cyclical_time_helpers.html">day_of_week()</a></code> means a weekday, not a particular
 Wednesday). Comparison therefore reduces both operands to their position
 within the cycle - the same reduction <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> displays - and compares
-those:</p><ul><li><p><code>day_of_week("2020-01-15") == day_of_week("2020-01-22")</code> is <code>TRUE</code>, since
-both are a Wednesday.</p></li>
-<li><p><code>day_of_year("2020-01-15") == day_of_year("2021-01-15")</code> is <code>TRUE</code>, since
-both are the 15th day of their year.</p></li>
+those:</p><ul><li><p><code>day_of_week(date("2020-01-15")) == day_of_week(date("2020-01-22"))</code> is
+<code>TRUE</code>, since both are a Wednesday.</p></li>
+<li><p><code>day_of_year(date("2020-01-15")) == day_of_year(date("2021-01-15"))</code> is
+<code>TRUE</code>, since both are the 15th day of their year.</p></li>
 </ul><p>Both operands must share a <code>cycle</code>: a cycle is a modulus rather than a unit,
 so there is no meaningful common cycle between (say) a weekday and a
 day-of-year, and comparing them is an error. Differing <em>chronons</em> within a
@@ -107,6 +107,21 @@ follows the position within the cycle (so <code>Mon &lt; Wed</code>); the cycle'
 is not treated as circular.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'mt_cyclical'</span></span>
+<span><span class="va">e1</span> <span class="op">==</span> <span class="va">e2</span></span>
+<span><span class="co"># S4 method for class 'mt_cyclical'</span></span>
+<span><span class="va">e1</span> <span class="op">!=</span> <span class="va">e2</span></span>
+<span><span class="co"># S4 method for class 'mt_cyclical'</span></span>
+<span><span class="va">e1</span> <span class="op">&lt;</span> <span class="va">e2</span></span>
+<span><span class="co"># S4 method for class 'mt_cyclical'</span></span>
+<span><span class="va">e1</span> <span class="op">&lt;=</span> <span class="va">e2</span></span>
+<span><span class="co"># S4 method for class 'mt_cyclical'</span></span>
+<span><span class="va">e1</span> <span class="op">&gt;</span> <span class="va">e2</span></span>
+<span><span class="co"># S4 method for class 'mt_cyclical'</span></span>
+<span><span class="va">e1</span> <span class="op">&gt;=</span> <span class="va">e2</span></span></code></pre></div>
+    </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>

@@ -8,11 +8,11 @@ reduces both operands to their position within the cycle - the same
 reduction [`format()`](https://rdrr.io/r/base/format.html) displays -
 and compares those:
 
-- `day_of_week("2020-01-15") == day_of_week("2020-01-22")` is `TRUE`,
-  since both are a Wednesday.
+- `day_of_week(date("2020-01-15")) == day_of_week(date("2020-01-22"))`
+  is `TRUE`, since both are a Wednesday.
 
-- `day_of_year("2020-01-15") == day_of_year("2021-01-15")` is `TRUE`,
-  since both are the 15th day of their year.
+- `day_of_year(date("2020-01-15")) == day_of_year(date("2021-01-15"))`
+  is `TRUE`, since both are the 15th day of their year.
 
 Both operands must share a `cycle`: a cycle is a modulus rather than a
 unit, so there is no meaningful common cycle between (say) a weekday and
@@ -31,6 +31,23 @@ discrete value spans the closed interval of its chronon, so
 As for `mt_linear`, this is not a total order when chronons differ.
 Ordering follows the position within the cycle (so `Mon < Wed`); the
 cycle's wrap-around is not treated as circular.
+
+## Usage
+
+``` r
+# S4 method for class 'mt_cyclical'
+e1 == e2
+# S4 method for class 'mt_cyclical'
+e1 != e2
+# S4 method for class 'mt_cyclical'
+e1 < e2
+# S4 method for class 'mt_cyclical'
+e1 <= e2
+# S4 method for class 'mt_cyclical'
+e1 > e2
+# S4 method for class 'mt_cyclical'
+e1 >= e2
+```
 
 ## Arguments
 

@@ -15,7 +15,7 @@ linear_time(), cyclical_time(), or a time_components() column)."><meta property=
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,18 +82,22 @@ allowing representation of fractional time granules (continuous time model).</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>mixtime</code> linear time vector, at the finest chronon reached by
-the supplied chain (or the anchor's own chronon, if no <code><a href="component_helpers.html">cyc()</a></code> components
-were supplied).</p>
+    <p>A <code>mixtime</code> time vector, at the finest chronon reached by the
+chain (or the root's own chronon, if only one component is given).
+Linear with a <code><a href="component_helpers.html">lin()</a></code> anchor, cyclical otherwise.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Exactly one <code><a href="component_helpers.html">lin()</a></code> component (the <strong>anchor</strong>) must be supplied. It fixes
-the absolute (non-repeating) position at some granule (e.g. the year).
-Every other component must be a <code><a href="component_helpers.html">cyc()</a></code> component that connects, without
-gaps or branches, from the anchor down to the target chronon. Each cycle of
-<code><a href="component_helpers.html">cyc()</a></code> must equal the chronon of another supplied component exactly, forming
-a single chain.</p>
+    <p>A <code><a href="component_helpers.html">lin()</a></code> component (the <strong>anchor</strong>), when supplied, fixes the absolute
+position at some granule (e.g. the year). Every other component must be
+<code><a href="component_helpers.html">cyc()</a></code>, chaining without gaps or branches from the anchor down to the
+target chronon: each cycle must equal another component's chronon exactly.</p>
+<p>With no <code><a href="component_helpers.html">lin()</a></code> anchor, every component must be <code><a href="component_helpers.html">cyc()</a></code>, chained the same
+way but rooted at whichever component's cycle isn't itself another
+component's chronon. The result is cyclical time tagged with that root's
+cycle: <code>cyc(month, year) ~ 3</code> alone matches <code><a href="cyclical_time_helpers.html">month_of_year()</a></code> for any
+March; chaining <code>cyc(day, month) ~ 15</code> onto it collapses to one (day,
+year) pair, day-of-year 74, matching <code><a href="cyclical_time_helpers.html">day_of_year()</a></code> for 15 March.</p>
 <p>Values of linear and cyclical components are specified on the right-hand-side
 of the formula. A <code><a href="component_helpers.html">lin()</a></code> value is the real-world count (e.g. the literal
 year 1980); a <code><a href="component_helpers.html">cyc()</a></code> value is the 1-indexed position within the cycle
@@ -118,6 +122,17 @@ the component vocabulary shared with <code><a href="time_components.html">time_c
 <span class="r-in"><span><span class="fu">time_compose</span><span class="op">(</span><span class="fu"><a href="component_helpers.html">lin</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1980</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1980</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># No lin() anchor: composes cyclical time</span></span></span>
+<span class="r-in"><span><span class="fu">time_compose</span><span class="op">(</span><span class="fu"><a href="component_helpers.html">cyc</a></span><span class="op">(</span><span class="va">month</span>, <span class="va">year</span><span class="op">)</span> <span class="op">~</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Mar</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Chaining collapses to one (chronon, cycle) pair: day 15 of month 3</span></span></span>
+<span class="r-in"><span><span class="co"># becomes day-of-year 74</span></span></span>
+<span class="r-in"><span><span class="fu">time_compose</span><span class="op">(</span><span class="fu"><a href="component_helpers.html">cyc</a></span><span class="op">(</span><span class="va">day</span>, <span class="va">month</span><span class="op">)</span> <span class="op">~</span> <span class="fl">15</span>, <span class="fu"><a href="component_helpers.html">cyc</a></span><span class="op">(</span><span class="va">month</span>, <span class="va">year</span><span class="op">)</span> <span class="op">~</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] D74</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Round-tripping through time_components()</span></span></span>
 <span class="r-in"><span><span class="va">parts</span> <span class="op">&lt;-</span> <span class="fu"><a href="time_components.html">time_components</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-03-15"</span><span class="op">)</span>, yr <span class="op">=</span> <span class="fu"><a href="component_helpers.html">lin</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span>, mth <span class="op">=</span> <span class="fu"><a href="component_helpers.html">cyc</a></span><span class="op">(</span><span class="va">month</span>, <span class="va">year</span><span class="op">)</span><span class="op">)</span></span></span>

@@ -74,7 +74,7 @@ Convenience functions for common time durations
 
 ## Time Manipulation
 
-Functions for manipulating and transforming time objects.
+Functions for manipulating and transforming time vectors.
 
 - [`seq(`*`<mixtime::mixtime>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.md)
   [`seq(`*`<mixtime::mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.md)
@@ -88,17 +88,32 @@ Functions for manipulating and transforming time objects.
 
 Methods for comparing time vectors.
 
-- [`mt_linear-compare`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
+- [`` `==`( ``*`<mt_linear>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
+  [`` `!=`( ``*`<mt_linear>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
+  [`` `<`( ``*`<mt_linear>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
+  [`` `<=`( ``*`<mt_linear>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
+  [`` `>`( ``*`<mt_linear>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
+  [`` `>=`( ``*`<mt_linear>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
   :
 
   Comparison operators for linear time (`mt_linear`)
 
-- [`mt_duration-compare`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.md)
+- [`` `==`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.md)
+  [`` `!=`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.md)
+  [`` `<`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.md)
+  [`` `<=`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.md)
+  [`` `>`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.md)
+  [`` `>=`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.md)
   :
 
   Comparison operators for durations (`mt_duration`)
 
-- [`mt_cyclical-compare`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
+- [`` `==`( ``*`<mt_cyclical>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
+  [`` `!=`( ``*`<mt_cyclical>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
+  [`` `<`( ``*`<mt_cyclical>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
+  [`` `<=`( ``*`<mt_cyclical>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
+  [`` `>`( ``*`<mt_cyclical>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
+  [`` `>=`( ``*`<mt_cyclical>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.md)
   :
 
   Comparison operators for cyclical time (`mt_cyclical`)
@@ -115,6 +130,15 @@ of time.
 - [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
   [`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
   : Linear and cyclical component helpers
+
+## Parsing and Formatting Time
+
+Functions for converting between character strings and time vectors.
+
+- [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md)
+  : Parse text into a time point
+- [`format(`*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/format.mt_time.md)
+  : Format mixtime vectors
 
 ## Calendar Systems
 
@@ -291,16 +315,37 @@ units and calendars.
   [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
   [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
   : Time units as a string
-- [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_labels.md)
-  : Friendly labels for linear relationships
-- [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md)
-  : Friendly labels for cyclical relationships
+
+- [`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
+  [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
+  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
+  : Describe a granule's label scheme
+
+- [`linear_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)
+  [`cyclical_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)
+  [`linear_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)
+  [`cyclical_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)
+  : Render and parse a granule's labels
+
+- [`vocab_table()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/vocab_table.md)
+  :
+
+  Build a `vocab` function from a plain name table
+
 - [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
   [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
   [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md)
   : Default formatting strings for chronons
+
 - [`chronon_format_attr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format_attr.md)
   : Default formatting strings for chronon attributes
+
+- [`parse_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/parse_format.md)
+  : Candidate format strings for parsing time
+
+- [`chronon_parse_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_parse.md)
+  [`chronon_parse_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_parse.md)
+  : Default parsing format strings for chronons
 
 ### Convenience function factories
 

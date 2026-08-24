@@ -96,11 +96,11 @@ progress forward or backward in time. For cyclical time types
 
 ``` r
 # Linear time sequences with integer by
-seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"))
+seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"))
 #> <mixtime[12]>
 #>  [1] 2020 Jan 2020 Feb 2020 Mar 2020 Apr 2020 May 2020 Jun 2020 Jul 2020 Aug
 #>  [9] 2020 Sep 2020 Oct 2020 Nov 2020 Dec
-seq(yearquarter("2020-01-01"), length.out = 5, by = 3)
+seq(yearquarter("2020 Q1"), length.out = 5, by = 3)
 #> <mixtime[5]>
 #> [1] 2020 Q1 2020 Q4 2021 Q3 2022 Q2 2023 Q1
 
@@ -109,7 +109,7 @@ seq(date("2020-01-01"), date("2020-12-31"), by = "1 month")
 #> <mixtime[12]>
 #>  [1] 2020-01-01 2020-02-01 2020-03-01 2020-04-01 2020-05-01 2020-06-01
 #>  [7] 2020-07-01 2020-08-01 2020-09-01 2020-10-01 2020-11-01 2020-12-01
-seq(yearmonth("2020-01-01"), yearmonth("2025-01-01"), by = "1 year")
+seq(yearmonth("2020 Jan"), yearmonth("2025 Jan"), by = "1 year")
 #> <mixtime[6]>
 #> [1] 2020 Jan 2021 Jan 2022 Jan 2023 Jan 2024 Jan 2025 Jan
 seq(date("2020-01-01"), length.out = 10, by = "2 weeks")
@@ -118,7 +118,7 @@ seq(date("2020-01-01"), length.out = 10, by = "2 weeks")
 #>  [7] 2020-03-25 2020-04-08 2020-04-22 2020-05-06
 
 # Linear time sequences incrementing by time granules
-seq(yearmonth("2020-01-01"), yearmonth("2020-12-01"), by = cal_gregorian$month(2L))
+seq(yearmonth("2020 Jan"), yearmonth(("2020 Dec")), by = cal_gregorian$month(2L))
 #> <mixtime[6]>
 #> [1] 2020 Jan 2020 Mar 2020 May 2020 Jul 2020 Sep 2020 Nov
 seq(date("2020-01-01"), length.out = 5, by = cal_gregorian$year(1L))

@@ -49,24 +49,33 @@ time_compose(..., discrete = TRUE, calendar = cal_gregorian)
 
 ## Value
 
-A `mixtime` linear time vector, at the finest chronon reached by the
-supplied chain (or the anchor's own chronon, if no
-[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
-components were supplied).
+A `mixtime` time vector, at the finest chronon reached by the chain (or
+the root's own chronon, if only one component is given). Linear with a
+[`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+anchor, cyclical otherwise.
 
 ## Details
 
-Exactly one
+A
 [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
-component (the **anchor**) must be supplied. It fixes the absolute
-(non-repeating) position at some granule (e.g. the year). Every other
-component must be a
-[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
-component that connects, without gaps or branches, from the anchor down
-to the target chronon. Each cycle of
-[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
-must equal the chronon of another supplied component exactly, forming a
-single chain.
+component (the **anchor**), when supplied, fixes the absolute position
+at some granule (e.g. the year). Every other component must be
+[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md),
+chaining without gaps or branches from the anchor down to the target
+chronon: each cycle must equal another component's chronon exactly.
+
+With no
+[`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+anchor, every component must be
+[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md),
+chained the same way but rooted at whichever component's cycle isn't
+itself another component's chronon. The result is cyclical time tagged
+with that root's cycle: `cyc(month, year) ~ 3` alone matches
+[`month_of_year()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.md)
+for any March; chaining `cyc(day, month) ~ 15` onto it collapses to one
+(day, year) pair, day-of-year 74, matching
+[`day_of_year()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.md)
+for 15 March.
 
 Values of linear and cyclical components are specified on the
 right-hand-side of the formula. A
@@ -100,6 +109,17 @@ time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3, cyc(day, month) ~ 15)
 time_compose(lin(year) ~ 1980)
 #> <mixtime[1]>
 #> [1] 1980
+
+# No lin() anchor: composes cyclical time
+time_compose(cyc(month, year) ~ 3)
+#> <mixtime[1]>
+#> [1] Mar
+
+# Chaining collapses to one (chronon, cycle) pair: day 15 of month 3
+# becomes day-of-year 74
+time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
+#> <mixtime[1]>
+#> [1] D74
 
 # Round-tripping through time_components()
 parts <- time_components(as.Date("2024-03-15"), yr = lin(year), mth = cyc(month, year))

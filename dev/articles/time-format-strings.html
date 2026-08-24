@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,9 +115,12 @@ in the time format string with glue substitutions:
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"{lin(year(1L))}-{cyc(month(1L), year(1L))}"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2026-08"</span></span></code></pre></div>
-<p>The linear labels are produced by <code><a href="../reference/linear_labels.html">linear_labels()</a></code>, and
-the cyclical labels are produced by <code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code>. When
-formatting mixtime vectors, additional arguments passed to
+<p>The linear labels are produced by
+<code><a href="../reference/label_format.html">linear_labels_format()</a></code>, and the cyclical labels are
+produced by <code><a href="../reference/label_format.html">cyclical_labels_format()</a></code> – see
+<code><a href="../reference/label_scheme.html">linear_labels()</a></code>/<code><a href="../reference/label_scheme.html">cyclical_labels()</a></code> for how a
+calendar declares these (and their text-parsing inverse) in one step.
+When formatting mixtime vectors, additional arguments passed to
 <code><a href="../reference/component_helpers.html">lin()</a></code> and <code><a href="../reference/component_helpers.html">cyc()</a></code> are forwarded to the label
 helper functions. Common arguments include <code>label = TRUE</code> to
 get named labels (e.g. “January”), and <code>abbreviate = TRUE</code>
@@ -154,19 +157,19 @@ format(
   datetime(Sys.time(), tz = "UTC"), 
   format = paste(fmt_time, "{tz(.time)}", fmt_time_mel)
 )
-#> [1] "2026-08-19 11:28:48 UTC (11:28:48 AEST)"
+#> [1] "2026-08-24 05:42:38 UTC (05:42:38 AEST)"
 ```
 -->
 <p>For example, the lunar phase can be added to a date format string by
 including the <code>phase</code> granule from the
 <code>cal_time_lunar</code> calendar. We can also set
-<code>emoji = TRUE</code> to get a lunar phase emoji instead of a
-numeric index:</p>
+<code>type = "emoji"</code> to get a lunar phase emoji instead of the
+named phase:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fmt_date</span>  <span class="op">&lt;-</span> <span class="st">"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"</span></span>
-<span><span class="va">fmt_lunar</span> <span class="op">&lt;-</span> <span class="st">"{with(cal_time_lunar, cyc(phase, month, emoji = TRUE))}"</span></span>
+<span><span class="va">fmt_lunar</span> <span class="op">&lt;-</span> <span class="st">"{with(cal_time_lunar, cyc(phase, month, label = TRUE, type = \"emoji\"))}"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">fmt_date</span>, <span class="va">fmt_lunar</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-08-19 🌒"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2026-08-24 🌔"</span></span></code></pre></div>
 <p>This makes the relationship between the format string and the
 calendar structure transparent, and means the same format-string idiom
 works unchanged across calendars.</p>
@@ -220,9 +223,9 @@ generalisable to other combinations of granules.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># YYYY-MM-DD format for a Gregorian date</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-08-19"</span></span>
+<span><span class="co">#&gt; [1] "2026-08-24"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-08-19"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2026-08-24"</span></span></code></pre></div>
 <p>This simplifies the construction of less common time formats, for
 example the year-day format (<code>YYYY-DDD</code>), which is
 <code>"{lin(year)}-D{cyc(day, year)}"</code> in mixtime but
@@ -231,9 +234,9 @@ a non-obvious code for “day of year”).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># YYY-DDD format for a Gregorian date</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"{lin(year)}-D{cyc(day, year)}"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-D231"</span></span>
+<span><span class="co">#&gt; [1] "2026-D236"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y-D%j"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-D231"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2026-D236"</span></span></code></pre></div>
 <p>Format strings for non-Gregorian calendars are also more intuitive,
 since the granules are specified in reference to units of calendar
 systems. For example, the format string for ISO week dates
@@ -250,9 +253,9 @@ get wrong.</p>
 <span>  <span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"{lin(year)}-W{cyc(week, year)}-{cyc(day, week, label = TRUE)}"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-W34-Wed"</span></span>
+<span><span class="co">#&gt; [1] "2026-W35-Mon"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%G-W%V-%a"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-W34-Wed"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2026-W35-Mon"</span></span></code></pre></div>
 <p>The table below maps every
 <code>strftime</code>/<code>strptime</code> conversion specification to
 its mixtime equivalent. There are many more possible mixtime format
@@ -320,7 +323,7 @@ Show/hide POSIX and mixtime equivalent code table
 </tr>
 <tr class="even">
 <td><code>%p</code></td>
-<td><code>{cyc(ampm, day)}</code></td>
+<td><code>{cyc(ampm, day, label = TRUE)}</code></td>
 <td>AM/PM indicator</td>
 </tr>
 <tr class="odd">

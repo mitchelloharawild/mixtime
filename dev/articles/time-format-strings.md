@@ -37,10 +37,14 @@ format(date(Sys.Date()), format = "{lin(year(1L))}-{cyc(month(1L), year(1L))}")
 ```
 
 The linear labels are produced by
-[`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_labels.md),
+[`linear_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md),
 and the cyclical labels are produced by
-[`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_labels.md).
-When formatting mixtime vectors, additional arguments passed to
+[`cyclical_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)
+– see
+[`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)/[`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
+for how a calendar declares these (and their text-parsing inverse) in
+one step. When formatting mixtime vectors, additional arguments passed
+to
 [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
 and
 [`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
@@ -80,15 +84,15 @@ same format string.
 
 For example, the lunar phase can be added to a date format string by
 including the `phase` granule from the `cal_time_lunar` calendar. We can
-also set `emoji = TRUE` to get a lunar phase emoji instead of a numeric
-index:
+also set `type = "emoji"` to get a lunar phase emoji instead of the
+named phase:
 
 ``` r
 
 fmt_date  <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
-fmt_lunar <- "{with(cal_time_lunar, cyc(phase, month, emoji = TRUE))}"
+fmt_lunar <- "{with(cal_time_lunar, cyc(phase, month, label = TRUE, type = \"emoji\"))}"
 format(date(Sys.Date()), format = paste(fmt_date, fmt_lunar))
-#> [1] "2026-08-19 🌒"
+#> [1] "2026-08-24 🌔"
 ```
 
 This makes the relationship between the format string and the calendar
@@ -134,9 +138,9 @@ combinations of granules.
 
 # YYYY-MM-DD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
-#> [1] "2026-08-19"
+#> [1] "2026-08-24"
 format(Sys.Date(), format = "%Y-%m-%d")
-#> [1] "2026-08-19"
+#> [1] "2026-08-24"
 ```
 
 This simplifies the construction of less common time formats, for
@@ -148,9 +152,9 @@ example the year-day format (`YYYY-DDD`), which is
 
 # YYY-DDD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-D{cyc(day, year)}")
-#> [1] "2026-D231"
+#> [1] "2026-D236"
 format(Sys.Date(), format = "%Y-D%j")
-#> [1] "2026-D231"
+#> [1] "2026-D236"
 ```
 
 Format strings for non-Gregorian calendars are also more intuitive,
@@ -169,9 +173,9 @@ format(
   date(Sys.Date(), calendar = cal_isoweek),
   format = "{lin(year)}-W{cyc(week, year)}-{cyc(day, week, label = TRUE)}"
 )
-#> [1] "2026-W34-Wed"
+#> [1] "2026-W35-Mon"
 format(Sys.Date(), format = "%G-W%V-%a")
-#> [1] "2026-W34-Wed"
+#> [1] "2026-W35-Mon"
 ```
 
 The table below maps every `strftime`/`strptime` conversion
@@ -191,7 +195,7 @@ Show/hide POSIX and mixtime equivalent code table
 | `%j` | `{cyc(day, year)}` | Day of year (001–366) |
 | `%H` | `{cyc(hour, day)}` | Hour, 24-hour clock (00–23) |
 | `%I` | `{cyc(hour, ampm)}` | Hour, 12-hour clock (01–12) |
-| `%p` | `{cyc(ampm, day)}` | AM/PM indicator |
+| `%p` | `{cyc(ampm, day, label = TRUE)}` | AM/PM indicator |
 | `%M` | `{cyc(minute, hour)}` | Minute (00–59) |
 | `%S` | `{cyc(second, minute)}` | Second as integer (00–61) |
 | `%A` | `{cyc(day, cal_isoweek$week, label = TRUE)}` | Full weekday name (e.g. Monday) |

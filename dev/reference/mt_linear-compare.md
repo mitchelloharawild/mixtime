@@ -25,6 +25,23 @@ If both operands are continuous (fractional chronons), or share an
 identical chronon, the comparison simplifies to a direct numeric
 comparison, since there is no interval to consider.
 
+## Usage
+
+``` r
+# S4 method for class 'mt_linear'
+e1 == e2
+# S4 method for class 'mt_linear'
+e1 != e2
+# S4 method for class 'mt_linear'
+e1 < e2
+# S4 method for class 'mt_linear'
+e1 <= e2
+# S4 method for class 'mt_linear'
+e1 > e2
+# S4 method for class 'mt_linear'
+e1 >= e2
+```
+
 ## Arguments
 
 - e1, e2:

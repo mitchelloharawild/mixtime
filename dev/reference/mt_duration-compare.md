@@ -15,6 +15,23 @@ magnitudes are compared as-is; otherwise both are scaled to their finest
 common chronon (the same scaling used when combining durations
 arithmetically, see `duration_combine()`).
 
+## Usage
+
+``` r
+# S4 method for class 'mt_duration'
+e1 == e2
+# S4 method for class 'mt_duration'
+e1 != e2
+# S4 method for class 'mt_duration'
+e1 < e2
+# S4 method for class 'mt_duration'
+e1 <= e2
+# S4 method for class 'mt_duration'
+e1 > e2
+# S4 method for class 'mt_duration'
+e1 >= e2
+```
+
 ## Arguments
 
 - e1, e2:

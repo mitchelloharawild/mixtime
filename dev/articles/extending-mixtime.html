@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,8 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/mixtime/">mixtime</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/mixtime/">mixtime</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rconsortium.github.io/S7/" class="external-link">S7</a></span><span class="op">)</span></span></code></pre></div>
 <p>This vignette documents the extension points made available in
 mixtime for creating new calendars and time units. As a running example,
 we will build the <a href="https://en.wikipedia.org/wiki/Symmetry454" class="external-link">Symmetry454
@@ -121,14 +122,20 @@ time unit with <code><a href="../reference/chronon_epoch.html">chronon_epoch()</
 </li>
 <li>
 <a href="#time-labels">Time labels</a>: labelling granular
-components of time with <code><a href="../reference/linear_labels.html">linear_labels()</a></code>,
-<code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code>
+components of time with <code><a href="../reference/label_scheme.html">linear_labels()</a></code>,
+<code><a href="../reference/label_scheme.html">cyclical_labels()</a></code>
 </li>
 <li>
-<a href="#time-formats">Time formats</a>: default format strings
+<a href="#time-formats">Formatting time</a>: default format strings
 with <code><a href="../reference/chronon_format.html">chronon_format_linear()</a></code>,
 <code><a href="../reference/chronon_format.html">chronon_format_cyclical()</a></code>,
 <code><a href="../reference/chronon_format.html">chronon_format_duration()</a></code>
+</li>
+<li>
+<a href="#time-parsing-formats">Parsing time</a>: candidate formats
+for parsing text back into time with
+<code><a href="../reference/chronon_parse.html">chronon_parse_linear()</a></code>,
+<code><a href="../reference/chronon_parse.html">chronon_parse_cyclical()</a></code>
 </li>
 </ul>
 </li>
@@ -141,7 +148,7 @@ registering your methods with the following <a href="https://rconsortium.github.
 hook</a>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">.onLoad</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/methods_register.html" class="external-link">methods_register</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rconsortium.github.io/S7/reference/methods_register.html" class="external-link">methods_register</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="time-units">Time units<a class="anchor" aria-label="anchor" href="#time-units"></a>
@@ -310,7 +317,7 @@ graph traversal (see <a href="#divmod">Divmod</a>) — a plain
 relationship).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Each Symmetry454 year has 12 months</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_cardinality_fixed</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_cardinality_fixed</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fl">12L</span></span>
 <span>  <span class="op">}</span></span>
@@ -339,7 +346,7 @@ is a leap year (gaining a 53rd week in December) when
 substantially from the familiar Gregorian leap-day rule and produces 52
 leap years in every 293-year period.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_cardinality</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_cardinality</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">at</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co"># The number of weeks in each n-month period</span></span>
 <span>    <span class="va">month_size</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">@</span><span class="va">n</span></span>
@@ -455,7 +462,7 @@ majority of the following code uses this structure to efficiently count
 how many leap weeks have occurred before any given week number in a
 cycle.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_divmod</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_divmod</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">from</span>, <span class="va">to</span>, <span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co"># Most of this code works on 1-week granules</span></span>
 <span>    <span class="va">week_size</span> <span class="op">&lt;-</span> <span class="va">from</span><span class="op">@</span><span class="va">n</span></span>
@@ -612,7 +619,7 @@ the origin for numeric inputs and labelling linear parts of time.</p>
 0) at 1970 W1, so <code>cal_symmetry454$year(1L)</code> has an epoch of
 1970.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_epoch</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">1970L</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_epoch</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">1970L</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -644,10 +651,10 @@ syntax. Irregular plurals use the full form,
 e.g. <code>"centur{?y/ies}"</code>. The default is to suffix with “s”
 for plurals (i.e. <code>{?/s}</code>).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 year{?/s}"</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Y"</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 month{?/s}"</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"M"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 year{?/s}"</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Y"</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 month{?/s}"</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"M"</span></span></code></pre></div>
 <p>The time unit abbreviations are also used in the default time
 formatting string, so we can now create and view a Symmetry454 linear
 time vector:</p>
@@ -686,11 +693,36 @@ to consider: linear time labels are for continuous time granules
 (usually the coarsest time unit, years), and cyclical time labels are
 for time granules that nest (cycle over) another granule (e.g. months
 within a year, days within a week).</p>
-<p>The <code><a href="../reference/linear_labels.html">linear_labels()</a></code> and <code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code>
-methods should return character vectors of the same length as the input
-time indices <code>i</code>.</p>
-<p>While not enforced, we recommend using the following argument names
-for common label options:</p>
+<p><code><a href="../reference/label_scheme.html">linear_labels()</a></code> and <code><a href="../reference/label_scheme.html">cyclical_labels()</a></code> are
+S7 generics that return a granule’s <em>label scheme</em>: a plain list
+describing how its position renders as text and parses back again.
+Declaring a scheme is usually just
+<code>method(cyclical_labels, list(granule, cycle)) &lt;- label_scheme(...)</code>.
+Rendering and parsing are handled separately by
+<code><a href="../reference/label_format.html">linear_labels_format()</a></code>/<code><a href="../reference/label_format.html">linear_labels_parse()</a></code>
+(and their cyclical counterparts), which by default read the scheme and
+produce the label. The scheme’s main fields are:</p>
+<ul>
+<li>
+<code>start</code>: what raw index <code>0</code> displays as
+(e.g. <code>start = 1L</code> makes January, raw index <code>0</code>,
+display as “1”), for both numeric and named rendering</li>
+<li>
+<code>width</code>: zero-pads numeric rendering
+(e.g. <code>width = 2L</code> for “02”)</li>
+<li>
+<code>vocab</code>: supplies the names for labelled rendering
+(e.g. “January”, “Jan”), most easily built with
+<code><a href="../reference/vocab_table.html">vocab_table()</a></code>
+</li>
+</ul>
+<p>Labels that don’t fit this scheme (e.g. the year “2BC”) can define
+<code><a href="../reference/label_format.html">linear_labels_format()</a></code>/<code><a href="../reference/label_format.html">linear_labels_parse()</a></code>
+directly instead. See <code><a href="../reference/label_scheme.html">?cyclical_labels</a></code> for the complete
+authoring reference, including <code>transform</code> for cycles whose
+names don’t follow a constant <code>start</code> shift.</p>
+<p>We recommend using the following argument names for common label
+options (the default rendering methods already use these):</p>
 <ul>
 <li>
 <code>label</code>: if <code>TRUE</code>, return labelled values
@@ -705,15 +737,28 @@ for common label options:</p>
 <div class="section level4">
 <h4 id="linear-time-labels-linear_labels">Linear time labels: <code>linear_labels()</code><a class="anchor" aria-label="anchor" href="#linear-time-labels-linear_labels"></a>
 </h4>
-<p>In most cases, the default linear labels provided by
-<code><a href="../reference/linear_labels.html">linear_labels()</a></code> are sufficient, which simply return the
-internal numeric representation of the time point (e.g. “0”, “1”, “2”,
-…). An example of when this default could be improved is by correctly
-labelling years about the era boundary (e.g. “2BC”, “1BC”, “1”, “2”, …
-instead of “-1”, “0”, “1”, “2”, …).</p>
+<p>In most cases, the default linear labels are sufficient, which simply
+return the internal numeric representation of the time point (e.g. “0”,
+“1”, “2”, …). An example of when this default could be improved is by
+correctly labelling years about the era boundary (e.g. “2BC”, “1BC”,
+“1”, “2”, … instead of “-1”, “0”, “1”, “2”, …). This relabelling isn’t a
+constant shift (it flips direction and skips 0 at the era boundary), so
+a <code><a href="../reference/label_scheme.html">linear_labels()</a></code> scheme can’t express it. Instead, define
+<code><a href="../reference/label_format.html">linear_labels_format()</a></code> and
+<code><a href="../reference/label_format.html">linear_labels_parse()</a></code> directly:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">linear_labels</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">i</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">linear_labels_format</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">i</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">i</span> <span class="op">&lt;=</span> <span class="fl">0L</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="op">-</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span>, <span class="st">"BC"</span><span class="op">)</span>, <span class="va">i</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">linear_labels_parse</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    pattern <span class="op">=</span> <span class="st">"\\d+(?:BC)?"</span>,</span>
+<span>    decode <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">text</span>, <span class="va">at</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">bc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"BC$"</span>, <span class="va">text</span><span class="op">)</span></span>
+<span>      <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"BC$"</span>, <span class="st">""</span>, <span class="va">text</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">bc</span>, <span class="fl">1L</span> <span class="op">-</span> <span class="va">n</span>, <span class="va">n</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="../reference/chronon_epoch.html">chronon_epoch</a></span><span class="op">(</span><span class="va">granule</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Then the transition from 1 BC to 1 AD is appropriately labelled:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -729,35 +774,34 @@ time format methods below to make these labels more readable.</p>
 <p>It is common to need custom labels for cyclical time granules, since
 cyclical time points often have familiar labels (e.g. Jan, Feb, … for
 months in years) or are 1-indexed (e.g. 1, 2, … for days in a month).
-The default method for <code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code> simply uses the
-internal 0-indexed numeric representation of the time point.</p>
-<p>The position within the cycle is given by <code>i</code> and is
-0-indexed (e.g. 0-11 for month of year). The linear position of the
-cycle itself is given by the <code>at</code> argument, which allows
-labels to vary between cycles. This is particularly useful for labelling
-irregular cycles (e.g. Hebrew months), however regular cycles (like
-Symmetry454 months) can ignore the <code>at</code> argument:</p>
+The default scheme simply uses the internal 0-indexed numeric
+representation of the time point.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Labels for months of the year, essentially the same as Gregorian months in years.</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">cyclical_labels</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">i</span>, <span class="va">at</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">label</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">abbreviate</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">label</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="co"># Index into R's localised month name objects (month.name and month.abb)</span></span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="va">abbreviate</span><span class="op">)</span> <span class="va">month.abb</span><span class="op">[</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">]</span> <span class="kw">else</span> <span class="va">month.name</span><span class="op">[</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">]</span></span>
-<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>      <span class="co"># Use i + 1L for 1-indexing months (so January is 1, February is 2, ...)</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%02d"</span>, <span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">)</span></span>
-<span>    <span class="op">}</span></span>
-<span>  <span class="op">}</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">cyclical_labels</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/label_scheme.html">label_scheme</a></span><span class="op">(</span></span>
+<span>    start <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>    width <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>    vocab <span class="op">=</span> <span class="fu"><a href="../reference/vocab_table.html">vocab_table</a></span><span class="op">(</span></span>
+<span>      `en-GB` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>wide <span class="op">=</span> <span class="va">month.name</span>, abbreviated <span class="op">=</span> <span class="va">month.abb</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Labels for weeks of the month are simply 1-indexed (e.g. "W1", "W2", ...)</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">cyclical_labels</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">granule</span>, <span class="va">cycle</span>, <span class="va">i</span>, <span class="va">at</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span></code></pre></div>
+<span><span class="co"># Labels for weeks of the month are simply 1-indexed (e.g. "1", "2", ...)</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">cyclical_labels</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/label_scheme.html">label_scheme</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
 <p>The other cyclical labels (e.g. day of week) are inherited from
 <code>cal_isoweek</code> since we reused the ISO week unit, so they are
 correctly labelled as days of the week (e.g. “Mon”, “Tue”, …).</p>
+<p>For cycles where the raw-index-to-name mapping isn’t a constant shift
+(e.g. a leap month that splits one name into two in some years),
+<code>transform</code> overrides the indexing used for named
+(<code>label = TRUE</code>) rendering with hand-written
+<code>encode</code>/<code>decode</code> functions. These also receive
+<code>at</code>, the linear position of the cycle instance, so the
+mapping can vary between cycles. See <code><a href="../reference/label_scheme.html">?cyclical_labels</a></code>’s
+“Irregular cycles” section for a worked example (the Hebrew calendar’s
+month-in-year cycle).</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Month of year</span></span>
 <span><span class="fu"><a href="../reference/cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"1955-11-12"</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_symmetry454</span><span class="op">)</span></span>
@@ -800,7 +844,7 @@ vectors.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="time-formats">Time formats<a class="anchor" aria-label="anchor" href="#time-formats"></a>
+<h3 id="time-formats">Formatting time<a class="anchor" aria-label="anchor" href="#time-formats"></a>
 </h3>
 <!-- TODO: Time formatting vignette -->
 <p>The default formatting for time vectors is defined by
@@ -817,15 +861,15 @@ strings:</p>
 <ul>
 <li>
 <code>lin(&lt;time granule&gt;)</code> - Granule labels for linear
-time grnaules, usually the largest granule
+time granules, usually the largest granule
 (e.g. <code>lin(year(1L))</code>). These labels are produced by
-<code><a href="../reference/linear_labels.html">linear_labels()</a></code>.</li>
+<code><a href="../reference/label_scheme.html">linear_labels()</a></code>.</li>
 <li>
 <code>cyc(&lt;time granule&gt;, &lt;cycle granule&gt;)</code> -
 Granule labels for cyclical time granules, where the labels are relative
 to the cycle (e.g. <code>cyc(month(1L), year(1L))</code> is the month
 within the year). These labels are produced by
-<code><a href="../reference/cyclical_labels.html">cyclical_labels()</a></code>.</li>
+<code><a href="../reference/label_scheme.html">cyclical_labels()</a></code>.</li>
 </ul>
 <p>The <code>&lt;time granule&gt;</code> and
 <code>&lt;cycle granule&gt;</code> placeholders in the format string
@@ -848,25 +892,25 @@ both cases a Symmetry 454 format method is needed to display dates
 appropriately.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simply display years as numbers (e.g. "1970", "1971", ...)</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
 <span>  <span class="va">chronon_format_linear</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span>, <span class="fu">S7</span><span class="fu">::</span><span class="va"><a href="https://rconsortium.github.io/S7/reference/class_any.html" class="external-link">class_any</a></span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cal</span><span class="op">)</span> <span class="st">"{lin(year(1L))}"</span></span>
 <span></span>
 <span><span class="co"># Display labelled months as month within year (e.g. "1970 Jan", "1970 Feb", ...)</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
 <span>  <span class="va">chronon_format_linear</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="fu">S7</span><span class="fu">::</span><span class="va"><a href="https://rconsortium.github.io/S7/reference/class_any.html" class="external-link">class_any</a></span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cal</span><span class="op">)</span> <span class="st">"{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}"</span></span>
 <span></span>
 <span><span class="co"># Display weeks as week in month in year (e.g. "1970-01-W1", "1970-01-W2", ...)</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
 <span>  <span class="va">chronon_format_linear</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">week</span>, <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_S3_class.html" class="external-link">new_S3_class</a></span><span class="op">(</span><span class="st">"cal_symmetry454"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cal</span><span class="op">)</span> <span class="st">"{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}"</span></span>
 <span></span>
 <span><span class="co"># Format days as day in week in month in year (e.g. "1970-Jan-W1-Mon", "1970-Jan-W1-Tue", ...)</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
 <span>  <span class="va">chronon_format_linear</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">day</span>, <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_S3_class.html" class="external-link">new_S3_class</a></span><span class="op">(</span><span class="st">"cal_symmetry454"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cal</span><span class="op">)</span> <span class="st">"{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}-{cyc(day(1L), week(1L), label=TRUE, abbreviate=TRUE)}"</span></span></code></pre></div>
@@ -904,7 +948,7 @@ the default format, which combines the time unit abbreviation with the
 cycle label (e.g. “W1” for week 1 of the month or year).</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Format months in years as abbreviated month labels (e.g. "Jan", "Feb", ...)</span></span>
-<span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span></span>
 <span>  <span class="va">chronon_format_cyclical</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="st">"{cyc(month,year,label=TRUE,abbreviate=TRUE)}"</span></span></code></pre></div>
@@ -930,6 +974,45 @@ chronon. The default method is usually sufficient, which uses
 <span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
 <span><span class="co">#&gt; [1] 3 Symmetry454 months</span></span></code></pre></div>
 </div>
+</div>
+<div class="section level3">
+<h3 id="time-parsing-formats">Parsing time<a class="anchor" aria-label="anchor" href="#time-parsing-formats"></a>
+</h3>
+<p>Parsing text back into time is the inverse of formatting:
+<code><a href="../reference/time_parse.html">time_parse()</a></code> matches text against one or more candidate
+format strings and returns whichever parses. The candidates for a given
+chronon are supplied by <code><a href="../reference/chronon_parse.html">chronon_parse_linear()</a></code> and
+<code><a href="../reference/chronon_parse.html">chronon_parse_cyclical()</a></code>, which dispatch exactly like
+<code><a href="../reference/chronon_format.html">chronon_format_linear()</a></code>/<code><a href="../reference/chronon_format.html">chronon_format_cyclical()</a></code>
+above. Their default methods simply reuse the single format returned by
+<code><a href="../reference/chronon_format.html">chronon_format_linear()</a></code>/<code><a href="../reference/chronon_format.html">chronon_format_cyclical()</a></code>,
+but it’s often worth listing every format actually in use (e.g. both
+“1970-01” and “1970 Jan”), so <code><a href="../reference/time_parse.html">time_parse()</a></code> has more than
+one candidate to try.</p>
+<p><code><a href="../reference/parse_format.html">parse_format()</a></code> combines format strings into the
+candidate vector these methods should return; <code><a href="../reference/time_parse.html">time_parse()</a></code>
+tries each candidate in turn and keeps whichever parses the most
+values.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">chronon_parse_linear</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span>, <span class="fu">S7</span><span class="fu">::</span><span class="va"><a href="https://rconsortium.github.io/S7/reference/class_any.html" class="external-link">class_any</a></span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">cal</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/parse_format.html">parse_format</a></span><span class="op">(</span></span>
+<span>    <span class="st">"{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}"</span>,</span>
+<span>    <span class="st">"{lin(year(1L))}-{cyc(month(1L), year(1L))}"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>With this method in place, <code><a href="../reference/time_parse.html">time_parse()</a></code> can recover a
+Symmetry454 month from either the labelled or numeric form:</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/time_parse.html">time_parse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1970-Jan"</span>, <span class="st">"1970-03"</span><span class="op">)</span>, format <span class="op">=</span> <span class="fu"><a href="../reference/chronon_parse.html">chronon_parse_linear</a></span><span class="op">(</span><span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[2]&gt;</span></span>
+<span><span class="co">#&gt; [1] 1970 Jan 1970 Mar</span></span></code></pre></div>
+<p><code><a href="../reference/parse_format.html">parse_format()</a></code> also accepts a <code>regex</code>
+argument, which marks its candidates’ surrounding (non-token) text as
+regular expression syntax rather than literal text to match exactly -
+useful for irregular formats, e.g. <code>"[/-]"</code> to accept either
+<code>/</code> or <code>-</code> as a separator. This is a niche need;
+most candidates leave it at the default. See the <code>regex</code>
+argument of <code><a href="../reference/time_parse.html">time_parse()</a></code> for details.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
