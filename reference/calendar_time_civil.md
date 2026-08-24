@@ -32,6 +32,10 @@ The following time units are available (`cal_time_civil$`).
 
 - `millisecond()`: Millisecond unit
 
+- `microsecond()`: Microsecond unit
+
+- `nanosecond()`: Nanosecond unit
+
 ## See also
 
 `cal_time_civil`,

@@ -23,7 +23,7 @@ chronons without loss of information."><meta property="og:image" content="https:
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ chronons without loss of information."><meta property="og:image" content="https:
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Find the common chronon of a time object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.2.0/R/chronon_common.R" class="external-link"><code>R/chronon_common.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/chronon_common.R" class="external-link"><code>R/chronon_common.R</code></a></small>
       <div class="d-none name"><code>chronon_common.Rd</code></div>
     </div>
 
@@ -103,19 +103,19 @@ an error is raised.</p></dd>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_day&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  @ n : int 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: 'mt_naive' chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The common chronon between a Gregorian month and an ISO week is a day</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearmonth</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_day&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  @ n : int 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: 'mt_naive' chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The common chronon between a ISO week and an hour is an hour</span></span></span>
 <span class="r-in"><span><span class="fu">chronon_common</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">yearweek</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="linear_time.html">linear_time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu">hour</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime::tu_hour&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  @ n : int 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: 'mt_naive' chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  @ tz: chr NA</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -128,7 +128,7 @@ an error is raised.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

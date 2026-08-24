@@ -64,9 +64,9 @@ chronon_format_cyclical(cal_isoweek$week(1L), cal_isoweek$year(1L))
 #> [1] "W{cyc(week,year)}"
 
 chronon_format_duration(cal_gregorian$year(1L))
-#> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
+#> [1] "{duration_label(.time)}"
 chronon_format_duration(cal_gregorian$month(1L))
-#> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
+#> [1] "{duration_label(.time)}"
 chronon_format_duration(cal_gregorian$day(1L))
-#> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"
+#> [1] "{duration_label(.time)}"
 ```

@@ -96,7 +96,7 @@ cyclical_time(
   calendar = cal_isoweek
 )
 #> <mixtime[1]>
-#> [1] Sun
+#> [1] Mon
 
 # Month of year (1-12)
 cyclical_time(
@@ -105,7 +105,7 @@ cyclical_time(
   cycle = year(1L)
 )
 #> <mixtime[1]>
-#> [1] Jun
+#> [1] Aug
 
 # Continuous time (discrete = FALSE) for fractional month of year
 cyclical_time(
@@ -115,7 +115,7 @@ cyclical_time(
   discrete = FALSE
 )
 #> <mixtime[1]>
-#> [1] Jun 90.0%
+#> [1] Aug 74.2%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -125,7 +125,7 @@ cyclical_time(
   calendar = cal_gregorian
 )
 #> <mixtime[1]>
-#> [1] D28
+#> [1] D24
 
 # Hours, minutes, and seconds
 cyclical_time(
@@ -134,5 +134,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 12:40:00
+#> [1] 04:47:54
 ```

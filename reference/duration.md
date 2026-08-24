@@ -8,14 +8,20 @@ in time.
 ## Usage
 
 ``` r
-duration(data, chronon = time_chronon(data), calendar = time_calendar(data))
+duration(
+  data,
+  chronon = time_chronon(data),
+  discrete = NULL,
+  calendar = time_calendar(data)
+)
 ```
 
 ## Arguments
 
 - data:
 
-  A time vector of duration magnitudes.
+  A time vector of duration magnitudes, or an existing `duration()`
+  vector to convert to `chronon` granules.
 
 - chronon:
 
@@ -24,6 +30,12 @@ duration(data, chronon = time_chronon(data), calendar = time_calendar(data))
   `day(1L)`. Chronons from a specific calendar can also be used (e.g.
   `cal_gregorian$month(1L)`). Defaults to the time chronon of the input
   `data` (`time_chronon(data)`).
+
+- discrete:
+
+  Logical. If `TRUE` (default), returns integer durations always
+  rounding down (discrete time model). If `FALSE`, returns fractional
+  durations (continuous time model).
 
 - calendar:
 
@@ -59,4 +71,12 @@ duration(3L, cal_gregorian$month(1L))
 duration(1:7, cal_gregorian$day(1L))
 #> <mixtime[7]>
 #> [1] 1 day  2 days 3 days 4 days 5 days 6 days 7 days
+
+# Convert a duration of 4 days into weeks
+duration(days(4), cal_isoweek$week(1L), discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 0.5714286 weeks
+duration(days(4), cal_isoweek$week(1L), discrete = TRUE)
+#> <mixtime[1]>
+#> [1] 0 weeks
 ```

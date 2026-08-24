@@ -31,7 +31,9 @@ milliseconds(data, calendar = time_calendar(data), ...)
 
 - data:
 
-  A time vector of duration magnitudes.
+  A time vector of duration magnitudes, or an existing
+  [`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
+  vector to convert to `chronon` granules.
 
 - calendar:
 

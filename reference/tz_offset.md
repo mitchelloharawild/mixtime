@@ -20,14 +20,16 @@ tz_offset(x, ...)
 
 ## Value
 
-A numeric vector of offsets from UTC in the same chronon (e.g. seconds
-for POSIXt, days for dates, etc.)
+A `mixtime` duration vector of offsets from UTC in the same chronon
+(e.g. seconds for POSIXt, days for dates, etc.)
 
 ## Examples
 
 ``` r
 tz_offset(as.POSIXct(Sys.time(), tz = Sys.timezone()))
-#> [1] 0
+#> <mixtime[1]>
+#> [1] 0.0 seconds
 tz_offset(as.POSIXct("2024-06-15 12:00:00", tz = "America/New_York"))
-#> [1] -14400
+#> <mixtime[1]>
+#> [1] -14400.0 seconds
 ```

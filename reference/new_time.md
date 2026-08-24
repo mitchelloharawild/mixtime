@@ -1,5 +1,17 @@
 # Constructor for mixtime time vectors
 
+**\[deprecated\]**
+
+`new_time()` was the low-level constructor for `mt_time` vectors. It has
+been deprecated in favour of calling the concrete time class
+constructors directly:
+[`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
+for linear time,
+[`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
+for durations, and
+[`mt_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
+for cyclical time.
+
 Creates a `mixtime` time vector at a specific time point, with a
 specified chronon and optional cycle. The `chronon` defines the smallest
 indivisible time granule for the time vector, while the `cycle` allows
@@ -50,8 +62,10 @@ new_time(
   chronon = cal_gregorian$day(1L, tz = Sys.timezone()),
   class = "mt_linear"
 )
-#> <mt_linear[1]>
-#> [1] 2026-06-28 0.0%
+#> Warning: `new_time()` was deprecated in mixtime 0.2.0.
+#> ℹ Please use `mt_linear()` instead.
+#> <mixtime::mt_linear[1]>
+#> [1] 2026-08-24 0.0%
 
 # Create a discrete mixtime time vector for the current date and time
 new_time(
@@ -59,8 +73,8 @@ new_time(
   chronon = cal_gregorian$second(1L, tz = Sys.timezone()),
   class = "mt_linear"
 )
-#> <mt_linear[1]>
-#> [1] 2026-06-28 12:40:05
+#> <mixtime::mt_linear[1]>
+#> [1] 2026-08-24 04:48:01
 
 # Create a discrete mixtime time vector for the time of day (cyclical time)
 new_time(
@@ -69,6 +83,8 @@ new_time(
   cycle = cal_gregorian$day(1L, tz = Sys.timezone()),
   class = "mt_cyclical"
 )
-#> <mt_cyclical[1]>
-#> [1] 12:40:05
+#> Warning: `new_time()` was deprecated in mixtime 0.2.0.
+#> ℹ Please use `mt_cyclical()` instead.
+#> <mixtime::mt_cyclical[1]>
+#> [1] 04:48:01
 ```

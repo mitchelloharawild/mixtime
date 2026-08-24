@@ -76,15 +76,15 @@ chronons and granules:
 These functions adapt to the calendar system of the input data. For
 example:
 
-- `year("2025-12-29")` returns a Gregorian year
+- `year(date("2025-12-29"))` returns a Gregorian year
 
-- `year(yearweek("2025-12-29"))` returns an ISO week-based year
+- `year(yearweek(date("2025-12-29")))` returns an ISO week-based year
 
 You can also explicitly specify a calendar using the `calendar`
 argument:
 
 
-    year(yearweek("2025-12-29"), calendar = cal_isoweek)
+    year(date("2025-12-29"), calendar = cal_isoweek)
 
 ## Custom linear time representations
 
@@ -117,7 +117,7 @@ year(Sys.Date())
 #> [1] 2026
 year(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 48.8%
+#> [1] 2026.64383561644 64.4%
 
 # ISO week-based year
 year(yearweek(Sys.Date()))
@@ -127,23 +127,23 @@ year(yearweek(Sys.Date()))
 # Year-quarter
 yearquarter(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 Q2
+#> [1] 2026 Q3
 yearquarter(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 Q2 95.1%
+#> [1] 2026 Q3 58.1%
 
 # Year-month
 yearmonth(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 Jun
+#> [1] 2026 Aug
 yearmonth(Sys.Date(), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026 Jun 90.0%
+#> [1] 2026 Aug 74.2%
 
 # Year-week (ISO 8601)
 yearweek(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026 W26
+#> [1] 2026 W35
 yearweek(0:52)
 #> <mixtime[53]>
 #>  [1] 1970 W01 1970 W02 1970 W03 1970 W04 1970 W05 1970 W06 1970 W07 1970 W08

@@ -11,7 +11,7 @@ that wraps around the vector as if arranged in a circle."><meta property="og:ima
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@ that wraps around the vector as if arranged in a circle."><meta property="og:ima
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Compute circular rolling sums</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.2.0/R/00_utils.R" class="external-link"><code>R/00_utils.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/00_utils.R" class="external-link"><code>R/00_utils.R</code></a></small>
       <div class="d-none name"><code>circsum.Rd</code></div>
     </div>
 
@@ -61,11 +61,14 @@ that wraps around the vector as if arranged in a circle.</p>
 
 
 <dt id="arg-size">size<a class="anchor" aria-label="anchor" href="#arg-size"></a></dt>
-<dd><p>Integer; the window size (number of consecutive elements to sum).</p></dd>
+<dd><p>Integer; the window size (number of consecutive elements to
+sum). A negative size anchors the window at its end, with the window
+counting backwards.</p></dd>
 
 
 <dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
-<dd><p>Integer; the step size (the increment in starting index for each sum).</p></dd>
+<dd><p>Integer; the step size (the increment in starting index for
+each sum). A negative step walks the windows backwards around the circle.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -87,6 +90,17 @@ combinations until the pattern between <code>x</code> and <code>step</code> repe
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  6 10  9  8 12</span>
 <span class="r-in"><span><span class="co"># Returns: 6 10 9 8 12 (1+2+3, 4+5+1, 2+3+4, 5+1+2, 3+4+5)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Negative step walks the same windows backwards</span></span></span>
+<span class="r-in"><span><span class="fu">circsum</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 5 4 3 2</span>
+<span class="r-in"><span><span class="co"># Returns: 1 5 4 3 2</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Negative size anchors each window at its end instead of its start - a</span></span></span>
+<span class="r-in"><span><span class="co"># trailing rather than leading rolling sum</span></span></span>
+<span class="r-in"><span><span class="fu">circsum</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>, <span class="op">-</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 3 5 7 9</span>
+<span class="r-in"><span><span class="co"># Returns: 6 3 5 7 9 (5+1, 1+2, 2+3, 3+4, 4+5)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -98,7 +112,7 @@ combinations until the pattern between <code>x</code> and <code>step</code> repe
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

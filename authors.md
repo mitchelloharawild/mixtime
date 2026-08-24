@@ -8,15 +8,15 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/mitchelloharawild/mixtime/blob/v0.2.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/mitchelloharawild/mixtime/blob/main/DESCRIPTION)
 
 O'Hara-Wild M (2026). *mixtime: Mixed Temporal Vectors and Operations*.
-R package version 0.2.0, <https://pkg.mitchelloharawild.com/mixtime/>.
+R package version 0.3.0, <https://pkg.mitchelloharawild.com/mixtime/>.
 
     @Manual{,
       title = {mixtime: Mixed Temporal Vectors and Operations},
       author = {Mitchell O'Hara-Wild},
       year = {2026},
-      note = {R package version 0.2.0},
+      note = {R package version 0.3.0},
       url = {https://pkg.mitchelloharawild.com/mixtime/},
     }

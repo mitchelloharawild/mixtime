@@ -13,7 +13,7 @@ evaluated in the context of the data's time_calendar()."><meta property="og:imag
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@ evaluated in the context of the data's time_calendar()."><meta property="og:imag
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Default formatting strings for chronons</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.2.0/R/01_chronon_format.R" class="external-link"><code>R/01_chronon_format.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/01_chronon_format.R" class="external-link"><code>R/01_chronon_format.R</code></a></small>
       <div class="d-none name"><code>chronon_format.Rd</code></div>
     </div>
 
@@ -107,11 +107,11 @@ strings for time units that are shared across calendars (e.g.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "W{cyc(week,year)}"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">chronon_format_duration</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{duration_label(.time)}"</span>
 <span class="r-in"><span><span class="fu">chronon_format_duration</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{duration_label(.time)}"</span>
 <span class="r-in"><span><span class="fu">chronon_format_duration</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{if (is.double(vec_data(.time))) base::format(vec_data(.time), nsmall = 1L) else as.character(vec_data(.time))} {time_unit_plural(chronon_common(.time), if (is.double(vec_data(.time))) 2L else vec_data(.time))}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{duration_label(.time)}"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -124,7 +124,7 @@ strings for time units that are shared across calendars (e.g.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

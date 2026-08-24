@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -149,7 +149,7 @@
       </dl></div><div class="section level2">
       <h2 id="time-manipulation">Time Manipulation<a class="anchor" aria-label="anchor" href="#time-manipulation"></a></h2>
 
-      <div class="section-desc"><p>Functions for manipulating and transforming time objects.</p></div>
+      <div class="section-desc"><p>Functions for manipulating and transforming time vectors.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -158,7 +158,7 @@
 
       <dl><dt>
 
-          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime::mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mt_time&gt;</i>)</a></code>
+          <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime::mixtime&gt;</i>)</a></code> <code><a href="seq.mixtime.html">seq(<i>&lt;mixtime::mt_time&gt;</i>)</a></code>
 
         </dt>
         <dd>Generate sequences of mixtime values</dd>
@@ -169,6 +169,89 @@
 
         </dt>
         <dd>Round, floor and ceiling transformations for time objects</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="comparison-operators">Comparison operators<a class="anchor" aria-label="anchor" href="#comparison-operators"></a></h3>
+      <div class="section-desc"><p>Methods for comparing time vectors.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="mt_linear-compare.html">`==`(<i>&lt;mt_linear&gt;</i>)</a></code> <code><a href="mt_linear-compare.html">`!=`(<i>&lt;mt_linear&gt;</i>)</a></code> <code><a href="mt_linear-compare.html">`&lt;`(<i>&lt;mt_linear&gt;</i>)</a></code> <code><a href="mt_linear-compare.html">`&lt;=`(<i>&lt;mt_linear&gt;</i>)</a></code> <code><a href="mt_linear-compare.html">`&gt;`(<i>&lt;mt_linear&gt;</i>)</a></code> <code><a href="mt_linear-compare.html">`&gt;=`(<i>&lt;mt_linear&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Comparison operators for linear time (<code>mt_linear</code>)</dd>
+
+        <dt>
+
+          <code><a href="mt_duration-compare.html">`==`(<i>&lt;mt_duration&gt;</i>)</a></code> <code><a href="mt_duration-compare.html">`!=`(<i>&lt;mt_duration&gt;</i>)</a></code> <code><a href="mt_duration-compare.html">`&lt;`(<i>&lt;mt_duration&gt;</i>)</a></code> <code><a href="mt_duration-compare.html">`&lt;=`(<i>&lt;mt_duration&gt;</i>)</a></code> <code><a href="mt_duration-compare.html">`&gt;`(<i>&lt;mt_duration&gt;</i>)</a></code> <code><a href="mt_duration-compare.html">`&gt;=`(<i>&lt;mt_duration&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Comparison operators for durations (<code>mt_duration</code>)</dd>
+
+        <dt>
+
+          <code><a href="mt_cyclical-compare.html">`==`(<i>&lt;mt_cyclical&gt;</i>)</a></code> <code><a href="mt_cyclical-compare.html">`!=`(<i>&lt;mt_cyclical&gt;</i>)</a></code> <code><a href="mt_cyclical-compare.html">`&lt;`(<i>&lt;mt_cyclical&gt;</i>)</a></code> <code><a href="mt_cyclical-compare.html">`&lt;=`(<i>&lt;mt_cyclical&gt;</i>)</a></code> <code><a href="mt_cyclical-compare.html">`&gt;`(<i>&lt;mt_cyclical&gt;</i>)</a></code> <code><a href="mt_cyclical-compare.html">`&gt;=`(<i>&lt;mt_cyclical&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Comparison operators for cyclical time (<code>mt_cyclical</code>)</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="time-components">Time Components<a class="anchor" aria-label="anchor" href="#time-components"></a></h3>
+      <div class="section-desc"><p>Functions for extracting and referring to linear and cyclical components of time.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="time_components.html">time_components()</a></code>
+
+        </dt>
+        <dd>Extract linear and cyclical time components</dd>
+
+        <dt>
+
+          <code><a href="time_compose.html">time_compose()</a></code>
+
+        </dt>
+        <dd>Compose a linear time vector from linear and cyclical components</dd>
+
+        <dt>
+
+          <code><a href="component_helpers.html">lin()</a></code> <code><a href="component_helpers.html">cyc()</a></code>
+
+        </dt>
+        <dd>Linear and cyclical component helpers</dd>
+      </dl></div><div class="section level2">
+      <h2 id="parsing-and-formatting-time">Parsing and Formatting Time<a class="anchor" aria-label="anchor" href="#parsing-and-formatting-time"></a></h2>
+
+      <div class="section-desc"><p>Functions for converting between character strings and time vectors.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="time_parse.html">time_parse()</a></code>
+
+        </dt>
+        <dd>Parse text into a time point</dd>
+
+        <dt>
+
+          <code><a href="format.mt_time.html">format(<i>&lt;mt_time&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Format mixtime vectors</dd>
       </dl></div><div class="section level2">
       <h2 id="calendar-systems">Calendar Systems<a class="anchor" aria-label="anchor" href="#calendar-systems"></a></h2>
 
@@ -383,7 +466,7 @@
         <dt>
 
           <code><a href="new_time.html">new_time()</a></code>
-
+          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
         </dt>
         <dd>Constructor for mixtime time vectors</dd>
 
@@ -403,10 +486,24 @@
 
         <dt>
 
-          <code><a href="is_time.html">is_time_linear()</a></code> <code><a href="is_time.html">is_time_cyclical()</a></code> <code><a href="is_time.html">is_time_duration()</a></code>
+          <code><a href="is_time.html">time_is_linear()</a></code> <code><a href="is_time.html">time_is_cyclical()</a></code> <code><a href="is_time.html">time_is_duration()</a></code> <code><a href="is_time.html">is_time_linear()</a></code> <code><a href="is_time.html">is_time_cyclical()</a></code> <code><a href="is_time.html">is_time_duration()</a></code>
 
         </dt>
         <dd>Check the time type of values</dd>
+
+        <dt>
+
+          <code><a href="time_is_determinate_at.html">time_is_determinate_at()</a></code>
+
+        </dt>
+        <dd>Test whether time is determinate at a granule's precision</dd>
+
+        <dt>
+
+          <code><a href="time_is_complete_at.html">time_is_complete_at()</a></code>
+
+        </dt>
+        <dd>Test whether a granule is completed at a time point</dd>
 
         <dt>
 
@@ -479,6 +576,13 @@
 
         </dt>
         <dd>Base S7 class for creating new time units</dd>
+
+        <dt>
+
+          <code><a href="mt_time-class.html">mt_linear()</a></code> <code><a href="mt_time-class.html">mt_duration()</a></code> <code><a href="mt_time-class.html">mt_cyclical()</a></code>
+
+        </dt>
+        <dd>Time vector classes</dd>
       </dl></div><div class="section level2">
 
       <h3 id="calendar-arithmetic">Calendar arithmetic<a class="anchor" aria-label="anchor" href="#calendar-arithmetic"></a></h3>
@@ -535,17 +639,24 @@
 
         <dt>
 
-          <code><a href="linear_labels.html">linear_labels()</a></code>
+          <code><a href="label_scheme.html">label_scheme()</a></code> <code><a href="label_scheme.html">linear_labels()</a></code> <code><a href="label_scheme.html">cyclical_labels()</a></code>
 
         </dt>
-        <dd>Friendly labels for linear relationships</dd>
+        <dd>Describe a granule's label scheme</dd>
 
         <dt>
 
-          <code><a href="cyclical_labels.html">cyclical_labels()</a></code>
+          <code><a href="label_format.html">linear_labels_format()</a></code> <code><a href="label_format.html">cyclical_labels_format()</a></code> <code><a href="label_format.html">linear_labels_parse()</a></code> <code><a href="label_format.html">cyclical_labels_parse()</a></code>
 
         </dt>
-        <dd>Friendly labels for cyclical relationships</dd>
+        <dd>Render and parse a granule's labels</dd>
+
+        <dt>
+
+          <code><a href="vocab_table.html">vocab_table()</a></code>
+
+        </dt>
+        <dd>Build a <code>vocab</code> function from a plain name table</dd>
 
         <dt>
 
@@ -560,6 +671,20 @@
 
         </dt>
         <dd>Default formatting strings for chronon attributes</dd>
+
+        <dt>
+
+          <code><a href="parse_format.html">parse_format()</a></code>
+
+        </dt>
+        <dd>Candidate format strings for parsing time</dd>
+
+        <dt>
+
+          <code><a href="chronon_parse.html">chronon_parse_linear()</a></code> <code><a href="chronon_parse.html">chronon_parse_cyclical()</a></code>
+
+        </dt>
+        <dd>Default parsing format strings for chronons</dd>
       </dl></div><div class="section level2">
 
       <h3 id="convenience-function-factories">Convenience function factories<a class="anchor" aria-label="anchor" href="#convenience-function-factories"></a></h3>
@@ -600,7 +725,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

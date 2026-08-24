@@ -3,6 +3,7 @@
 ``` r
 
 library(mixtime)
+library(S7)
 ```
 
 This vignette documents the extension points made available in mixtime
@@ -25,6 +26,8 @@ The extension points covered are:
   relationships between time units:
   - [Cardinality](#cardinality): Define the number of finer units in a
     coarser unit with
+    [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.md)
+    and
     [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
   - [Divmod](#divmod): Define the division and remainder of time units
     with
@@ -39,12 +42,16 @@ The extension points covered are:
     [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
   - [Time labels](#time-labels): labelling granular components of time
     with
-    [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md),
-    [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
-  - [Time formats](#time-formats): default format strings with
+    [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md),
+    [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)
+  - [Formatting time](#time-formats): default format strings with
     [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md),
     [`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md),
     [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
+  - [Parsing time](#time-parsing-formats): candidate formats for parsing
+    text back into time with
+    [`chronon_parse_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_parse.md),
+    [`chronon_parse_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_parse.md)
 
 The mixtime package uses S7 for all extension methods. If you are new to
 S7, the vignette on [generics and
@@ -57,7 +64,7 @@ hook](https://rconsortium.github.io/S7/articles/packages.html):
 ``` r
 
 .onLoad <- function(...) {
-  S7::methods_register()
+  methods_register()
 }
 ```
 
@@ -150,6 +157,8 @@ cal_symmetry454
 #>   - minute
 #>   - second
 #>   - millisecond
+#>   - microsecond
+#>   - nanosecond
 ```
 
 In this case, the time unit for weeks exactly matches the ISO week unit,
@@ -185,7 +194,8 @@ calendar arithmetic methods described below.
 
 ## Calendar arithmetic
 
-Two S7 generics drive all calendar calculations:
+Three S7 generics drive all calendar calculations:
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.md),
 [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
 and
 [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md).
@@ -195,6 +205,8 @@ how they work are not important for users of the calendar, but they are
 the main extension points for developers creating new calendars.
 
 For a time unit to be useful in mixtime, at minimum a
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.md)
+or
 [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
 method between itself and the next coarser unit must be defined. Time
 units with irregular relationships (e.g. days → months) also require
@@ -220,11 +232,41 @@ chronon_cardinality(cal_isoweek$day(1L), cal_isoweek$week(1L))
 #> [1] 7
 ```
 
-For units with a fixed relationship (e.g. 7 days per week) the `at`
-argument can be ignored. The `at` variable disambiguates the point in
-time for variable cardinalities (e.g. days per month), `at` is the
-internal numeric representation of time in the coarser unit (e.g. months
-since epoch for days → months).
+Units with a fixed relationship (e.g. 7 days per week) don’t need a time
+context, so they should be defined with
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.md)
+instead, which takes just the two units (no `at`) and returns the number
+of unit (`n = 1L`) `x` granules that fit within one unit `y` granule.
+Defining
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.md)
+for a pair automatically provides the corresponding
+[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+method (scaled by the requested granule sizes), and is what allows the
+relationship to be used when deriving
+[`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
+by graph traversal (see [Divmod](#divmod)) — a plain
+[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+method cannot be used there since no `at` is available mid-traversal.
+
+In the Symmetry454 calendar every year has exactly 12 months (a fixed
+relationship).
+
+``` r
+
+# Each Symmetry454 year has 12 months
+method(chronon_cardinality_fixed, list(cal_symmetry454$month, cal_symmetry454$year)) <-
+  function(x, y) {
+    12L
+  }
+chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$year(1L))
+#> [1] 12
+```
+
+Variable cardinalities (e.g. days per month) instead need a
+[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+method, disambiguated by the `at` argument: the internal numeric
+representation of time in the coarser unit (e.g. months since epoch for
+days → months).
 
 ``` r
 
@@ -234,20 +276,6 @@ chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 1L) # F
 #> [1] 28
 chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$month(1L), at = 25L) # Feb 1972 (leap year)
 #> [1] 29
-```
-
-In the Symmetry454 calendar every year has exactly 12 months (a fixed
-relationship).
-
-``` r
-
-# Each Symmetry454 year has 12 months
-S7::method(chronon_cardinality, list(cal_symmetry454$month, cal_symmetry454$year)) <-
-  function(x, y, at = NULL) {
-    y@n * 12L / x@n
-  }
-chronon_cardinality(cal_symmetry454$month(1L), cal_symmetry454$year(1L))
-#> [1] 12
 ```
 
 The number of weeks in each month follows the repeating **4–5–4**
@@ -265,7 +293,7 @@ produces 52 leap years in every 293-year period.
 
 ``` r
 
-S7::method(chronon_cardinality, list(cal_symmetry454$week, cal_symmetry454$month)) <-
+method(chronon_cardinality, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(x, y, at = NULL) {
     # The number of weeks in each n-month period
     month_size <- y@n
@@ -351,7 +379,7 @@ methods. These methods are required to efficiently convert between units
 with irregular relationships, such as days → months. For regular
 relationships (e.g. days → weeks) the divmod is automatically derived
 from
-[`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+[`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.md)
 methods alone.
 
 `chronon_divmod(from, to, x)` converts times `x` in the `from` granules
@@ -395,7 +423,7 @@ cycle.
 
 ``` r
 
-S7::method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
+method(chronon_divmod, list(cal_symmetry454$week, cal_symmetry454$month)) <-
   function(from, to, x) {
     # Most of this code works on 1-week granules
     week_size <- from@n
@@ -571,7 +599,7 @@ at 1970 W1, so `cal_symmetry454$year(1L)` has an epoch of 1970.
 
 ``` r
 
-S7::method(chronon_epoch, cal_symmetry454$year) <- function(x) 1970L
+method(chronon_epoch, cal_symmetry454$year) <- function(x) 1970L
 ```
 
 ## Displaying time
@@ -603,10 +631,10 @@ default is to suffix with “s” for plurals (i.e. `{?/s}`).
 
 ``` r
 
-S7::method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year{?/s}"
-S7::method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "Y"
-S7::method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month{?/s}"
-S7::method(time_unit_abbr, cal_symmetry454$month) <- function(x) "M"
+method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year{?/s}"
+method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "Y"
+method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month{?/s}"
+method(time_unit_abbr, cal_symmetry454$month) <- function(x) "M"
 ```
 
 The time unit abbreviations are also used in the default time formatting
@@ -657,15 +685,35 @@ coarsest time unit, years), and cyclical time labels are for time
 granules that nest (cycle over) another granule (e.g. months within a
 year, days within a week).
 
-The
-[`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
+[`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)
 and
-[`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
-methods should return character vectors of the same length as the input
-time indices `i`.
+[`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)
+are S7 generics that return a granule’s *label scheme*: a plain list
+describing how its position renders as text and parses back again.
+Declaring a scheme is usually just
+`method(cyclical_labels, list(granule, cycle)) <- label_scheme(...)`.
+Rendering and parsing are handled separately by
+[`linear_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_format.md)/[`linear_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_format.md)
+(and their cyclical counterparts), which by default read the scheme and
+produce the label. The scheme’s main fields are:
 
-While not enforced, we recommend using the following argument names for
-common label options:
+- `start`: what raw index `0` displays as (e.g. `start = 1L` makes
+  January, raw index `0`, display as “1”), for both numeric and named
+  rendering
+- `width`: zero-pads numeric rendering (e.g. `width = 2L` for “02”)
+- `vocab`: supplies the names for labelled rendering (e.g. “January”,
+  “Jan”), most easily built with
+  [`vocab_table()`](https://pkg.mitchelloharawild.com/mixtime/reference/vocab_table.md)
+
+Labels that don’t fit this scheme (e.g. the year “2BC”) can define
+[`linear_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_format.md)/[`linear_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_format.md)
+directly instead. See
+[`?cyclical_labels`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)
+for the complete authoring reference, including `transform` for cycles
+whose names don’t follow a constant `start` shift.
+
+We recommend using the following argument names for common label options
+(the default rendering methods already use these):
 
 - `label`: if `TRUE`, return labelled values (e.g. “January”,
   “February”, …), otherwise return unlabelled values (e.g. “1”, “2”, …)
@@ -675,18 +723,34 @@ common label options:
 
 #### Linear time labels: `linear_labels()`
 
-In most cases, the default linear labels provided by
-[`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md)
-are sufficient, which simply return the internal numeric representation
-of the time point (e.g. “0”, “1”, “2”, …). An example of when this
-default could be improved is by correctly labelling years about the era
-boundary (e.g. “2BC”, “1BC”, “1”, “2”, … instead of “-1”, “0”, “1”, “2”,
-…).
+In most cases, the default linear labels are sufficient, which simply
+return the internal numeric representation of the time point (e.g. “0”,
+“1”, “2”, …). An example of when this default could be improved is by
+correctly labelling years about the era boundary (e.g. “2BC”, “1BC”,
+“1”, “2”, … instead of “-1”, “0”, “1”, “2”, …). This relabelling isn’t a
+constant shift (it flips direction and skips 0 at the era boundary), so
+a
+[`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)
+scheme can’t express it. Instead, define
+[`linear_labels_format()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_format.md)
+and
+[`linear_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_format.md)
+directly:
 
 ``` r
 
-S7::method(linear_labels, cal_symmetry454$year) <- function(granule, i, ...) {
+method(linear_labels_format, cal_symmetry454$year) <- function(granule, i, ...) {
   ifelse(i <= 0L, paste0(-i + 1L, "BC"), i)
+}
+method(linear_labels_parse, cal_symmetry454$year) <- function(granule, ...) {
+  list(
+    pattern = "\\d+(?:BC)?",
+    decode = function(text, at = NULL) {
+      bc <- grepl("BC$", text)
+      n <- as.integer(sub("BC$", "", text))
+      ifelse(bc, 1L - n, n) - chronon_epoch(granule)
+    }
+  )
 }
 ```
 
@@ -707,35 +771,39 @@ format methods below to make these labels more readable.
 It is common to need custom labels for cyclical time granules, since
 cyclical time points often have familiar labels (e.g. Jan, Feb, … for
 months in years) or are 1-indexed (e.g. 1, 2, … for days in a month).
-The default method for
-[`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md)
-simply uses the internal 0-indexed numeric representation of the time
-point.
+The default scheme simply uses the internal 0-indexed numeric
+representation of the time point.
 
 ``` r
 
 # Labels for months of the year, essentially the same as Gregorian months in years.
-S7::method(cyclical_labels, list(cal_symmetry454$month, cal_symmetry454$year)) <-
-  function(granule, cycle, i, label = FALSE, abbreviate = FALSE, ...) {
-    if (label) {
-      # Index into R's localised month name objects (month.name and month.abb)
-      if (abbreviate) month.abb[i + 1L] else month.name[i + 1L]
-    } else {
-      # Use i + 1L for 1-indexing months (so January is 1, February is 2, ...)
-      sprintf("%02d", i + 1L)
-    }
-  }
+method(cyclical_labels, list(cal_symmetry454$month, cal_symmetry454$year)) <-
+  label_scheme(
+    start = 1L,
+    width = 2L,
+    vocab = vocab_table(
+      `en-GB` = list(wide = month.name, abbreviated = month.abb)
+    )
+  )
 
-# Labels for weeks of the month are simply 1-indexed (e.g. "W1", "W2", ...)
-S7::method(cyclical_labels, list(cal_symmetry454$week, cal_symmetry454$month)) <-
-  function(granule, cycle, i, ...) {
-    as.character(i + 1L)
-  }
+# Labels for weeks of the month are simply 1-indexed (e.g. "1", "2", ...)
+method(cyclical_labels, list(cal_symmetry454$week, cal_symmetry454$month)) <-
+  label_scheme(start = 1L)
 ```
 
 The other cyclical labels (e.g. day of week) are inherited from
 `cal_isoweek` since we reused the ISO week unit, so they are correctly
 labelled as days of the week (e.g. “Mon”, “Tue”, …).
+
+For cycles where the raw-index-to-name mapping isn’t a constant shift
+(e.g. a leap month that splits one name into two in some years),
+`transform` overrides the indexing used for named (`label = TRUE`)
+rendering with hand-written `encode`/`decode` functions. These also
+receive `at`, the linear position of the cycle instance, so the mapping
+can vary between cycles. See
+[`?cyclical_labels`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)’s
+“Irregular cycles” section for a worked example (the Hebrew calendar’s
+month-in-year cycle).
 
 ``` r
 
@@ -783,7 +851,7 @@ the weeks are nested within months. The default format for months is
 allow us to change the default formats for linear and cyclical time
 vectors.
 
-### Time formats
+### Formatting time
 
 The default formatting for time vectors is defined by
 [`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
@@ -801,15 +869,15 @@ vignette.
 There are two types of granule labels useful for these time format
 strings:
 
-- `lin(<time granule>)` - Granule labels for linear time grnaules,
+- `lin(<time granule>)` - Granule labels for linear time granules,
   usually the largest granule (e.g. `lin(year(1L))`). These labels are
   produced by
-  [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_labels.md).
+  [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md).
 - `cyc(<time granule>, <cycle granule>)` - Granule labels for cyclical
   time granules, where the labels are relative to the cycle
   (e.g. `cyc(month(1L), year(1L))` is the month within the year). These
   labels are produced by
-  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_labels.md).
+  [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md).
 
 The `<time granule>` and `<cycle granule>` placeholders in the format
 string must evaluate to a time granule from a calendar time unit. For
@@ -831,25 +899,25 @@ needed to display dates appropriately.
 ``` r
 
 # Simply display years as numbers (e.g. "1970", "1971", ...)
-S7::method(
+method(
   chronon_format_linear,
   list(cal_symmetry454$year, S7::class_any)
 ) <- function(x, cal) "{lin(year(1L))}"
 
 # Display labelled months as month within year (e.g. "1970 Jan", "1970 Feb", ...)
-S7::method(
+method(
   chronon_format_linear,
   list(cal_symmetry454$month, S7::class_any)
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}"
 
 # Display weeks as week in month in year (e.g. "1970-01-W1", "1970-01-W2", ...)
-S7::method(
+method(
   chronon_format_linear,
   list(cal_symmetry454$week, S7::new_S3_class("cal_symmetry454"))
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}"
 
 # Format days as day in week in month in year (e.g. "1970-Jan-W1-Mon", "1970-Jan-W1-Tue", ...)
-S7::method(
+method(
   chronon_format_linear,
   list(cal_symmetry454$day, S7::new_S3_class("cal_symmetry454"))
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}-{cyc(day(1L), week(1L), label=TRUE, abbreviate=TRUE)}"
@@ -893,7 +961,7 @@ cycle label (e.g. “W1” for week 1 of the month or year).
 ``` r
 
 # Format months in years as abbreviated month labels (e.g. "Jan", "Feb", ...)
-S7::method(
+method(
   chronon_format_cyclical,
   list(cal_symmetry454$month, cal_symmetry454$year)
 ) <- function(x, y) "{cyc(month,year,label=TRUE,abbreviate=TRUE)}"
@@ -929,3 +997,58 @@ duration(3L, cal_symmetry454$month(1L))
 #> <mixtime[1]>
 #> [1] 3 Symmetry454 months
 ```
+
+### Parsing time
+
+Parsing text back into time is the inverse of formatting:
+[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
+matches text against one or more candidate format strings and returns
+whichever parses. The candidates for a given chronon are supplied by
+[`chronon_parse_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_parse.md)
+and
+[`chronon_parse_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_parse.md),
+which dispatch exactly like
+[`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)/[`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)
+above. Their default methods simply reuse the single format returned by
+[`chronon_format_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md)/[`chronon_format_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md),
+but it’s often worth listing every format actually in use (e.g. both
+“1970-01” and “1970 Jan”), so
+[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
+has more than one candidate to try.
+
+[`parse_format()`](https://pkg.mitchelloharawild.com/mixtime/reference/parse_format.md)
+combines format strings into the candidate vector these methods should
+return;
+[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
+tries each candidate in turn and keeps whichever parses the most values.
+
+``` r
+
+method(chronon_parse_linear, list(cal_symmetry454$month, S7::class_any)) <- function(x, cal) {
+  parse_format(
+    "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}",
+    "{lin(year(1L))}-{cyc(month(1L), year(1L))}"
+  )
+}
+```
+
+With this method in place,
+[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
+can recover a Symmetry454 month from either the labelled or numeric
+form:
+
+``` r
+
+time_parse(c("1970-Jan", "1970-03"), format = chronon_parse_linear(cal_symmetry454$month(1L)))
+#> <mixtime[2]>
+#> [1] 1970 Jan 1970 Mar
+```
+
+[`parse_format()`](https://pkg.mitchelloharawild.com/mixtime/reference/parse_format.md)
+also accepts a `regex` argument, which marks its candidates’ surrounding
+(non-token) text as regular expression syntax rather than literal text
+to match exactly - useful for irregular formats, e.g. `"[/-]"` to accept
+either `/` or `-` as a separator. This is a niche need; most candidates
+leave it at the default. See the `regex` argument of
+[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
+for details.

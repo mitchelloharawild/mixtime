@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Get timezone offset</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.2.0/R/timezone.R" class="external-link"><code>R/timezone.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/timezone.R" class="external-link"><code>R/timezone.R</code></a></small>
       <div class="d-none name"><code>tz_offset.Rd</code></div>
     </div>
 
@@ -60,15 +60,18 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A numeric vector of offsets from UTC in the same chronon (e.g. seconds for POSIXt, days for dates, etc.)</p>
+    <p>A <code>mixtime</code> duration vector of offsets from UTC in the same chronon
+(e.g. seconds for POSIXt, days for dates, etc.)</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">tz_offset</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, tz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0 seconds</span>
 <span class="r-in"><span><span class="fu">tz_offset</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2024-06-15 12:00:00"</span>, tz <span class="op">=</span> <span class="st">"America/New_York"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -14400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -14400.0 seconds</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -80,7 +83,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
