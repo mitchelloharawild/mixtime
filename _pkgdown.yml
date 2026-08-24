@@ -63,7 +63,7 @@ reference:
   - milliseconds
 
 - title: "Time Manipulation"
-  desc: "Functions for manipulating and transforming time objects."
+  desc: "Functions for manipulating and transforming time vectors."
   contents:
   - starts_with("seq")
   - time_round
@@ -82,6 +82,12 @@ reference:
   - time_compose
   - lin
   - cyc
+
+- title: "Parsing and Formatting Time"
+  desc: "Functions for converting between character strings and time vectors."
+  contents:
+  - time_parse
+  - format.mt_time
 
 - title: "Calendar Systems"
   desc: "Calendar systems are composed of their associated time units. These define how time is divided and measured in different calendar systems."
@@ -175,9 +181,15 @@ reference:
   - time_unit_full
   - linear_labels
   - cyclical_labels
+  - linear_labels_format
+  - cyclical_labels_format
+  - vocab_table
   - chronon_format_linear
   - chronon_format_cyclical
   - chronon_format_attr
+  - parse_format
+  - chronon_parse_linear
+  - chronon_parse_cyclical
 - subtitle: "Convenience function factories"
   contents:
   - new_cyclical_time_fn

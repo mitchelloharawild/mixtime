@@ -212,6 +212,26 @@ time_format_impl <- function(x, format = time_format_default(x, attr = attr), ..
   out
 }
 
+#' Format mixtime vectors
+#'
+#' Formats a mixtime vector as a character vector, using a glue-style format
+#' string of `{lin(...)}`/`{cyc(...)}` tokens tailored to the vector's chronon
+#' and cycle. If `format` is omitted, a sensible default is derived
+#' automatically. See `vignette("time-format-strings")` for the format string
+#' syntax.
+#'
+#' @param x A mixtime vector.
+#' @param ... Additional arguments for methods, including `format`: a
+#'   glue-style format string, defaulting to one derived automatically for `x`.
+#' @param attr If `TRUE` (default), append attribute information (e.g.
+#'   timezone) to the default format.
+#'
+#' @return A character vector the same length as `x`.
+#'
+#' @usage
+#' \S4method{format}{mt_time}(x, ..., attr = TRUE)
+#' @aliases format,mt_time-method
+#' @name format.mt_time
 #' @export
 S7::method(format, mt_time) <- function(x, ..., attr = TRUE) {
   time_format_impl(x, ..., attr = attr)
