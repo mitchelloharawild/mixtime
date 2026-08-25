@@ -45,7 +45,8 @@ both positions are expressed in the finest common chronon, and a discrete
 value spans the closed interval of its chronon, so
 \itemize{
 \item \code{a == b} iff \code{start(a) == start(b)} and \code{end(a) == end(b)}
-\item \code{a < b} iff \code{end(a) < start(b)}, \code{a > b} iff \code{start(a) > end(b)}
+\item \code{a < b}/\code{a > b} iff \code{a}/\code{b} ends at or before the other begins (a gap, or
+just adjacency - see \link{mt_linear-compare} for why this includes adjacency)
 \item \code{a <= b} iff \code{end(a) <= end(b)}, \code{a >= b} iff \code{start(a) >= start(b)}
 }
 

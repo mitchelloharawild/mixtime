@@ -33,17 +33,19 @@ start/end instants of the (possibly zero-width) interval each value
 represents:
 \itemize{
 \item \code{a == b} iff \code{start(a) == start(b)} and \code{end(a) == end(b)}
-\item \code{a < b} iff \code{end(a) < start(b)}
-\item \code{a > b} iff \code{start(a) > end(b)}
+\item \code{a < b} iff \code{end(a) <= start(b)} (i.e. before with or without a gap)
+\item \code{a > b} iff \code{start(a) >= end(b)} (i.e. after with or without a gap)
 \item \code{a <= b} iff \code{end(a) <= end(b)} (right-bound comparison)
 \item \code{a >= b} iff \code{start(a) >= start(b)} (left-bound comparison)
 }
 
-This is \strong{not} a total order: \code{<=}/\code{>=} are endpoint comparisons, not
-shorthand for \verb{(< or ==)}/\verb{(> or ==)}, so it is possible for none of
-\code{==}, \code{<}, \code{>} to hold between two values.
+This is not a total order for comparisons between time points at different
+granularities: \code{<=}/\code{>=} are \strong{not} shorthand for \verb{(< or ==)}/\verb{(> or ==)}.
+For example, \code{yearquarter("2020 Q3") <= year("2020")} is TRUE despite
+\code{yearquarter("2020 Q3") < year("2020")} and
+\code{yearquarter("2020 Q3") == year("2020")} being FALSE.
 
-If both operands are continuous (fractional chronons), or share an
-identical chronon, the comparison simplifies to a direct numeric
-comparison, since there is no interval to consider.
+The inequality operators \code{<}/\code{>} and \code{<=}/\code{>=} are useful conjugations of
+Allen's interval algebra for common data manipulation needs. The complete set
+of Allen's 13 base relations are documented in \link{allen-interval-algebra}.
 }

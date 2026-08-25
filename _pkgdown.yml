@@ -75,6 +75,7 @@ reference:
   - mt_linear-compare
   - mt_duration-compare
   - mt_cyclical-compare
+  - allen-algebra
 - subtitle: "Time Components"
   desc: "Functions for extracting and referring to linear and cyclical components of time."
   contents:

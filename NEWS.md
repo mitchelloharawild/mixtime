@@ -1,5 +1,13 @@
 # mixtime (development version)
 
+## New features
+
+* Added the twelve remaining base relations of Allen's interval algebra as
+  infix operators - `%p%`/`%pi%` (precedes/preceded by), `%m%`/`%mi%`
+  (meets/met by), `%o%`/`%oi%` (overlaps/overlapped by), `%s%`/`%si%`
+  (starts/started by), `%d%`/`%di%` (during/contains), and `%f%`/`%fi%`
+  (finishes/finished by) - completing the set alongside the existing `==`.
+
 # mixtime 0.3.0
 
 ## New features
