@@ -6,7 +6,15 @@ Authors@R:
              family = "O'Hara-Wild",
              email = "mail@mitchelloharawild.com",
              role = c("aut", "cre"),
-             comment = c(ORCID = "0000-0001-6729-7695")))
+             comment = c(ORCID = "0000-0001-6729-7695")),
+      person(given = "Cynthia",
+             family = "Huang",
+             role = "ctb",
+             comment = c(ORCID = "0000-0002-9218-987X")),
+      person(given = "Rob",
+             family = "Hyndman",
+             role = "ctb",
+             comment = c(ORCID = "0000-0002-2140-5352")))
 Description: Flexible time classes for time series analysis and forecasting with
     mixed temporal granularities. Supports linear and cyclical time 
     representations in discrete and continuous forms, with timezone support, 

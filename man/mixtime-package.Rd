@@ -26,5 +26,11 @@ Authors:
   \item Mitchell O'Hara-Wild \email{mail@mitchelloharawild.com} (\href{https://orcid.org/0000-0001-6729-7695}{ORCID})
 }
 
+Other contributors:
+\itemize{
+  \item Cynthia Huang (\href{https://orcid.org/0000-0002-9218-987X}{ORCID}) [contributor]
+  \item Rob Hyndman (\href{https://orcid.org/0000-0002-2140-5352}{ORCID}) [contributor]
+}
+
 }
 \keyword{internal}
