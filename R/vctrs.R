@@ -28,34 +28,6 @@ vec_cast_to_mixtime <- function(x, to, ...) {
   mixtime(x)
 }
 
-#' @importFrom vctrs vec_proxy_order
-method(vec_proxy_order, class_mixtime) <- function(x, ...) {
-  mode <- check_common_time_mode(x)
-  if (!length(x@x)) return(vec_proxy_order(vecvec::unvecvec(x)))
-
-  # The granules each part is reduced to, read before converting the parts below
-  # replaces them with bare chronon counts carrying neither granule.
-  chronon <- chronon_common_impl(lapply(x@x, function(v) attr(v, "chronon")))
-  cycle <- if (identical(mode, "cyclical")) check_common_cycle(x)
-
-  # Convert all time values to a common chronon, which a single part already is
-  if (length(x@x) > 1L) {
-    x@x <- lapply(x@x, function(v) {
-      if (is.integer(v)) v <- v + 0.5
-      chronon_convert(v, chronon)
-    })
-  }
-
-  if (!is.null(cycle)) {
-    # Cyclical values order by their position within the cycle, matching `==`
-    # and `<` on `mt_cyclical` (see `mt_cyclical-compare`) rather than the
-    # absolute chronon count stored underneath.
-    x@x <- lapply(x@x, function(v) cyclical_position(vec_data(v), chronon, cycle))
-  }
-
-  vec_proxy_order(vecvec::unvecvec(x))
-}
-
 #' @importFrom vctrs vec_proxy_equal
 method(vec_proxy_equal, class_mixtime) <- function(x, ...) {
   cycle <- if (identical(check_common_time_mode(x), "cyclical")) check_common_cycle(x)

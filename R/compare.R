@@ -550,9 +550,104 @@ method(`%fi%`, list(class_any, mt_cyclical)) <- function(e1, e2) cyclical_compar
 method(`%fi%`, list(class_mixtime, class_any)) <- mixtime_compare(`%fi%`)
 method(`%fi%`, list(class_any, class_mixtime)) <- mixtime_compare(`%fi%`)
 
+#' Ordering of mixtime vectors
+#'
+#' @description
+#' `sort()` and `xtfrm()` (which in turn powers `order()`, `rank()`, and
+#' comparisons like `min()`/`max()`) order a mixtime vector chronologically.
+#' Continuous time points (e.g. `POSIXct`-backed values) order by their exact
+#' instant, but a *discrete* time value (e.g. `yearmonth(2020, 1)`) represents
+#' an entire span of time rather than a single instant, so ordering it
+#' against a value of another granularity (or against a continuous value)
+#' first requires picking the instant *within* that span to compare from.
+#'
+#' `align_discrete` controls that choice: `0` anchors discrete values to the
+#' start of their span, `1` to the end, and the default `0.5` to the
+#' midpoint - so, for example, `yearmonth(2020, 1)` sorts before, at the same
+#' position as, or after `date("2020-01-15")` according to whether
+#' `align_discrete` is closer to `0`, exactly `0.5`, or closer to `1`. This
+#' only affects relative order between differing chronons/granularities;
+#' values that already share a chronon keep their exact relative order for
+#' any `align_discrete`, since shifting every value by the same amount can't
+#' change their order.
+#'
+#' Because base R's `xtfrm()` generic takes no arguments beyond `x`,
+#' `align_discrete` can only be customised through `sort()`; `xtfrm()` (and
+#' anything built on it, such as `order()` or `rank()`) always aligns to the
+#' midpoint.
+#'
+#' @param x,decreasing,na.last,... See [sort()].
+#' @param align_discrete The fractional position (`0` = start, `1` = end)
+#'   within a discrete time span's chronon to use as its ordering instant
+#'   when reconciling it against a value of another chronon. Default `0.5`
+#'   (the midpoint).
+#'
+#' @return
+#' `sort()` returns a mixtime vector; `xtfrm()` returns a numeric vector
+#' suitable for ranking.
+#'
+#' @examples
+#' x <- c(yearmonth(2020, 1), date("2020-01-15"), yearmonth(2020, 2))
+#' sort(x)
+#' sort(x, align_discrete = 0)   # yearmonth(2020, 1) now sorts after the 15th
+#' sort(x, decreasing = TRUE)
+#'
+#' @name mixtime-order
+#' @aliases xtfrm.mixtime sort.mixtime
+NULL
+
 # Ordering and de-duplication of mixtime vectors
+
+#' Ordering proxy for mixtime vectors
+#'
+#' Builds the ordering key underlying [xtfrm()] and [sort()] on mixtime
+#' vectors (see `mixtime-order`).
+#'
+#' @param x A mixtime vector.
+#' @param align_discrete The fractional position (0 = start, 1 = end) within
+#'   a discrete time span's chronon to use as its ordering instant.
+#'
+#' @noRd
+#' @importFrom vctrs vec_proxy_order
+mixtime_order_proxy <- function(x, align_discrete = 0.5) {
+  mode <- check_common_time_mode(x)
+  if (!length(x@x)) return(vec_proxy_order(vecvec::unvecvec(x)))
+
+  # The granules each part is reduced to, read before converting the parts below
+  # replaces them with bare chronon counts carrying neither granule.
+  chronon <- chronon_common_impl(lapply(x@x, function(v) attr(v, "chronon")))
+  cycle <- if (identical(mode, "cyclical")) check_common_cycle(x)
+
+  # Convert all time values to a common chronon, which a single part already is
+  if (length(x@x) > 1L) {
+    x@x <- lapply(x@x, function(v) {
+      if (is.integer(v)) v <- v + align_discrete
+      chronon_convert(v, chronon)
+    })
+  }
+
+  if (!is.null(cycle)) {
+    # Cyclical values order by their position within the cycle, matching `==`
+    # and `<` on `mt_cyclical` (see `mt_cyclical-compare`) rather than the
+    # absolute chronon count stored underneath.
+    x@x <- lapply(x@x, function(v) cyclical_position(vec_data(v), chronon, cycle))
+  }
+
+  vec_proxy_order(vecvec::unvecvec(x))
+}
+
+
+#' @rdname mixtime-order
+#' @export
 method(xtfrm, class_mixtime) <- function(x) {
-  xtfrm(vec_proxy_order(x))
+  xtfrm(mixtime_order_proxy(x, align_discrete = 0.5))
+}
+
+#' @rdname mixtime-order
+#' @export
+method(sort, class_mixtime) <- function(x, decreasing = FALSE, na.last = NA, ..., align_discrete = 0.5) {
+  key <- xtfrm(mixtime_order_proxy(x, align_discrete = align_discrete))
+  x[order(key, na.last = na.last, decreasing = decreasing)]
 }
 
 method(unique, class_mixtime) <- function(x, incomparables = FALSE, ...) {

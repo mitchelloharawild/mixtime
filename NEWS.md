@@ -8,6 +8,10 @@
   (starts/started by), `%d%`/`%di%` (during/contains), and `%f%`/`%fi%`
   (finishes/finished by) - completing the set alongside the existing `==`.
 
+* Added an `align_discrete` argument to `sort()` controlling the representative
+  time instant used for sorting discrete time spans of different granularity.
+  `0` for a span's start, `1` for its end, and `0.5` (default) for its midpoint.
+
 # mixtime 0.3.0
 
 ## New features
