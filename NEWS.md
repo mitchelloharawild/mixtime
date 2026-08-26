@@ -8,6 +8,14 @@
   (starts/started by), `%d%`/`%di%` (during/contains), and `%f%`/`%fi%`
   (finishes/finished by) - completing the set alongside the existing `==`.
 
+## Improvements
+
+* Generalised the default parse strings used by `yearweek()`, `yearmonth()`, and
+  `yearquarter()` to accept strings that are accepted by tsibble equivalents for
+  ease of migration (with the intentional exception of dates and datetimes, 
+  which need to be parsed first with `date()` or `datetime()`).
+* Parsing named labels (e.g. month and weekday names) are now case-insensitive.
+
 # mixtime 0.3.0
 
 ## New features

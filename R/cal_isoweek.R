@@ -57,19 +57,19 @@ method(chronon_format_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- fun
 # Candidate parsing formats
 method(chronon_parse_linear, list(cal_isoweek$week, class_any)) <- function(x, cal) {
   parse_format(
-    # e.g. "2024-W01", "2024W01", "2024 w1"
-    "{lin(year)}[-\\s]*[Ww]{cyc(week,year)}",
-    # e.g. "W01-2024", "w1 2024"
-    "[Ww]{cyc(week,year)}[-\\s]+{lin(year)}",
+    # e.g. "2024-W01", "2024W01", "2024 w1", "2024 Week 1"
+    "[[:space:]]*{lin(year)}[-/,._[:space:]]*(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[[:space:]]*",
+    # e.g. "W01-2024", "w1 2024", "Week 1 2024"
+    "[[:space:]]*(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*",
     regex = TRUE
   )
 }
 method(chronon_parse_linear, list(cal_isoweek$day, S7::new_S3_class("cal_isoweek"))) <- function(x, cal) {
   parse_format(
     # e.g. "2024-W01-3", "2024W01 Wed", "2024 w1 Wednesday"
-    "{lin(year)}[-\\s]*[Ww]{cyc(week,year)}[-\\s]+{cyc(day,week)}",
+    "[[:space:]]*{lin(year)}[-/,._[:space:]]*(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{cyc(day,week)}[[:space:]]*",
     # e.g. "Wed W01-2024", "3 w1 2024"
-    "{cyc(day,week)}[-\\s]+[Ww]{cyc(week,year)}[-\\s]+{lin(year)}",
+    "[[:space:]]*{cyc(day,week)}[-/,._[:space:]]+(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*",
     regex = TRUE
   )
 }
@@ -79,8 +79,8 @@ method(chronon_parse_cyclical, list(cal_isoweek$day, cal_isoweek$week)) <- funct
 }
 method(chronon_parse_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y) {
   parse_format(
-    # e.g. "1", "W1", "w01"
-    "[Ww]?{cyc(week,year)}",
+    # e.g. "1", "W1", "w01", "Week 1"
+    "[[:space:]]*(?:(?i:weeks?|wk|w)[-/,._[:space:]]*)?{cyc(week,year)}[[:space:]]*",
     regex = TRUE
   )
 }

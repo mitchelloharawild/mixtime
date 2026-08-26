@@ -550,6 +550,95 @@ test_that("chronon_parse_linear()/chronon_parse_cyclical() tolerate irregular se
   )
 })
 
+test_that("granule strings accept every spelling tsibble's year*() functions did", {
+  # Migration from tsibble: the granule-specific strings its yearmonth(),
+  # yearquarter() and yearweek() parsed (keyword spellings, either component
+  # order, any separator, any casing) must parse here too. Each value is
+  # parsed on its own, since one time_parse() call commits to a single
+  # format for the whole vector.
+  parse_each <- function(x, fmt, calendar = cal_gregorian) {
+    vapply(
+      x,
+      function(v) format(time_parse(v, format = fmt, regex = TRUE, calendar = calendar)),
+      character(1L),
+      USE.NAMES = FALSE
+    )
+  }
+
+  fmt_month <- chronon_parse_linear(cal_gregorian$month(1L))
+  expect_true(all(parse_each(
+    c(
+      "2018 Jan", "2018 January", "2018-Jan", "2018/Jan", "2018Jan",
+      "2018 M01", "2018 M1", "2018m1", "2018-M01", "2018 M 01",
+      "2018-01", "2018/01", "2018.01", "2018 01", "2018-1", " 2018 Jan "
+    ),
+    fmt_month
+  ) == "2018 Jan"))
+  expect_true(all(parse_each(
+    c("Jan 2018", "January 2018", "Jan-2018", "Jan/2018", "M01 2018"),
+    fmt_month
+  ) == "2018 Jan"))
+
+  fmt_quarter <- chronon_parse_linear(cal_gregorian$quarter(1L))
+  expect_true(all(parse_each(
+    c(
+      "2018 Q1", "2018 Qtr1", "2018 Quarter 1", "2018Q1", "2018-Q1",
+      "2018_Q1", "2018/Q1", "2018.Q1", "2018 q1", "2018 qtr 1",
+      "2018 quarter1", "2018 Q 1", "2018 Q01", "2018 1", " 2018 Q1 "
+    ),
+    fmt_quarter
+  ) == "2018 Q1"))
+  expect_true(all(parse_each(
+    c("Q1 2018", "Qtr1 2018", "Quarter 1 2018", "1 2018"),
+    fmt_quarter
+  ) == "2018 Q1"))
+
+  fmt_week <- chronon_parse_linear(cal_isoweek$week(1L))
+  expect_true(all(parse_each(
+    c(
+      "2018 W01", "2018 W1", "2018 Wk01", "2018 Week 1", "2018W01",
+      "2018-W01", "2018_W1", "2018/W1", "2018.W1", "2018 w01",
+      "2018 wk 1", "2018 week01", "2018 WEEK 1", "2018-W001", " 2018 W1 "
+    ),
+    fmt_week,
+    calendar = cal_isoweek
+  ) == "2018 W01"))
+  expect_true(all(parse_each(
+    c("W01 2018", "W1 2018", "Wk1 2018", "Week 1 2018"),
+    fmt_week,
+    calendar = cal_isoweek
+  ) == "2018 W01"))
+})
+
+test_that("a year and its finer component still need a keyword or separator between them", {
+  # Without one, "201801" would be split by the greedy year token itself
+  # ("20180" + "1"), so an all-digit run must not parse.
+  expect_error(
+    time_parse("201801", format = chronon_parse_linear(cal_gregorian$month(1L)), regex = TRUE),
+    class = "mixtime_parse_no_match"
+  )
+  expect_error(
+    time_parse("20181", format = chronon_parse_linear(cal_gregorian$quarter(1L)), regex = TRUE),
+    class = "mixtime_parse_no_match"
+  )
+})
+
+test_that("named labels parse case-insensitively", {
+  # label_parse_spec()'s decode() has always matched the vocab with
+  # tolower(), but its pattern used to match the names as written, so a
+  # differently-cased name never reached decode().
+  fmt <- chronon_parse_linear(cal_gregorian$month(1L))
+  expect_equal(format(time_parse("2018 MARCH", format = fmt, regex = TRUE)), "2018 Mar")
+  expect_equal(format(time_parse("2018 march", format = fmt, regex = TRUE)), "2018 Mar")
+  expect_equal(format(time_parse("MAR 2018", format = fmt, regex = TRUE)), "2018 Mar")
+
+  # Same for the BC/AD year labels, which override the generic directly.
+  expect_equal(
+    time_parse("44bc", chronon = cal_gregorian$year(1L)),
+    time_parse("44BC", chronon = cal_gregorian$year(1L))
+  )
+})
+
 test_that("chronon_parse_linear() for civil time-of-day chronons builds on the day chronon's own candidates", {
   # cal_gregorian$second's candidates are cal_gregorian$day's date candidates
   # (Y-M-D, D-M-Y, M-D-Y) each with a fixed "H:M:S" suffix pasted on -- the

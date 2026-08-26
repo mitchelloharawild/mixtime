@@ -75,20 +75,20 @@ method(chronon_format_cyclical,
 method(chronon_parse_linear, list(cal_gregorian$month, class_any)) <-
   function(x, cal) {
     parse_format(
-      # e.g. "2024-03", "2024 Mar", "2024, March"
-      "{lin(year)}[-/,\\s]+{cyc(month,year)}",
-      # e.g. "03-2024", "Mar 2024", "March, 2024"
-      "{cyc(month,year)}[-/,\\s]+{lin(year)}",
+      # e.g. "2024-03", "2024 Mar", "2024, March", "2024 M03", "2024M3",
+      "[[:space:]]*{lin(year)}(?:[-/,._[:space:]]*(?i:months?|mth|m)[-/,._[:space:]]*|[-/,._[:space:]]+|(?=[[:alpha:]])){cyc(month,year)}[[:space:]]*",
+      # e.g. "03-2024", "Mar 2024", "March, 2024", "M03 2024"
+      "[[:space:]]*(?:(?i:months?|mth|m)[-/,._[:space:]]*)?{cyc(month,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*",
       regex = TRUE
     )
   }
 method(chronon_parse_linear, list(cal_gregorian$quarter, class_any)) <-
   function(x, cal) {
     parse_format(
-      # e.g. "2024 Q1", "2024-Q1", "2024/1"
-      "{lin(year)}[-/,\\s]+[Qq]?{cyc(quarter,year)}",
-      # e.g. "Q1 2024", "Q1, 2024", "1 2024"
-      "[Qq]?{cyc(quarter,year)}[-/,\\s]+{lin(year)}",
+      # e.g. "2024 Q1", "2024-Q1", "2024/1", "2024Q1", "2024 Quarter 1"
+      "[[:space:]]*{lin(year)}(?:[-/,._[:space:]]*(?i:quarters?|qtr|q)[-/,._[:space:]]*|[-/,._[:space:]]+){cyc(quarter,year)}[[:space:]]*",
+      # e.g. "Q1 2024", "Q1, 2024", "1 2024", "Quarter 1 2024"
+      "[[:space:]]*(?:(?i:quarters?|qtr|q)[-/,._[:space:]]*)?{cyc(quarter,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*",
       regex = TRUE
     )
   }
@@ -364,10 +364,10 @@ bc_ad_format <- function(granule, i, ...) {
 }
 bc_ad_parse <- function(granule, ...) {
   list(
-    pattern = "\\d+(?:BC)?",
+    pattern = "\\d+(?:(?i:BC))?",
     decode = function(text, at = NULL) {
-      bc <- grepl("BC$", text)
-      n <- as.integer(sub("BC$", "", text))
+      bc <- grepl("BC$", text, ignore.case = TRUE)
+      n <- as.integer(sub("BC$", "", text, ignore.case = TRUE))
       # This override bypasses linear_labels_parse()'s default method, so
       # (unlike a linear_labels() scheme) it must undo the epoch shift
       # chronon_parts() applies for display itself -- see

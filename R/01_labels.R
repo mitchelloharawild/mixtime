@@ -493,7 +493,9 @@ label_parse_spec <- function(start, vocab, transform) {
     uniq_names[order(-nchar(uniq_names))],
     perl = TRUE
   )
-  pattern <- paste(c(escaped_names, "\\d+"), collapse = "|")
+  pattern <- paste0(
+    "(?i:", paste(c(escaped_names, "\\d+"), collapse = "|"), ")"
+  )
 
   decode <- if (is.null(transform)) {
     function(d, at = NULL) d - start
