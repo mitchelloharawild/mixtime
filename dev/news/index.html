@@ -38,9 +38,18 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
+<div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>Added the twelve remaining base relations of Allen’s interval algebra as infix operators - <code>%p%</code>/<code>%pi%</code> (precedes/preceded by), <code>%m%</code>/<code>%mi%</code> (meets/met by), <code>%o%</code>/<code>%oi%</code> (overlaps/overlapped by), <code>%s%</code>/<code>%si%</code> (starts/started by), <code>%d%</code>/<code>%di%</code> (during/contains), and <code>%f%</code>/<code>%fi%</code> (finishes/finished by) - completing the set alongside the existing <code>==</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
+<ul><li>Generalised the default parse strings used by <code><a href="../reference/linear_time_helpers.html">yearweek()</a></code>, <code><a href="../reference/linear_time_helpers.html">yearmonth()</a></code>, and <code><a href="../reference/linear_time_helpers.html">yearquarter()</a></code> to accept strings that are accepted by tsibble equivalents for ease of migration (with the intentional exception of dates and datetimes, which need to be parsed first with <code><a href="../reference/linear_time_helpers.html">date()</a></code> or <code><a href="../reference/linear_time_helpers.html">datetime()</a></code>).</li>
+<li>Parsing named labels (e.g. month and weekday names) are now case-insensitive.</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.0" id="mixtime-030">mixtime 0.3.0<a class="anchor" aria-label="anchor" href="#mixtime-030"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.0" id="mixtime-030">mixtime 0.3.0<a class="anchor" aria-label="anchor" href="#mixtime-030"></a></h2><p class="text-muted">CRAN release: 2026-08-24</p>
 <div class="section level3">
 <h3 id="new-features-0-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
 <ul><li><p>Added <code><a href="../reference/time_parse.html">time_parse()</a></code>, the inverse of <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code>: parses text back into a time point using the same <code>{lin(...)}</code>/<code>{cyc(...)}</code> template <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> uses. Default parse strings are specified with <code><a href="../reference/chronon_parse.html">chronon_parse_linear()</a></code> and <code><a href="../reference/chronon_parse.html">chronon_parse_cyclical()</a></code> (with the <code><a href="../reference/parse_format.html">parse_format()</a></code> helper), mirroring how <code>chronon_format_*()</code> methods specify their default format.</p></li>

@@ -109,8 +109,8 @@ for the single default format these are based on.</p></div>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{lin(year)}"</span>
 <span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{lin(year)}[-/,\\s]+{cyc(month,year)}"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "{cyc(month,year)}[-/,\\s]+{lin(year)}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "[[:space:]]*{lin(year)}(?:[-/,._[:space:]]*(?i:months?|mth|m)[-/,._[:space:]]*|[-/,._[:space:]]+|(?=[[:alpha:]])){cyc(month,year)}[[:space:]]*"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "[[:space:]]*(?:(?i:months?|mth|m)[-/,._[:space:]]*)?{cyc(month,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*"                                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"regex")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -120,8 +120,8 @@ for the single default format these are based on.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"regex")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{lin(year)}[-\\s]*[Ww]{cyc(week,year)}[-\\s]+{cyc(day,week)}"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "{cyc(day,week)}[-\\s]+[Ww]{cyc(week,year)}[-\\s]+{lin(year)}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "[[:space:]]*{lin(year)}[-/,._[:space:]]*(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{cyc(day,week)}[[:space:]]*"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "[[:space:]]*{cyc(day,week)}[-/,._[:space:]]+(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"regex")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>

@@ -35,3 +35,11 @@ Authors:
 
 - Mitchell O'Hara-Wild <mail@mitchelloharawild.com>
   ([ORCID](https://orcid.org/0000-0001-6729-7695))
+
+Other contributors:
+
+- Cynthia Huang ([ORCID](https://orcid.org/0000-0002-9218-987X))
+  \[contributor\]
+
+- Rob Hyndman ([ORCID](https://orcid.org/0000-0002-2140-5352))
+  \[contributor\]

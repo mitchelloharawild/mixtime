@@ -17,7 +17,8 @@ shared cycle are reconciled as they are for mt_linear:
 both positions are expressed in the finest common chronon, and a discrete
 value spans the closed interval of its chronon, so
 a == b iff start(a) == start(b) and end(a) == end(b)
-a &amp;lt; b iff end(a) &amp;lt; start(b), a &amp;gt; b iff start(a) &amp;gt; end(b)
+a &amp;lt; b/a &amp;gt; b iff a/b ends at or before the other begins (a gap, or
+just adjacency - see mt_linear-compare for why this includes adjacency)
 a &amp;lt;= b iff end(a) &amp;lt;= end(b), a &amp;gt;= b iff start(a) &amp;gt;= start(b)
 
 
@@ -41,7 +42,8 @@ shared cycle are reconciled as they are for mt_linear:
 both positions are expressed in the finest common chronon, and a discrete
 value spans the closed interval of its chronon, so
 a == b iff start(a) == start(b) and end(a) == end(b)
-a &amp;lt; b iff end(a) &amp;lt; start(b), a &amp;gt; b iff start(a) &amp;gt; end(b)
+a &amp;lt; b/a &amp;gt; b iff a/b ends at or before the other begins (a gap, or
+just adjacency - see mt_linear-compare for why this includes adjacency)
 a &amp;lt;= b iff end(a) &amp;lt;= end(b), a &amp;gt;= b iff start(a) &amp;gt;= start(b)
 
 
@@ -100,7 +102,8 @@ day-of-year, and comparing them is an error. Differing <em>chronons</em> within 
 shared cycle are reconciled as they are for <a href="mt_linear-compare.html">mt_linear</a>:
 both positions are expressed in the finest common chronon, and a discrete
 value spans the closed interval of its chronon, so</p><ul><li><p><code>a == b</code> iff <code>start(a) == start(b)</code> and <code>end(a) == end(b)</code></p></li>
-<li><p><code>a &lt; b</code> iff <code>end(a) &lt; start(b)</code>, <code>a &gt; b</code> iff <code>start(a) &gt; end(b)</code></p></li>
+<li><p><code>a &lt; b</code>/<code>a &gt; b</code> iff <code>a</code>/<code>b</code> ends at or before the other begins (a gap, or
+just adjacency - see <a href="mt_linear-compare.html">mt_linear-compare</a> for why this includes adjacency)</p></li>
 <li><p><code>a &lt;= b</code> iff <code>end(a) &lt;= end(b)</code>, <code>a &gt;= b</code> iff <code>start(a) &gt;= start(b)</code></p></li>
 </ul><p>As for <code>mt_linear</code>, this is not a total order when chronons differ. Ordering
 follows the position within the cycle (so <code>Mon &lt; Wed</code>); the cycle's wrap-around

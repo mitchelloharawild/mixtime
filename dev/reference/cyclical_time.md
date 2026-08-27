@@ -96,7 +96,7 @@ cyclical_time(
   calendar = cal_isoweek
 )
 #> <mixtime[1]>
-#> [1] Mon
+#> [1] Thu
 
 # Month of year (1-12)
 cyclical_time(
@@ -115,7 +115,7 @@ cyclical_time(
   discrete = FALSE
 )
 #> <mixtime[1]>
-#> [1] Aug 74.2%
+#> [1] Aug 83.9%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -125,7 +125,7 @@ cyclical_time(
   calendar = cal_gregorian
 )
 #> <mixtime[1]>
-#> [1] D24
+#> [1] D27
 
 # Hours, minutes, and seconds
 cyclical_time(
@@ -134,5 +134,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 05:42:18
+#> [1] 12:51:46
 ```

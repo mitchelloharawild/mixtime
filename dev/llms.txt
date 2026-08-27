@@ -428,6 +428,20 @@ Methods for comparing time vectors.
 
   Comparison operators for cyclical time (`mt_cyclical`)
 
+- [`` `%p%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%pi%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%m%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%mi%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%o%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%oi%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%s%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%si%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%d%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%di%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%f%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  [`` `%fi%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
+  : Allen's interval algebra for time vectors
+
 ### Time Components
 
 Functions for extracting and referring to linear and cyclical components

@@ -24,7 +24,10 @@ discrete value spans the closed interval of its chronon, so
 
 - `a == b` iff `start(a) == start(b)` and `end(a) == end(b)`
 
-- `a < b` iff `end(a) < start(b)`, `a > b` iff `start(a) > end(b)`
+- `a < b`/`a > b` iff `a`/`b` ends at or before the other begins (a gap,
+  or just adjacency - see
+  [mt_linear-compare](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.md)
+  for why this includes adjacency)
 
 - `a <= b` iff `end(a) <= end(b)`, `a >= b` iff `start(a) >= start(b)`
 

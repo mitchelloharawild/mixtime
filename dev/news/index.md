@@ -2,7 +2,34 @@
 
 ## mixtime (development version)
 
+### New features
+
+- Added the twelve remaining base relations of Allen’s interval algebra
+  as infix operators - `%p%`/`%pi%` (precedes/preceded by), `%m%`/`%mi%`
+  (meets/met by), `%o%`/`%oi%` (overlaps/overlapped by), `%s%`/`%si%`
+  (starts/started by), `%d%`/`%di%` (during/contains), and `%f%`/`%fi%`
+  (finishes/finished by) - completing the set alongside the existing
+  `==`.
+
+### Improvements
+
+- Generalised the default parse strings used by
+  [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
+  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
+  and
+  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
+  to accept strings that are accepted by tsibble equivalents for ease of
+  migration (with the intentional exception of dates and datetimes,
+  which need to be parsed first with
+  [`date()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
+  or
+  [`datetime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)).
+- Parsing named labels (e.g. month and weekday names) are now
+  case-insensitive.
+
 ## mixtime 0.3.0
+
+CRAN release: 2026-08-24
 
 ### New features
 

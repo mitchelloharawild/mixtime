@@ -6,36 +6,40 @@ instant. Comparing two mt_linear vectors therefore compares the
 start/end instants of the (possibly zero-width) interval each value
 represents:
 a == b iff start(a) == start(b) and end(a) == end(b)
-a &amp;lt; b iff end(a) &amp;lt; start(b)
-a &amp;gt; b iff start(a) &amp;gt; end(b)
+a &amp;lt; b iff end(a) &amp;lt;= start(b) (i.e. before with or without a gap)
+a &amp;gt; b iff start(a) &amp;gt;= end(b) (i.e. after with or without a gap)
 a &amp;lt;= b iff end(a) &amp;lt;= end(b) (right-bound comparison)
 a &amp;gt;= b iff start(a) &amp;gt;= start(b) (left-bound comparison)
 
 
-This is not a total order: &amp;lt;=/&amp;gt;= are endpoint comparisons, not
-shorthand for (&amp;lt; or ==)/(&amp;gt; or ==), so it is possible for none of
-==, &amp;lt;, &amp;gt; to hold between two values.
-If both operands are continuous (fractional chronons), or share an
-identical chronon, the comparison simplifies to a direct numeric
-comparison, since there is no interval to consider."><meta property="og:description" content="Discrete linear time values represent a closed interval spanning their
+This is not a total order for comparisons between time points at different
+granularities: &amp;lt;=/&amp;gt;= are not shorthand for (&amp;lt; or ==)/(&amp;gt; or ==).
+For example, yearquarter(&quot;2020 Q3&quot;) &amp;lt;= year(&quot;2020&quot;) is TRUE despite
+yearquarter(&quot;2020 Q3&quot;) &amp;lt; year(&quot;2020&quot;) and
+yearquarter(&quot;2020 Q3&quot;) == year(&quot;2020&quot;) being FALSE.
+The inequality operators &amp;lt;/&amp;gt; and &amp;lt;=/&amp;gt;= are useful conjugations of
+Allen's interval algebra for common data manipulation needs. The complete set
+of Allen's 13 base relations are documented in allen-interval-algebra."><meta property="og:description" content="Discrete linear time values represent a closed interval spanning their
 chronon (e.g. year(2020) spans every instant from the start of 2020 to
 the end of 2020), while continuous linear time values represent a single
 instant. Comparing two mt_linear vectors therefore compares the
 start/end instants of the (possibly zero-width) interval each value
 represents:
 a == b iff start(a) == start(b) and end(a) == end(b)
-a &amp;lt; b iff end(a) &amp;lt; start(b)
-a &amp;gt; b iff start(a) &amp;gt; end(b)
+a &amp;lt; b iff end(a) &amp;lt;= start(b) (i.e. before with or without a gap)
+a &amp;gt; b iff start(a) &amp;gt;= end(b) (i.e. after with or without a gap)
 a &amp;lt;= b iff end(a) &amp;lt;= end(b) (right-bound comparison)
 a &amp;gt;= b iff start(a) &amp;gt;= start(b) (left-bound comparison)
 
 
-This is not a total order: &amp;lt;=/&amp;gt;= are endpoint comparisons, not
-shorthand for (&amp;lt; or ==)/(&amp;gt; or ==), so it is possible for none of
-==, &amp;lt;, &amp;gt; to hold between two values.
-If both operands are continuous (fractional chronons), or share an
-identical chronon, the comparison simplifies to a direct numeric
-comparison, since there is no interval to consider."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg"><meta name="robots" content="noindex"></head><body>
+This is not a total order for comparisons between time points at different
+granularities: &amp;lt;=/&amp;gt;= are not shorthand for (&amp;lt; or ==)/(&amp;gt; or ==).
+For example, yearquarter(&quot;2020 Q3&quot;) &amp;lt;= year(&quot;2020&quot;) is TRUE despite
+yearquarter(&quot;2020 Q3&quot;) &amp;lt; year(&quot;2020&quot;) and
+yearquarter(&quot;2020 Q3&quot;) == year(&quot;2020&quot;) being FALSE.
+The inequality operators &amp;lt;/&amp;gt; and &amp;lt;=/&amp;gt;= are useful conjugations of
+Allen's interval algebra for common data manipulation needs. The complete set
+of Allen's 13 base relations are documented in allen-interval-algebra."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg"><meta name="robots" content="noindex"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -80,16 +84,18 @@ the end of 2020), while continuous linear time values represent a single
 instant. Comparing two <code>mt_linear</code> vectors therefore compares the
 start/end instants of the (possibly zero-width) interval each value
 represents:</p><ul><li><p><code>a == b</code> iff <code>start(a) == start(b)</code> and <code>end(a) == end(b)</code></p></li>
-<li><p><code>a &lt; b</code> iff <code>end(a) &lt; start(b)</code></p></li>
-<li><p><code>a &gt; b</code> iff <code>start(a) &gt; end(b)</code></p></li>
+<li><p><code>a &lt; b</code> iff <code>end(a) &lt;= start(b)</code> (i.e. before with or without a gap)</p></li>
+<li><p><code>a &gt; b</code> iff <code>start(a) &gt;= end(b)</code> (i.e. after with or without a gap)</p></li>
 <li><p><code>a &lt;= b</code> iff <code>end(a) &lt;= end(b)</code> (right-bound comparison)</p></li>
 <li><p><code>a &gt;= b</code> iff <code>start(a) &gt;= start(b)</code> (left-bound comparison)</p></li>
-</ul><p>This is <strong>not</strong> a total order: <code>&lt;=</code>/<code>&gt;=</code> are endpoint comparisons, not
-shorthand for <code>(&lt; or ==)</code>/<code>(&gt; or ==)</code>, so it is possible for none of
-<code>==</code>, <code>&lt;</code>, <code>&gt;</code> to hold between two values.</p>
-<p>If both operands are continuous (fractional chronons), or share an
-identical chronon, the comparison simplifies to a direct numeric
-comparison, since there is no interval to consider.</p>
+</ul><p>This is not a total order for comparisons between time points at different
+granularities: <code>&lt;=</code>/<code>&gt;=</code> are <strong>not</strong> shorthand for <code>(&lt; or ==)</code>/<code>(&gt; or ==)</code>.
+For example, <code>yearquarter("2020 Q3") &lt;= year("2020")</code> is TRUE despite
+<code>yearquarter("2020 Q3") &lt; year("2020")</code> and
+<code>yearquarter("2020 Q3") == year("2020")</code> being FALSE.</p>
+<p>The inequality operators <code>&lt;</code>/<code>&gt;</code> and <code>&lt;=</code>/<code>&gt;=</code> are useful conjugations of
+Allen's interval algebra for common data manipulation needs. The complete set
+of Allen's 13 base relations are documented in <a href="allen-interval-algebra.html">allen-interval-algebra</a>.</p>
     </div>
 
     <div class="section level2">

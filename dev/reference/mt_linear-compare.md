@@ -9,21 +9,25 @@ represents:
 
 - `a == b` iff `start(a) == start(b)` and `end(a) == end(b)`
 
-- `a < b` iff `end(a) < start(b)`
+- `a < b` iff `end(a) <= start(b)` (i.e. before with or without a gap)
 
-- `a > b` iff `start(a) > end(b)`
+- `a > b` iff `start(a) >= end(b)` (i.e. after with or without a gap)
 
 - `a <= b` iff `end(a) <= end(b)` (right-bound comparison)
 
 - `a >= b` iff `start(a) >= start(b)` (left-bound comparison)
 
-This is **not** a total order: `<=`/`>=` are endpoint comparisons, not
-shorthand for `(< or ==)`/`(> or ==)`, so it is possible for none of
-`==`, `<`, `>` to hold between two values.
+This is not a total order for comparisons between time points at
+different granularities: `<=`/`>=` are **not** shorthand for
+`(< or ==)`/`(> or ==)`. For example,
+`yearquarter("2020 Q3") <= year("2020")` is TRUE despite
+`yearquarter("2020 Q3") < year("2020")` and
+`yearquarter("2020 Q3") == year("2020")` being FALSE.
 
-If both operands are continuous (fractional chronons), or share an
-identical chronon, the comparison simplifies to a direct numeric
-comparison, since there is no interval to consider.
+The inequality operators `<`/`>` and `<=`/`>=` are useful conjugations
+of Allen's interval algebra for common data manipulation needs. The
+complete set of Allen's 13 base relations are documented in
+[allen-interval-algebra](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md).
 
 ## Usage
 

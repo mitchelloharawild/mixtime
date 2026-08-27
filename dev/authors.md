@@ -5,6 +5,12 @@
 - **[Mitchell O'Hara-Wild](https://mitchelloharawild.com)**. Author,
   maintainer. [](https://orcid.org/0000-0001-6729-7695)
 
+- **Cynthia Huang**. Contributor.
+  [](https://orcid.org/0000-0002-9218-987X)
+
+- **[Rob Hyndman](http://robjhyndman.com)**. Contributor.
+  [](https://orcid.org/0000-0002-2140-5352)
+
 ## Citation
 
 Source:
