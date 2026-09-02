@@ -335,7 +335,8 @@ bfs_shortest_path <- function(
   to = integer(),
   start = integer(),
   end = integer(),
-  directed = FALSE
+  directed = FALSE,
+  exclude = integer()
 ) {
   # Input validation
   if (length(from) != length(to)) {
@@ -355,6 +356,7 @@ bfs_shortest_path <- function(
   to <- as.integer(to)
   start <- as.integer(start)
   end <- as.integer(end)
+  exclude <- as.integer(exclude %||% integer())
 
   # If start equals end, return just the start vertex
   if (start == end) {
@@ -385,6 +387,11 @@ bfs_shortest_path <- function(
 
   visited <- logical(n)
   parent <- integer(n)
+  # Excluded nodes are pre-marked visited so they're never added to the
+  # frontier (and never appear in the reconstructed path), except `start`
+  # itself always remains usable as the path's origin.
+  exclude <- exclude[exclude >= 1L & exclude <= n & exclude != start]
+  visited[exclude] <- TRUE
   visited[[start]] <- TRUE
   frontier <- start
 
@@ -548,13 +555,15 @@ S7_graph_dispatch_multi <- function(
     vec_match(vapply(group, S7_class_id, character(1L)), chr_classes)
   })
 
-  int_tree <- steiner_tree_paths(
+  steiner <- steiner_tree_paths(
     from = graph$edge_from,
     to = graph$edge_to,
     start = int_start,
     terminals = int_terminals,
     groups = int_groups
   )
+  int_tree <- steiner$tree
+  failed_groups <- steiner$failed_groups
 
   # Nodes are conversion waypoints rather than the granules asked for, so each
   # resolves to the finest granule of its time unit: `start` for the unit the
@@ -599,11 +608,17 @@ S7_graph_dispatch_multi <- function(
       children = lapply(node$children, resolve_tree)
     )
   }
-  resolve_tree(int_tree)
+  list(tree = resolve_tree(int_tree), failed_groups = failed_groups)
 }
 
-# Returns a nested list: list(node = int, children = list(...))
-# Groups are inserted first (chained BFS ensuring co-occurrence on one path).
+# Returns list(tree = list(node = int, children = list(...)), failed_groups =
+# <integer indices into `groups`>). Groups are inserted first (chained BFS
+# ensuring co-occurrence on one path); any group whose members cannot be
+# co-located on a single path (group_path() found no route, or the group was
+# a lone node identical to `start`) is *not* inserted, and its index is
+# reported in `failed_groups` so the caller can treat its targets as
+# genuinely unreachable rather than silently matching an unrelated
+# occurrence of the same class elsewhere in the tree.
 # Terminals are only inserted if not already present in the tree.
 steiner_tree_paths <- function(
   from = integer(),
@@ -613,13 +628,13 @@ steiner_tree_paths <- function(
   groups = list()
 ) {
   if (length(from) != length(to)) {
-    return(list())
+    return(list(tree = list(), failed_groups = seq_along(groups)))
   }
   if (length(start) != 1L) {
-    return(list())
+    return(list(tree = list(), failed_groups = seq_along(groups)))
   }
   if (length(from) == 0L) {
-    return(list())
+    return(list(tree = list(), failed_groups = seq_along(groups)))
   }
 
   # Collect all nodes currently present in the tree
@@ -650,17 +665,20 @@ steiner_tree_paths <- function(
 
     waypoints <- c(start, ordered_group)
     path <- integer(0)
+    used <- integer(0)
     for (i in seq_len(length(waypoints) - 1L)) {
       segment <- bfs_shortest_path(
         from = from,
         to = to,
         start = waypoints[[i]],
-        end = waypoints[[i + 1L]]
+        end = waypoints[[i + 1L]],
+        exclude = setdiff(used, waypoints[[i]])
       )
       if (length(segment) == 0L) {
         return(integer(0))
       }
       path <- c(path, if (i == 1L) segment else segment[-1L])
+      used <- c(used, segment)
     }
     path
   }
@@ -695,10 +713,13 @@ steiner_tree_paths <- function(
   tree <- list(node = start, children = list())
 
   # 1. Insert group paths first (enforce co-occurrence)
-  for (group in groups) {
-    path <- group_path(group)
+  failed_groups <- integer(0)
+  for (i in seq_along(groups)) {
+    path <- group_path(groups[[i]])
     if (length(path) > 1L) {
       tree <- insert_path(tree, path[-1L])
+    } else {
+      failed_groups <- c(failed_groups, i)
     }
   }
 
@@ -717,7 +738,7 @@ steiner_tree_paths <- function(
     }
   }
 
-  tree
+  list(tree = tree, failed_groups = failed_groups)
 }
 
 S7_graph_glb <- function(graph, chronons) {
