@@ -44,8 +44,8 @@ for testing if an object is a `mixtime`.
 ``` r
 as_mixtime(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-08-27
+#> [1] 2026-09-02
 as_mixtime(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-08-27 12:51:42
+#> [1] 2026-09-02 03:09:48
 ```

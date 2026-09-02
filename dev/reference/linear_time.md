@@ -88,7 +88,7 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-08-27 12h
+#> [1] 2026-09-02 03h
 
 # Monthly time
 linear_time(
@@ -96,15 +96,15 @@ linear_time(
   chronon = month(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026 Aug
+#> [1] 2026 Sep
 
 # Discrete vs continuous time
 linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 #> <mixtime[1]>
-#> [1] 2026-08-27
+#> [1] 2026-09-02
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-08-27 53.6%
+#> [1] 2026-09-02 13.2%
 
 # ISO week calendar with week-day structure
 linear_time(
@@ -113,5 +113,5 @@ linear_time(
   calendar = cal_isoweek
 )
 #> <mixtime[1]>
-#> [1] 2026-W35-Thu
+#> [1] 2026-W36-Wed
 ```
