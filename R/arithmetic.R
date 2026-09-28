@@ -45,7 +45,7 @@ duration_shift <- function(time, dur) {
 duration_combine <- function(e1, e2, op) {
   x_chronon <- e1@chronon
   y_chronon <- e2@chronon
-  tu <- chronon_common_impl(list(x_chronon, y_chronon))
+  tu <- chronon_glb_impl(list(x_chronon, y_chronon))
   # Scale magnitudes to common chronon units before performing arithmetic
   xd <- S7_data(e1) * chronon_cardinality(tu, x_chronon)
   yd <- S7_data(e2) * chronon_cardinality(tu, y_chronon)
@@ -86,7 +86,7 @@ S7::method(vec_math, mt_time) <- function(.fn, .x, ...) {
 method(`-`, list(mt_time, mt_time)) <- function(e1, e2) {
   x_chronon <- e1@chronon
   y_chronon <- e2@chronon
-  tu <- chronon_common_impl(list(x_chronon, y_chronon))
+  tu <- chronon_glb_impl(list(x_chronon, y_chronon))
   cx <- chronon_convert(e1, tu, discrete = FALSE)
   cy <- chronon_convert(e2, tu, discrete = FALSE)
   # When a TZ-aware operand uses a coarser granule than the common chronon, the conversion

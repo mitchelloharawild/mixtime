@@ -764,6 +764,42 @@ S7_graph_glb <- function(graph, chronons) {
   graph$classes[[int_glb]]
 }
 
+S7_graph_lub <- function(graph, chronons) {
+  int_chronons <- vec_match(
+    vapply(chronons, S7_class_id, character(1L)),
+    graph$chr_classes
+  )
+
+  int_lub <- least_upper_bound(
+    from = graph$edge_from,
+    to = graph$edge_to,
+    nodes = int_chronons
+  )
+
+  if (rlang::is_empty(int_lub)) {
+    stop(
+      "One or more of the provided chronons do not share a common coarser chronon.",
+      call. = FALSE
+    )
+  }
+
+  # Return lub
+  graph$classes[[int_lub]]
+}
+
+# Finds the least upper bound that contains all `nodes` in a graph defined by
+# directed edges from `from` to `to`. This is the dual of
+# `greatest_lower_bound()`: reversing the edge direction turns "closest common
+# ancestor" (finer chronons feeding up into `nodes`) into "closest common
+# descendant" (coarser chronons that `nodes` feed up into).
+least_upper_bound <- function(
+  from = integer(),
+  to = integer(),
+  nodes = integer()
+) {
+  greatest_lower_bound(from = to, to = from, nodes = nodes)
+}
+
 # Finds the greatest lower bound that contains all `nodes` in a graph defined by
 # directed edges from `from` to `to`.
 greatest_lower_bound <- function(

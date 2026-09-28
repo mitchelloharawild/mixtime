@@ -79,7 +79,7 @@ time_round_impl <- function(x, granule, round_fn) {
   by@n <- by@n * as.numeric(granule)
 
   # Inherit non-naive attributes from chronon
-  by <- granule_inherit_props(by, chronon <- chronon_common(x))
+  by <- granule_inherit_props(by, chronon <- chronon_glb(x))
 
   # Native numeric value of `x`, in its own chronon (an exact conversion)
   res <- chronon_convert(x, chronon)

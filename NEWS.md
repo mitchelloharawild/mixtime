@@ -8,6 +8,13 @@
   (starts/started by), `%d%`/`%di%` (during/contains), and `%f%`/`%fi%`
   (finishes/finished by) - completing the set alongside the existing `==`.
 
+* `chronon_common()` has been renamed to `chronon_glb()`, calling out that it
+  finds the *greatest lower bound* (the finest common chronon) explicitly in
+  its name. Added `chronon_lub()`, the dual operation that finds the
+  *least upper bound* (the coarsest chronon that every input chronon evenly
+  aggregates into). `chronon_common()` is retained as a deprecated alias for
+  `chronon_glb()`.
+
 ## Improvements
 
 * Generalised the default parse strings used by `yearweek()`, `yearmonth()`, and

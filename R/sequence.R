@@ -104,8 +104,8 @@
 
   # Check chronon compatibility
   if (!missing_from && !missing_to) {
-    from_chronon <- chronon_common(from)
-    to_chronon <- chronon_common(to)
+    from_chronon <- chronon_glb(from)
+    to_chronon <- chronon_glb(to)
 
     # Check that from and to have the same time classes
     if (!identical(from_chronon, to_chronon)) {
@@ -138,7 +138,7 @@
     }
 
     # Sequence chronon
-    chronon <- chronon_common(ptype)
+    chronon <- chronon_glb(ptype)
 
     # Parse `by` argument
     if (is.character(by)) {

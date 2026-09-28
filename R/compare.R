@@ -64,7 +64,7 @@ linear_compare <- function(op, e1, e2) {
     y_end <- if (y_discrete) y_start + 1 else y_start
   } else {
     # Convert to the common chronon before measuring each operand's width in it
-    common <- chronon_common_impl(list(x_chronon, y_chronon))
+    common <- chronon_glb_impl(list(x_chronon, y_chronon))
     x_start <- as.double(chronon_convert_impl(xv, x_chronon, common, discrete = x_discrete))
     y_start <- as.double(chronon_convert_impl(yv, y_chronon, common, discrete = y_discrete))
 
@@ -140,7 +140,7 @@ duration_compare <- function(op, e1, e2) {
 
   if (!identical(x_chronon, y_chronon)) {
     # Scale both magnitudes to their finest common chronon (mirrors `duration_combine()`)
-    tu <- chronon_common_impl(list(x_chronon, y_chronon))
+    tu <- chronon_glb_impl(list(x_chronon, y_chronon))
     xd <- xd * chronon_cardinality(tu, x_chronon)
     yd <- yd * chronon_cardinality(tu, y_chronon)
   }
@@ -263,7 +263,7 @@ cyclical_compare <- function(op, e1, e2) {
   } else {
     # Convert to the common chronon before reducing to a cycle position and
     # measuring each operand's width in it, mirroring `linear_compare()`
-    common <- chronon_common_impl(list(x_chronon, y_chronon))
+    common <- chronon_glb_impl(list(x_chronon, y_chronon))
     x_start <- cyclical_position(
       chronon_convert_impl(xv, x_chronon, common, discrete = x_discrete),
       common, cycle

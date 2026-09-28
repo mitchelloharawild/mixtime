@@ -105,7 +105,7 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
   }
   
   # Add default granule properties if not given in chronon or cycle
-  chronon <- granule_inherit_props(chronon, chronon_common(data))
+  chronon <- granule_inherit_props(chronon, chronon_glb(data))
   if (!is.null(cycle)) {
     cycle <- granule_inherit_props(cycle, chronon)
   }

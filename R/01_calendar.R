@@ -128,7 +128,7 @@ method(time_calendar, mt_unit) <- function(x) {
   attr(S7::S7_class(x), "cal")$calendar
 }
 method(time_calendar, class_mixtime) <- function(x) {
-  time_calendar(chronon_common(x))
+  time_calendar(chronon_glb(x))
 }
 method(time_calendar, mt_time) <- function(x) time_calendar(time_chronon(x))
 method(time_calendar, S7::class_any) <- function(x) cal_gregorian

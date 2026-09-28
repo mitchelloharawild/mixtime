@@ -50,7 +50,7 @@ test_that("only fixed cardinality (and direct divmod) relationships form divmod 
   }
 
   # Both relationships are visible to the cardinality graph, used for
-  # ordering/topology by chronon_common() and time_parts().
+  # ordering/topology by chronon_glb() and time_parts().
   expect_true(edge_exists(chronon_cardinality_graph(), tu_fixed_test_a(1L), tu_fixed_test_b(1L)))
   expect_true(edge_exists(chronon_cardinality_graph(), tu_variable_test_a(1L), tu_variable_test_b(1L)))
 

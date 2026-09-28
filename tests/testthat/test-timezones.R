@@ -170,8 +170,8 @@ test_that("the common chronon keeps a timezone the inputs agree on", {
     cal_gregorian$hour(1L)
   )
 
-  expect_equal(tz_name(chronon_common(c(secs, secs))), tz)
-  expect_equal(tz_name(chronon_common(c(secs, hrs))), tz)
+  expect_equal(tz_name(chronon_glb(c(secs, secs))), tz)
+  expect_equal(tz_name(chronon_glb(c(secs, hrs))), tz)
 
   # Combining no longer drops the timezone, whichever way round it is done.
   expect_equal(unique(tz_name(c(secs, hrs))), tz)
@@ -190,10 +190,10 @@ test_that("the common chronon of disagreeing known timezones is UTC", {
   utc <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "UTC"))
   naive <- datetime(melb, tz = NA)
 
-  expect_equal(tz_name(chronon_common(c(melb, utc))), "UTC")
+  expect_equal(tz_name(chronon_glb(c(melb, utc))), "UTC")
   # Naive time cannot be represented in a timezone, so a naive input keeps the
   # common chronon naive rather than being adopted into the other's zone.
-  expect_true(is.na(tz_name(chronon_common(c(melb, naive)))))
+  expect_true(is.na(tz_name(chronon_glb(c(melb, naive)))))
 })
 
 test_that("combining a zoned time with a naive one is consistently wall-clock", {
@@ -210,11 +210,11 @@ test_that("combining a zoned time with a naive one is consistently wall-clock", 
 
   combined <- c(zoned, naive)
 
-  expect_true(is.na(tz_name(chronon_common(combined))))
+  expect_true(is.na(tz_name(chronon_glb(combined))))
   expect_equal(as.numeric(vecvec::unvecvec(combined)), c(475682, 475682))
 })
 
-test_that("chronon_common() of mixed known timezones formats without error", {
+test_that("chronon_glb() of mixed known timezones formats without error", {
   # Regression test for tz-merge.md: mixing two real (but different) known
   # zones used to collapse the common chronon to naive, and formatting
   # through that naive chronon directly (as ggtime's axis breaks do) crashed.
@@ -230,11 +230,11 @@ test_that("chronon_common() of mixed known timezones formats without error", {
   ))
   combined <- c(london, melbourne)
 
-  expect_equal(tz_name(chronon_common(combined)), "UTC")
+  expect_equal(tz_name(chronon_glb(combined)), "UTC")
 
   x <- vecvec::unvecvec(mixtime(
     as.numeric(combined),
-    chronon = chronon_common(combined),
+    chronon = chronon_glb(combined),
     discrete = FALSE
   ))
   expect_no_error(format(x))
@@ -248,7 +248,7 @@ test_that("tz_offset() of a POSIXct states one offset per element", {
 
   expect_true(all(time_is_duration(offset)))
   expect_equal(as.numeric(offset), c(39600, 36000))
-  expect_equal(tz_name(chronon_common(offset)), "Australia/Melbourne")
+  expect_equal(tz_name(chronon_glb(offset)), "Australia/Melbourne")
 })
 
 test_that("tz_transitions() of a range with no transitions is an empty table", {

@@ -127,5 +127,5 @@ method(chronon_convert, S7::class_any) <- function(
   discrete = FALSE,
   ...
 ) {
-  chronon_convert_impl(as.numeric(x), chronon_common(x), to, discrete)
+  chronon_convert_impl(as.numeric(x), chronon_glb(x), to, discrete)
 }

@@ -77,7 +77,7 @@ test_that("format() falls back to the generic mt_unit template for a naive-tz ci
   # (via S7::super()) to the same generic mt_unit fallback used for any other
   # chronon without a bespoke format template.
   combined <- c(date(Sys.Date()), datetime(as.POSIXct("2015-01-01", tz = "UTC")))
-  ch <- chronon_common(combined)
+  ch <- chronon_glb(combined)
   expect_true(is.na(tz_name(ch)))
   expect_null(time_calendar(ch)$year)
 

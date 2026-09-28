@@ -27,7 +27,7 @@ chronon_format_linear <- new_generic("chronon_format_linear", c("x", "cal"), fun
   S7::S7_dispatch()
 })
 method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
-  paste0(time_unit_abbr(x), "{lin(chronon_common(.time))}")
+  paste0(time_unit_abbr(x), "{lin(chronon_glb(.time))}")
 }
 
 #' @examples
@@ -40,7 +40,7 @@ method(chronon_format_linear, list(mt_unit, class_any)) <- function(x, cal) {
 #' @export
 chronon_format_cyclical <- new_generic("chronon_format_cyclical", c("x", "y"))
 method(chronon_format_cyclical, list(mt_unit, mt_unit)) <- function(x, y) {
-  paste0(time_unit_abbr(x), "{cyc(chronon_common(.time), chronon_common(time_cycle(.time)))}")
+  paste0(time_unit_abbr(x), "{cyc(chronon_glb(.time), chronon_glb(time_cycle(.time)))}")
 }
 
 #' @examples
@@ -60,7 +60,7 @@ method(chronon_format_duration, mt_unit) <- function(x) {
 # durations show a fractional magnitude and always read as plural.
 duration_label <- function(x) {
   n <- vec_data(x)
-  chronon <- chronon_common(x)
+  chronon <- chronon_glb(x)
   if (is.double(n)) {
     paste(format(n, nsmall = 1L), time_unit_plural(chronon, 2L))
   } else {
