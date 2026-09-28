@@ -586,9 +586,13 @@ multiple time granularities.
   : Test whether time is determinate at a granule's precision
 - [`time_is_complete_at()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_is_complete_at.md)
   : Test whether a granule is completed at a time point
-- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)
-  [`chronon_common.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)
-  : Find the common chronon of a time object
+- [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  [`chronon_glb.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  [`chronon_lub.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  **\[deprecated\]** : Find the finest or coarsest common chronon of a
+  time object
 
 ### Mixtime Accessors
 

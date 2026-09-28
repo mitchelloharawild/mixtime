@@ -11,6 +11,18 @@
   (finishes/finished by) - completing the set alongside the existing
   `==`.
 
+- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  has been renamed to
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md),
+  calling out that it finds the *greatest lower bound* (the finest
+  common chronon) explicitly in its name. Added
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md),
+  the dual operation that finds the *least upper bound* (the coarsest
+  chronon that every input chronon evenly aggregates into).
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  is retained as a deprecated alias for
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md).
+
 ### Improvements
 
 - Generalised the default parse strings used by
@@ -26,6 +38,16 @@
   [`datetime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)).
 - Parsing named labels (e.g. month and weekday names) are now
   case-insensitive.
+
+### Bug fixes
+
+- [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
+  returned the unit-granule constant `1` for a pair sharing the same
+  time unit at different granule sizes (e.g.
+  `chronon_cardinality_fixed(day(1L), day(10L))`), ignoring the
+  requested sizes entirely instead of scaling by them like
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+  does for the same case.
 
 ## mixtime 0.3.0
 
@@ -375,13 +397,13 @@ CRAN release: 2026-08-24
   despite sharing a (naive) common chronon. Both operations convert
   their operands into a shared common chronon that correctly comes out
   naive when the operands disagree on timezone (see
-  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)),
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)),
   but converting an operand *into* that common chronon silently
   re-inherited the operand’s own timezone back (one conversion at a
   time), so a timezone-aware operand ended up at its true (UTC) absolute
   instant while a naive operand was left as-is - two different bases
   being compared/combined as if they were the same.
-  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)’s
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)’s
   naive result is now hardened so it can no longer be re-inherited into,
   and every operand converted into it lands on bare wall-clock time
   instead, the same way `datetime(x, tz = NA)` already strips a timezone
@@ -392,7 +414,7 @@ CRAN release: 2026-08-24
 - Substantially faster performance by caching the granule cardinality
   graph (used by `chronon_convert()`,
   [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_divmod.md),
-  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_common.md)
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
   and `time_parts()`) and tzdb names (used in operations with
   timezones).
 - Reworked time vectors to be built with S7 rather than vctrs for
