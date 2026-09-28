@@ -6,6 +6,12 @@ test_that("chronon_cardinality_fixed() returns the unit-granule constant", {
   expect_error(chronon_cardinality_fixed(cal_gregorian$day(1L), cal_gregorian$month(1L)))
 })
 
+test_that("chronon_cardinality_fixed() scales the same time unit by granule size", {
+  expect_equal(chronon_cardinality_fixed(cal_gregorian$day(1L), cal_gregorian$day(10L)), 10)
+  expect_equal(chronon_cardinality_fixed(cal_gregorian$day(1L), cal_gregorian$day(1L)), 1)
+  expect_equal(chronon_cardinality_fixed(cal_gregorian$day(10L), cal_gregorian$day(1L)), 1 / 10)
+})
+
 test_that("chronon_cardinality_fixed() traverses edges in either direction", {
   # A coarser `x` than `y` walks the graph against the fine -> coarse direction
   # its edges are registered in, giving the reciprocal.

@@ -144,9 +144,9 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
 
 # #' @rdname chronon_cardinality_fixed
 method(chronon_cardinality_fixed, list(mt_unit, mt_unit)) <- function(x, y) {
-  # Check if x and y are the same class
+  # Same time unit: always fixed, scaled by the requested granule sizes.
   if (S7_class_id(x) == S7_class_id(y)) {
-    return(1)
+    return(y@n / x@n)
   }
 
   # No specific method defined between these classes.

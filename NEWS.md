@@ -23,6 +23,14 @@
   which need to be parsed first with `date()` or `datetime()`).
 * Parsing named labels (e.g. month and weekday names) are now case-insensitive.
 
+## Bug fixes
+
+* `chronon_cardinality_fixed()` returned the unit-granule constant `1` for a
+  pair sharing the same time unit at different granule sizes (e.g.
+  `chronon_cardinality_fixed(day(1L), day(10L))`), ignoring the requested
+  sizes entirely instead of scaling by them like `chronon_cardinality()`
+  does for the same case.
+
 # mixtime 0.3.0
 
 ## New features
