@@ -141,15 +141,22 @@ cyclical_time <- function(
     cli::cli_abort(e$message, call = NULL)
   })
 
-  # Make numeric data input 1-indexed
-  # if (is.numeric(data)) data <- data - 1L
-  # TODO - numeric data should default to origin-less cyclical time
+  # A bare number has no anchor, so it builds mt_cyclical_free, not mt_cyclical.
+  if (!is_mixtime(data) && !S7_inherits(data, mt_time) && is.numeric(data)) {
+    # Shift by the chronon's own display convention (e.g. day_of_year(60) is the 60th day).
+    start <- cyclical_labels(chronon, cycle)$start
+    data <- (if (discrete) as.integer(round(data)) else as.double(data)) - start
 
+    # A regular (at-independent) cardinality bounds it: out-of-range is NA.
+    cardinality <- tryCatch(chronon_cardinality_fixed(chronon, cycle), error = function(e) NULL)
+    if (!is.null(cardinality)) {
+      data[data %% cardinality != data] <- NA
+    }
+
+    return(new_mixtime(mt_cyclical_free(data, chronon = chronon, cycle = cycle)))
+  }
 
   mixtime(data, chronon = chronon, cycle = cycle, discrete = discrete)
-
-  # TODO - For origin-less cyclical time, reduce to cyclical time with divmod methods
-  # data <- chronon_divmod(from = chronon, to = cycle, x = data)$mod
 }
 
 # #' @importFrom vctrs vec_arith

@@ -33,6 +33,9 @@ check_tz_name <- function(zone) {
 time_mode_label <- function(x) {
   if (S7_inherits(x, mt_cyclical)) {
     "cyclical"
+  } else if (S7_inherits(x, mt_cyclical_free)) {
+    # Distinct from "cyclical": a magnitude, never reduced via cyclical_position().
+    "cyclical_free"
   } else if (S7_inherits(x, mt_duration)) {
     "duration"
   } else {

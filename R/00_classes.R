@@ -159,13 +159,17 @@ mt_unit <- S7::new_class(
 #'
 #' @description
 #' The `mt_time` family are the S7 vector classes that store time points as a
-#' numeric count of chronons. `mt_time` is the (internal) base class carrying 
+#' numeric count of chronons. `mt_time` is the (internal) base class carrying
 #' the `chronon` property; the common modes of time are:
 #'
 #' * `mt_linear` - linear time points, typically produced with [linear_time()].
-#' * `mt_cyclical` - cyclical time points with additional `cycle` granule, 
+#' * `mt_cyclical` - cyclical time points with additional `cycle` granule,
 #'   typically produced with [cyclical_time()].
 #' * `mt_duration` - time durations, typically produced with [duration()].
+#' * `mt_cyclical_free` - cyclical time with no anchor to a real point in
+#'   time (a bare magnitude within a cycle, e.g. "day 60 of the year" with no
+#'   year known), produced by [cyclical_time()] with bare numeric input, or
+#'   by [time_compose()]/[time_parse()] with no [lin()] anchor.
 #'
 #' The underlying data can be either **integer** (discrete time) or **double**
 #' (continuous time). The `chronon` (and, for `mt_cyclical`, the `cycle`) are 
@@ -236,6 +240,21 @@ mt_duration <- S7::new_class("mt_duration", parent = mt_time)
 #' @export
 mt_cyclical <- S7::new_class(
   "mt_cyclical",
+  parent = mt_time,
+  properties = list(
+    cycle = S7::new_property(
+      class = mt_unit,
+      default = quote(mt_unit(1L)),
+      validator = granule_len1
+    )
+  )
+)
+
+#' @rdname mt_time-class
+#' @usage NULL
+#' @export
+mt_cyclical_free <- S7::new_class(
+  "mt_cyclical_free",
   parent = mt_time,
   properties = list(
     cycle = S7::new_property(

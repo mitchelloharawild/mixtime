@@ -311,6 +311,164 @@ method(`>`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare("
 method(`>=`, list(mt_duration, class_any)) <- function(e1, e2) duration_compare(">=", e1, e2)
 method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(">=", e1, e2)
 
+#' Comparison operators for origin-less cyclical time (`mt_cyclical_free`)
+#'
+#' @description
+#' A `mt_cyclical_free` value (see [cyclical_time()]) is a magnitude within a
+#' cycle with no anchor to a real point in time (e.g. `day_of_year(60)`, "day
+#' 60 of the year", with no year known) - modelled on [mt_duration], not
+#' [mt_cyclical]. Comparing two free values is therefore
+#' [mt_duration-compare]'s plain magnitude comparison, not
+#' [mt_cyclical-compare]'s interval/position reduction:
+#'
+#' - `a == b` iff the two magnitudes are equal in their common chronon
+#' - `a < b`, `a <= b`, `a > b`, `a >= b` compare the magnitudes directly
+#'
+#' Both operands must share a `cycle` (a type-compatibility tag, not a unit -
+#' see [mt_cyclical-compare]): comparing (say) a day-of-week-free against a
+#' day-of-year-free is an error. Differing chronons within a shared cycle are
+#' reconciled by scaling both magnitudes to their finest common chronon via
+#' [chronon_cardinality()] - never [chronon_divmod()], which would assert
+#' that the stored number's position is measured relative to some specific
+#' instance of the cycle, a claim that is false by construction for data
+#' defined to carry no knowledge of which instance it belongs to.
+#'
+#' A free value can also be compared against an anchored [mt_cyclical]: the
+#' anchored side reduces to its position within the cycle via its own
+#' existing, unchanged machinery (the same reduction [format()] and
+#' [mt_cyclical-compare] use), and both sides are then compared as
+#' magnitudes.
+#'
+#' Unlike `mt_cyclical`, this is a total order (there is no interval to
+#' compare - see [mt_duration-compare]), so Allen's interval algebra
+#' (`%p%`, `%m%`, ...) is not supported, matching `mt_duration`'s own
+#' documented exclusion.
+#'
+#' @param e1,e2 `mt_cyclical_free` vectors sharing a cycle (or values castable
+#'   to one, such as plain numeric vectors sharing the other operand's
+#'   chronon), or one `mt_cyclical_free` and one anchored `mt_cyclical`
+#'   sharing a cycle.
+#'
+#' @return A logical vector.
+#'
+#' @usage
+#' \S4method{==}{mt_cyclical_free}(e1, e2)
+#' \S4method{!=}{mt_cyclical_free}(e1, e2)
+#' \S4method{<}{mt_cyclical_free}(e1, e2)
+#' \S4method{<=}{mt_cyclical_free}(e1, e2)
+#' \S4method{>}{mt_cyclical_free}(e1, e2)
+#' \S4method{>=}{mt_cyclical_free}(e1, e2)
+#'
+#' @aliases ==,mt_cyclical_free-method !=,mt_cyclical_free-method <,mt_cyclical_free-method <=,mt_cyclical_free-method >,mt_cyclical_free-method >=,mt_cyclical_free-method
+#' @name mt_cyclical_free-compare
+NULL
+
+free_compare <- function(op, e1, e2) {
+  if (!S7_inherits(e1, mt_cyclical_free)) e1 <- vec_cast(e1, e2)
+  if (!S7_inherits(e2, mt_cyclical_free)) e2 <- vec_cast(e2, e1)
+
+  # A cycle is a modulus, not a unit, so differing cycles have no common cycle
+  cycle <- cycle_common(e1@cycle, e2@cycle)
+  if (is.null(cycle)) {
+    vctrs::stop_incompatible_op(op, e1, e2, details = cycle_incompatible_details)
+  }
+
+  x_chronon <- e1@chronon
+  y_chronon <- e2@chronon
+  xd <- S7_data(e1)
+  yd <- S7_data(e2)
+
+  if (!identical(x_chronon, y_chronon)) {
+    # Scale both magnitudes to their finest common chronon - never chronon_divmod().
+    tu <- chronon_glb_impl(list(x_chronon, y_chronon))
+    xd <- xd * chronon_cardinality(tu, x_chronon)
+    yd <- yd * chronon_cardinality(tu, y_chronon)
+  }
+
+  switch(
+    op,
+    "==" = xd == yd,
+    "!=" = xd != yd,
+    "<"  = xd < yd,
+    ">"  = xd > yd,
+    "<=" = xd <= yd,
+    ">=" = xd >= yd
+  )
+}
+
+# Reduce the anchored side via cyclical_position(); compare both as magnitudes.
+free_cyclical_compare <- function(op, e1, e2) {
+  e1_free <- S7_inherits(e1, mt_cyclical_free)
+  e2_free <- S7_inherits(e2, mt_cyclical_free)
+  if (!e1_free && !S7_inherits(e1, mt_cyclical)) e1 <- vec_cast(e1, e2)
+  if (!e2_free && !S7_inherits(e2, mt_cyclical)) e2 <- vec_cast(e2, e1)
+
+  cycle <- cycle_common(attr(e1, "cycle"), attr(e2, "cycle"))
+  if (is.null(cycle)) {
+    vctrs::stop_incompatible_op(op, e1, e2, details = cycle_incompatible_details)
+  }
+
+  common <- chronon_glb_impl(list(attr(e1, "chronon"), attr(e2, "chronon")))
+
+  free_magnitude <- function(x) as.numeric(S7_data(x)) * chronon_cardinality(common, attr(x, "chronon"))
+  anchored_position <- function(x) {
+    xv <- chronon_convert_impl(
+      S7_data(x), attr(x, "chronon"), common, discrete = is.integer(S7_data(x))
+    )
+    cyclical_position(xv, common, cycle)
+  }
+
+  xd <- if (e1_free) free_magnitude(e1) else anchored_position(e1)
+  yd <- if (e2_free) free_magnitude(e2) else anchored_position(e2)
+
+  switch(
+    op,
+    "==" = xd == yd,
+    "!=" = xd != yd,
+    "<"  = xd < yd,
+    ">"  = xd > yd,
+    "<=" = xd <= yd,
+    ">=" = xd >= yd
+  )
+}
+
+method(`==`, list(mt_cyclical_free, class_any)) <- function(e1, e2) free_compare("==", e1, e2)
+method(`==`, list(class_any, mt_cyclical_free)) <- function(e1, e2) free_compare("==", e1, e2)
+
+method(`!=`, list(mt_cyclical_free, class_any)) <- function(e1, e2) free_compare("!=", e1, e2)
+method(`!=`, list(class_any, mt_cyclical_free)) <- function(e1, e2) free_compare("!=", e1, e2)
+
+method(`<`, list(mt_cyclical_free, class_any)) <- function(e1, e2) free_compare("<", e1, e2)
+method(`<`, list(class_any, mt_cyclical_free)) <- function(e1, e2) free_compare("<", e1, e2)
+
+method(`<=`, list(mt_cyclical_free, class_any)) <- function(e1, e2) free_compare("<=", e1, e2)
+method(`<=`, list(class_any, mt_cyclical_free)) <- function(e1, e2) free_compare("<=", e1, e2)
+
+method(`>`, list(mt_cyclical_free, class_any)) <- function(e1, e2) free_compare(">", e1, e2)
+method(`>`, list(class_any, mt_cyclical_free)) <- function(e1, e2) free_compare(">", e1, e2)
+
+method(`>=`, list(mt_cyclical_free, class_any)) <- function(e1, e2) free_compare(">=", e1, e2)
+method(`>=`, list(class_any, mt_cyclical_free)) <- function(e1, e2) free_compare(">=", e1, e2)
+
+# More specific than the class_any pairs above.
+method(`==`, list(mt_cyclical_free, mt_cyclical)) <- function(e1, e2) free_cyclical_compare("==", e1, e2)
+method(`==`, list(mt_cyclical, mt_cyclical_free)) <- function(e1, e2) free_cyclical_compare("==", e1, e2)
+
+method(`!=`, list(mt_cyclical_free, mt_cyclical)) <- function(e1, e2) free_cyclical_compare("!=", e1, e2)
+method(`!=`, list(mt_cyclical, mt_cyclical_free)) <- function(e1, e2) free_cyclical_compare("!=", e1, e2)
+
+method(`<`, list(mt_cyclical_free, mt_cyclical)) <- function(e1, e2) free_cyclical_compare("<", e1, e2)
+method(`<`, list(mt_cyclical, mt_cyclical_free)) <- function(e1, e2) free_cyclical_compare("<", e1, e2)
+
+method(`<=`, list(mt_cyclical_free, mt_cyclical)) <- function(e1, e2) free_cyclical_compare("<=", e1, e2)
+method(`<=`, list(mt_cyclical, mt_cyclical_free)) <- function(e1, e2) free_cyclical_compare("<=", e1, e2)
+
+method(`>`, list(mt_cyclical_free, mt_cyclical)) <- function(e1, e2) free_cyclical_compare(">", e1, e2)
+method(`>`, list(mt_cyclical, mt_cyclical_free)) <- function(e1, e2) free_cyclical_compare(">", e1, e2)
+
+method(`>=`, list(mt_cyclical_free, mt_cyclical)) <- function(e1, e2) free_cyclical_compare(">=", e1, e2)
+method(`>=`, list(mt_cyclical, mt_cyclical_free)) <- function(e1, e2) free_cyclical_compare(">=", e1, e2)
+
 #' Comparison operators for cyclical time (`mt_cyclical`)
 #'
 #' @description

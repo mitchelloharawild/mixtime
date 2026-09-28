@@ -233,6 +233,89 @@ S7::method(format, mt_time) <- function(x, ..., attr = TRUE) {
   time_format_impl(x, ..., attr = attr)
 }
 
+#' Format origin-less cyclical time (`mt_cyclical_free`)
+#'
+#' A `mt_cyclical_free` value has no `at` (no real point in time) to resolve
+#' a within-cycle position from, so unlike an anchored [mt_cyclical] it is
+#' rendered directly from its own raw stored offset via the same
+#' [chronon_format_cyclical()] template and [cyclical_labels_format()]
+#' renderer an anchored value's reduced position would use, called with
+#' `at = NULL` - never via [chronon_divmod()]/`chronon_parts()`, which would
+#' assert a position relative to some specific cycle instance (banned for
+#' this type, see `_dev/cycle.md`).
+#'
+#' @param format A glue-style format string of `{cyc(...)}` tokens (see
+#'   [format.mt_time]), defaulting to one derived automatically for `x`. A
+#'   free value has no `{lin(...)}` anchor to resolve, so only `{cyc(...)}`
+#'   tokens are meaningful here.
+#' @inheritParams format.mt_time
+#'
+#' @return A character vector the same length as `x`.
+#'
+#' @usage
+#' \S4method{format}{mt_cyclical_free}(x, ..., attr = TRUE)
+#' @aliases format,mt_cyclical_free-method
+#' @name format.mt_cyclical_free
+#' @export
+S7::method(format, mt_cyclical_free) <- function(x, format = NULL, ..., attr = TRUE) {
+  chronon <- base::attr(x, "chronon")
+  cycle <- base::attr(x, "cycle")
+  v <- vec_data(x)
+  special <- is.na(x) | is.infinite(v)
+
+  out <- character(length(x))
+  out[special] <- base::format(v[special])
+
+  if (any(!special)) {
+    custom <- !is.null(format)
+    fmt_str <- format %||% chronon_format_cyclical(chronon, cycle)
+    calendar <- time_calendar(cycle)
+    env <- rlang::new_environment(
+      data = c(component_mask(calendar, chronon), list(.time = x)),
+      parent = rlang::caller_env()
+    )
+    fmt <- mt_glue_fmt(fmt_str, env = env)
+    fmt_parts <- vapply(fmt, is.list, logical(1L))
+    specs <- lapply(fmt[fmt_parts], format_token_spec)
+    token_values <- free_cyclical_token_values(v[!special], chronon, cycle, specs)
+
+    # A literal fragment repeats; a {cyc(...)} token renders its decomposed value.
+    ti <- 0L
+    pieces <- lapply(seq_along(fmt), function(i) {
+      if (!fmt_parts[[i]]) return(rep(fmt[[i]], sum(!special)))
+      ti <<- ti + 1L
+      spec <- specs[[ti]]
+      rlang::exec(
+        cyclical_labels_format,
+        spec$chronon, spec$cycle %||% cycle, token_values[[ti]],
+        at = NULL, !!!spec$attrs
+      )
+    })
+    out[!special] <- rlang::exec(paste0, !!!pieces)
+    if (!custom && attr) out[!special] <- paste0(out[!special], chronon_format_attr(chronon))
+  }
+  out
+}
+
+# Split `v` across a template's {cyc(...)} tokens, coarsest-to-finest, via
+# chronon_cardinality() only - never chronon_divmod(). Coarsest keeps the leftover.
+free_cyclical_token_values <- function(v, own_chronon, own_cycle, specs) {
+  n <- length(specs)
+  out <- vector("list", n)
+  remaining <- v
+  for (i in rev(seq_len(n))) {
+    if (i == 1L) {
+      out[[i]] <- remaining
+    } else {
+      spec <- specs[[i]]
+      card <- chronon_cardinality(spec$chronon, spec$cycle %||% own_cycle)
+      out[[i]] <- remaining %% card
+      remaining <- remaining %/% card
+    }
+  }
+  out
+}
+
 #' @export
 S7::method(print, mt_time) <- function(x, ...) {
   cat(paste0("<", class(x)[[1L]], "[", length(x), "]>"), "\n", sep = "")
@@ -260,6 +343,11 @@ S7::method(str, mt_cyclical) <- function(object, ..., vec.len = getOption("str")
 #' @export
 S7::method(str, mt_duration) <- function(object, ..., vec.len = getOption("str")$vec.len %||% 4L) {
   cat("duration<", format(time_chronon(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
+}
+
+#' @export
+S7::method(str, mt_cyclical_free) <- function(object, ..., vec.len = getOption("str")$vec.len %||% 4L) {
+  cat("free_cyclical<", format(time_chronon(object)[1L]), "/", format(time_cycle(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
 }
 
 .mt_str_values <- function(x, vec_len) {

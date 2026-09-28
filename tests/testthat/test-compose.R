@@ -89,7 +89,7 @@ test_that("Inf in the anchor carries through as an infinite count", {
 test_that("a single cyc() with no lin() anchor composes a cyclical time point", {
   r <- time_compose(cyc(month, year) ~ 3)
 
-  expect_true(time_is_cyclical(r))
+  expect_true(time_is_cyclical_free(r))
   expect_equal(format(r), "Mar")
   expect_equal(
     as.numeric(vecvec::unvecvec(r)),
@@ -101,7 +101,7 @@ test_that("a chained cyc() sequence with no lin() anchor composes a cyclical tim
   # Rooted at cyc(month, year); day 15 of month 3 collapses to (day, year).
   r <- time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
 
-  expect_true(time_is_cyclical(r))
+  expect_true(time_is_cyclical_free(r))
   expect_equal(format(r), "D74")
   expect_equal(
     as.numeric(vecvec::unvecvec(r)),

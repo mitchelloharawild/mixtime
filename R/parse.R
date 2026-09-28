@@ -451,6 +451,15 @@ time_parse_recast <- function(x, chronon, cycle, discrete) {
 
   data <- vctrs::vec_data(x)
 
+  if (!is.null(cycle)) {
+    # Origin-less parse: `data` is a bare offset, scaled via chronon_cardinality().
+    if (!identical(chronon, from)) {
+      data <- as.numeric(data) * chronon_cardinality(chronon, from)
+      if (discrete) data <- as.integer(data)
+    }
+    return(mt_cyclical_free(data, chronon = chronon, cycle = cycle))
+  }
+
   # A tz-naive parse has no absolute instant to convert from - reinterpret it
   # as local wall-clock time in the target tz before any granule conversion.
   if (
@@ -472,11 +481,7 @@ time_parse_recast <- function(x, chronon, cycle, discrete) {
     data <- chronon_convert_impl(data, from, chronon, discrete)
   }
 
-  if (is.null(cycle)) {
-    mt_linear(data, chronon = chronon)
-  } else {
-    mt_cyclical(data, chronon = chronon, cycle = cycle)
-  }
+  mt_linear(data, chronon = chronon)
 }
 
 time_parse_warn_failures <- function(bad, show = 5L) {

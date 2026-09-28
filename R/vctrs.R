@@ -80,6 +80,8 @@ method(vec_proxy_equal, class_mixtime) <- function(x, ...) {
 
 # --- casts from a time vector to a base type ---
 mt_cast_to_character <- function(x, to, ...) time_format_impl(x)
+# mt_cyclical_free has its own format() method instead - never time_format_impl().
+mt_cast_to_character_free <- function(x, to, ...) format(x)
 mt_cast_to_integer <- function(x, to, ...) vec_cast(vec_data(x), integer())
 mt_cast_to_double <- function(x, to, ...) vec_cast(vec_data(x), double())
 mt_cast_to_Date <- function(x, to, ...) {
@@ -103,7 +105,7 @@ mt_cast_from_numeric <- function(x, to, ...) {
 }
 
 mt_cast_from_character <- function(x, to, ...) {
-  cycle <- if (S7_inherits(to, mt_cyclical)) attr(to, "cycle") else NULL
+  cycle <- if (S7_inherits(to, mt_cyclical) || S7_inherits(to, mt_cyclical_free)) attr(to, "cycle") else NULL
   data <- vec_data(time_parse_impl(
     x,
     chronon = attr(to, "chronon"),
@@ -155,6 +157,36 @@ mt_cast_time_time <- function(x, to, ..., x_arg = "", to_arg = "") {
   x <- chronon_convert(x, attr(to, "chronon"), discrete = is.integer(to))
   attributes(x) <- attributes(to)
   x
+}
+
+# --- time-to-time cast for mt_cyclical_free (same kind only) ---
+# A magnitude like mt_duration: chronon_cardinality() scaling, never chronon_convert().
+mt_cast_time_time_free <- function(x, to, ..., x_arg = "", to_arg = "") {
+  if (is.null(cycle_common(attr(x, "cycle"), attr(to, "cycle")))) {
+    vctrs::stop_incompatible_cast(
+      x, to, x_arg = x_arg, to_arg = to_arg,
+      details = cycle_incompatible_details
+    )
+  }
+  discrete <- is.integer(vec_data(to))
+  x <- as.numeric(x) * chronon_cardinality(attr(to, "chronon"), attr(x, "chronon"))
+  if (discrete) x <- as.integer(x)
+  attributes(x) <- attributes(to)
+  x
+}
+
+mt_ptype2_time_time_free <- function(x, y, ..., x_arg = "", y_arg = "") {
+  cycle <- cycle_common(attr(x, "cycle"), attr(y, "cycle"))
+  if (is.null(cycle)) {
+    vctrs::stop_incompatible_type(
+      x, y, x_arg = x_arg, y_arg = y_arg,
+      details = cycle_incompatible_details
+    )
+  }
+  mt_cyclical_free(
+    chronon = chronon_glb_impl(list(attr(x, "chronon"), attr(y, "chronon"))),
+    cycle = cycle
+  )
 }
 
 # --- prototype2 between two time vectors of the same kind ---
@@ -210,6 +242,17 @@ register_mt_vctrs <- function() {
     register_s3_method("vctrs", "vec_cast", paste0(cls, ".", cls), mt_cast_time_time)
     register_s3_method("vctrs", "vec_ptype2", paste0(cls, ".", cls), mt_ptype2_time_time)
   }
+
+  # mt_cyclical_free: registered separately, its casts use their own logic.
+  free <- "mixtime::mt_cyclical_free"
+  register_s3_method("vctrs", "vec_cast.character", free, mt_cast_to_character_free)
+  register_s3_method("vctrs", "vec_cast.integer", free, mt_cast_to_integer)
+  register_s3_method("vctrs", "vec_cast.double", free, mt_cast_to_double)
+  register_s3_method("vctrs", "vec_cast", paste0(free, ".integer"), mt_cast_from_numeric)
+  register_s3_method("vctrs", "vec_cast", paste0(free, ".double"), mt_cast_from_numeric)
+  register_s3_method("vctrs", "vec_cast", paste0(free, ".", free), mt_cast_time_time_free)
+  register_s3_method("vctrs", "vec_ptype2", paste0(free, ".", free), mt_ptype2_time_time_free)
+  register_s3_method("vctrs", "vec_cast", paste0(free, ".character"), mt_cast_from_character)
 
   # A linear time vector can be cast to Date / POSIXct.
   register_s3_method("vctrs", "vec_cast.Date", "mixtime::mt_linear", mt_cast_to_Date)

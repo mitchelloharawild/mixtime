@@ -157,7 +157,7 @@ test_that("a calendar-author decode() that throws still falls back to per-row re
 test_that("a format with no lin() anchor parses to cyclical time", {
   r <- time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")
 
-  expect_true(time_is_cyclical(r))
+  expect_true(time_is_cyclical_free(r))
   expect_equal(format(r), "Feb")
   expect_equal(
     as.numeric(vecvec::unvecvec(r)),
@@ -169,7 +169,7 @@ test_that("a chained cyc()-only format parses to cyclical time", {
   # Collapses to (day, year): day-of-year 74, same as day_of_year() for 15 March.
   r <- time_parse("15 Mar", format = "{cyc(day, month)} {cyc(month, year, label = TRUE)}")
 
-  expect_true(time_is_cyclical(r))
+  expect_true(time_is_cyclical_free(r))
   expect_equal(format(r), "D74")
   expect_equal(
     as.numeric(vecvec::unvecvec(r)),
@@ -670,7 +670,7 @@ test_that("chronon_parse_cyclical() for civil time-of-day-in-day chronons parses
   fmt <- chronon_parse_cyclical(cal_gregorian$second(1L), cal_gregorian$day(1L))
   r <- time_parse("09:30:45", format = fmt, calendar = cal_gregorian)
 
-  expect_true(time_is_cyclical(r))
+  expect_true(time_is_cyclical_free(r))
   expect_equal(format(r), "09:30:45")
 })
 
@@ -704,7 +704,7 @@ test_that("chronon_parse_cyclical() for civil hour-in-day chronons parses a bare
   rpm <- time_parse("2 PM", format = fmt, calendar = cal_gregorian)
   ram <- time_parse("2 AM", format = fmt, calendar = cal_gregorian)
 
-  expect_true(time_is_cyclical(r24))
+  expect_true(time_is_cyclical_free(r24))
   expect_equal(format(r24, "{cyc(hour,day)}"), "14")
   expect_equal(format(rpm, "{cyc(hour,day)}"), "14")
   expect_equal(format(ram, "{cyc(hour,day)}"), "02")
@@ -769,9 +769,9 @@ test_that("time_parse_impl() returns a simple time vector, and time_parse() is a
   expect_equal(format(wrapped), format(r))
 })
 
-test_that("time_parse_impl() returns a simple cyclical vector for a cyc()-only format", {
+test_that("time_parse_impl() returns a simple origin-less cyclical vector for a cyc()-only format", {
   r <- time_parse_impl("Feb", format = "{cyc(month, year, label = TRUE)}")
-  expect_true(S7::S7_inherits(r, mt_cyclical))
+  expect_true(S7::S7_inherits(r, mt_cyclical_free))
   expect_false(is_mixtime(r))
 })
 

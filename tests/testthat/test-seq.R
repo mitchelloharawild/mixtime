@@ -79,12 +79,12 @@ test_that("seq.mixtime works with linear time using time unit objects", {
 })
 
 test_that("seq.mixtime works with cyclical time", {
-  # month_of_year sequence (full cycle)
-  result <- seq(month_of_year(0L), month_of_year(11L))
+  # bare input is 1-indexed (January = 1); a full year is months 1:12.
+  result <- seq(month_of_year(1L), month_of_year(12L))
   expect_s7_class(result, class_mixtime)
   expect_length(result, 12)
-  expect_equal(format(result[[1]]), format(month_of_year(0L)))
-  expect_equal(format(result[[12]]), format(month_of_year(11L)))
+  expect_equal(format(result[[1]]), format(month_of_year(1L)))
+  expect_equal(format(result[[12]]), format(month_of_year(12L)))
 
   # month_of_year with wrap-around and time unit by
   # result <- seq(month_of_year(5L), month_of_year(3L), by = cal_gregorian$month(2L))
@@ -94,12 +94,12 @@ test_that("seq.mixtime works with cyclical time", {
   # expect_equal(format(result[[1]]), format(month_of_year(5L)))
   # expect_equal(format(result[[6]]), format(month_of_year(3L)))
 
-  # day_of_week sequence with integer by
-  result <- seq(day_of_week(0L), day_of_week(6L), by = 1L)
+  # day_of_week sequence with integer by (1-indexed: Monday = 1)
+  result <- seq(day_of_week(1L), day_of_week(7L), by = 1L)
   expect_s7_class(result, class_mixtime)
   expect_length(result, 7)
-  expect_equal(format(result[[1]]), format(day_of_week(0L)))
-  expect_equal(format(result[[7]]), format(day_of_week(6L)))
+  expect_equal(format(result[[1]]), format(day_of_week(1L)))
+  expect_equal(format(result[[7]]), format(day_of_week(7L)))
 })
 
 test_that("seq.mixtime handles length.out correctly", {
@@ -110,11 +110,11 @@ test_that("seq.mixtime handles length.out correctly", {
   expect_equal(format(result[[1]]), format(yearmonth("2020 Jan")))
   expect_equal(format(result[[24]]), format(yearmonth("2021 Dec")))
 
-  # With cyclical time
-  result <- seq(month_of_year(0L), length.out = 15)
+  # With cyclical time (1-indexed: month_of_year(1L) is January)
+  result <- seq(month_of_year(1L), length.out = 15)
   expect_s7_class(result, class_mixtime)
   expect_length(result, 15)
-  expect_equal(format(result[[1]]), format(month_of_year(0L)))
+  expect_equal(format(result[[1]]), format(month_of_year(1L)))
 })
 
 test_that("seq.mixtime handles along.with correctly", {

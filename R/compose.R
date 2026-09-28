@@ -35,7 +35,9 @@
 #'
 #' @return A `mixtime` time vector, at the finest chronon reached by the
 #'   chain (or the root's own chronon, if only one component is given).
-#'   Linear with a `lin()` anchor, cyclical otherwise.
+#'   Linear with a `lin()` anchor; origin-less cyclical (`mt_cyclical_free`)
+#'   otherwise, since there is then no point in time for the result to be a
+#'   position within.
 #'
 #' @seealso [time_components()] for the inverse operation, [lin()]/[cyc()] for
 #'   the component vocabulary shared with [time_components()] and [format()].
@@ -127,6 +129,10 @@ compose_tag <- function(x, calendar) {
     # formula-derived component's convention.
     offset <- chronon_divmod(from = chronon, to = cycle, x = vec_data(x))$mod
     return(list(chronon = chronon, cycle = cycle, value = offset))
+  }
+  if (S7_inherits(x, mt_cyclical_free)) {
+    # Already a bare within-cycle offset - pass through, no chronon_divmod().
+    return(list(chronon = attr(x, "chronon"), cycle = attr(x, "cycle"), value = vec_data(x)))
   }
 
   if (!inherits(x, "formula") || length(x) != 3L) {
@@ -382,6 +388,7 @@ compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
   if (is.null(cycle)) {
     mt_linear(running_count, chronon = running_chronon)
   } else {
-    mt_cyclical(running_count, chronon = running_chronon, cycle = cycle)
+    # No lin() anchor - an origin-less magnitude (mt_cyclical_free), not mt_cyclical.
+    mt_cyclical_free(running_count, chronon = running_chronon, cycle = cycle)
   }
 }

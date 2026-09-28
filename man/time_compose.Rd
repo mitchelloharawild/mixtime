@@ -24,7 +24,9 @@ allowing representation of fractional time granules (continuous time model).}
 \value{
 A \code{mixtime} time vector, at the finest chronon reached by the
 chain (or the root's own chronon, if only one component is given).
-Linear with a \code{lin()} anchor, cyclical otherwise.
+Linear with a \code{lin()} anchor; origin-less cyclical (\code{mt_cyclical_free})
+otherwise, since there is then no point in time for the result to be a
+position within.
 }
 \description{
 \code{time_compose()} is the inverse of \code{\link[=time_components]{time_components()}}: given a set of

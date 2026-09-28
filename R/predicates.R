@@ -1,9 +1,14 @@
 #' Check the time type of values
 #'
-#' Test whether elements of a `mixtime` vector are linear, cyclical, or durations.
+#' Test whether elements of a `mixtime` vector are linear, cyclical,
+#' origin-less cyclical, or durations.
 #'
 #' These helpers return a logical vector the same length as `x` identifying the
-#' type of time represented by each element.
+#' type of time represented by each element. `time_is_cyclical()` and
+#' `time_is_cyclical_free()` are distinct: an anchored cyclical time point
+#' (e.g. [month_of_year()] of a real date) is a position within a cycle,
+#' while an origin-less one (e.g. bare `month_of_year(3)`, with no date
+#' behind it) is a magnitude within a cycle - see `_dev/cycle.md`.
 #'
 #' @param x A time object (typically a `mixtime` vector).
 #' @param ... Additional arguments for methods.
@@ -11,10 +16,12 @@
 #' @return A logical vector the same length as `x`.
 #'
 #' @examples
-#' t <- c(yearmonth(0), month_of_year(0), months(0L))
+#' t <- c(yearmonth(0), month_of_year(as.Date("2020-01-01")), months(0L))
 #' time_is_linear(t)
 #' time_is_cyclical(t)
 #' time_is_duration(t)
+#'
+#' time_is_cyclical_free(month_of_year(3))
 #'
 #' @name is_time
 #' @export
@@ -29,6 +36,13 @@ time_is_cyclical <- S7::new_generic("time_is_cyclical", "x")
 method(time_is_cyclical, class_mixtime) <- vecvec::vecvec_apply_fn(time_is_cyclical, logical())
 method(time_is_cyclical, class_any) <- function(x) rep.int(FALSE, length(x))
 method(time_is_cyclical, mt_cyclical) <- function(x) rep.int(TRUE, length(x))
+
+#' @rdname is_time
+#' @export
+time_is_cyclical_free <- S7::new_generic("time_is_cyclical_free", "x")
+method(time_is_cyclical_free, class_mixtime) <- vecvec::vecvec_apply_fn(time_is_cyclical_free, logical())
+method(time_is_cyclical_free, class_any) <- function(x) rep.int(FALSE, length(x))
+method(time_is_cyclical_free, mt_cyclical_free) <- function(x) rep.int(TRUE, length(x))
 
 #' @rdname is_time
 #' @export

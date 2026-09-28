@@ -2,6 +2,25 @@
 
 ## New features
 
+* Added `mt_cyclical_free`, an origin-less cyclical time type for "cyclical
+  time without knowledge of which cycle it is in" (#47) - a magnitude within
+  a cycle (e.g. "day 60 of the year", with no year known), rather than a
+  position within one. It is built automatically by `cyclical_time()`
+  (and helpers like `day_of_year()`/`month_of_year()`) when given bare
+  numeric input, and by `time_compose()`/`time_parse()` when no `lin()`
+  anchor is supplied. Bare numeric input is indexed the way that chronon is
+  normally displayed (read from its registered `cyclical_labels()` scheme -
+  e.g. `day_of_year(60)` is the 60th day, but `time_of_day(0)` is midnight,
+  not "the 1st second"), and out-of-range input is `NA` wherever the
+  chronon/cycle pair has a fixed, at-independent cardinality (e.g.
+  `month_of_year(0)` and `month_of_year(13)`, since a year always has 12
+  months); a pair with no such fixed bound (e.g. day-of-year, since a year
+  has 365 or 366 days depending which one) is left unvalidated. Comparison
+  mirrors `mt_duration`'s plain magnitude comparison (no Allen's interval
+  algebra); a free value can also be
+  compared directly against an anchored `mt_cyclical`. Added
+  `time_is_cyclical_free()` alongside the existing `time_is_*()` predicates.
+
 * New `chronon_traverse()` walks out from a chronon to coarser or finer time
   units along the registered cardinality relationships, accumulating a value
   (such as the cumulative fixed cardinality) and stopping where a predicate

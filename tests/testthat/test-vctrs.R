@@ -21,13 +21,16 @@ test_that("vec_cast to character works for mt_duration", {
 
 test_that("inner time vectors are S7 objects of the right class", {
   lin <- yearmonth(0:3)@x[[1L]]
-  cyc <- month_of_year(0:3)@x[[1L]]
+  cyc <- month_of_year(as.Date("2020-01-01") + 0:3)@x[[1L]]
+  cyc_free <- month_of_year(0:3)@x[[1L]]
   dur <- days(0:3)@x[[1L]]
   expect_true(S7::S7_inherits(lin, mt_linear))
   expect_true(S7::S7_inherits(cyc, mt_cyclical))
+  expect_true(S7::S7_inherits(cyc_free, mt_cyclical_free))
   expect_true(S7::S7_inherits(dur, mt_duration))
   # cyclical carries a typed `cycle` property; chronon is a typed `mt_unit`
   expect_true(S7::S7_inherits(cyc@cycle, mt_unit))
+  expect_true(S7::S7_inherits(cyc_free@cycle, mt_unit))
   expect_true(S7::S7_inherits(lin@chronon, mt_unit))
 })
 
@@ -43,10 +46,17 @@ test_that("vec_cast() parses character onto a linear time vector's own chronon",
 })
 
 test_that("vec_cast() parses character onto a cyclical time vector's own chronon/cycle", {
-  to <- month_of_year(0L)@x[[1L]]
+  to <- month_of_year(as.Date("2020-01-01"))@x[[1L]]
   cast <- vctrs::vec_cast("Feb", to)
   expect_true(S7::S7_inherits(cast, mt_cyclical))
   expect_equal(cast, month_of_year(date("2020-02-15"))@x[[1L]])
+})
+
+test_that("vec_cast() parses character onto an origin-less cyclical time vector's own chronon/cycle", {
+  to <- month_of_year(0L)@x[[1L]]
+  cast <- vctrs::vec_cast("Feb", to)
+  expect_true(S7::S7_inherits(cast, mt_cyclical_free))
+  expect_equal(cast, month_of_year(2L)@x[[1L]])
 })
 
 test_that("vec_cast() from character fills in unset chronon properties (e.g. tz) from the target", {
