@@ -66,6 +66,7 @@ reference:
   desc: "Functions for manipulating and transforming time vectors."
   contents:
   - starts_with("seq")
+  - time_shift
   - time_round
   - time_floor
   - time_ceiling

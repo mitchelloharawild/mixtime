@@ -18,18 +18,23 @@
 #' @param on_invalid How to handle time points that overflow the cycle when
 #'   using a `by` argument with different time granule than the sequence chronon.
 #'   Options are:
-#'   * `"nearest"` (default): Adjust overflowing time points to the nearest
-#'     valid time point within the cycle
+#'   * `"clamp"` (default): Reduce the overflowing component to its last valid
+#'     value, preserving finer components (e.g., the time of day)
+#'   * `"nearest"`: Use the end of the cycle, so finer components are not
+#'     preserved. For discrete time this is the last chronon within the cycle;
+#'     for continuous time it is the end of that chronon
 #'   * `"overflow"`: Allow time points to overflow into the next cycle
+#'   * `"reject"`: Return `NA` with a warning
 #'
 #'   This is relevant when the starting time point has an offset that doesn't
 #'   exist in all cycles. For example, starting on day 31 with `by = "1 month"`
 #'   will overflow in months with fewer than 31 days (e.g., February). With
-#'   `"nearest"`, these will be adjusted to the last day of the month (e.g.,
+#'   `"clamp"`, these will be adjusted to the last day of the month (e.g.,
 #'   Feb 28/29). With `"overflow"`, the extra days carry into the next month.
 #'
 #'   If not explicitly specified and overflow occurs, a warning is issued with
-#'   the default `"nearest"` behavior applied.
+#'   the default `"clamp"` behavior applied. See [time_shift()] for shifting
+#'   time points with the same options.
 #' @param ... Additional arguments passed to the underlying sequence method.
 #'
 #' @return A mixtime vector containing the sequence.
@@ -55,8 +60,8 @@
 #' seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))
 #'
 #' # Handling invalid dates with on_invalid
-#' seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses nearest
-#' seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "nearest")
+#' seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses clamp
+#' seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "clamp")
 #' seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 #'
 #' # Cyclical time sequences
@@ -86,7 +91,7 @@
   by,
   length.out = NULL,
   along.with = NULL,
-  on_invalid = c("nearest", "overflow"),
+  on_invalid = c("clamp", "nearest", "overflow", "reject"),
   ...
 ) {
   if (!is.null(along.with)) {
@@ -236,15 +241,19 @@
         res,
         seq_mod,
         path,
-        clamp = on_invalid == "nearest"
+        on_invalid,
+        discrete = is.integer(ptype)
       )
 
-      if (missing_on_invalid && any(recomposed$clamped, na.rm = TRUE)) {
+      if (missing_on_invalid && any(recomposed$invalid)) {
         cli::cli_warn(c(
           "The cycle offset ({time_granule_label(chronon, seq_part + 1L)}) has produced time points that overflow the {time_unit_plural(by, 1L)} cycle.",
-          "!" = "Using the nearest valid time points in the cycle, {.code on_invalid = \"nearest\"} (the default).",
+          "!" = "Clamping to the last valid time points in the cycle, {.code on_invalid = \"clamp\"} (the default).",
           "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
         ))
+      }
+      if (on_invalid == "reject" && any(recomposed$invalid)) {
+        warn_invalid_reject(recomposed$invalid)
       }
       # `chronon_recompose()` stays in the local-shifted domain used by
       # `align_value` above - undo the shift to recover the true `chronon`

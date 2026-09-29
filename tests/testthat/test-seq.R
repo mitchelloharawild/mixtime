@@ -332,6 +332,33 @@ test_that("seq.mixtime on_invalid = 'overflow' lets the day-of-month overflow in
   expect_equal(format(result), c("2020-01-31", "2020-03-02", "2020-03-31"))
 })
 
+test_that("seq.mixtime on_invalid = 'nearest' uses the last chronon of the cycle", {
+  result <- seq(
+    datetime("2021-01-31 09:30:00"),
+    length.out = 3,
+    by = "1 month",
+    on_invalid = "nearest"
+  )
+  expect_equal(
+    format(result),
+    c("2021-01-31 09:30:00", "2021-02-28 23:59:59", "2021-03-31 09:30:00")
+  )
+})
+
+test_that("seq.mixtime on_invalid = 'reject' gives NA with a warning", {
+  expect_warning(
+    result <- seq(
+      date("2020-01-31"),
+      length.out = 3,
+      by = "1 month",
+      on_invalid = "reject"
+    ),
+    "1 time point did not exist"
+  )
+  expect_equal(is.na(result), c(FALSE, TRUE, FALSE))
+  expect_equal(format(result[c(1, 3)]), c("2020-01-31", "2020-03-31"))
+})
+
 test_that("seq.mixtime messages describe the granules involved", {
   # Granules are S7 scalars, so their size comes from @n rather than vec_data()
   expect_error(

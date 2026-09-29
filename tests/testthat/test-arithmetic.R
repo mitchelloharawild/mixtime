@@ -342,3 +342,94 @@ test_that("datetime() with a timezone can be shifted by durations with a regular
   expect_equal(format(d - hours(1L)), "2026-06-03 01:30:00 AEST")
   expect_equal(format(hours(1L) + d), "2026-06-03 03:30:00 AEST")
 })
+
+# ---------------------------------------------------------------------------
+# time_shift(): resolving invalid time points with `on_invalid`
+# ---------------------------------------------------------------------------
+
+test_that("time_shift() defaults to clamping, matching `+`", {
+  x <- datetime("2021-01-30 09:30:00")
+  expect_equal(format(time_shift(x, months(1L))), "2021-02-28 09:30:00")
+  expect_equal(format(time_shift(x, months(1L))), format(x + months(1L)))
+})
+
+test_that("time_shift() on_invalid = 'nearest' uses the last chronon of the target granule", {
+  x <- datetime("2021-01-30 09:30:00")
+  expect_equal(
+    format(time_shift(x, months(1L), on_invalid = "nearest")),
+    "2021-02-28 23:59:59"
+  )
+  # Valid time points are unaffected
+  expect_equal(
+    format(time_shift(
+      datetime(c("2021-01-15 09:30:00", "2021-01-31 12:00:00")),
+      months(1L),
+      on_invalid = "nearest"
+    )),
+    c("2021-02-15 09:30:00", "2021-02-28 23:59:59")
+  )
+  # With day chronons, nearest and clamp agree
+  expect_equal(
+    format(time_shift(date("2024-02-29"), years(1L), on_invalid = "nearest")),
+    "2025-02-28"
+  )
+})
+
+test_that("time_shift() on_invalid = 'nearest' uses the end of the last chronon for continuous time", {
+  # The end of the last second (and day) is the start of the next granule
+  expect_equal(
+    format(time_shift(
+      datetime("2021-01-30 09:30:00", discrete = FALSE),
+      months(1L),
+      on_invalid = "nearest"
+    )),
+    format(datetime("2021-03-01 00:00:00", discrete = FALSE))
+  )
+  expect_equal(
+    format(time_shift(
+      date("2021-01-31", discrete = FALSE),
+      months(1L),
+      on_invalid = "nearest"
+    )),
+    format(date("2021-03-01", discrete = FALSE))
+  )
+})
+
+test_that("time_shift() on_invalid = 'overflow' carries into the next granule", {
+  expect_equal(
+    format(time_shift(
+      datetime("2021-01-30 09:30:00"),
+      months(1L),
+      on_invalid = "overflow"
+    )),
+    "2021-03-02 09:30:00"
+  )
+  expect_equal(
+    format(time_shift(date("2021-03-31"), months(-1L), on_invalid = "overflow")),
+    "2021-03-03"
+  )
+})
+
+test_that("time_shift() on_invalid = 'reject' gives NA with a warning", {
+  expect_warning(
+    res <- time_shift(
+      date(c("2020-01-31", "2020-01-15")),
+      months(1L),
+      on_invalid = "reject"
+    ),
+    "1 time point did not exist"
+  )
+  expect_equal(is.na(res), c(TRUE, FALSE))
+  expect_equal(format(res[2]), "2020-02-15")
+  # No warning when every time point is valid
+  expect_no_warning(time_shift(date("2020-01-15"), months(1L), on_invalid = "reject"))
+})
+
+test_that("time_shift() accepts character durations and validates `by`", {
+  expect_equal(
+    format(time_shift(date("2021-01-31"), "1 month", on_invalid = "nearest")),
+    "2021-02-28"
+  )
+  expect_error(time_shift(date("2021-01-31"), date("2021-01-31")), "duration")
+  expect_error(time_shift(date("2021-01-31"), months(1L), on_invalid = "bad"))
+})

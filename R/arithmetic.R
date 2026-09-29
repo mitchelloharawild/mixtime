@@ -4,8 +4,9 @@
 #
 # Shifts involving time and duration chronons with irregular cardinalities are
 # computed with calendar-field arithmetic, clamping any components that are
-# invalid (e.g. 2026-01-31 + months(1) -> 2026-02-28, not 2026-03-03).
-duration_shift <- function(time, dur) {
+# invalid (e.g. 2026-01-31 + months(1) -> 2026-02-28, not 2026-03-03). See
+# chronon_recompose() for the `on_invalid` resolutions.
+duration_shift <- function(time, dur, on_invalid = "clamp") {
   time_data <- S7_data(time)
   time_chronon <- time@chronon
   dur_chronon <- dur@chronon
@@ -14,9 +15,17 @@ duration_shift <- function(time, dur) {
     path <- chronon_longest_path(time_chronon, dur_chronon)
     decomposed <- chronon_decompose(as.numeric(time_data), path)
     div <- decomposed$div[[length(path)]] + S7_data(dur)
-    new_time_data <- as.numeric(
-      chronon_recompose(div, decomposed$mod, path)$value
+    recomposed <- chronon_recompose(
+      div,
+      decomposed$mod,
+      path,
+      on_invalid,
+      discrete = is.integer(time_data)
     )
+    if (on_invalid == "reject" && any(recomposed$invalid)) {
+      warn_invalid_reject(recomposed$invalid)
+    }
+    new_time_data <- as.numeric(recomposed$value)
   } else {
     dur_chronon <- granule_inherit_props(dur_chronon, time_chronon)
     at <- chronon_convert_impl(
@@ -121,6 +130,73 @@ method(`+`, list(mt_duration, mt_time)) <- function(e1, e2) {
 method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
   S7_data(e2) <- duration_shift(e2, e1) - S7_data(e2)
   e2
+}
+
+#' Shift time points by a duration
+#'
+#' Shifts time points by a duration, like `x + by`, with control over how time
+#' points that don't exist in the target granule are resolved. Shifting by a
+#' duration with an irregular relationship to the time points' chronon (e.g.
+#' days within months) can produce time points that don't exist, such as
+#' shifting 31 January by one month. The `+` and `-` operators always use
+#' `on_invalid = "clamp"`.
+#'
+#' @param x A time point vector.
+#' @param by A time [duration()] (e.g., `months(1L)`), or a character string
+#'   specifying one (e.g., `"1 month"`).
+#' @param on_invalid How to resolve time points that don't exist in the target
+#'   granule:
+#'   * `"clamp"` (default): Reduce the invalid component to its last valid
+#'     value, preserving finer components (e.g., the time of day).
+#'   * `"nearest"`: Use the end of the target granule, so finer components are
+#'     not preserved. For discrete time this is the last chronon within the
+#'     granule (e.g., 23:59:59 on the last day); for continuous time it is the
+#'     end of that chronon (e.g., 00:00:00 on the following day).
+#'   * `"overflow"`: Allow the invalid component to overflow into the next
+#'     granule.
+#'   * `"reject"`: Return `NA` with a warning.
+#'
+#' @return A time point vector of the same type as `x`.
+#'
+#' @examples
+#' x <- datetime("2021-01-30 09:30:00")
+#' time_shift(x, months(1L))
+#' time_shift(x, months(1L), on_invalid = "nearest")
+#' time_shift(x, months(1L), on_invalid = "overflow")
+#' time_shift(x, months(1L), on_invalid = "reject")
+#'
+#' # Shifting backwards
+#' time_shift(date("2021-03-31"), months(-1L), on_invalid = "overflow")
+#'
+#' @export
+time_shift <- new_generic(
+  "time_shift",
+  "x",
+  function(x, by, on_invalid = c("clamp", "nearest", "overflow", "reject")) {
+    S7::S7_dispatch()
+  }
+)
+method(time_shift, class_mixtime) <- vecvec::vecvec_apply_fn(time_shift)
+method(time_shift, mt_time) <- function(
+  x,
+  by,
+  on_invalid = c("clamp", "nearest", "overflow", "reject")
+) {
+  on_invalid <- rlang::arg_match(on_invalid)
+  if (is.character(by)) {
+    by <- parse_time_unit(by)
+  }
+  if (S7_inherits(by, mt_unit)) {
+    by <- duration(1L, by)
+  }
+  if (is_mixtime(by)) {
+    by <- vecvec::unvecvec(by)
+  }
+  if (!S7_inherits(by, mt_duration)) {
+    cli::cli_abort("{.arg by} must be a time duration.")
+  }
+  S7_data(x) <- S7_data(x) + duration_shift(x, by, on_invalid)
+  x
 }
 
 # --- combining durations (resulting in common chronon durations) --------------

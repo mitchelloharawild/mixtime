@@ -91,23 +91,68 @@ chronon_decompose <- function(x, path) {
 }
 
 # Backward walk: reconstruct a path[[1]]-unit value from `div`/`mod`
-# (chronon_decompose()'s output, `div` possibly shifted). Clamps each irregular
-# hop's whole-unit remainder to its paired coarser count's valid range.
-# `clamped` flags where clamping changed a value (for warning on overflow).
-chronon_recompose <- function(div, mod, path, clamp = TRUE) {
+# (chronon_decompose()'s output, `div` possibly shifted). An irregular hop's
+# whole-unit remainder that exceeds its paired coarser count's valid range is
+# resolved according to `on_invalid`:
+#
+# * "clamp": reduce the offending remainder to the last valid unit, keeping
+#   finer remainders (e.g. 2026-01-31 14:30 + 1 month -> 2026-02-28 14:30).
+# * "nearest": the end of the target granule, discarding finer remainders. For
+#   `discrete` time this is its last path[[1]] chronon (e.g. 2026-01-31 14:30 +
+#   1 month -> 2026-02-28 23:59:59); for continuous time it is the end of that
+#   chronon, accepting the slight overflow (-> 2026-03-01 00:00:00).
+# * "overflow": leave the remainder to carry into the next granule.
+# * "reject": NA.
+#
+# `invalid` flags which elements needed resolving (for warnings).
+chronon_recompose <- function(
+  div,
+  mod,
+  path,
+  on_invalid = "clamp",
+  discrete = TRUE
+) {
   n <- length(path)
   value <- div
-  clamped <- rep(FALSE, length(value))
+  invalid <- rep(FALSE, length(value))
   for (i in seq(n, by = -1L, length.out = n - 1L)) {
-    m <- mod[[i - 1L]]
-    if (clamp && !chronon_hop_is_regular(path[[i - 1L]], path[[i]])) {
-      card <- chronon_cardinality(path[[i - 1L]], path[[i]], at = value)
+    m <- rep_len(mod[[i - 1L]], length(value))
+    # A coarser hop already resolved to the end of its granule: finer
+    # components start the next granule (for discrete time, 1 chronon is
+    # subtracted below).
+    if (on_invalid == "nearest") m[invalid] <- 0
+    if (
+      on_invalid != "overflow" &&
+        !chronon_hop_is_regular(path[[i - 1L]], path[[i]])
+    ) {
+      card <- rep_len(
+        chronon_cardinality(path[[i - 1L]], path[[i]], at = value),
+        length(value)
+      )
       m_int <- floor(m)
-      m_clamped <- pmin(card - 1, m_int)
-      clamped <- clamped | (m_clamped != m_int)
-      m <- m_clamped + (m - m_int)
+      bad <- (m_int > card - 1) %in% TRUE
+      invalid <- invalid | bad
+      m[bad] <- switch(
+        on_invalid,
+        clamp = card[bad] - 1 + (m[bad] - m_int[bad]),
+        nearest = card[bad],
+        reject = NA
+      )
     }
     value <- chronon_divmod_dispatch(path[[i]], path[[i - 1L]], value)$div + m
   }
-  list(value = value, clamped = clamped)
+  if (on_invalid == "nearest" && discrete) {
+    value[invalid] <- value[invalid] - 1
+  }
+  list(value = value, invalid = invalid)
+}
+
+warn_invalid_reject <- function(invalid) {
+  cli::cli_warn(
+    c(
+      "{sum(invalid)} time point{?s} did not exist in the target granule and {cli::qty(sum(invalid))}{?was/were} replaced with {.val NA}.",
+      "i" = "Use {.code on_invalid = \"clamp\"} or {.code \"nearest\"} to resolve them to valid time points instead."
+    ),
+    call = NULL
+  )
 }
