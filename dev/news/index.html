@@ -47,11 +47,13 @@
 <h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
 <ul><li>Generalised the default parse strings used by <code><a href="../reference/linear_time_helpers.html">yearweek()</a></code>, <code><a href="../reference/linear_time_helpers.html">yearmonth()</a></code>, and <code><a href="../reference/linear_time_helpers.html">yearquarter()</a></code> to accept strings that are accepted by tsibble equivalents for ease of migration (with the intentional exception of dates and datetimes, which need to be parsed first with <code><a href="../reference/linear_time_helpers.html">date()</a></code> or <code><a href="../reference/linear_time_helpers.html">datetime()</a></code>).</li>
 <li>Parsing named labels (e.g. month and weekday names) are now case-insensitive.</li>
+<li>The chronon of <code>Date</code> and <code>POSIXct</code> objects is now identified from the interval between observations (like tsibble’s interval), rather than always being 1 day or 1 second. For example, <code><a href="../reference/mixtime.html">mixtime()</a></code> on hourly datetimes now produces 1 hour chronons. A multiple of a unit is used only when every observation is aligned to it, so conversion never loses information.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> returned the unit-granule constant <code>1</code> for a pair sharing the same time unit at different granule sizes (e.g. <code>chronon_cardinality_fixed(day(1L), day(10L))</code>), ignoring the requested sizes entirely instead of scaling by them like <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> does for the same case.</li>
+<li>Durations of multi-unit chronons now print with the chronon’s size, so <code>duration(2L, hour(3L))</code> shows <code>"6 hours"</code> (not <code>"2 hours"</code>) and the chronon of a 3-hourly time vector reads <code>"3 hours"</code> (e.g. in <code><a href="../reference/time_chronon.html">time_chronon()</a></code> and <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code>), not <code>"1 hour"</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">

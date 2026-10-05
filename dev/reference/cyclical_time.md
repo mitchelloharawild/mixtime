@@ -105,7 +105,7 @@ cyclical_time(
   cycle = year(1L)
 )
 #> <mixtime[1]>
-#> [1] Sep
+#> [1] Oct
 
 # Continuous time (discrete = FALSE) for fractional month of year
 cyclical_time(
@@ -115,7 +115,7 @@ cyclical_time(
   discrete = FALSE
 )
 #> <mixtime[1]>
-#> [1] Sep 90.0%
+#> [1] Oct 12.9%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -125,7 +125,7 @@ cyclical_time(
   calendar = cal_gregorian
 )
 #> <mixtime[1]>
-#> [1] D28
+#> [1] D05
 
 # Hours, minutes, and seconds
 cyclical_time(
@@ -134,5 +134,5 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 13:54:10
+#> [1] 13:11:13
 ```

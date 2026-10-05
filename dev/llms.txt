@@ -389,6 +389,8 @@ Functions for manipulating and transforming time vectors.
 - [`seq(`*`<mixtime::mixtime>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.md)
   [`seq(`*`<mixtime::mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.md)
   : Generate sequences of mixtime values
+- [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md)
+  : Shift time points by a duration
 - [`time_round()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)
   [`time_ceiling()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)
   [`time_floor()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)

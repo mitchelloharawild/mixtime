@@ -66,16 +66,32 @@ time object, such as continuous time or cyclical time representations.</p>
     <p>A time <code><a href="duration.html">duration()</a></code> vector representing the chronon of each
 value (e.g., <code>days(1L)</code>).</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>For <a href="https://rdrr.io/r/base/Dates.html" class="external-link">base::Date</a> and <a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">base::POSIXct</a> objects the chronon is identified from
+the greatest common divisor of the intervals between observations, in the
+same way as a tsibble's interval. For example, hourly datetimes have a 1 hour
+chronon rather than 1 second. A multiple of a unit (e.g. 3 hours) is only
+used if every observation falls on a boundary of that chronon; otherwise a
+single unit is used so that no information is lost when converting.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The chronon of a Date object is 1 day</span></span></span>
+<span class="r-in"><span><span class="co"># The chronon of a Date or POSIXct object is identified from the interval</span></span></span>
+<span class="r-in"><span><span class="co"># between observations (as with tsibble's interval)</span></span></span>
+<span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 day 1 day 1 day</span>
+<span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2024-01-01"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span> <span class="op">+</span> <span class="fl">3600</span> <span class="op">*</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 hour 1 hour 1 hour</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Without an interval, the chronon of a Date is 1 day and a POSIXct is 1 second</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 day</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The chronon of a POSIXct object is 1 second</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 second</span>

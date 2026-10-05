@@ -38,6 +38,13 @@
   [`datetime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)).
 - Parsing named labels (e.g. month and weekday names) are now
   case-insensitive.
+- The chronon of `Date` and `POSIXct` objects is now identified from the
+  interval between observations (like tsibble’s interval), rather than
+  always being 1 day or 1 second. For example,
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  on hourly datetimes now produces 1 hour chronons. A multiple of a unit
+  is used only when every observation is aligned to it, so conversion
+  never loses information.
 
 ### Bug fixes
 
@@ -48,6 +55,11 @@
   requested sizes entirely instead of scaling by them like
   [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
   does for the same case.
+- Durations of multi-unit chronons now print with the chronon’s size, so
+  `duration(2L, hour(3L))` shows `"6 hours"` (not `"2 hours"`) and the
+  chronon of a 3-hourly time vector reads `"3 hours"` (e.g. in
+  [`time_chronon()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_chronon.md)
+  and [`str()`](https://rdrr.io/r/utils/str.html)), not `"1 hour"`.
 
 ## mixtime 0.3.0
 
