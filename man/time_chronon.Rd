@@ -19,12 +19,23 @@ value (e.g., \code{days(1L)}).
 This S7 generic function extracts the chronon (the smallest time granule) from a
 time object, such as continuous time or cyclical time representations.
 }
+\details{
+For \link[base:Date]{base::Date} and \link[base:POSIXct]{base::POSIXct} objects the chronon is identified from
+the greatest common divisor of the intervals between observations, in the
+same way as a tsibble's interval. For example, hourly datetimes have a 1 hour
+chronon rather than 1 second. A multiple of a unit (e.g. 3 hours) is only
+used if every observation falls on a boundary of that chronon; otherwise a
+single unit is used so that no information is lost when converting.
+}
 \examples{
 
-# The chronon of a Date object is 1 day
-time_chronon(Sys.Date())
+# The chronon of a Date or POSIXct object is identified from the interval
+# between observations (as with tsibble's interval)
+time_chronon(Sys.Date() + 0:2)
+time_chronon(as.POSIXct("2024-01-01", tz = "UTC") + 3600 * 0:2)
 
-# The chronon of a POSIXct object is 1 second
+# Without an interval, the chronon of a Date is 1 day and a POSIXct is 1 second
+time_chronon(Sys.Date())
 time_chronon(Sys.time())
 
 # The chronon of a continuous time year and month is 1 month

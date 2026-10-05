@@ -220,3 +220,54 @@ test_that("Combinations - c() with NA", {
   expect_equal(length(result), 3L)
   expect_equal(is.na(result), c(FALSE, FALSE, TRUE))
 })
+
+# ----------------------------------------------------------------------------
+# Chronon of Date and POSIXct (time_chronon())
+# ----------------------------------------------------------------------------
+
+test_that("Date/POSIXct chronons are identified from the observed interval", {
+  chronon_of <- function(x) attr(time_chronon(x)@x[[1L]], "chronon")
+
+  # Hourly datetimes have an hourly chronon
+  x <- as.POSIXct("2024-01-01", tz = "UTC") + 3600 * (0:5)
+  expect_equal(chronon_of(x), cal_gregorian$hour(1L, tz = "UTC"))
+  expect_equal(chronon_glb(mixtime(x)), cal_gregorian$hour(1L, tz = "UTC"))
+  expect_equal(as.POSIXct(mixtime(x), tz = "UTC"), x)
+
+  # Multiple units are used when observations fall on the chronon boundaries
+  x <- as.POSIXct("2024-01-01", tz = "UTC") + 3 * 3600 * (0:3)
+  expect_equal(chronon_of(x)@n, 3)
+  x <- as.POSIXct("2024-01-01", tz = "UTC") + 90 * 60 * (0:3)
+  expect_equal(chronon_of(x), cal_gregorian$minute(90, tz = "UTC"))
+
+  # ... otherwise a single unit is used to avoid losing information
+  x <- as.POSIXct("2024-01-01 01:00", tz = "UTC") + 3 * 3600 * (0:3)
+  expect_equal(chronon_of(x), cal_gregorian$hour(1L, tz = "UTC"))
+  expect_equal(as.POSIXct(mixtime(x), tz = "UTC"), x)
+
+  # Days are measured in local time, including across DST transitions
+  x <- as.POSIXct(
+    c("2024-03-29", "2024-03-30", "2024-03-31", "2024-04-01"),
+    tz = "Europe/London"
+  )
+  expect_equal(chronon_of(x), cal_gregorian$day(1L, tz = "Europe/London"))
+
+  # Sub-second intervals
+  x <- as.POSIXct("2024-01-01", tz = "UTC") + 0.25 * (0:3)
+  expect_equal(chronon_of(x), cal_gregorian$millisecond(250, tz = "UTC"))
+
+  # Without an interval, the chronon is a second
+  expect_equal(chronon_of(as.POSIXct("2024-01-01 01:00", tz = "UTC")), cal_gregorian$second(1L, tz = "UTC"))
+  expect_equal(chronon_of(as.POSIXct(NA, tz = "UTC")), cal_gregorian$second(1L, tz = "UTC"))
+
+  # Weekly dates use a 7 day chronon only when aligned to the epoch (Thursday)
+  x <- as.Date("2024-01-04") + 7 * (0:3)
+  expect_equal(chronon_of(x), cal_gregorian$day(7))
+  expect_equal(as.Date(mixtime(x)), x)
+  x <- as.Date("2024-01-01") + 7 * (0:3)
+  expect_equal(chronon_of(x), cal_gregorian$day(1L))
+  expect_equal(as.Date(mixtime(x)), x)
+
+  # Without an interval, the chronon is a day
+  expect_equal(chronon_of(as.Date("2024-01-01")), cal_gregorian$day(1L))
+})

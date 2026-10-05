@@ -22,6 +22,11 @@
   ease of migration (with the intentional exception of dates and datetimes, 
   which need to be parsed first with `date()` or `datetime()`).
 * Parsing named labels (e.g. month and weekday names) are now case-insensitive.
+* The chronon of `Date` and `POSIXct` objects is now identified from the
+  interval between observations (like tsibble's interval), rather than always
+  being 1 day or 1 second. For example, `mixtime()` on hourly datetimes now
+  produces 1 hour chronons. A multiple of a unit is used only when every
+  observation is aligned to it, so conversion never loses information.
 
 ## Bug fixes
 

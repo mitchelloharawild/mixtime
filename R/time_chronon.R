@@ -2,7 +2,14 @@
 #' 
 #' This S7 generic function extracts the chronon (the smallest time granule) from a
 #' time object, such as continuous time or cyclical time representations.
-#' 
+#'
+#' For [base::Date] and [base::POSIXct] objects the chronon is identified from
+#' the greatest common divisor of the intervals between observations, in the
+#' same way as a tsibble's interval. For example, hourly datetimes have a 1 hour
+#' chronon rather than 1 second. A multiple of a unit (e.g. 3 hours) is only
+#' used if every observation falls on a boundary of that chronon; otherwise a
+#' single unit is used so that no information is lost when converting.
+#'
 #' @param x A time object (e.g., [base::Date], [base::POSIXct], [linear_time()], etc.)
 #' @param ... Additional arguments for methods.
 #' 
@@ -11,10 +18,13 @@
 #' 
 #' @examples
 #' 
-#' # The chronon of a Date object is 1 day
+#' # The chronon of a Date or POSIXct object is identified from the interval
+#' # between observations (as with tsibble's interval)
+#' time_chronon(Sys.Date() + 0:2)
+#' time_chronon(as.POSIXct("2024-01-01", tz = "UTC") + 3600 * 0:2)
+#'
+#' # Without an interval, the chronon of a Date is 1 day and a POSIXct is 1 second
 #' time_chronon(Sys.Date())
-#' 
-#' # The chronon of a POSIXct object is 1 second
 #' time_chronon(Sys.time())
 #' 
 #' # The chronon of a continuous time year and month is 1 month
@@ -40,19 +50,70 @@ S7::method(time_chronon, class_any) <- function(x) {
 }
 
 S7::method(time_chronon, S7::new_S3_class("Date")) <- function(x) {
-  # Date is a 1-day naive chronon
+  # Date is a naive chronon of days, spanning the observed interval
   duration(
-    rep(1L, length(x)), 
-    chronon = cal_gregorian$day(1L)
+    rep(1L, length(x)),
+    chronon = chronon_from_interval(
+      as.numeric(x),
+      units = list(cal_gregorian$day),
+      sizes = 1
+    )
   )
 }
 
 S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
-  # POSIXct is a 1-second chronon with time zone information
+  # POSIXct is a chronon of the observed interval with time zone information
+  x <- as.POSIXct(x)
+  tz <- attr(x, "tzone") %||% "UTC"
+  # Measure the interval in local (wall clock) seconds, so that e.g. daily
+  # observations at local midnight are whole days across DST transitions.
+  x <- as.numeric(x)
+  local <- x + get_tz_offset(x, if (tz == "") Sys.timezone() else tz)
   duration(
     rep(1L, length(x)),
-    chronon = cal_gregorian$second(1L, tz = attr(x, "tzone") %||% "UTC")
+    chronon = chronon_from_interval(
+      local,
+      units = with(cal_gregorian, list(day, hour, minute, second, millisecond)),
+      sizes = c(86400, 3600, 60, 1, 1e-3),
+      fallback = cal_gregorian$second,
+      tz = tz
+    )
   )
+}
+
+# Identify the chronon of a time vector from its observed interval, in the same
+# way as {tsibble}'s interval: the greatest common divisor of the differences
+# between observations.
+#
+# `x` is numeric time since epoch (in local time), and `units` are candidate
+# unit constructors ordered from coarsest to finest, with fixed `sizes` in the
+# units of `x`. The chronon's unit is the coarsest in which every observation is
+# a whole number, and its size `n` is the gcd of the differences between
+# observations measured in that unit.
+#
+# A chronon of `n > 1` units floors values into epoch-aligned blocks, so `n` is
+# only used when every observation falls on a block boundary. Otherwise the
+# chronon is a single unit, so that the conversion never loses information.
+#
+# With fewer than two distinct observations there is no interval, so the
+# `fallback` unit is used (defaulting to the finest candidate unit).
+chronon_from_interval <- function(x, units, sizes, ..., fallback = units[[length(units)]]) {
+  x <- unique(x[is.finite(x)])
+  if (length(x) < 2L) return(fallback(1L, ...))
+
+  for (i in seq_along(units)) {
+    v <- x / sizes[[i]]
+    if (any(abs(v - round(v)) > 1e-6)) next
+
+    v <- round(v)
+    chronon <- units[[i]](1L, ...)
+    n <- Reduce(gcd, abs(diff(sort(v))))
+    if (n > 1L && all(v %% n == 0)) {
+      chronon@n <- chronon@n * n
+    }
+    return(chronon)
+  }
+  fallback(1L, ...)
 }
 
 # {tsibble} time classes
