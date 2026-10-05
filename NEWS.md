@@ -30,6 +30,10 @@
   `chronon_cardinality_fixed(day(1L), day(10L))`), ignoring the requested
   sizes entirely instead of scaling by them like `chronon_cardinality()`
   does for the same case.
+* Durations of multi-unit chronons now print with the chronon's size, so
+  `duration(2L, hour(3L))` shows `"6 hours"` (not `"2 hours"`) and the
+  chronon of a 3-hourly time vector reads `"3 hours"` (e.g. in
+  `time_chronon()` and `str()`), not `"1 hour"`.
 
 # mixtime 0.3.0
 

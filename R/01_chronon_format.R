@@ -57,11 +57,17 @@ method(chronon_format_duration, mt_unit) <- function(x) {
 
 # A duration as text, e.g. "3 months" or "1.5 days". This is time_granule_label()
 # over the magnitudes of a duration vector, except that continuous (double)
-# durations show a fractional magnitude and always read as plural.
+# durations show a fractional magnitude and always read as plural. Magnitudes
+# count chronons, so they are scaled by the chronon's size: 2 chronons of
+# `hour(3L)` read as "6 hours".
 duration_label <- function(x) {
-  n <- vec_data(x)
   chronon <- chronon_glb(x)
-  if (is.double(n)) {
+  n <- vec_data(x)
+  # Continuity follows the duration's own storage, not the size's type (so a
+  # discrete duration of `hour(3)`, with a double size, still reads "3 hours").
+  continuous <- is.double(n)
+  n <- n * chronon@n
+  if (continuous) {
     paste(format(n, nsmall = 1L), time_unit_plural(chronon, 2L))
   } else {
     time_granule_label(chronon, n)
