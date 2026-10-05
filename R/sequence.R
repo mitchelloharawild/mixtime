@@ -263,8 +263,8 @@
 
   if (missing_on_invalid && any(shifted$invalid & !shifted$skipped)) {
     cli::cli_warn(c(
-      "Some time points in the sequence fall past the end of a shorter {time_unit_plural(by, 1L)}.",
-      "!" = "Clamping them to the last valid time point in that {time_unit_plural(by, 1L)}, {.code on_invalid = \"clamp\"} (the default).",
+      "Some time points in the sequence fall past the end of a shorter {unit_name(by, 1L)}.",
+      "!" = "Clamping them to the last valid time point in that {unit_name(by, 1L)}, {.code on_invalid = \"clamp\"} (the default).",
       "i" = "Specify {.arg on_invalid}, or set the {.code mixtime.on_invalid} option, to suppress this warning."
     ))
   }

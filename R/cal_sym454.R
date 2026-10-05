@@ -59,10 +59,14 @@ cal_sym454 <- new_calendar(
 )
 
 # Time unit labels
-method(time_unit_full, cal_sym454$year) <- function(x) "year{?/s}"
-method(time_unit_abbr, cal_sym454$year) <- function(x) "Y"
-method(time_unit_full, cal_sym454$month) <- function(x) "month{?/s}"
-method(time_unit_abbr, cal_sym454$month) <- function(x) "M"
+method(unit_labels, cal_sym454$year) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "year{?/s}")),
+  symbol = "Y"
+)
+method(unit_labels, cal_sym454$month) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "month{?/s}")),
+  symbol = "M"
+)
 
 ## Default formats
 S7::method(

@@ -547,8 +547,8 @@ duration_labels_parse <- function(granule, locale = NULL, ...) {
   duration_check_locale(locale)
 
   number <- "[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?"
-  full <- unique(c(time_unit_plural(granule, 2L), time_unit_plural(granule, 1L)))
-  abbr <- time_unit_abbr(granule)
+  full <- unique(c(unit_name(granule, 2L), unit_name(granule, 1L)))
+  abbr <- unit_symbol(granule)
   # Longest first, so "days" isn't cut short by "day".
   esc <- function(x) {
     x <- x[nzchar(x)]

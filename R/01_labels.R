@@ -332,7 +332,7 @@ method(linear_labels_format, mt_unit) <- function(
     transform = scheme$transform,
     # No vocab: fall back to the pre-scheme "<i><abbr>" style (e.g. "5Y").
     fallback_label = function(i) {
-      paste0(i, if (abbreviate) time_unit_abbr(granule) else time_unit_plural(granule, i))
+      paste0(i, if (abbreviate) unit_symbol(granule) else unit_name(granule, i))
     }
   )
 }
@@ -370,7 +370,7 @@ method(cyclical_labels_format, list(mt_unit, mt_unit)) <- function(
     transform = scheme$transform,
     # Same fallback as linear, "<abbr><i>" order (e.g. "M5" not "5M").
     fallback_label = function(i) {
-      paste0(if (abbreviate) time_unit_abbr(granule) else time_unit_plural(granule, i), i)
+      paste0(if (abbreviate) unit_symbol(granule) else unit_name(granule, i), i)
     }
   )
 }

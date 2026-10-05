@@ -123,12 +123,12 @@ free_locate_example <- function(cycle) {
 
 # Singular name of a granule's unit (e.g. "month", or "2 months").
 free_unit <- function(granule) {
-  if (granule@n == 1L) time_unit_plural(granule, 1L) else time_granule_label(granule)
+  if (granule@n == 1L) unit_name(granule, 1L) else time_granule_label(granule)
 }
 
 # Plural name of a granule's unit (e.g. "months").
 free_units <- function(granule) {
-  if (granule@n == 1L) time_unit_plural(granule, 2L) else paste("periods of", time_granule_label(granule))
+  if (granule@n == 1L) unit_name(granule, 2L) else paste("periods of", time_granule_label(granule))
 }
 
 # A free value's kind, e.g. "day of month".
@@ -218,7 +218,7 @@ free_shift_what <- function(x, label, sign) {
 # Located time has the free value's chronon, so `by` defaults to it.
 free_shift_example <- function(by, n, sign) {
   op <- if (sign > 0) "+" else "-"
-  fn <- time_unit_plural(by, 2L)
+  fn <- unit_name(by, 2L)
   if (by@n == 1L && is.function(get0(fn, envir = asNamespace("mixtime"), inherits = FALSE))) {
     return(sprintf("%%s %s %s(%s)", op, fn, n))
   }

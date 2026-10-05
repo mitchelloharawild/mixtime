@@ -244,5 +244,5 @@ test_that("zero-length durations can be built and converted", {
     discrete = FALSE
   )
   expect_length(empty, 0L)
-  expect_equal(time_unit_plural(attr(empty@x[[1L]], "chronon")), "hours")
+  expect_equal(unit_name(attr(empty@x[[1L]], "chronon")), "hours")
 })

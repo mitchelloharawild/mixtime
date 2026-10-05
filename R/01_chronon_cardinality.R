@@ -223,9 +223,9 @@ check_cardinality_comparable <- function(x, y) {
   S7_graph_dispatch(chronon_cardinality_graph(), y, x)
   cli::cli_abort(
     c(
-      "Cannot compute the number of {time_unit_plural(x)} in {time_unit_plural(y)}.",
+      "Cannot compute the number of {unit_name(x)} in {unit_name(y)}.",
       "x" = "Neither unit is finer than the other, so they don't nest within each other.",
-      "i" = "Use a common finer unit instead, such as {time_unit_plural(chronon_glb_impl(list(x, y)))}."
+      "i" = "Use a common finer unit instead, such as {unit_name(chronon_glb_impl(list(x, y)))}."
     ),
     call = NULL
   )
@@ -239,7 +239,7 @@ check_cardinality_at <- function(at, x, y) {
     stop(
       sprintf(
         "The number of %s in %s requires the time context `at`.",
-        time_unit_plural(x), time_unit_plural(y)
+        unit_name(x), unit_name(y)
       ),
       call. = FALSE
     )

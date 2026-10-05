@@ -2,11 +2,11 @@ test_that("calendars sharing a unit retain one S7 class and separate calendars",
   tu_shared_day <- new_time_unit("tu_shared_day", parent = mt_tz_unit)
   first <- new_calendar(day = tu_shared_day, name = "cal_first")
   second <- new_calendar(inherit = first, name = "cal_second")
-  method(time_unit_abbr, first$day) <- function(x) "d"
+  method(unit_labels, first$day) <- unit_scheme(vocab_table(`en-GB` = list(wide = "day{?/s}")), symbol = "d")
 
   x <- first$day(n = 2L, tz = "UTC")
   y <- second$day(n = 3L, tz = "UTC")
-  expect_identical(time_unit_abbr(y), "d")
+  expect_identical(unit_labels(y)$symbol, "d")
   expect_identical(time_calendar(x), first)
   expect_identical(time_calendar(y), second)
   expect_identical(x@n, 2L)

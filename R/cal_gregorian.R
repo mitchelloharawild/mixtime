@@ -46,12 +46,18 @@ cal_gregorian <- new_calendar(
 )
 
 # Time unit labels
-method(time_unit_full, cal_gregorian$year) <- function(x) "year{?/s}"
-method(time_unit_abbr, cal_gregorian$year) <- function(x) "Y"
-method(time_unit_full, cal_gregorian$quarter) <- function(x) "quarter{?/s}"
-method(time_unit_abbr, cal_gregorian$quarter) <- function(x) "Q"
-method(time_unit_full, cal_gregorian$month) <- function(x) "month{?/s}"
-method(time_unit_abbr, cal_gregorian$month) <- function(x) "M"
+method(unit_labels, cal_gregorian$year) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "year{?/s}")),
+  symbol = "Y"
+)
+method(unit_labels, cal_gregorian$quarter) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "quarter{?/s}")),
+  symbol = "Q"
+)
+method(unit_labels, cal_gregorian$month) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "month{?/s}")),
+  symbol = "M"
+)
 
 # Epoch for years
 method(chronon_epoch, cal_gregorian$year) <- function(x) 1970L

@@ -51,6 +51,13 @@
 * `time_compose()` and `time_parse()` without a `lin()` component only combine
   components with fixed lengths, so day 15 of March is now an error (its day
   of the year depends on the year).
+* `time_unit_full()`, `time_unit_abbr()` and `time_unit_plural()` are
+  replaced by a single unit scheme per time unit, registered with
+  `method(unit_labels, <unit>) <- unit_scheme(vocab, symbol, locale)`. Like
+  `label_scheme()`, names come from a `vocab` function (e.g.
+  ``vocab_table(`en-GB` = list(wide = "day{?/s}"))``). Unit names are shared by
+  duration formatting and parsing, granule labels, tsibble intervals and
+  messages.
 
 ## Improvements
 

@@ -89,24 +89,42 @@ cal_time_solar <- cal_time_solar_transit
 
 
 # Time unit labels
-method(time_unit_full, cal_time_solar$day) <- function(x) "day{?/s}"
-method(time_unit_abbr, cal_time_solar$day) <- function(x) "D"
-method(time_unit_full, cal_time_solar$ampm) <- function(x) "halfday{?/s}"
-method(time_unit_abbr, cal_time_solar$ampm) <- function(x) "HD"
-method(time_unit_full, cal_time_solar$hour) <- function(x) "hour{?/s}"
-method(time_unit_abbr, cal_time_solar$hour) <- function(x) "h"
-method(time_unit_full, cal_time_solar$minute) <- function(x) "minute{?/s}"
-method(time_unit_abbr, cal_time_solar$minute) <- function(x) "m"
-method(time_unit_full, cal_time_solar$second) <- function(x) "second{?/s}"
-method(time_unit_abbr, cal_time_solar$second) <- function(x) "s"
-method(time_unit_full, cal_time_solar$degree) <- function(x) "degree{?/s}"
-method(time_unit_abbr, cal_time_solar$degree) <- function(x) "\u00b0"
-method(time_unit_full, cal_time_solar$arcminute) <- function(x) "arcminute{?/s}"
-method(time_unit_abbr, cal_time_solar$arcminute) <- function(x) "'"
-method(time_unit_full, cal_time_solar$arcsecond) <- function(x) "arcsecond{?/s}"
-method(time_unit_abbr, cal_time_solar$arcsecond) <- function(x) "\""
-method(time_unit_full, cal_time_solar$illumination) <- function(x) "illumination phase{?/s}"
-method(time_unit_abbr, cal_time_solar$illumination) <- function(x) "I"
+method(unit_labels, cal_time_solar$day) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "day{?/s}")),
+  symbol = "D"
+)
+method(unit_labels, cal_time_solar$ampm) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "halfday{?/s}")),
+  symbol = "HD"
+)
+method(unit_labels, cal_time_solar$hour) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "hour{?/s}")),
+  symbol = "h"
+)
+method(unit_labels, cal_time_solar$minute) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "minute{?/s}")),
+  symbol = "m"
+)
+method(unit_labels, cal_time_solar$second) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "second{?/s}")),
+  symbol = "s"
+)
+method(unit_labels, cal_time_solar$degree) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "degree{?/s}")),
+  symbol = "\u00b0"
+)
+method(unit_labels, cal_time_solar$arcminute) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "arcminute{?/s}")),
+  symbol = "'"
+)
+method(unit_labels, cal_time_solar$arcsecond) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "arcsecond{?/s}")),
+  symbol = "\""
+)
+method(unit_labels, cal_time_solar$illumination) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "illumination phase{?/s}")),
+  symbol = "I"
+)
 
 # Default formats
 method(chronon_format_linear, list(cal_time_solar$day, class_any)) <- function(x, cal) "{lin(day)}"

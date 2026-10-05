@@ -31,7 +31,7 @@ method(interval_pull, mt_time) <- function(x) {
   chronon <- attr(x, "chronon")
 
   interval <- list(chronon@n)
-  names(interval) <- time_unit_plural(chronon, 1L)
+  names(interval) <- unit_name(chronon, 1L)
 
   rlang::inject(tsibble::new_interval(!!!interval))
 }

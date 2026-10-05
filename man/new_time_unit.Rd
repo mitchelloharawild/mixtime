@@ -88,6 +88,7 @@ tu_my_quarter <- new_time_unit(
 \item \code{\link{mt_unit}}, \code{\link{mt_tz_unit}}, \code{\link{mt_loc_unit}} for the base classes to
 inherit from.
 \item \code{\link[=new_calendar]{new_calendar()}} for assembling time units into a calendar.
+\item \code{\link[=unit_scheme]{unit_scheme()}} for naming a time unit (e.g. "day", "days" and "D").
 \item \code{\link[S7:new_class]{S7::new_class()}} for the underlying S7 class constructor.
 }
 }

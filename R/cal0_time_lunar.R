@@ -42,10 +42,14 @@ cal_time_lunar_synodic <- new_calendar(
 cal_time_lunar <- cal_time_lunar_synodic
 
 # Time granule labels
-method(time_unit_full, cal_time_lunar$month) <- function(x) "synodic month{?/s}"
-method(time_unit_abbr, cal_time_lunar$month) <- function(x) "LM"
-method(time_unit_full, cal_time_lunar$phase) <- function(x) "synodic phase{?/s}"
-method(time_unit_abbr, cal_time_lunar$phase) <- function(x) "LP"
+method(unit_labels, cal_time_lunar$month) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "synodic month{?/s}")),
+  symbol = "LM"
+)
+method(unit_labels, cal_time_lunar$phase) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "synodic phase{?/s}")),
+  symbol = "LP"
+)
 
 # Default formats
 method(chronon_format_linear, list(cal_time_lunar$month, class_any)) <- function(x, cal) "L{lin(month)}"

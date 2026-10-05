@@ -39,10 +39,14 @@ cal_isoweek <- new_calendar(
 )
 
 # Time unit labels
-method(time_unit_full, cal_isoweek$year) <- function(x) "isoyear{?/s}"
-method(time_unit_abbr, cal_isoweek$year) <- function(x) "IY"
-method(time_unit_full, cal_isoweek$week) <- function(x) "week{?/s}"
-method(time_unit_abbr, cal_isoweek$week) <- function(x) "W"
+method(unit_labels, cal_isoweek$year) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "isoyear{?/s}")),
+  symbol = "IY"
+)
+method(unit_labels, cal_isoweek$week) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "week{?/s}")),
+  symbol = "W"
+)
 
 # Epoch for years
 method(chronon_epoch, cal_isoweek$year) <- function(x) 1970L

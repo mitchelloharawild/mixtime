@@ -195,8 +195,7 @@ reference:
   - circsum
 - subtitle: "Time labels and formatting"
   contents:
-  - time_unit_abbr
-  - time_unit_full
+  - unit_scheme
   - linear_labels
   - cyclical_labels
   - linear_labels_format

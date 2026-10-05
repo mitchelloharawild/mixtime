@@ -49,6 +49,7 @@
 #' * [`mt_unit`], [`mt_tz_unit`], [`mt_loc_unit`] for the base classes to
 #'   inherit from.
 #' * [new_calendar()] for assembling time units into a calendar.
+#' * [unit_scheme()] for naming a time unit (e.g. "day", "days" and "D").
 #' * [S7::new_class()] for the underlying S7 class constructor.
 #'
 #' @examples
@@ -93,45 +94,90 @@ new_time_unit <- function(
   )
 }
 
-#' Time units as a string
-#' 
-#' These S7 generic functions provide the full and abbreviated names for time
-#' units. `time_unit_full()` is used in messages and durations (e.g., "2 months").
-#' `time_unit_abbr()` is used for tsibble index interval displays (e.g., "1M").
-#' `time_unit_plural()` pluralises the full unit name for a given quantity using
-#' cli-style pluralisation (e.g., `"year{?/s}"` becomes `"year"` or `"years"`).
-#' 
-#' @param x A time granule object (e.g., `cal_gregorian$month(1L)`)
-#' @param n Numeric quantity used to select singular or plural form.
-#' @param ... Additional arguments for methods.
-#' 
-#' @return A string representing the time unit
-#' 
+#' Describe a time unit's naming scheme
+#'
+#' Builds the function a [unit_labels()] method is: assign its result
+#' directly, e.g. `method(unit_labels, granule) <- unit_scheme(...)`. A unit
+#' scheme names a granule itself, e.g. the "month" in "3 months", and is the
+#' single source of truth for every output that renders a count of a unit:
+#' duration formatting and parsing (`dur()` tokens), granule labels
+#' (`format(month(3L))`), tsibble interval displays and messages.
+#'
+#' ```r
+#' method(unit_labels, cal_gregorian$month) <- unit_scheme(
+#'   vocab = vocab_table(`en-GB` = list(wide = "month{?/s}")),
+#'   symbol = "M"
+#' )
+#' ```
+#'
+#' This differs from a [label_scheme()], which labels the *values* of a
+#' granule (e.g. "March" or "2024") rather than the granule itself, but the
+#' two share the same `vocab` and `locale` fields.
+#'
+#' @param vocab A function `function(type = NULL, locale = NULL)` returning
+#'   either the full named list of renderings for one locale (`type = NULL`),
+#'   or one rendering (e.g. `vocab("wide")`), as for a [label_scheme()]. Each
+#'   rendering is a cli-style plural template, e.g. `"day{?/s}"` or
+#'   `"{?zero/one/other}"`. The `"wide"` type gives the unit's full name.
+#'   [vocab_table()] builds this from a plain lookup table.
+#' @param symbol A short identifier for the unit, e.g. `"D"`. It is used as
+#'   the prefix of default format strings, in abbreviated label fallbacks
+#'   (e.g. `"5Y"`) and when parsing durations. Symbols are not localised, and
+#'   should be distinct across units (e.g. `"M"` for month and `"m"` for
+#'   minute).
+#' @param locale A caller-overridable default locale, selecting which
+#'   `vocab()` entry to use by default.
+#'
+#' @return A function `function(granule) list(vocab =, symbol =, locale =)`,
+#'   assignable directly as a [unit_labels()] method. `granule` is only used
+#'   for dispatch: a scheme describes a granule class, not the instance a
+#'   method happens to be called with.
+#'
+#' @seealso [unit_labels()], the generic a scheme is returned from;
+#'   [label_scheme()] for labelling the values of a granule; [vocab_table()]
+#'   for the common hand-listed name table case.
+#'
 #' @examples
-#' time_unit_full(cal_gregorian$year(1L))
-#' time_unit_plural(cal_gregorian$year(1L), 1L)
-#' time_unit_plural(cal_gregorian$year(1L), 2L)
-#' time_unit_abbr(cal_gregorian$year(1L))
-#' 
-#' @rdname time_unit_labels
+#' scheme <- unit_labels(cal_gregorian$year(1L))
+#' scheme$vocab("wide")
+#' scheme$symbol
+#'
 #' @export
-time_unit_full <- S7::new_generic("time_unit_full", "x")
-method(time_unit_full, mt_unit) <- function(x) "unit{?/s}"
-
-#' @rdname time_unit_labels
-#' @export
-time_unit_plural <- function(x, n = 2L) {
-  str_plural(time_unit_full(x), as.numeric(n))
+unit_scheme <- function(vocab, symbol = "", locale = NULL) {
+  fields <- list(
+    vocab = vocab,
+    symbol = symbol,
+    locale = locale
+  )
+  # granule is unused, only here so this can be assigned directly as a
+  # unit_labels() method.
+  function(granule) fields
 }
 
-#' @rdname time_unit_labels
+#' @param granule A time granule instance (e.g. `cal_gregorian$month(1L)`).
+#' @param ... Unused; only present for S7 dispatch.
+#' @rdname unit_scheme
 #' @export
-time_unit_abbr <- S7::new_generic("time_unit_abbr", "x")
-method(time_unit_abbr, mt_unit) <- function(x) ""
+unit_labels <- S7::new_generic("unit_labels", "granule")
+method(unit_labels, mt_unit) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "unit{?/s}"))
+)
+
+# The full name of a unit, pluralised for quantity `n` (e.g. "year", "years").
+# Vectorised over `n`.
+unit_name <- function(x, n = 2L, type = "wide", locale = NULL) {
+  scheme <- unit_labels(x)
+  str_plural(scheme$vocab(type, locale %||% scheme$locale), as.numeric(n))
+}
+
+# The symbol of a unit (e.g. "Y").
+unit_symbol <- function(x) {
+  unit_labels(x)$symbol
+}
 
 # A quantity of a time unit as text, e.g. "15 months". Defaults to describing
 # the granule itself (`month(15L)`), since `mt_unit` objects are S7 scalars
 # which neither paste() nor cli can interpolate directly. Vectorised over `n`.
 time_granule_label <- function(x, n = x@n) {
-  paste(n, time_unit_plural(x, n))
+  paste(n, unit_name(x, n))
 }
