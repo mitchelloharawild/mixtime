@@ -115,7 +115,7 @@
     # Check that from and to have the same time classes
     if (!identical(from_chronon, to_chronon)) {
       cli::cli_abort(c(
-        "Incompatible time chronones in {.fn seq}.",
+        "Incompatible time chronons in {.fn seq}.",
         "i" = "{.arg from} has {.cls {time_granule_label(from_chronon)}} chronons.",
         "i" = "{.arg to} has {.cls {time_granule_label(to_chronon)}} chronons."
       ))
