@@ -1,8 +1,24 @@
+# Newer tsibble versions define their own methods for mixtime indices. These
+# registrations would otherwise replace them (depending on load order), so
+# defer to tsibble's method whenever it provides one.
+tsibble_mixtime_method <- function(generic) {
+  get0(
+    paste0(generic, ".mixtime::mixtime"),
+    envir = asNamespace("tsibble"),
+    mode = "function",
+    inherits = FALSE
+  )
+}
+
 index_valid <- S7::new_external_generic("tsibble", "index_valid", "x")
-method(index_valid, class_mixtime) <- function(x) TRUE
+method(index_valid, class_mixtime) <- function(x) {
+  if (!is.null(f <- tsibble_mixtime_method("index_valid"))) return(f(x))
+  TRUE
+}
 
 interval_pull <- S7::new_external_generic("tsibble", "interval_pull", "x")
 method(interval_pull, class_mixtime) <- function(x) {
+  if (!is.null(f <- tsibble_mixtime_method("interval_pull"))) return(f(x))
   intvls <- lapply(x@x, function(x) tsibble::interval_pull(x))
   x <- new_rcrd(
     vec_rbind(!!!lapply(intvls, new_data_frame)),
