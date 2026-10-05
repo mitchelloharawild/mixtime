@@ -17,6 +17,7 @@
 
 ## Improvements
 
+* Performance improvements for temporal operations with time zones.
 * Generalised the default parse strings used by `yearweek()`, `yearmonth()`, and
   `yearquarter()` to accept strings that are accepted by tsibble equivalents for
   ease of migration (with the intentional exception of dates and datetimes, 
