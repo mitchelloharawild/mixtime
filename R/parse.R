@@ -1,16 +1,22 @@
-#' Parse text into a time point
+#' Parse text into time points or durations
 #'
 #' `time_parse()` is the inverse of [format()]: given text and the same
-#' `{lin(...)}`/`{cyc(...)}` template `format` uses, it reconstructs the time
-#' points that would have produced that text, via [time_compose()].
+#' `{lin(...)}`/`{cyc(...)}`/`{dur(...)}` template `format` uses, it
+#' reconstructs the time points (via [time_compose()]) or durations that would
+#' have produced that text.
 #'
 #' A `format` with a `{lin(...)}` token parses to linear time; one of only
 #' `{cyc(...)}` tokens parses to cyclical time, e.g. `time_parse("Feb",
 #' format = "{cyc(month, year, label = TRUE)}")` recovers the same kind of
-#' value as [month_of_year()].
+#' value as [month_of_year()]. A format with a `{dur(...)}` token (which
+#' must be its only token) parses to a [duration()], e.g. `time_parse("3
+#' days", format = "{dur(day)}")`.
 #'
-#' Granule-specific extraction and decoding labels for each token is done by
-#' [linear_labels_parse()]/[cyclical_labels_parse()].
+#' Granule-specific extraction and decoding labels for each `{lin(...)}`/
+#' `{cyc(...)}` token is done by [linear_labels_parse()]/
+#' [cyclical_labels_parse()]. A `{dur(...)}` token matches a number, optionally
+#' followed by the granule's unit name (e.g. `"3 days"`, `"1 day"`, `"3D"` or
+#' `"3"`).
 #'
 #' @param x A character vector to parse.
 #' @param chronon Target time granule for the result, and (with `cycle`) the
@@ -19,7 +25,7 @@
 #'   converted onto it if `format` reaches a different chronon.
 #' @param cycle Target cycle granule, pairing with `chronon` for a cyclical
 #'   result. Requires `chronon`.
-#' @param format A glue-style format string of [lin()]/[cyc()] tokens, e.g.
+#' @param format A glue-style format string of [lin()]/[cyc()] tokens (or a [dur()] token), e.g.
 #'   `"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"` (see
 #'   `vignette("time-format-strings")`), or several to try: whichever parses
 #'   the most values of `x` is used for the whole vector (ties keep the
@@ -42,13 +48,16 @@
 #'   `format` is `NULL`. `NULL` (the default) uses `time_calendar(cycle)` or
 #'   `time_calendar(chronon)`, whichever is supplied, else [cal_gregorian].
 #' @param locale Default locale for named (`label = TRUE`) tokens that don't
-#'   specify their own. `NULL` defers to each token's own scheme.
+#'   specify their own. `NULL` defers to each token's own scheme. Duration
+#'   (`{dur(...)}`) unit names are currently English-only, so a non-English
+#'   locale is an error for them.
 #' @param discrete Whether the result is discrete (integer chronon counts)
-#'   or continuous (fractional). See [linear_time()].
+#'   or continuous (fractional). See [linear_time()]. A fractional duration
+#'   magnitude (e.g. `"1.5 days"`) only parses when `discrete = FALSE`.
 #'
-#' @return A `mixtime` time vector, the same length as `x`. Linear if
-#'   `format` includes a `{lin(...)}` token (or `cycle` is `NULL`),
-#'   cyclical otherwise.
+#' @return A `mixtime` time vector, the same length as `x`. A duration if
+#'   `format` is a `{dur(...)}` token, linear if it includes a `{lin(...)}`
+#'   token (or `cycle` is `NULL`), cyclical otherwise.
 #'
 #' @seealso [format()] for the inverse direction, [time_compose()] for
 #'   composing a time point from already-decoded components,
@@ -91,6 +100,10 @@
 #'   format = "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
 #'   regex = TRUE
 #' )
+#'
+#' # Durations, with an optional unit name after the magnitude
+#' time_parse(c("3 days", "1 day", "2D", "5"), format = "{dur(day)}")
+#' time_parse("1.5 hours", format = "{dur(hour)}", discrete = FALSE)
 #'
 #' # Default format strings from the target chronon, and results with `tz`.
 #' time_parse("2024-02-15 09:00:00", chronon = cal_gregorian$second(1L, tz = "America/Los_Angeles"))
@@ -179,13 +192,13 @@ time_parse_impl <- function(
   m <- length(x_try)
 
   if (n == 0L) {
-    result <- time_parse_na(compiled_list[[1L]]$chain, compiled_list[[1L]]$cycle, discrete, 1L)
+    result <- time_parse_na(compiled_list[[1L]], discrete, 1L)
     if (!is.null(chronon)) result <- time_parse_recast(result, chronon, cycle, discrete)
     return(result[0L])
   }
   if (m == 0L) {
     # Every value is missing: no data to choose a format by.
-    result <- time_parse_na(compiled_list[[1L]]$chain, compiled_list[[1L]]$cycle, discrete, 1L)
+    result <- time_parse_na(compiled_list[[1L]], discrete, 1L)
     if (!is.null(chronon)) result <- time_parse_recast(result, chronon, cycle, discrete)
     return(result[rep(1L, n)])
   }
@@ -239,7 +252,7 @@ time_parse_impl <- function(
   }
 
   attempted <- best$attempted
-  na_one <- time_parse_na(compiled_list[[best$format]]$chain, compiled_list[[best$format]]$cycle, discrete, 1L)
+  na_one <- time_parse_na(compiled_list[[best$format]], discrete, 1L)
 
   failed <- !attempted$ok
   if (any(failed)) {
@@ -281,7 +294,7 @@ time_parse_attempt <- function(compiled, x_try, matches, discrete) {
   text_cols <- lapply(seq_len(n_specs), function(k) mat[k + 1L, ])
 
   res <- tryCatch(
-    list(value = time_parse_compose(compiled$specs, text_cols, compiled$chain_order, compiled$cycle, discrete)),
+    list(value = time_parse_compose(compiled, text_cols, discrete)),
     error = function(e) list(error = e)
   )
 
@@ -295,7 +308,7 @@ time_parse_attempt <- function(compiled, x_try, matches, discrete) {
     n_ok <- 0L
     for (i in which(row_matched)) {
       row_res <- tryCatch(
-        list(value = time_parse_compose(compiled$specs, lapply(text_cols, `[`, i), compiled$chain_order, compiled$cycle, discrete)),
+        list(value = time_parse_compose(compiled, lapply(text_cols, `[`, i), discrete)),
         error = function(e) list(error = e)
       )
       if (is.null(row_res$error) && !is.na(row_res$value)) {
@@ -316,13 +329,28 @@ time_parse_compile <- function(format, calendar, locale, env, regex = FALSE) {
   mask_env <- rlang::new_environment(data = component_mask(calendar), parent = env)
   fmt <- mt_glue_fmt(format, env = mask_env)
   is_spec <- vapply(fmt, is.list, logical(1L))
+  is_dur <- vapply(fmt, inherits, logical(1L), "mt_dur_spec")
+
+  # A duration has no calendar position to chain lin()/cyc() tokens onto.
+  if (any(is_dur) && sum(is_spec) > 1L) {
+    cli::cli_abort(
+      c(
+        "A {.fn dur} token must be the only token in {.arg format}.",
+        x = "Found {sum(is_spec)} tokens in {.val {format}}.",
+        i = "A duration has no position in the calendar to combine with other {.fn dur}, {.fn lin} or {.fn cyc} tokens."
+      ),
+      call = NULL
+    )
+  }
 
   specs <- lapply(fmt[is_spec], function(tok) {
     spec <- format_token_spec(tok)
     attrs <- spec$attrs
     if (is.null(attrs$locale)) attrs$locale <- locale
 
-    parse_spec <- if (is.null(spec$cycle)) {
+    parse_spec <- if (inherits(tok, "mt_dur_spec")) {
+      rlang::exec(duration_labels_parse, spec$chronon, !!!attrs)
+    } else if (is.null(spec$cycle)) {
       rlang::exec(linear_labels_parse, spec$chronon, !!!attrs)
     } else {
       rlang::exec(cyclical_labels_parse, spec$chronon, spec$cycle, !!!attrs)
@@ -344,6 +372,13 @@ time_parse_compile <- function(format, calendar, locale, env, regex = FALSE) {
     } else {
       fragments[[i]] <- time_parse_escape_literal(fmt[[i]])
     }
+  }
+
+  pattern <- paste0("^", paste0(fragments, collapse = ""), "$")
+
+  # Duration formats decode directly, without a lin()/cyc() chain.
+  if (any(is_dur)) {
+    return(list(kind = "duration", pattern = pattern, specs = specs))
   }
 
   # Validate the format's shape and resolve its chain order once, up front.
@@ -368,7 +403,8 @@ time_parse_compile <- function(format, calendar, locale, env, regex = FALSE) {
   )
 
   list(
-    pattern = paste0("^", paste0(fragments, collapse = ""), "$"),
+    kind = "chain",
+    pattern = pattern,
     specs = specs,
     chain = chain$chain,
     cycle = chain$cycle,
@@ -421,8 +457,14 @@ time_parse_no_capture <- function(text) {
 # A cyc() link's decode is deferred until its coarser instance is resolved,
 # except at the chain's root (position 1), which decodes outright: `at`
 # defaults to NULL, so this works whether the root is a lin() or (for
-# cyclical time) a cyc() token.
-time_parse_compose <- function(specs, text_cols, chain_order, cycle, discrete) {
+# cyclical time) a cyc() token. A dur() format decodes directly to a duration.
+time_parse_compose <- function(compiled, text_cols, discrete) {
+  specs <- compiled$specs
+  if (compiled$kind == "duration") {
+    spec <- specs[[1L]]
+    return(mt_duration(spec$decode(text_cols[[1L]], discrete = discrete), chronon = spec$chronon))
+  }
+  chain_order <- compiled$chain_order
   comps <- lapply(seq_along(chain_order), function(pos) {
     k <- chain_order[[pos]]
     spec <- specs[[k]]
@@ -433,12 +475,17 @@ time_parse_compose <- function(specs, text_cols, chain_order, cycle, discrete) {
       list(chronon = spec$chronon, cycle = spec$cycle, value = function(at) spec$decode(text, at))
     }
   })
-  compose_recompose(comps, discrete = discrete, cycle = cycle, strict = FALSE)
+  compose_recompose(comps, discrete = discrete, cycle = compiled$cycle, strict = FALSE)
 }
 
-# An all-`NA` result at the chain's finest chronon, built via compose_recompose().
-time_parse_na <- function(shape_chain, cycle, discrete, k) {
-  chain <- shape_chain
+# An all-`NA` result for a compiled format (a duration, or the chain's finest chronon).
+time_parse_na <- function(compiled, discrete, k) {
+  if (compiled$kind == "duration") {
+    na <- if (discrete) NA_integer_ else NA_real_
+    return(mt_duration(rep(na, k), chronon = compiled$specs[[1L]]$chronon))
+  }
+  cycle <- compiled$cycle
+  chain <- compiled$chain
   chain[[1L]]$value <- rep(NA_real_, k)
   for (j in seq_along(chain)[-1L]) {
     chain[[j]]$value <- function(at) rep(NA_real_, length(at))
@@ -450,6 +497,12 @@ time_parse_na <- function(shape_chain, cycle, discrete, k) {
 # the caller-requested chronon/cycle, filling in whichever of its properties
 # (tz, lat/lon, ...) were left unset.
 time_parse_recast <- function(x, chronon, cycle, discrete) {
+  if (S7::S7_inherits(x, mt_duration)) {
+    if (!is.null(cycle)) {
+      cli::cli_abort("{.arg cycle} can't be used when parsing a {.fn dur} format.", call = NULL)
+    }
+    return(duration(x, chronon, discrete = discrete)@x[[1L]])
+  }
   from <- attr(x, "chronon")
   chronon <- granule_inherit_props(chronon, from)
   if (!is.null(cycle)) cycle <- granule_inherit_props(cycle, chronon)
@@ -487,6 +540,50 @@ time_parse_recast <- function(x, chronon, cycle, discrete) {
   }
 
   mt_linear(data, chronon = chronon)
+}
+
+# Parse spec for a `{dur(granule)}` token: a number with an optional unit name.
+duration_labels_parse <- function(granule, locale = NULL, ...) {
+  duration_check_locale(locale)
+
+  number <- "[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?"
+  full <- unique(c(time_unit_plural(granule, 2L), time_unit_plural(granule, 1L)))
+  abbr <- time_unit_abbr(granule)
+  # Longest first, so "days" isn't cut short by "day".
+  esc <- function(x) {
+    x <- x[nzchar(x)]
+    time_parse_escape_literal(x[order(-nchar(x))])
+  }
+  units <- c(
+    if (length(full)) paste0("(?i:", paste(esc(full), collapse = "|"), ")"),
+    esc(abbr) # case-sensitive, e.g. "M" (month) vs "m" (minute)
+  )
+  pattern <- paste0(number, "(?:\\s*(?:", paste(units, collapse = "|"), "))?")
+
+  list(
+    pattern = pattern,
+    decode = function(text, at = NULL, discrete = TRUE) {
+      n <- as.numeric(sub(paste0("^\\s*(", number, ").*$"), "\\1", text, perl = TRUE))
+      if (!discrete) return(n)
+      # Fractional magnitudes fail to parse as discrete durations.
+      n[!is.finite(n) | n != trunc(n) | abs(n) > .Machine$integer.max] <- NA
+      as.integer(n)
+    }
+  )
+}
+
+# Aborts for non-English locales, since duration unit names are English-only.
+duration_check_locale <- function(locale) {
+  if (!is.null(locale) && !grepl("^en($|[-_])", locale)) {
+    cli::cli_abort(
+      c(
+        "Locale {.val {locale}} isn't supported for {.fn dur} tokens.",
+        i = "Duration unit names are currently English-only."
+      ),
+      call = NULL
+    )
+  }
+  invisible(locale)
 }
 
 time_parse_warn_failures <- function(bad, show = 5L) {

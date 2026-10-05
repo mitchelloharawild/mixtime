@@ -21,6 +21,11 @@
   times that occur twice when daylight saving ends. Without them, the earliest
   time is used with a warning. The `mixtime.on_ambiguous` option sets the
   default.
+* Added a `dur()` format token for formatting and parsing durations, e.g.
+  `format(x, "{dur(day)}")` and `time_parse("3 days", format = "{dur(day)}")`.
+  Parsing accepts an optional unit name (`"3 days"`, `"3D"`, `"3"`), and
+  fractional magnitudes with `discrete = FALSE`. Unit names are English-only
+  for now.
 
 ## Deprecated
 

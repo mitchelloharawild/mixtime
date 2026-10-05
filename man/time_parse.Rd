@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse.R
 \name{time_parse}
 \alias{time_parse}
-\title{Parse text into a time point}
+\title{Parse text into time points or durations}
 \usage{
 time_parse(
   x,
@@ -27,7 +27,7 @@ converted onto it if \code{format} reaches a different chronon.}
 \item{cycle}{Target cycle granule, pairing with \code{chronon} for a cyclical
 result. Requires \code{chronon}.}
 
-\item{format}{A glue-style format string of \code{\link[=lin]{lin()}}/\code{\link[=cyc]{cyc()}} tokens, e.g.
+\item{format}{A glue-style format string of \code{\link[=lin]{lin()}}/\code{\link[=cyc]{cyc()}} tokens (or a \code{\link[=dur]{dur()}} token), e.g.
 \code{"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"} (see
 \code{vignette("time-format-strings")}), or several to try: whichever parses
 the most values of \code{x} is used for the whole vector (ties keep the
@@ -54,28 +54,36 @@ to disambiguate \code{chronon}'s \code{\link[=chronon_parse_linear]{chronon_pars
 \code{time_calendar(chronon)}, whichever is supplied, else \link{cal_gregorian}.}
 
 \item{locale}{Default locale for named (\code{label = TRUE}) tokens that don't
-specify their own. \code{NULL} defers to each token's own scheme.}
+specify their own. \code{NULL} defers to each token's own scheme. Duration
+(\code{{dur(...)}}) unit names are currently English-only, so a non-English
+locale is an error for them.}
 
 \item{discrete}{Whether the result is discrete (integer chronon counts)
-or continuous (fractional). See \code{\link[=linear_time]{linear_time()}}.}
+or continuous (fractional). See \code{\link[=linear_time]{linear_time()}}. A fractional duration
+magnitude (e.g. \code{"1.5 days"}) only parses when \code{discrete = FALSE}.}
 }
 \value{
-A \code{mixtime} time vector, the same length as \code{x}. Linear if
-\code{format} includes a \code{{lin(...)}} token (or \code{cycle} is \code{NULL}),
-cyclical otherwise.
+A \code{mixtime} time vector, the same length as \code{x}. A duration if
+\code{format} is a \code{{dur(...)}} token, linear if it includes a \code{{lin(...)}}
+token (or \code{cycle} is \code{NULL}), cyclical otherwise.
 }
 \description{
 \code{time_parse()} is the inverse of \code{\link[=format]{format()}}: given text and the same
-\code{{lin(...)}}/\code{{cyc(...)}} template \code{format} uses, it reconstructs the time
-points that would have produced that text, via \code{\link[=time_compose]{time_compose()}}.
+\code{{lin(...)}}/\code{{cyc(...)}}/\code{{dur(...)}} template \code{format} uses, it
+reconstructs the time points (via \code{\link[=time_compose]{time_compose()}}) or durations that would
+have produced that text.
 }
 \details{
 A \code{format} with a \code{{lin(...)}} token parses to linear time; one of only
 \code{{cyc(...)}} tokens parses to cyclical time, e.g. \code{time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")} recovers the same kind of
-value as \code{\link[=month_of_year]{month_of_year()}}.
+value as \code{\link[=month_of_year]{month_of_year()}}. A format with a \code{{dur(...)}} token (which
+must be its only token) parses to a \code{\link[=duration]{duration()}}, e.g. \code{time_parse("3 days", format = "{dur(day)}")}.
 
-Granule-specific extraction and decoding labels for each token is done by
-\code{\link[=linear_labels_parse]{linear_labels_parse()}}/\code{\link[=cyclical_labels_parse]{cyclical_labels_parse()}}.
+Granule-specific extraction and decoding labels for each \code{{lin(...)}}/
+\code{{cyc(...)}} token is done by \code{\link[=linear_labels_parse]{linear_labels_parse()}}/
+\code{\link[=cyclical_labels_parse]{cyclical_labels_parse()}}. A \code{{dur(...)}} token matches a number, optionally
+followed by the granule's unit name (e.g. \code{"3 days"}, \code{"1 day"}, \code{"3D"} or
+\code{"3"}).
 }
 \examples{
 time_parse("2024-02-15", format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
@@ -111,6 +119,10 @@ time_parse(
   format = "{lin(year)}[/-]{cyc(month, year)}[/-]{cyc(day, month)}( .*)?",
   regex = TRUE
 )
+
+# Durations, with an optional unit name after the magnitude
+time_parse(c("3 days", "1 day", "2D", "5"), format = "{dur(day)}")
+time_parse("1.5 hours", format = "{dur(hour)}", discrete = FALSE)
 
 # Default format strings from the target chronon, and results with `tz`.
 time_parse("2024-02-15 09:00:00", chronon = cal_gregorian$second(1L, tz = "America/Los_Angeles"))

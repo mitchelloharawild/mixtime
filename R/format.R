@@ -43,13 +43,31 @@ mt_unit_display <- function(x, units, parts, ...) {
   }
 }
 
-# Decodes one mt_glue_fmt() `{lin(...)}`/`{cyc(...)}` token with attributes
+# Decodes one mt_glue_fmt() `{lin(...)}`/`{cyc(...)}`/`{dur(...)}` token with attributes
 format_token_spec <- function(tok) {
   list(
     chronon = tok[[1L]],
     cycle = if (length(tok) == 2L) tok[[2L]] else NULL,
-    attrs = attributes(tok) %||% list()
+    attrs = attributes(tok)[setdiff(names(attributes(tok)), "class")] %||% list()
   )
+}
+
+# Formats duration `x` for a `{dur(...)}` token, in units of the token's granule.
+format_duration_token <- function(tok, x) {
+  if (!S7_inherits(x, mt_duration)) {
+    cli::cli_abort(
+      c(
+        "{.fn dur} can only format durations.",
+        i = "Use {.fn lin} or {.fn cyc} to format time points."
+      ),
+      call = NULL
+    )
+  }
+  spec <- format_token_spec(tok)
+  duration_check_locale(spec$attrs$locale)
+  if (length(x) == 0L) return(character())
+  discrete <- is.integer(vec_data(x))
+  duration_label(duration(x, spec$chronon, discrete = discrete)@x[[1L]])
 }
 
 time_format_default <- function(x, attr = TRUE) {
@@ -124,6 +142,10 @@ time_format_impl <- function(x, format = time_format_default(x, attr = attr), ..
   )
 
   fmt <- mt_glue_fmt(format, env = env)
+
+  # Render {dur(...)} tokens directly, since durations have no calendar parts.
+  fmt_dur <- vapply(fmt, inherits, logical(1L), "mt_dur_spec")
+  fmt[fmt_dur] <- lapply(fmt[fmt_dur], format_duration_token, x = x[!x_special])
   fmt_parts <- vapply(fmt, is.list, logical(1L))
 
   # Resolve bare S7 class tokens (e.g. from {year}, {month}, {day}) into
@@ -211,7 +233,7 @@ time_format_impl <- function(x, format = time_format_default(x, attr = attr), ..
 #' Format mixtime vectors
 #'
 #' Formats a mixtime vector as a character vector, using a glue-style format
-#' string of `{lin(...)}`/`{cyc(...)}` tokens tailored to the vector's chronon
+#' string of `{lin(...)}`/`{cyc(...)}` (or, for durations, `{dur(...)}`) tokens tailored to the vector's chronon
 #' and cycle. If `format` is omitted, a sensible default is derived
 #' automatically. See `vignette("time-format-strings")` for the format string
 #' syntax.

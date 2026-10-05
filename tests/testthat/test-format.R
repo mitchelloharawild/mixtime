@@ -133,3 +133,18 @@ test_that("chronon_divmod() across several granules works on vectors", {
   expect_equal(res$div, c(1, 0, NA))
   expect_equal(res$mod, c(500000, 2, NA))
 })
+
+test_that("dur() tokens format durations in their (1-unit) granule", {
+  d <- hours(c(2L, 30L, NA))
+
+  expect_equal(format(d, "{dur(hour)}"), c("2 hours", "30 hours", "NA"))
+  expect_equal(format(d, "{dur(minute)}"), c("120 minutes", "1800 minutes", "NA"))
+  expect_equal(format(duration(2L, cal_gregorian$hour(3L)), "{dur(hour)}"), "6 hours")
+  expect_equal(format(duration(1.5, cal_gregorian$day(1L)), "{dur(day)} long"), "1.5 days long")
+})
+
+test_that("dur() only formats durations, and only in format strings", {
+  expect_error(format(as_mixtime(as.Date("2024-01-01")), "{dur(day)}"), "only format durations")
+  expect_error(time_components(as.Date("2024-01-01"), dur(day)), "time_components")
+  expect_error(dur(day), "component-aware context")
+})

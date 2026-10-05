@@ -31,7 +31,7 @@ A character vector the same length as \code{x}.
 }
 \description{
 Formats a mixtime vector as a character vector, using a glue-style format
-string of \code{{lin(...)}}/\code{{cyc(...)}} tokens tailored to the vector's chronon
+string of \code{{lin(...)}}/\code{{cyc(...)}} (or, for durations, \code{{dur(...)}}) tokens tailored to the vector's chronon
 and cycle. If \code{format} is omitted, a sensible default is derived
 automatically. See \code{vignette("time-format-strings")} for the format string
 syntax.

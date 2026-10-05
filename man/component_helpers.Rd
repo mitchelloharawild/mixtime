@@ -4,26 +4,29 @@
 \alias{component_helpers}
 \alias{lin}
 \alias{cyc}
-\title{Linear and cyclical component helpers}
+\alias{dur}
+\title{Linear, cyclical and duration component helpers}
 \usage{
 lin(granule)
 
 cyc(granule, cycle)
+
+dur(granule)
 }
 \arguments{
 \item{granule}{The time granule to address, given as a granule generator (e.g.
 \code{year}) or a sized time unit (e.g. \code{year(1L)}). Resolved in the calendar of
-the time vector being formatted or decomposed.}
+the time vector being formatted, parsed or decomposed.}
 
 \item{cycle}{The coarser granule defining the cycle a \code{cyc()} component repeats
 within (e.g. \code{year} in \code{cyc(month, year)}).}
 }
 \value{
 A component specification, consumed internally by the component-aware
-context (e.g. \code{\link[=format]{format()}} or \code{\link[=time_components]{time_components()}}).
+context (e.g. \code{\link[=format]{format()}}, \code{\link[=time_parse]{time_parse()}} or \code{\link[=time_components]{time_components()}}).
 }
 \description{
-\code{lin()} and \code{cyc()} name the time components addressed by mixtime's
+\code{lin()}, \code{cyc()} and \code{dur()} name the time components addressed by mixtime's
 \emph{component-aware contexts} — a single vocabulary shared across \code{\link[=format]{format()}} (and
 parsing) format strings and \code{\link[=time_components]{time_components()}} expressions. They are only
 meaningful inside one of these contexts; calling them directly is an error.
@@ -33,7 +36,14 @@ A linear and a cyclical component of the same granule store the \emph{same} valu
 the count of that chronon since the Unix epoch. The reduction to a within-cycle
 position happens only when a cyclical vector is formatted. \code{cyc()} therefore
 behaves like \code{lin()} on its finest granule but additionally records the cycle.
+
+\code{dur()} addresses a \emph{duration} (an unanchored span of time, see \code{\link[=duration]{duration()}})
+counted in units of a granule, e.g. \code{"{dur(day)}"} formats and parses text
+like \code{"3 days"}. A duration has no position in the calendar, so \code{dur()} must
+be the only token in its format string and isn't available in
+\code{\link[=time_components]{time_components()}}. Its granule is always a 1-unit granule, so
+\code{dur(hour(3L))} behaves like \code{dur(hour)}.
 }
 \seealso{
-\code{\link[=format]{format()}} and \code{\link[=time_components]{time_components()}}
+\code{\link[=format]{format()}}, \code{\link[=time_parse]{time_parse()}}, \code{\link[=time_components]{time_components()}} and \code{\link[=duration]{duration()}}
 }

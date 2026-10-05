@@ -28,6 +28,7 @@ Where `strftime()` uses `%`-prefixed codes tied to the Gregorian calendar (e.g. 
 |---|---|
 | `lin(granule)` | A linear granularity is typically used for the coarsest granule (e.g. years). |
 | `cyc(granule, cycle)` | A cyclical granularity displays finer granules within a coarser cycle (e.g. months within years). |
+| `dur(granule)` | A duration displayed as a count of granules (e.g. "3 days"), see [Durations](#durations). |
 
 The `granule` and `cycle` arguments accept time granules from a calendar, for example the format codes for `yearmonth()` are `lin(year(1L))` and `cyc(month(1L), year(1L))`. These format codes are combined in the time format string with glue substitutions: `"{lin(year(1L))}-{cyc(month(1L), year(1L))}"`.
 
@@ -73,6 +74,21 @@ format(date(Sys.Date()), format = paste(fmt_date, fmt_lunar))
 ```
 
 This makes the relationship between the format string and the calendar structure transparent, and means the same format-string idiom works unchanged across calendars.
+
+## Durations {#durations}
+
+Durations (see `duration()`) have no position in a calendar, so they're formatted with their own `dur(granule)` code rather than `lin()`/`cyc()`. It displays the duration as a count of `granule` units, and must be the only time component code in the format string.
+
+```{r}
+format(hours(c(2L, 30L)), format = "{dur(minute)} elapsed")
+```
+
+The same format string parses text back into durations with `time_parse()`. The unit name after the number is optional, and may be singular, plural or abbreviated. Fractional magnitudes require `discrete = FALSE`.
+
+```{r}
+time_parse(c("3 days", "1 day", "2D", "5"), format = "{dur(day)}")
+time_parse("1.5 days", format = "{dur(day)}", discrete = FALSE)
+```
 
 ## Advanced time formatting
 
