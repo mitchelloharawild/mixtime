@@ -85,3 +85,9 @@ test_that("format() falls back to the generic mt_unit template for a naive-tz ci
   expect_no_error(out <- format(naive_second))
   expect_match(out, "^D[0-9]")
 })
+
+test_that("format() describes a time unit", {
+  expect_identical(format(cal_gregorian$month(1L)), "1 month")
+  expect_identical(format(cal_gregorian$minute(15L)), "15 minutes")
+  expect_identical(format(cal_isoweek$week(1L)), "1 week")
+})

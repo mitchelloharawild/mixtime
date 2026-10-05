@@ -244,6 +244,13 @@ S7::method(print, mt_time) <- function(x, ...) {
   invisible(x)
 }
 
+# A time unit as text, e.g. "1 month" or "15 minutes". Used wherever a
+# granule is displayed on its own, such as a tsibble's interval.
+#' @export
+S7::method(format, mt_unit) <- function(x, ...) {
+  time_granule_label(x, x@n)
+}
+
 #' @export
 S7::method(str, mt_linear) <- function(object, ..., vec.len = getOption("str")$vec.len %||% 4L) {
   cat("linear<", format(time_chronon(object)[1L]), "> [1:", length(object), "] ", .mt_str_values(object, vec.len), "\n", sep = "")
