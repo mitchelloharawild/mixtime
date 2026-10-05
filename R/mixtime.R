@@ -170,7 +170,8 @@ is_mixtime <- function(x) {
 #' @method Summary mixtime::mixtime
 #' @export
 `Summary.mixtime::mixtime` <- function(..., na.rm = FALSE) {
-  new_mixtime(NextMethod())
+  res <- NextMethod()
+  if (S7_inherits(res, mt_time)) new_mixtime(res) else res
 }
 
 method(c, class_mixtime) <- function(...) {

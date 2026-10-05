@@ -127,6 +127,24 @@ S7::method(rep, mt_time) <- function(x, ...) {
   x
 }
 
+#' @method Summary mixtime::mt_time
+#' @export
+`Summary.mixtime::mt_time` <- function(..., na.rm = FALSE) {
+  dots <- list(...)
+  res <- do.call(
+    .Generic,
+    c(lapply(dots, function(x) unclass(S7::S7_data(x))), list(na.rm = na.rm))
+  )
+  # min/max/range return time points; any/all/sum/prod do not
+  if (.Generic %in% c("min", "max", "range")) {
+    x <- dots[[1L]]
+    S7::S7_data(x) <- structure(res, class = "mt_time_data")
+    x
+  } else {
+    res
+  }
+}
+
 #' @export
 S7::method(c, mt_time) <- function(...) {
   dots <- list(...)

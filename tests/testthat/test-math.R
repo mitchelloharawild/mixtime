@@ -74,3 +74,21 @@ test_that("round() respects the digits argument for durations", {
   expect_equal(as.numeric(round(days(1.567), digits = 1)), 1.6)
   expect_equal(as.numeric(round(days(1.567), digits = 2)), 1.57)
 })
+
+# ---------------------------------------------------------------------------
+# Summary group generics (min, max, range)
+# ---------------------------------------------------------------------------
+
+test_that("min(), max() and range() preserve the time class", {
+  x <- yearmonth(c("2014 Feb", "2013 Jan", "2013 Jun"))
+  expect_true(is_mixtime(max(x)))
+  expect_equal(format(max(x)), "2014 Feb")
+  expect_equal(format(min(x)), "2013 Jan")
+  expect_equal(format(range(x)), c("2013 Jan", "2014 Feb"))
+  expect_equal(format(max(x, na.rm = TRUE)), "2014 Feb")
+})
+
+test_that("max() result supports further arithmetic", {
+  x <- yearmonth(c("2013 Jan", "2014 Feb"))
+  expect_equal(format(max(x) - 11L), "2013 Mar")
+})
