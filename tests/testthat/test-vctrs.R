@@ -92,3 +92,28 @@ test_that("mode of time (integer/double) survives vec_slice/vec_c/vec_restore", 
   expect_s7_class(combined, class_mixtime)
   expect_type(vctrs::vec_data(combined@x[[1L]]), "integer")
 })
+
+test_that("deserialised mixtime vectors can be combined (vec_c / vec_cast)", {
+  x <- yearmonth(0:2)
+  y <- unserialize(serialize(x, NULL))
+  # Deserialising gives the S7 class attribute a new identity
+  expect_false(identical(attributes(x), attributes(y)))
+  expect_equal(vctrs::vec_c(y, y), c(x, x))
+  expect_equal(vctrs::vec_c(x, y), c(x, x))
+  expect_equal(vctrs::vec_cast(x, vctrs::vec_ptype(y)), x)
+  expect_equal(vctrs::vec_rbind(data.frame(t = y), data.frame(t = x))$t, c(x, x))
+})
+
+test_that("mixtime read from an RDS written by another R session can be combined", {
+  skip_on_cran()
+  skip_if_not_installed("callr")
+  path <- tempfile(fileext = ".rds")
+  on.exit(unlink(path))
+  callr::r(function(path) {
+    library(mixtime)
+    saveRDS(list(a = yearmonth(0:2), b = yearmonth(3:5)), path)
+  }, list(path = path))
+  v <- readRDS(path)
+  expect_no_error(out <- vctrs::vec_c(v$a, v$b))
+  expect_equal(out, yearmonth(0:5))
+})
