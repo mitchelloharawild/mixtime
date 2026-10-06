@@ -229,6 +229,7 @@ cyclical_position <- function(x, chronon, cycle) {
   pos <- chronon_parts(x, cyclical = list(list(chronon, cycle)))$cyclical[[1L]]
   xd <- S7_data(x)
   if (is.double(xd)) {
+    xd <- round_ulp(xd)
     pos <- pos + (xd - floor(xd))
   }
   pos

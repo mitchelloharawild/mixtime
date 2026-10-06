@@ -61,6 +61,9 @@
   the zone in effect when it starts, so a day on which daylight saving ends
   reads as daylight time (e.g. `"2015-04-05 AEDT"` in Melbourne, previously
   `"AEST"`).
+* `format()` of a continuous time no longer shows a time just below its true
+  value when floating-point error leaves it a fraction of a second short (e.g.
+  `"03:29:59 100.0%"` instead of `"03:30:00 0.0%"`).
 
 # mixtime 0.3.0
 

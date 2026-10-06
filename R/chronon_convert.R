@@ -100,6 +100,16 @@ floor_ulp <- function(x) {
   floor(x + 8 * .Machine$double.eps * pmax(abs(x), 1))
 }
 
+# Snap values within a few ULPs of a whole number onto it, removing
+# floating-point error (e.g. a continuous time that should be exactly 03:30:00
+# but is stored a hair below it).
+round_ulp <- function(x) {
+  r <- round(x)
+  near <- (abs(x - r) <= 8 * .Machine$double.eps * pmax(abs(x), 1)) %in% TRUE
+  x[near] <- r[near]
+  x
+}
+
 method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, ...) {
   chronon_convert_impl(vec_data(x), attr(x, "chronon"), to, discrete)
 }

@@ -91,3 +91,18 @@ test_that("format() describes a time unit", {
   expect_identical(format(cal_gregorian$minute(15L)), "15 minutes")
   expect_identical(format(cal_isoweek$week(1L)), "1 week")
 })
+
+test_that("format() of continuous time ignores floating-point error at unit boundaries", {
+  # 03:30:00 AEDT, stored one ULP below the boundary (as a conversion from a
+  # continuous day on a 23-hour day gives)
+  tz <- "Australia/Melbourne"
+  sec <- cal_gregorian$second(1L, tz = tz)
+  x <- linear_time(1759595400 - 2.4e-7, chronon = sec, discrete = FALSE)
+  expect_equal(format(x), "2025-10-05 03:30:00 0.0% AEDT")
+
+  hr <- cal_gregorian$hour(1L, tz = "UTC")
+  expect_equal(
+    format(linear_time(488776.5 - 6e-11, chronon = hr, discrete = FALSE), "{frac(.time)}"),
+    "50.0%"
+  )
+})

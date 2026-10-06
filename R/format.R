@@ -112,8 +112,8 @@ time_format_impl <- function(x, format = time_format_default(x, attr = attr), ..
         },
         frac = function(x) {
           # The fraction through each chronon (in its own context)
-          x <- vec_data(x)
-          sprintf("%.1f%%", (x - floor(x))*100)
+          x <- round_ulp(vec_data(x))
+          sprintf("%.1f%%", (x - floor(x)) * 100)
         },
 
         # Attach .time for specialised usage (e.g. tz_abbreviation(.time))

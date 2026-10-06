@@ -22,11 +22,12 @@ chronon_parts <- function(x, linear = list(), cyclical = list()) {
   start_tu <- attr(x, "chronon")
 
   # Read the time points as local wall-clock values. A continuous time model
-  # keeps its fractional position instead of flooring it away here.
+  # keeps its fractional position instead of flooring it away here, less any
+  # floating-point error that would floor a whole unit away.
   x <- vec_data(x)
   discrete <- is.integer(x)
-  x <- chronon_to_local(start_tu, x)
-  if (discrete) x <- floor_ulp(x)
+  x <- chronon_to_local(start_tu, round_ulp(x))
+  x <- if (discrete) floor_ulp(x) else round_ulp(x)
 
   # The two granules of a cyclical part: the chronon is the finer unit (the
   # desired output unit) and the cycle the coarser unit it repeats within.
