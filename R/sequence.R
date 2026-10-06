@@ -108,7 +108,7 @@
     length.out <- length(along.with)
   } else if (!is.null(length.out)) {
     if (length(length.out) != 1L) {
-      stop(sprintf("'%s' must be of length 1", length.out))
+      cli::cli_abort("{.arg length.out} must be of length 1.")
     }
     length.out <- ceiling(length.out)
   }
@@ -117,154 +117,35 @@
   missing_to <- missing(to)
   missing_by <- missing(by)
 
-  # Check chronon compatibility
-  if (!missing_from && !missing_to) {
-    from_chronon <- chronon_glb(from)
-    to_chronon <- chronon_glb(to)
+  n_provided <- sum(!missing_from, !missing_to, !is.null(length.out))
+  if (missing_by && n_provided < 2L) {
+    cli::cli_abort(
+      "When {.arg by} is missing, at least two of {.arg from}, {.arg to}, or {.arg length.out} must be specified."
+    )
+  }
+  if (!missing_by && n_provided != 2L) {
+    cli::cli_abort(
+      "When {.arg by} is provided, exactly two of {.arg from}, {.arg to}, or {.arg length.out} must be specified."
+    )
+  }
 
-    # Check that from and to have the same time classes
-    if (!identical(from_chronon, to_chronon)) {
+  ptype <- if (missing_from) to else from
+  # Sequence chronon
+  chronon <- chronon_glb(ptype)
+
+  # Check that from and to have the same time classes
+  if (!missing_from && !missing_to) {
+    to_chronon <- chronon_glb(to)
+    if (!identical(chronon, to_chronon)) {
       cli::cli_abort(c(
         "Incompatible time chronons in {.fn seq}.",
-        "i" = "{.arg from} has {.cls {time_granule_label(from_chronon)}} chronons.",
+        "i" = "{.arg from} has {.cls {time_granule_label(chronon)}} chronons.",
         "i" = "{.arg to} has {.cls {time_granule_label(to_chronon)}} chronons."
       ))
     }
   }
-  ptype <- if (missing_from) to else from
 
-  if (!missing_by) {
-    # If by is provided, exactly two of from/to/length.out must be specified
-    n_provided <- sum(!missing_from, !missing_to, !is.null(length.out))
-    if (n_provided != 2L) {
-      cli::cli_abort(
-        "When {.arg by} is provided, exactly two of {.arg from}, {.arg to}, or {.arg length.out} must be specified."
-      )
-    }
-
-    # Allow duration input for by, but convert to granule
-    if (length(by) != 1L) {
-      cli::cli_abort("{.var by} must be a single time duration", call. = FALSE)
-    }
-    if (time_is_duration(by)) {
-      by_size <- as.numeric(by)
-      by <- attr(by, "chronon")
-      by@n <- by@n * by_size
-    }
-
-    # Sequence chronon
-    chronon <- chronon_glb(ptype)
-
-    # Parse `by` argument
-    if (is.character(by)) {
-      by <- parse_time_unit(by)
-    }
-    # Numeric `by` uses chronon
-    if (is.numeric(by) && !S7_inherits(by, mt_unit)) {
-      by <- S7::S7_class(chronon)(by)
-    }
-
-    # Inherit granule properties from `by` if not given in `chronon` granule
-    by <- granule_inherit_props(by, chronon)
-    # A negative `by` steps backwards by whole units of `by`
-    step <- if (by@n < 0) -1L else 1L
-    # Shift by multiples of `by`'s single unit, as `+` does (`months(18L)` is
-    # 18 months, not one 18-month window). Calendar shifts add to the unit's
-    # count after decomposing the anchor once, which only matches repeated
-    # shifts of a multi-unit `by` window when its size divides the calendar
-    # cycle (e.g. 18 months drift against years).
-    by_n <- abs(by@n)
-    by@n <- 1L
-
-    missing_on_invalid <- is.character(on_invalid) && length(on_invalid) > 1L
-    on_invalid <- match.arg(on_invalid)
-
-    # A `by` boundary (e.g. "start of month") is defined on the local wall clock
-    # of `by`'s context, so `chronon_divmod()` works on local values - the same
-    # convention `chronon_parts()` uses.
-    local_chronon <- chronon_in_context(chronon, by)
-    to_local <- function(x) {
-      x <- chronon_convert_impl(x, chronon, local_chronon, discrete = FALSE)
-      chronon_to_local(local_chronon, x)
-    }
-
-    # Each time point is shifted from an anchor by a whole number of `by` units
-    # (`anchor + duration(k, by)`), rather than from the previous time point.
-    # The anchor is `from`, or `to` (right aligned) if `from` is missing.
-    anchor <- as.numeric(if (missing_from) to else from)
-    k <- if (missing_from) {
-      step * (seq_len(length.out) - length.out)
-    } else if (missing_to) {
-      step * (seq_len(length.out) - 1L)
-    } else if (chronon_shift_is_exact(local_chronon, by)) {
-      # Whole `by` steps of real time from `from` to `to`
-      d <- chronon_to_utc(chronon, as.numeric(to)) -
-        chronon_to_utc(chronon, anchor)
-      d <- d / (chronon_fixed_seconds(by) * by_n)
-      seq.int(0L, step * floor_ulp(step * d), by = step)
-    } else {
-      # Whole units of the local calendar from `from` to `to`, found by
-      # shifting `to` left by `from`'s offset into its unit.
-      from_divmod <- chronon_divmod(chronon, by, to_local(anchor))
-      to_divmod <- chronon_divmod(
-        chronon,
-        by,
-        to_local(as.numeric(to)) - from_divmod$mod
-      )
-      # Stepping backwards, round up to stay at or after `to`
-      to_div <- to_divmod$div + (step < 0 & to_divmod$mod != 0)
-      # Whole `by` steps within those units
-      n_steps <- floor(step * (to_div - from_divmod$div) / by_n)
-      seq.int(0L, step * n_steps, by = step)
-    }
-
-    shifted <- chronon_shift(
-      chronon,
-      anchor,
-      by,
-      k * by_n,
-      on_invalid,
-      discrete = is.integer(ptype)
-    )
-    res <- shifted$value
-
-    if (missing_on_invalid && any(shifted$invalid & !shifted$skipped)) {
-      cli::cli_warn(c(
-        "Some time points in the sequence fall past the end of a shorter {time_unit_plural(by, 1L)}.",
-        "!" = "Clamping them to the last valid time point in that {time_unit_plural(by, 1L)}, {.code on_invalid = \"clamp\"} (the default).",
-        "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
-      ))
-    }
-    if (missing_on_invalid && any(shifted$skipped)) {
-      n_skipped <- sum(shifted$skipped)
-      cli::cli_warn(c(
-        "{n_skipped} time point{?s} in the sequence {?falls/fall} in local time skipped by a time zone change (e.g. when daylight saving starts).",
-        "!" = "Moving {cli::qty(n_skipped)}{?it/them} back by the size of the gap, {.code on_invalid = \"clamp\"} (the default).",
-        "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
-      ))
-    }
-    if (on_invalid == "reject" && any(shifted$invalid)) {
-      warn_invalid_reject(shifted$invalid)
-    }
-
-    if (!missing_from && !missing_to) {
-      # A local time that doesn't exist can move forward, past `to`
-      to <- as.numeric(to)
-      past <- step * (res - to) > 8 * .Machine$double.eps * pmax(abs(to), 1)
-      res <- res[!(past %in% TRUE)]
-    }
-
-    # Restore integer type for discrete time input, rounding like `+` does
-    if (is.integer(ptype)) res <- as.integer(round(res))
-  } else {
-    # If by is missing, at least two of from/to/length.out must be specified
-    n_provided <- sum(!missing_from, !missing_to, !is.null(length.out))
-    if (n_provided < 2L) {
-      cli::cli_abort(
-        "When {.arg by} is missing, at least two of {.arg from}, {.arg to}, or {.arg length.out} must be specified."
-      )
-    }
-
+  if (missing_by) {
     arg <- list(length.out = length.out)
     if (!missing_from) {
       arg$from <- as.numeric(from)
@@ -272,9 +153,115 @@
     if (!missing_to) {
       arg$to <- as.numeric(to)
     }
-
-    res <- rlang::exec(seq.int, !!!arg)
+    return(vec_restore(rlang::exec(seq.int, !!!arg), ptype))
   }
+
+  # Allow duration input for by, but convert to granule
+  if (length(by) != 1L) {
+    cli::cli_abort("{.var by} must be a single time duration", call. = FALSE)
+  }
+  if (time_is_duration(by)) {
+    by_size <- as.numeric(by)
+    by <- attr(by, "chronon")
+    by@n <- by@n * by_size
+  }
+
+  # Parse `by` argument
+  if (is.character(by)) {
+    by <- parse_time_unit(by)
+  }
+  # Numeric `by` uses chronon
+  if (is.numeric(by) && !S7_inherits(by, mt_unit)) {
+    by <- S7::S7_class(chronon)(by)
+  }
+
+  # Inherit granule properties from `by` if not given in `chronon` granule
+  by <- granule_inherit_props(by, chronon)
+  # A negative `by` steps backwards by whole units of `by`
+  step <- if (by@n < 0) -1L else 1L
+  # Shift by multiples of `by`'s single unit, as `+` does (`months(18L)` is
+  # 18 months, not one 18-month window). Calendar shifts add to the unit's
+  # count after decomposing the anchor once, which only matches repeated
+  # shifts of a multi-unit `by` window when its size divides the calendar
+  # cycle (e.g. 18 months drift against years).
+  by_n <- abs(by@n)
+  by@n <- 1L
+
+  missing_on_invalid <- is.character(on_invalid) && length(on_invalid) > 1L
+  on_invalid <- match.arg(on_invalid)
+
+  # Each time point is shifted from an anchor by a whole number of `by` units
+  # (`anchor + duration(k, by)`), rather than from the previous time point.
+  # The anchor is `from`, or `to` (right aligned) if `from` is missing.
+  anchor <- as.numeric(ptype)
+  if (!missing_to) {
+    to <- as.numeric(to)
+  }
+  local_chronon <- chronon_in_context(chronon, by)
+  k <- if (missing_from) {
+    step * (seq_len(length.out) - length.out)
+  } else if (missing_to) {
+    step * (seq_len(length.out) - 1L)
+  } else if (chronon_shift_is_exact(local_chronon, by)) {
+    # Whole `by` steps of real time from `from` to `to`
+    d <- chronon_to_utc(chronon, to) - chronon_to_utc(chronon, anchor)
+    d <- d / (chronon_fixed_seconds(by) * by_n)
+    seq.int(0L, step * floor_ulp(step * d), by = step)
+  } else {
+    # Whole units of the local calendar from `from` to `to`, found by
+    # shifting `to` left by `from`'s offset into its unit. A `by` boundary
+    # (e.g. "start of month") is defined on the local wall clock of `by`'s
+    # context, the same convention `chronon_parts()` uses.
+    local <- chronon_to_local(
+      local_chronon,
+      chronon_convert_impl(c(anchor, to), chronon, local_chronon, discrete = FALSE)
+    )
+    from_divmod <- chronon_divmod(chronon, by, local[1L])
+    to_divmod <- chronon_divmod(chronon, by, local[2L] - from_divmod$mod)
+    # Stepping backwards, round up to stay at or after `to`
+    to_div <- to_divmod$div + (step < 0 & to_divmod$mod != 0)
+    # Whole `by` steps within those units
+    n_steps <- floor(step * (to_div - from_divmod$div) / by_n)
+    seq.int(0L, step * n_steps, by = step)
+  }
+
+  shifted <- chronon_shift(
+    chronon,
+    anchor,
+    by,
+    k * by_n,
+    on_invalid,
+    discrete = is.integer(ptype)
+  )
+  res <- shifted$value
+
+  if (missing_on_invalid && any(shifted$invalid & !shifted$skipped)) {
+    cli::cli_warn(c(
+      "Some time points in the sequence fall past the end of a shorter {time_unit_plural(by, 1L)}.",
+      "!" = "Clamping them to the last valid time point in that {time_unit_plural(by, 1L)}, {.code on_invalid = \"clamp\"} (the default).",
+      "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
+    ))
+  }
+  if (missing_on_invalid && any(shifted$skipped)) {
+    n_skipped <- sum(shifted$skipped)
+    cli::cli_warn(c(
+      "{n_skipped} time point{?s} in the sequence {?falls/fall} in local time skipped by a time zone change (e.g. when daylight saving starts).",
+      "!" = "Moving {cli::qty(n_skipped)}{?it/them} back by the size of the gap, {.code on_invalid = \"clamp\"} (the default).",
+      "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
+    ))
+  }
+  if (on_invalid == "reject" && any(shifted$invalid)) {
+    warn_invalid_reject(shifted$invalid)
+  }
+
+  if (!missing_from && !missing_to) {
+    # A local time that doesn't exist can move forward, past `to`
+    past <- step * (res - to) > 8 * .Machine$double.eps * pmax(abs(to), 1)
+    res <- res[!(past %in% TRUE)]
+  }
+
+  # Restore integer type for discrete time input, rounding like `+` does
+  if (is.integer(ptype)) res <- as.integer(round(res))
 
   vec_restore(res, ptype)
 }

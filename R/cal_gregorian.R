@@ -153,7 +153,9 @@ monthdays <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
 
 is_leap_year <- function(year) {
   year <- floor(year)
-  (year %% 4L == 0L & year %% 100L != 0L) | (year %% 400L == 0L)
+  # Divisibility via floor() rather than %%, which is much slower on doubles
+  divisible <- function(n) year == n * floor(year / n)
+  (divisible(4) & !divisible(100)) | divisible(400)
 }
 
 # Days since epoch (1970-01-01) to the 1st of the Gregorian month

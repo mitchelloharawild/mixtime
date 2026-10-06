@@ -64,6 +64,12 @@ S7::method(chronon_glb, class_mixtime) <- function(x, .ptype = NULL, ...) {
   )
 }
 
+# A bare time vector carries its chronon, so skip building a duration via
+# time_chronon() just to read it back.
+S7::method(chronon_glb, mt_time) <- function(x, .ptype = NULL, ...) {
+  chronon_glb_impl(list(attr(x, "chronon")), .ptype = .ptype)
+}
+
 S7::method(chronon_glb, class_any) <- function(x, .ptype = NULL, ...) {
   chronon_glb_impl(
     list(attr(time_chronon(x[1L])@x[[1L]], "chronon")),
@@ -91,6 +97,12 @@ S7::method(chronon_lub, class_mixtime) <- function(x, .ptype = NULL, ...) {
     lapply(x@x, attr, "chronon"),
     .ptype = .ptype
   )
+}
+
+# A bare time vector carries its chronon, so skip building a duration via
+# time_chronon() just to read it back.
+S7::method(chronon_lub, mt_time) <- function(x, .ptype = NULL, ...) {
+  chronon_lub_impl(list(attr(x, "chronon")), .ptype = .ptype)
 }
 
 S7::method(chronon_lub, class_any) <- function(x, .ptype = NULL, ...) {
