@@ -186,12 +186,14 @@ method(chronon_cardinality_fixed, list(cal_time_solar$arcsecond, cal_time_solar$
 
 # Solar illumination phases
 method(chronon_cardinality, list(cal_time_solar$second, cal_time_solar$illumination)) <- function(x, y, at = NULL) {
+  check_cardinality_at(at, x, y)
   (approx_solar_seconds_from_solar_phase((at + 1L) * y@n, y@lat, y@lon, y@alt) -
      approx_solar_seconds_from_solar_phase(at * y@n, y@lat, y@lon, y@alt)) / x@n
 }
 
 # The number of UTC seconds in a solar second
 method(chronon_cardinality, list(cal_time_civil$second, cal_time_solar$second)) <- function(x, y, at = NULL) {
+  check_cardinality_at(at, x, y)
   at_ss <- approx_solar_seconds_from_utc(at, y@lat, y@lon, y@alt)
   (approx_utc_from_solar_seconds((at_ss + 1L) * y@n, y@lat, y@lon, y@alt) -
      approx_utc_from_solar_seconds(at_ss * y@n, y@lat, y@lon, y@alt)) / x@n

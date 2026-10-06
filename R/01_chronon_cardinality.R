@@ -167,3 +167,17 @@ method(chronon_cardinality_fixed, list(mt_unit, mt_unit)) <- function(x, y) {
   }
   result
 }
+# Irregular cardinalities depend on where in time they're measured. Without a
+# time point `at` (e.g. when converting a duration, which has no position)
+# there is nothing to measure against, so error rather than guess.
+check_cardinality_at <- function(at, x, y) {
+  if (is.null(at)) {
+    stop(
+      sprintf(
+        "The number of %s in %s requires the time context `at`.",
+        time_unit_plural(x), time_unit_plural(y)
+      ),
+      call. = FALSE
+    )
+  }
+}

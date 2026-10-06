@@ -141,6 +141,7 @@ S7::method(chronon_cardinality_fixed, list(cal_sym454$month, cal_sym454$year)) <
   }
 S7::method(chronon_cardinality, list(cal_sym454$week, cal_sym454$month)) <-
   function(x, y, at = NULL) {
+    check_cardinality_at(at, x, y)
     # The number of weeks in each n-month period
     month_size <- y@n
     nweeks_cyc <- circsum(c(4L, 5L, 4L), month_size)

@@ -86,6 +86,7 @@ method(chronon_parse_cyclical, list(cal_isoweek$week, cal_isoweek$year)) <- func
 }
 
 method(chronon_cardinality, list(cal_isoweek$week, cal_isoweek$year)) <- function(x, y, at = NULL) {
+  check_cardinality_at(at, x, y)
   if(y@n != 1L) {
     cli::cli_abort("The number of weeks in multi-year chronons is not yet supported.")
   }

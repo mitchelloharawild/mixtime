@@ -202,6 +202,21 @@ test_that("calendar-dependent duration conversion errors with a duration-specifi
   )
 })
 
+test_that("irregular duration conversions error instead of assuming a position", {
+  expect_error(
+    duration(duration(1L, cal_isoweek$year(1L)), cal_isoweek$week(1L)),
+    "no anchor"
+  )
+  expect_error(
+    duration(duration(1L, cal_sym454$month(1L)), cal_sym454$week(1L)),
+    "no anchor"
+  )
+  expect_error(
+    duration(duration(1L, cal_time_lunar$phase(1L)), cal_time_civil$second(1L)),
+    "no anchor"
+  )
+})
+
 test_that("zero-length durations can be built and converted", {
   # The element-wise duration predicate is `NA` for a zero-length input, so
   # zero-length magnitudes must be routed by class rather than by value.
