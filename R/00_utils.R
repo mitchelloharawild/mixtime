@@ -185,6 +185,10 @@ fdivmod <- function(x, y) {
   list(div = div, mod = x - div * y)
 }
 
+fmod <- function(x, y) {
+  x - floor(x / y) * y
+}
+
 # Evaluate time units in a calendar context
 eval_cal <- function(expr, cal) {
   eval_tidy({{ expr }}, data = cal)

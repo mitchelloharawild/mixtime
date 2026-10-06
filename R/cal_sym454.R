@@ -147,16 +147,16 @@ S7::method(chronon_cardinality, list(cal_sym454$week, cal_sym454$month)) <-
     nweeks_cyc <- circsum(c(4L, 5L, 4L), month_size)
 
     # Find which n-month period we're in based on the "at" position (months since epoch)
-    period <- at %% length(nweeks_cyc) + 1L
+    period <- fmod(at, length(nweeks_cyc)) + 1L
 
     nweeks <- nweeks_cyc[period]
 
     # Add the extra week to December for Symmetry454 leap years.
     # A year is a leap year when (52*year + 146) %% 293 < 52.
     m1 <- at * month_size
-    contains_dec <- which((m1 %% 12L) >= (12L - month_size))
-    year <- 1970L + m1[contains_dec] %/% 12L
-    is_leap_year <- ((52 * year + 146L) %% 293L) < 52L
+    contains_dec <- which(fmod(m1, 12L) >= (12L - month_size))
+    year <- 1970L + fdiv(m1[contains_dec], 12L)
+    is_leap_year <- fmod(52 * year + 146L, 293L) < 52L
 
     nweeks[contains_dec[is_leap_year]] <- nweeks[contains_dec[is_leap_year]] + 1L
 
@@ -194,8 +194,8 @@ S7::method(chronon_divmod, list(cal_sym454$week, cal_sym454$month)) <-
     }
     leaps_symmetry454 <- function(x) {
       # There are 15288 weeks in a full 293-year cycle (293*52 + 52 leap weeks)
-      w <- x %% 15288L
-      x %/% 15288L * 52L +
+      w <- fmod(x, 15288L)
+      fdiv(x, 15288L) * 52L +
       ifelse(w < 2348L,  leaps_cycle_45(w),
       ifelse(w < 6470L,  8L  + leaps_cycle_79(w - 2348L),
       ifelse(w < 8818L,  22L + leaps_cycle_45(w - 6470L),
@@ -222,16 +222,17 @@ S7::method(chronon_divmod, list(cal_sym454$week, cal_sym454$month)) <-
     weeks_tot <- sum(weeks_len)
 
     ## Find which n-month cycle we're in based on the regularised week count
-    period_full <- x_reg %/% weeks_tot
+    period_full <- fdiv(x_reg, weeks_tot)
 
     ## Find which part within the n-month cycle we're in
     weeks_seq  <- cumsum(weeks_len[-length(weeks_len)])
-    period_part <- rowSums(outer(x_reg %% weeks_tot, weeks_seq, ">="))
+    x_mod <- fmod(x_reg, weeks_tot)
+    period_part <- rowSums(outer(x_mod, weeks_seq, ">="))
 
     # div: total complete n-month cycles + complete n-months within the current cycle
     div <- period_full * length(weeks_len) + period_part
     # mod: remaining (regularised) weeks within the current n-month period
-    mod <- x_reg %% weeks_tot - c(0L, weeks_seq)[period_part + 1L]
+    mod <- x_mod - c(0L, weeks_seq)[period_part + 1L]
 
 
     # 3. Adjust the remainder to account for leap weeks that were removed during regularisation.
@@ -239,12 +240,12 @@ S7::method(chronon_divmod, list(cal_sym454$week, cal_sym454$month)) <-
     # Identify leap weeks re-using cumulative in-cycle leap week counts: leaps_symmetry454()
     # If the week added a leap week from the previous, then it itself must be a leap week.
     # Applied only to regularised 52/53rd weeks of the year (only these weeks can be leap weeks)
-    last_weeks  <- which(x_reg %% 52L >= 51L)
+    last_weeks  <- which(fmod(x_reg, 52L) >= 51L)
     leap_weeks  <- last_weeks[n_leaps[last_weeks] - leaps_symmetry454(x_cyc[last_weeks] - week_size) > 0L]
     mod[leap_weeks] <- mod[leap_weeks] + 1L  # restore leap week to remainder
 
     # Scale mod back to the original n-unit week size
-    mod <- mod %/% week_size
+    mod <- fdiv(mod, week_size)
 
     # Return the divmod result
     list(div = div, mod = mod)
@@ -260,11 +261,11 @@ S7::method(chronon_divmod, list(cal_sym454$month, cal_sym454$week)) <-
     weeks_tot <- weeks_seq[length(weeks_seq)]
     
     # Modular arithmetic to find weeks from months (without leap weeks)
-    period_full <- (x %/% length(weeks_len)) * weeks_tot
+    period_full <- fdiv(x, length(weeks_len)) * weeks_tot
     period_part <- stats::approx(
       x = seq(0, length.out = length(weeks_len) + 1L), 
       y = c(0L, weeks_seq), 
-      xout = x %% length(weeks_len), 
+      xout = fmod(x, length(weeks_len)), 
     )$y
 
     # 2. Compute the number of leap weeks to add back in
@@ -289,8 +290,8 @@ S7::method(chronon_divmod, list(cal_sym454$month, cal_sym454$week)) <-
     }
     leaps_symmetry454 <- function(x) {
       # There are 3516 months in a full 293-year cycle (293*12 months)
-      m <- x %% 3516L
-      x %/% 3516L * 52L +
+      m <- fmod(x, 3516L)
+      fdiv(x, 3516L) * 52L +
       ifelse(m < 540L,   leaps_cycle_45(m),
       ifelse(m < 1488L,  8L  + leaps_cycle_79(m - 540L),
       ifelse(m < 2028L,  22L + leaps_cycle_45(m - 1488L),

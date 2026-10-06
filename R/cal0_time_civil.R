@@ -446,7 +446,7 @@ method(
 ) <- function(granule, cycle, i, at = NULL, ...) {
   if (S7_inherits(cycle, cal_time_civil$ampm)) {
     # 12 hours count with 12,1,2,...,11
-    sprintf("%02d", (i - 1L) %% 12L + 1L)
+    sprintf("%02d", fmod(i - 1L, 12L) + 1L)
   } else {
     # 24 hours count with 0-indexing
     sprintf("%02d", i)

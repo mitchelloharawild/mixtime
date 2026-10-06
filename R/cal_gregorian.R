@@ -322,7 +322,7 @@ method(chronon_divmod, list(cal_gregorian$day, cal_gregorian$year)) <- function(
   year <- yoe + era * 400L + (month <= 2L) # year (proleptic Gregorian)
 
   ly <- is_leap_year(year)
-  yday <- (doy + 59 + ly) %% (365L + ly)
+  yday <- fmod(doy + 59 + ly, 365L + ly)
 
   list(
     div = year - 1970L,
