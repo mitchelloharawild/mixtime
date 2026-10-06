@@ -54,6 +54,11 @@
 * Calendar arithmetic on time-zone-aware times (e.g. adding months) now keeps
   the local clock time. A local time that occurs twice when daylight saving
   ends resolves to its first occurrence.
+* Adding or subtracting hours, minutes or seconds on time-zone-aware times
+  now moves by real time across daylight saving changes, so 02:30 AEDT plus
+  one hour is 02:30 AEST when daylight saving ends (previously 03:30 AEST, two
+  real hours later). Days and longer units keep the local clock time, so
+  `hours(24L)` and `days(1L)` differ on a 23 or 25 hour day.
 * Converting solar time to time-zone-aware civil time now accounts for the
   time zone, and converting solar time between two locations now accounts for
   the change of location.

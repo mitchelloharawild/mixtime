@@ -22,28 +22,34 @@ chronon_shift <- function(
   x <- chronon_convert_impl(x, chronon, ctx_chronon, discrete = FALSE)
   invalid <- rep_len(FALSE, max(length(x), length(n)))
 
-  # Calendar arithmetic keeps the local wall-clock reading ("same clock time,
-  # N units later"), so it works on local values.
-  local <- chronon_to_local(ctx_chronon, x)
-
-  if (chronon_needs_clamping(ctx_chronon, unit)) {
-    path <- chronon_longest_path(ctx_chronon, unit)
-    decomposed <- chronon_decompose(local, path)
-    div <- decomposed$div[[length(path)]] + n
-    recomposed <- chronon_recompose(
-      div,
-      decomposed$mod,
-      path,
-      on_invalid,
-      discrete = discrete
-    )
-    local <- as.numeric(recomposed$value)
-    invalid <- recomposed$invalid
+  if (chronon_shift_is_exact(ctx_chronon, unit)) {
+    # Exact arithmetic adds real time ("N hours later"), on absolute time.
+    s <- chronon_to_utc(ctx_chronon, x) + n * chronon_fixed_seconds(unit)
+    x <- chronon_from_utc(ctx_chronon, s)
   } else {
-    at <- chronon_convert_graph(local, ctx_chronon, unit)
-    local <- chronon_convert_graph(at + n, unit, ctx_chronon)
+    # Calendar arithmetic keeps the local wall-clock reading ("same clock
+    # time, N units later"), so it works on local values.
+    local <- chronon_to_local(ctx_chronon, x)
+
+    if (chronon_needs_clamping(ctx_chronon, unit)) {
+      path <- chronon_longest_path(ctx_chronon, unit)
+      decomposed <- chronon_decompose(local, path)
+      div <- decomposed$div[[length(path)]] + n
+      recomposed <- chronon_recompose(
+        div,
+        decomposed$mod,
+        path,
+        on_invalid,
+        discrete = discrete
+      )
+      local <- as.numeric(recomposed$value)
+      invalid <- recomposed$invalid
+    } else {
+      at <- chronon_convert_graph(local, ctx_chronon, unit)
+      local <- chronon_convert_graph(at + n, unit, ctx_chronon)
+    }
+    x <- chronon_from_local(ctx_chronon, local)
   }
-  x <- chronon_from_local(ctx_chronon, local)
 
   list(
     value = chronon_convert_impl(x, ctx_chronon, chronon, discrete = FALSE),

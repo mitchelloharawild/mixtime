@@ -378,6 +378,63 @@ test_that("datetime() with a timezone can be shifted by durations with a regular
   expect_equal(format(hours(1L) + d), "2026-06-03 03:30:00 AEST")
 })
 
+# Melbourne falls back from 03:00 AEDT to 02:00 AEST on 2025-04-06, and springs
+# forward from 02:00 AEST to 03:00 AEDT on 2025-10-05.
+mel_utc <- function(x) {
+  datetime(as.POSIXct(as.POSIXct(x, tz = "UTC"), tz = "Australia/Melbourne"))
+}
+real_seconds <- function(x, y) {
+  as.numeric(as.POSIXct(y)) - as.numeric(as.POSIXct(x))
+}
+
+test_that("units shorter than a day add real time across the end of daylight saving", {
+  # 02:30 AEDT, the first of the two 02:30s
+  x <- mel_utc("2025-04-05 15:30:00")
+  expect_equal(format(x), "2025-04-06 02:30:00 AEDT")
+
+  expect_equal(format(x + hours(1L)), "2025-04-06 02:30:00 AEST")
+  expect_equal(real_seconds(x, x + hours(1L)), 3600)
+  expect_equal(format(x + hours(1L) - hours(1L)), format(x))
+
+  y <- datetime("2025-04-06 01:30:00", tz = "Australia/Melbourne")
+  expect_equal(format(y + hours(2L)), "2025-04-06 02:30:00 AEST")
+  expect_equal(real_seconds(y, y + hours(2L)), 7200)
+  expect_equal(format(y + minutes(90L)), "2025-04-06 02:00:00 AEST")
+
+  # 24 hours is real time; a day keeps the clock time
+  expect_equal(format(x + hours(24L)), "2025-04-07 01:30:00 AEST")
+  expect_equal(real_seconds(x, x + hours(24L)), 86400)
+  expect_equal(
+    format(x + duration(1L, cal_gregorian$hour(24L))),
+    "2025-04-07 01:30:00 AEST"
+  )
+  expect_equal(format(x + days(1L)), "2025-04-07 02:30:00 AEST")
+  expect_equal(real_seconds(x, x + days(1L)), 90000)
+})
+
+test_that("units shorter than a day add real time across the start of daylight saving", {
+  x <- datetime("2025-10-05 01:30:00", tz = "Australia/Melbourne")
+  expect_equal(format(x + hours(1L)), "2025-10-05 03:30:00 AEDT")
+  expect_equal(real_seconds(x, x + hours(1L)), 3600)
+  expect_equal(
+    format(datetime("2025-10-05 03:30:00", tz = "Australia/Melbourne") - hours(1L)),
+    "2025-10-05 01:30:00 AEST"
+  )
+  expect_equal(format(x + hours(24L)), "2025-10-06 02:30:00 AEDT")
+})
+
+test_that("units of a day or longer keep the clock time across daylight saving", {
+  # A local time that doesn't exist moves forward by the size of the gap
+  x <- datetime("2025-10-04 02:30:00", tz = "Australia/Melbourne")
+  expect_equal(format(x + days(1L)), "2025-10-05 03:30:00 AEDT")
+  expect_equal(format(x + days(2L)), "2025-10-06 02:30:00 AEDT")
+
+  # A local time that occurs twice resolves to its first occurrence
+  x <- datetime("2025-04-05 02:30:00", tz = "Australia/Melbourne")
+  expect_equal(format(x + days(1L)), "2025-04-06 02:30:00 AEDT")
+  expect_equal(format(x + weeks(1L)), "2025-04-12 02:30:00 AEST")
+})
+
 # ---------------------------------------------------------------------------
 # time_shift(): resolving invalid time points with `on_invalid`
 # ---------------------------------------------------------------------------

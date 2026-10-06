@@ -75,12 +75,32 @@ method(chronon_from_local, mt_unit) <- function(chronon, x, discrete = FALSE) {
   if (discrete) floor_ulp(x) else as.double(x)
 }
 
+# Whether shifting `chronon`'s values by `unit` (see chronon_shift()) is exact
+# arithmetic on absolute time, rather than calendar arithmetic that keeps the
+# local wall-clock reading. Defaults to calendar arithmetic, which is the same
+# thing for contexts whose stored values are already local.
+chronon_shift_is_exact <- S7::new_generic(
+  "chronon_shift_is_exact",
+  "chronon",
+  function(chronon, unit) S7::S7_dispatch()
+)
+method(chronon_shift_is_exact, mt_unit) <- function(chronon, unit) FALSE
+
 # The chronon used as the absolute time frame, built once since constructing
 # it validates the time zone name.
 tu_utc_second <- local({
   chronon <- NULL
   function() chronon %||% (chronon <<- cal_time_civil$second(1L, tz = "UTC"))
 })
+
+# Length of `unit` in seconds, or NA when it isn't fixed (e.g. a month).
+chronon_fixed_seconds <- function(unit) {
+  s <- tu_utc_second()
+  if (!chronon_fixed_reachable(s, unit) && !chronon_fixed_reachable(unit, s)) {
+    return(NA_real_)
+  }
+  chronon_cardinality(s, unit)
+}
 
 # `chronon` with its context replaced by `ctx`'s (where they share one).
 chronon_in_context <- function(chronon, ctx) {

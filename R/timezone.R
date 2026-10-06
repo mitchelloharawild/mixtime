@@ -225,6 +225,14 @@ method(chronon_is_local, mt_tz_unit) <- function(chronon) {
   !tz_has_offset(chronon)
 }
 
+# Units shorter than a day (e.g. hours) shift by exact real time, so an hour
+# across a daylight saving transition is one real hour. Longer units keep the
+# local clock time. Without UTC offsets the two agree.
+method(chronon_shift_is_exact, mt_tz_unit) <- function(chronon, unit) {
+  tz_has_offset(chronon) &&
+    (chronon_fixed_seconds(unit) / abs(unit@n) < 86400) %in% TRUE
+}
+
 method(chronon_to_utc, mt_tz_unit) <- function(chronon, x) {
   if (!tz_has_offset(chronon)) {
     return(chronon_convert_graph(x, chronon, tu_utc_second()))
