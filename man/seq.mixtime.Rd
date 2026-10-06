@@ -73,6 +73,11 @@ month of year).
 For linear time types (Date, POSIXct, yearmonth, etc.), sequences progress
 forward or backward in time. For cyclical time types (month_of_year,
 day_of_week, etc.), sequences wrap around cyclically.
+
+Each time point is \code{from} (or \code{to}, if \code{from} is missing) shifted by a whole
+number of \code{by} steps, matching \code{from + duration(k, by)}. For time-zone-aware times, steps of a day or
+longer keep the local clock time, while shorter steps (e.g. hours) are real
+time across daylight saving changes.
 }
 \examples{
 # Linear time sequences with integer by

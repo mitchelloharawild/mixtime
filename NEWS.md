@@ -59,6 +59,12 @@
   one hour is 02:30 AEST when daylight saving ends (previously 03:30 AEST, two
   real hours later). Days and longer units keep the local clock time, so
   `hours(24L)` and `days(1L)` differ on a 23 or 25 hour day.
+* `seq()` of time-zone-aware times by days (or weeks) now keeps the local
+  clock time across daylight saving changes, so a daily sequence at 10:00
+  stays at 10:00 (previously it moved to 09:00 when daylight saving ended).
+  Each element of `seq()` now matches adding a duration to the start, so a
+  time moved forward by daylight saving starting returns to its clock time on
+  the following day.
 * Converting solar time to time-zone-aware civil time now accounts for the
   time zone, and converting solar time between two locations now accounts for
   the change of location.

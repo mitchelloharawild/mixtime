@@ -43,7 +43,12 @@
 #' For linear time types (Date, POSIXct, yearmonth, etc.), sequences progress
 #' forward or backward in time. For cyclical time types (month_of_year,
 #' day_of_week, etc.), sequences wrap around cyclically.
-#' 
+#'
+#' Each time point is `from` (or `to`, if `from` is missing) shifted by a whole
+#' number of `by` steps, matching `from + duration(k, by)`. For time-zone-aware times, steps of a day or
+#' longer keep the local clock time, while shorter steps (e.g. hours) are real
+#' time across daylight saving changes.
+#'
 #' @examples
 #' # Linear time sequences with integer by
 #' seq(yearmonth("2020 Jan"), yearmonth("2020 Dec"))
@@ -156,117 +161,81 @@
 
     # Inherit granule properties from `by` if not given in `chronon` granule
     by <- granule_inherit_props(by, chronon)
-
-    # Calendar-field clamping applies when `by` has an irregular cardinality
-    # with the `chronon`; the irregularity potentially allows for out-of-range
-    # time points (e.g. 30 Jan -> 30 Feb is invalid, because day<->month is
-    # irregular). Rounding to the nearest valid time point impacts other time
-    # components (e.g. the time of the day), which is usually undesirable.
-    path <- if (chronon_needs_clamping(chronon, by)) {
-      chronon_longest_path(chronon, by)
-    }
-
-    # Convert `from`/`to` time chronons to `by` time chronons. `align_value` records whichever
-    # of `from`/`to` ends up determining `seq_part` (the sequence's within-`by` remainder) -
-    # it's what the reconstruction below decomposes for the clamped path.
-    seq_part <- NULL
-    align_value <- NULL
-    # Increment by 1 since the time point chronon is rebased with `by`
-    arg <- list(by = 1L)
-    # For the clamped path a `by` boundary (e.g. "start of month") is defined on
-    # the local wall clock of `by`'s context, so `chronon_divmod()`/
-    # `chronon_decompose()` work on local values - the same convention
-    # `chronon_parts()` uses. Regular (fixed-cardinality) `by` granules like
-    # hour/day are stepped as raw durations instead (matching e.g.
-    # `seq.POSIXt()`), so they're left alone.
-    local_chronon <- chronon_in_context(chronon, by)
-    to_by_domain <- if (is.null(path)) {
-      function(x) x
-    } else {
-      function(x) {
-        x <- chronon_convert_impl(x, chronon, local_chronon, discrete = FALSE)
-        chronon_to_local(local_chronon, x)
-      }
-    }
-    if (!missing_from) {
-      # Convert `from` into `by` chronons
-      from_local <- to_by_domain(as.numeric(from))
-      divmod <- chronon_divmod(chronon, by, from_local)
-      arg$from <- divmod$div
-
-      # Left aligned sequencing
-      seq_part <- divmod$mod
-      align_value <- from_local
-    }
-    if (!missing_to) {
-      # Shift `to` left to account for `from` alignment
-      if (!is.null(seq_part)) {
-        to <- to - seq_part
-      }
-
-      # Convert `to` into `by` chronons
-      to_local <- to_by_domain(as.numeric(to))
-      divmod <- chronon_divmod(chronon, by, to_local)
-      arg$to <- divmod$div
-
-      # Right aligned sequencing if from isn't provided
-      if (is.null(seq_part)) {
-        seq_part <- divmod$mod
-        align_value <- to_local
-      }
-    }
-    if (!is.null(length.out)) {
-      arg$length.out <- length.out
-    }
-
-    res <- rlang::exec(seq.int, !!!arg)
+    # A negative `by` steps backwards by whole units of `by`
+    step <- if (by@n < 0) -1L else 1L
+    by@n <- abs(by@n)
 
     missing_on_invalid <- is.character(on_invalid) && length(on_invalid) > 1L
     on_invalid <- match.arg(on_invalid)
 
-    # Reconstruct `chronon` units from `by`-unit counts (from seq.int())
-    #
-    # If sequenced by an irregular cardinality (`path` is non-NULL), use
-    # clamping to return component-by-component valid time points.
-    #
-    # Otherwise, regular cardinality can be directly converted (as raw
-    # durations, like the divmod above) and always produce valid time points.
-    if (is.null(path)) {
-      res <- chronon_convert_graph(
-        res,
-        by,
-        chronon,
-        discrete = is.integer(ptype)
-      ) +
-        seq_part
-    } else {
-      seq_mod <- chronon_decompose(align_value, path)$mod
-      recomposed <- chronon_recompose(
-        res,
-        seq_mod,
-        path,
-        on_invalid,
-        discrete = is.integer(ptype)
-      )
-
-      if (missing_on_invalid && any(recomposed$invalid)) {
-        cli::cli_warn(c(
-          "The cycle offset ({time_granule_label(chronon, seq_part + 1L)}) has produced time points that overflow the {time_unit_plural(by, 1L)} cycle.",
-          "!" = "Clamping to the last valid time points in the cycle, {.code on_invalid = \"clamp\"} (the default).",
-          "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
-        ))
-      }
-      if (on_invalid == "reject" && any(recomposed$invalid)) {
-        warn_invalid_reject(recomposed$invalid)
-      }
-      # `chronon_recompose()` stays in the local domain used by `align_value`
-      # above - convert back to stored `chronon` values.
-      res <- chronon_from_local(local_chronon, recomposed$value)
-      res <- chronon_convert_impl(res, local_chronon, chronon, discrete = FALSE)
+    # A `by` boundary (e.g. "start of month") is defined on the local wall clock
+    # of `by`'s context, so `chronon_divmod()` works on local values - the same
+    # convention `chronon_parts()` uses.
+    local_chronon <- chronon_in_context(chronon, by)
+    to_local <- function(x) {
+      x <- chronon_convert_impl(x, chronon, local_chronon, discrete = FALSE)
+      chronon_to_local(local_chronon, x)
     }
 
-    # Restore integer type for discrete time input
-    if (is.integer(ptype)) res <- as.integer(res)
+    # Each time point is shifted from an anchor by a whole number of `by` units
+    # (`anchor + duration(k, by)`), rather than from the previous time point.
+    # The anchor is `from`, or `to` (right aligned) if `from` is missing.
+    anchor <- as.numeric(if (missing_from) to else from)
+    k <- if (missing_from) {
+      step * (seq_len(length.out) - length.out)
+    } else if (missing_to) {
+      step * (seq_len(length.out) - 1L)
+    } else if (chronon_shift_is_exact(local_chronon, by)) {
+      # Whole `by` units of real time from `from` to `to`
+      d <- chronon_to_utc(chronon, as.numeric(to)) -
+        chronon_to_utc(chronon, anchor)
+      d <- d / chronon_fixed_seconds(by)
+      seq.int(0L, step * floor_ulp(step * d), by = step)
+    } else {
+      # Whole `by` units of the local calendar from `from` to `to`, found by
+      # shifting `to` left by `from`'s offset into its `by` unit.
+      from_divmod <- chronon_divmod(chronon, by, to_local(anchor))
+      to_divmod <- chronon_divmod(
+        chronon,
+        by,
+        to_local(as.numeric(to)) - from_divmod$mod
+      )
+      # Stepping backwards, round up to stay at or after `to`
+      to_div <- to_divmod$div + (step < 0 & to_divmod$mod != 0)
+      seq.int(0L, to_div - from_divmod$div, by = step)
+    }
+
+    shifted <- chronon_shift(
+      chronon,
+      anchor,
+      by,
+      k,
+      on_invalid,
+      discrete = is.integer(ptype)
+    )
+    res <- shifted$value
+
+    if (missing_on_invalid && any(shifted$invalid)) {
+      seq_part <- chronon_divmod(chronon, by, to_local(anchor))$mod
+      cli::cli_warn(c(
+        "The cycle offset ({time_granule_label(chronon, seq_part + 1L)}) has produced time points that overflow the {time_unit_plural(by, 1L)} cycle.",
+        "!" = "Clamping to the last valid time points in the cycle, {.code on_invalid = \"clamp\"} (the default).",
+        "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
+      ))
+    }
+    if (on_invalid == "reject" && any(shifted$invalid)) {
+      warn_invalid_reject(shifted$invalid)
+    }
+
+    if (!missing_from && !missing_to) {
+      # A local time that doesn't exist moves forward, which can pass `to`
+      to <- as.numeric(to)
+      past <- step * (res - to) > 8 * .Machine$double.eps * pmax(abs(to), 1)
+      res <- res[!(past %in% TRUE)]
+    }
+
+    # Restore integer type for discrete time input, rounding like `+` does
+    if (is.integer(ptype)) res <- as.integer(round(res))
   } else {
     # If by is missing, at least two of from/to/length.out must be specified
     n_provided <- sum(!missing_from, !missing_to, !is.null(length.out))

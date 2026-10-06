@@ -385,3 +385,119 @@ test_that("seq.mixtime with negative-magnitude `by` clamps and steps backwards",
   ))
   expect_equal(format(result2), format(result))
 })
+
+# Melbourne falls back from 03:00 AEDT to 02:00 AEST on 2025-04-06, and springs
+# forward from 02:00 AEST to 03:00 AEDT on 2025-10-05.
+
+test_that("seq.mixtime by day keeps the local clock time across daylight saving", {
+  tz <- "Australia/Melbourne"
+  result <- seq(
+    datetime("2025-04-05 10:00:00", tz = tz),
+    by = cal_gregorian$day(1L),
+    length.out = 3
+  )
+  expect_equal(
+    format(result),
+    c(
+      "2025-04-05 10:00:00 AEDT",
+      "2025-04-06 10:00:00 AEST",
+      "2025-04-07 10:00:00 AEST"
+    )
+  )
+
+  # Each day is counted from the start, so a time moved forward by the gap
+  # returns to its clock time on the following day.
+  result <- seq(
+    datetime("2025-10-04 02:30:00", tz = tz),
+    by = "1 day",
+    length.out = 3
+  )
+  expect_equal(
+    format(result),
+    c(
+      "2025-10-04 02:30:00 AEST",
+      "2025-10-05 03:30:00 AEDT",
+      "2025-10-06 02:30:00 AEDT"
+    )
+  )
+
+  # A time moved forward past `to` is left out
+  expect_equal(
+    format(seq(
+      datetime("2025-10-04 02:30:00", tz = tz),
+      datetime("2025-10-05 03:00:00", tz = tz),
+      by = "1 day"
+    )),
+    "2025-10-04 02:30:00 AEST"
+  )
+  # Right aligned to `to`
+  expect_equal(
+    format(seq(
+      to = datetime("2025-10-06 02:30:00", tz = tz),
+      by = "1 day",
+      length.out = 3
+    )),
+    format(result)
+  )
+})
+
+test_that("seq.mixtime by hour steps real hours across daylight saving", {
+  tz <- "Australia/Melbourne"
+  from <- datetime("2025-04-06 01:00:00", tz = tz)
+  expected <- c(
+    "2025-04-06 01:00:00 AEDT",
+    "2025-04-06 02:00:00 AEDT",
+    "2025-04-06 02:00:00 AEST",
+    "2025-04-06 03:00:00 AEST"
+  )
+  expect_equal(
+    format(seq(from, by = cal_gregorian$hour(1L), length.out = 4)),
+    expected
+  )
+  to <- datetime("2025-04-06 03:00:00", tz = tz)
+  expect_equal(format(seq(from, to, by = "1 hour")), expected)
+  expect_equal(format(seq(to, from, by = "-1 hour")), rev(expected))
+
+  expect_equal(
+    format(seq(
+      datetime("2025-10-05 01:00:00", tz = tz),
+      by = "1 hour",
+      length.out = 3
+    )),
+    c(
+      "2025-10-05 01:00:00 AEST",
+      "2025-10-05 03:00:00 AEDT",
+      "2025-10-05 04:00:00 AEDT"
+    )
+  )
+})
+
+test_that("seq.mixtime matches adding durations to its start", {
+  units <- list(
+    hour = cal_gregorian$hour(1L),
+    day = cal_gregorian$day(1L),
+    hour24 = cal_gregorian$hour(24L),
+    month = cal_gregorian$month(1L),
+    year = cal_gregorian$year(1L)
+  )
+  starts <- list(
+    # Before the end and the start of daylight saving in Melbourne
+    datetime("2025-04-05 02:30:00", tz = "Australia/Melbourne"),
+    datetime("2025-10-04 02:30:00", tz = "Australia/Melbourne"),
+    datetime("2024-01-31 02:30:00", tz = "Australia/Melbourne"),
+    datetime("2024-01-31 02:30:00", tz = "UTC"),
+    datetime("2024-01-31 02:30:00")
+  )
+  for (x in starts) {
+    for (u in names(units)) {
+      by <- units[[u]]
+      # Enough hours to cross the transition, without passing 2038 in years
+      n <- if (u == "hour") 48L else 10L
+      result <- suppressWarnings(seq(x, by = by, length.out = n))
+      expected <- x + duration(seq_len(n) - 1L, by)
+      info <- paste(format(x), u)
+      expect_equal(format(result), format(expected), info = info)
+      expect_equal(as.numeric(result), as.numeric(expected), info = info)
+    }
+  }
+})

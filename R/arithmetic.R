@@ -20,7 +20,7 @@ chronon_shift <- function(
   # Shift in `unit`'s context (e.g. by days of another time zone).
   ctx_chronon <- chronon_in_context(chronon, unit)
   x <- chronon_convert_impl(x, chronon, ctx_chronon, discrete = FALSE)
-  invalid <- rep_len(FALSE, max(length(x), length(n)))
+  invalid <- NULL
 
   if (chronon_shift_is_exact(ctx_chronon, unit)) {
     # Exact arithmetic adds real time ("N hours later"), on absolute time.
@@ -53,7 +53,7 @@ chronon_shift <- function(
 
   list(
     value = chronon_convert_impl(x, ctx_chronon, chronon, discrete = FALSE),
-    invalid = invalid
+    invalid = invalid %||% rep_len(FALSE, length(x))
   )
 }
 
