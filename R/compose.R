@@ -180,7 +180,7 @@ compose_chain <- function(comps) {
   if (n_lin > 1L) {
     labels <- vapply(
       comps[is_lin],
-      function(x) time_granule_label(x$chronon, 1),
+      function(x) time_granule_label(x$chronon),
       character(1L)
     )
     cli::cli_abort(
@@ -216,7 +216,7 @@ compose_chain <- function(comps) {
     if (n_root > 1L) {
       labels <- vapply(
         comps[is_root],
-        function(x) paste0(time_granule_label(x$chronon, 1), "/", time_granule_label(x$cycle, 1)),
+        function(x) paste0(time_granule_label(x$chronon), "/", time_granule_label(x$cycle)),
         character(1L)
       )
       cli::cli_abort(
@@ -249,12 +249,12 @@ compose_chain <- function(comps) {
     if (length(matches) > 1L) {
       labels <- vapply(
         links[matches],
-        function(x) time_granule_label(x$chronon, 1),
+        function(x) time_granule_label(x$chronon),
         character(1L)
       )
       cli::cli_abort(
         c(
-          "Multiple {.fn cyc} components build from the same {time_granule_label(frontier, 1)}: {paste(labels, collapse = ', ')}.",
+          "Multiple {.fn cyc} components build from the same {time_granule_label(frontier)} chronon: {paste(labels, collapse = ', ')}.",
           i = "Supply only one path from the anchor to the target granularity."
         ),
         call = NULL
@@ -270,9 +270,9 @@ compose_chain <- function(comps) {
       links[!used],
       function(x) {
         paste0(
-          time_granule_label(x$chronon, 1),
+          time_granule_label(x$chronon),
           "/",
-          time_granule_label(x$cycle, 1)
+          time_granule_label(x$cycle)
         )
       },
       character(1L)
@@ -357,7 +357,7 @@ compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
       bad_i <- which(bad)[1L]
       cli::cli_abort(
         c(
-          "{.val {offset_i[keep][bad_i] + 1L}} is not a valid {time_granule_label(chronon_i, 1)} within that {time_granule_label(running_chronon, 1)}.",
+          "{.val {offset_i[keep][bad_i] + 1L}} is not a valid position for {time_granule_label(chronon_i)} granules within {time_granule_label(running_chronon)}.",
           i = "Valid values are {.val {1}} to {.val {cardinality[bad_i]}}."
         ),
         call = NULL

@@ -72,7 +72,7 @@ duration <- function(
       error = function(e) {
         cli::cli_abort(
           c(
-            "Can't convert a duration from {.val {time_unit_plural(from_chronon)}} to {.val {time_unit_plural(chronon)}}.",
+            "Can't convert a duration with a chronon of {.val {time_granule_label(from_chronon)}} to one of {.val {time_granule_label(chronon)}}.",
             i = "Their ratio depends on where in the calendar the duration falls, but a duration has no anchor to resolve that against.",
             i = "Convert a {.cls mixtime} time point instead, which carries the calendar context this conversion needs."
           ),
@@ -91,7 +91,7 @@ duration <- function(
   if (S7_inherits(data, mt_time)) {
     cli::cli_abort(
       c(
-        "{.var data} already has chronon {.val {time_unit_plural(attr(data, 'chronon'))}}, but it isn't a duration.",
+        "{.var data} already has a chronon of {.val {time_granule_label(attr(data, 'chronon'))}}, but it isn't a duration.",
         i = "{.fn duration} converts duration vectors; use {.fn mixtime} to convert time points."
       ),
       call = NULL
