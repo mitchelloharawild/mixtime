@@ -145,6 +145,25 @@ S7::method(rep, mt_time) <- function(x, ...) {
   }
 }
 
+#' @method diff mixtime::mt_time
+#' @export
+`diff.mixtime::mt_time` <- function(x, lag = 1L, differences = 1L, ...) {
+  if (length(lag) != 1L || length(differences) != 1L ||
+      lag < 1L || differences < 1L) {
+    cli::cli_abort(
+      "{.arg lag} and {.arg differences} must be integers >= 1.",
+      call. = FALSE
+    )
+  }
+  # Use the class's own `-` method so the result keeps its time class and
+  # chronon (e.g. differences of linear times are durations).
+  for (i in seq_len(differences)) {
+    idx <- seq_len(max(length(x) - lag, 0L))
+    x <- x[idx + lag] - x[idx]
+  }
+  x
+}
+
 #' @export
 S7::method(c, mt_time) <- function(...) {
   dots <- list(...)

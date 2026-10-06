@@ -175,6 +175,41 @@ test_that("yearmonth() - yearmonth() is negative when ym1 < ym2", {
 })
 
 # ---------------------------------------------------------------------------
+# diff() on unwrapped time objects (uses the class's own `-` method)
+# ---------------------------------------------------------------------------
+
+test_that("diff() on linear times returns durations with the chronon kept", {
+  x <- vecvec::unvecvec(
+    yearmonth(as.Date(c("2000-01-01", "2001-01-01", "2003-01-01")))
+  )
+  d <- diff(x)
+
+  expect_true(S7::S7_inherits(d, mt_duration))
+  expect_equal(d@chronon, x@chronon)
+  expect_equal(d, x[-1] - x[-length(x)])
+  expect_equal(as.integer(d), c(12L, 24L))
+  expect_equal(as.integer(max(d)), 24L)
+})
+
+test_that("diff() respects lag and differences", {
+  x <- vecvec::unvecvec(
+    yearmonth(as.Date(c("2000-01-01", "2001-01-01", "2003-01-01")))
+  )
+
+  expect_equal(as.integer(diff(x, lag = 2)), 36L)
+  expect_equal(as.integer(diff(x, differences = 2)), 12L)
+})
+
+test_that("diff() on a length-1 time returns a zero-length duration", {
+  x <- vecvec::unvecvec(yearmonth(as.Date("2000-01-01")))
+  d <- diff(x)
+
+  expect_length(d, 0L)
+  expect_true(S7::S7_inherits(d, mt_duration))
+  expect_equal(d@chronon, x@chronon)
+})
+
+# ---------------------------------------------------------------------------
 # date +/- integer (direct numeric shift along the chronon)
 # ---------------------------------------------------------------------------
 
