@@ -145,6 +145,36 @@ method(
   )
 }
 method(
+  chronon_format_linear,
+  list(cal_time_civil$microsecond, class_any)
+) <- function(x, cal) {
+  paste(
+    chronon_format_linear(cal$day(1L), cal),
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)}"
+  )
+}
+method(
+  chronon_format_linear,
+  list(cal_time_civil$nanosecond, class_any)
+) <- function(x, cal) {
+  paste(
+    chronon_format_linear(cal$day(1L), cal),
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)}"
+  )
+}
+method(
+  chronon_format_cyclical,
+  list(cal_time_civil$microsecond, cal_time_civil$day)
+) <- function(x, y) {
+  "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)}"
+}
+method(
+  chronon_format_cyclical,
+  list(cal_time_civil$nanosecond, cal_time_civil$day)
+) <- function(x, y) {
+  "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)}"
+}
+method(
   chronon_format_cyclical,
   list(cal_time_civil$millisecond, cal_time_civil$day)
 ) <- function(x, y) {
@@ -233,6 +263,42 @@ method(
   )
 }
 method(
+  chronon_parse_linear,
+  list(cal_time_civil$microsecond, class_any)
+) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)}",
+      "T{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)}",
+      " {cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)} {cyc(ampm, day, label = TRUE)}",
+      "T{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)} {cyc(ampm, day, label = TRUE)}"
+    ),
+    c(
+      "[ T]{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}\\.{cyc(microsecond, second)}",
+      "[ T]{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}\\.{cyc(microsecond, second)} {cyc(ampm, day, label = TRUE)}"
+    )
+  )
+}
+method(
+  chronon_parse_linear,
+  list(cal_time_civil$nanosecond, class_any)
+) <- function(x, cal) {
+  parse_format_time_of_day(
+    cal,
+    c(
+      " {cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)}",
+      "T{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)}",
+      " {cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)} {cyc(ampm, day, label = TRUE)}",
+      "T{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)} {cyc(ampm, day, label = TRUE)}"
+    ),
+    c(
+      "[ T]{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}\\.{cyc(nanosecond, second)}",
+      "[ T]{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}\\.{cyc(nanosecond, second)} {cyc(ampm, day, label = TRUE)}"
+    )
+  )
+}
+method(
   chronon_parse_cyclical,
   list(cal_time_civil$hour, cal_time_civil$day)
 ) <- function(x, y) {
@@ -266,6 +332,25 @@ method(
   parse_format(
     "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)}",
     "{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(millisecond, second)} {cyc(ampm, day, label = TRUE)}"
+  )
+}
+
+method(
+  chronon_parse_cyclical,
+  list(cal_time_civil$microsecond, cal_time_civil$day)
+) <- function(x, y) {
+  parse_format(
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)}",
+    "{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)} {cyc(ampm, day, label = TRUE)}"
+  )
+}
+method(
+  chronon_parse_cyclical,
+  list(cal_time_civil$nanosecond, cal_time_civil$day)
+) <- function(x, y) {
+  parse_format(
+    "{cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)}",
+    "{cyc(hour, ampm)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(nanosecond, second)} {cyc(ampm, day, label = TRUE)}"
   )
 }
 
@@ -380,7 +465,7 @@ method(
   )
 }
 
-# Minutes/seconds/milliseconds count with 0-indexing -- plain numeric (tier 1).
+# Minutes/seconds and sub-seconds count with 0-indexing -- plain numeric (tier 1).
 method(
   cyclical_labels,
   list(cal_time_civil$minute, S7::class_any)
@@ -393,3 +478,11 @@ method(
   cyclical_labels,
   list(cal_time_civil$millisecond, S7::class_any)
 ) <- label_scheme(start = 0L, width = 3L)
+method(
+  cyclical_labels,
+  list(cal_time_civil$microsecond, S7::class_any)
+) <- label_scheme(start = 0L, width = 6L)
+method(
+  cyclical_labels,
+  list(cal_time_civil$nanosecond, S7::class_any)
+) <- label_scheme(start = 0L, width = 9L)

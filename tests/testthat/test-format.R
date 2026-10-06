@@ -106,3 +106,24 @@ test_that("format() of continuous time ignores floating-point error at unit boun
     "50.0%"
   )
 })
+
+test_that("format() zero-pads microsecond and nanosecond chronons to 6 and 9 digits", {
+  expect_equal(
+    chronon_format_linear(cal_gregorian$microsecond(1L)),
+    "{lin(year)}-{cyc(month,year)}-{cyc(day,month)} {cyc(hour, day)}:{cyc(minute, hour)}:{cyc(second, minute)}.{cyc(microsecond, second)}"
+  )
+  expect_equal(
+    format(linear_time(1000056L, chronon = cal_gregorian$microsecond(1L))),
+    "1970-01-01 00:00:01.000056"
+  )
+  expect_equal(
+    format(linear_time(1000000056L, chronon = cal_gregorian$nanosecond(1L))),
+    "1970-01-01 00:00:01.000000056"
+  )
+})
+
+test_that("chronon_divmod() across several granules works on vectors", {
+  res <- chronon_divmod(cal_gregorian$microsecond(1L), cal_gregorian$second(1L), c(1500000, 2, NA))
+  expect_equal(res$div, c(1, 0, NA))
+  expect_equal(res$mod, c(500000, 2, NA))
+})

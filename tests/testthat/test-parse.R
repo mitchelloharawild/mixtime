@@ -795,3 +795,27 @@ test_that("time_parse_impl() edge cases (empty/all-missing input) also stay unwr
   expect_equal(length(rna), 1L)
   expect_true(is.na(rna))
 })
+
+test_that("microsecond and nanosecond civil chronons parse and format back identically", {
+  # Near the epoch, where these counts still fit integer storage
+  us <- c("1970-01-01 00:00:01.123456", "1970-01-01 00:00:00.000001")
+  x <- time_parse(us, chronon = cal_gregorian$microsecond(1L))
+  expect_equal(attr(x@x[[1L]], "chronon"), cal_gregorian$microsecond(1L))
+  expect_equal(vctrs::vec_data(x@x[[1L]]), c(1123456L, 1L))
+  expect_equal(format(x), us)
+  expect_equal(format(time_parse("1970-01-01T00:00:01.000056", chronon = cal_gregorian$microsecond(1L))), "1970-01-01 00:00:01.000056")
+
+  ns <- "1970-01-01 00:00:01.123456789"
+  x <- time_parse(ns, chronon = cal_gregorian$nanosecond(1L))
+  expect_equal(vctrs::vec_data(x@x[[1L]]), 1123456789L)
+  expect_equal(format(x), ns)
+  fmt <- chronon_format_linear(cal_gregorian$nanosecond(1L))
+  expect_equal(format(time_parse(ns, format = fmt), format = fmt), ns)
+})
+
+test_that("chronon_parse_cyclical() for microsecond/nanosecond-in-day chronons parses a bare clock time", {
+  x <- time_parse("00:00:01.000056", chronon = cal_gregorian$microsecond(1L), cycle = cal_gregorian$day(1L))
+  expect_equal(format(x), "00:00:01.000056")
+  x <- time_parse("00:00:01.000000056", chronon = cal_gregorian$nanosecond(1L), cycle = cal_gregorian$day(1L))
+  expect_equal(format(x), "00:00:01.000000056")
+})
