@@ -75,8 +75,12 @@ method(chronon_from_local, mt_unit) <- function(chronon, x, discrete = FALSE) {
   if (discrete) floor_ulp(x) else as.double(x)
 }
 
-# The chronon used as the absolute time frame.
-tu_utc_second <- function() cal_time_civil$second(1L, tz = "UTC")
+# The chronon used as the absolute time frame, built once since constructing
+# it validates the time zone name.
+tu_utc_second <- local({
+  chronon <- NULL
+  function() chronon %||% (chronon <<- cal_time_civil$second(1L, tz = "UTC"))
+})
 
 # `chronon` with its context replaced by `ctx`'s (where they share one).
 chronon_in_context <- function(chronon, ctx) {
