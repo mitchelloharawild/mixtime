@@ -697,4 +697,15 @@ test_that("time zone lookups match one-at-a-time lookups in any order", {
     get_tz_abbreviation(x, tz),
     vapply(x, function(s) get_tz_abbreviation(s, tz), character(1L))
   )
+
+  # Interleaved time zones, one per element
+  zones <- rep_len(c(tz, tz, "Europe/Berlin", "UTC"), length(x))
+  expect_equal(
+    get_tz_offset(x, zones),
+    mapply(function(s, z) get_tz_offset(s, z), x, zones, USE.NAMES = FALSE)
+  )
+  expect_equal(
+    get_tz_abbreviation(x, zones),
+    mapply(function(s, z) get_tz_abbreviation(s, z), x, zones, USE.NAMES = FALSE)
+  )
 })

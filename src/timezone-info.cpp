@@ -28,7 +28,9 @@ writable::doubles get_tz_offset(
     p_time_zone = mixtime::zone_name_load(zone_name);
   }
   
-  // The offset period of the previous lookup, reused while times stay in it
+  // The zone and offset period of the previous lookup, reused while times
+  // stay in them
+  SEXP zone_elt = R_NilValue;
   date::sys_info info;
   bool cached = false;
 
@@ -38,18 +40,17 @@ writable::doubles get_tz_offset(
       continue;
     }
     
-    const date::time_zone* p_time_zone_elt;
-    if (recycle_zone) {
-      p_time_zone_elt = p_time_zone;
-    } else {
-      const std::string zone_name_elt = r_string(zone[i]);
-      p_time_zone_elt = mixtime::zone_name_load(zone_name_elt);
+    // R stores each distinct string once, so a repeated zone is the same
+    // pointer as the previous element's
+    if (!recycle_zone && STRING_ELT(zone, i) != zone_elt) {
+      zone_elt = STRING_ELT(zone, i);
+      p_time_zone = mixtime::zone_name_load(r_string(zone[i]));
       cached = false;
     }
     
     const date::sys_seconds tp = mixtime::posixct_to_sys_time(posixct[i]);
     if (!cached || tp < info.begin || tp >= info.end) {
-      info = mixtime::get_sys_info(tp, p_time_zone_elt);
+      info = mixtime::get_sys_info(tp, p_time_zone);
       cached = true;
     }
     
@@ -77,27 +78,34 @@ writable::strings get_tz_abbreviation(
     p_time_zone = mixtime::zone_name_load(zone_name);
   }
   
+  // The zone, offset period and abbreviation of the previous lookup, reused
+  // while times stay in them
+  SEXP zone_elt = R_NilValue;
+  date::sys_info info;
+  SEXP abbrev = NA_STRING;
+  bool cached = false;
+
   for (R_xlen_t i = 0; i < size; ++i) {
     if (ISNA(posixct[i])) {
       SET_STRING_ELT(abbreviation, i, NA_STRING);
       continue;
     }
     
-    const date::time_zone* p_time_zone_elt;
-    if (recycle_zone) {
-      p_time_zone_elt = p_time_zone;
-    } else {
-      const std::string zone_name_elt = r_string(zone[i]);
-      p_time_zone_elt = mixtime::zone_name_load(zone_name_elt);
+    if (!recycle_zone && STRING_ELT(zone, i) != zone_elt) {
+      zone_elt = STRING_ELT(zone, i);
+      p_time_zone = mixtime::zone_name_load(r_string(zone[i]));
+      cached = false;
     }
     
     const date::sys_seconds tp = mixtime::posixct_to_sys_time(posixct[i]);
-    const date::sys_info info = mixtime::get_sys_info(tp, p_time_zone_elt);
+    if (!cached || tp < info.begin || tp >= info.end) {
+      info = mixtime::get_sys_info(tp, p_time_zone);
+      // Kept reachable by `abbreviation`, which it is stored in straight away
+      abbrev = Rf_mkCharLenCE(info.abbrev.c_str(), info.abbrev.size(), CE_UTF8);
+      cached = true;
+    }
     
-    SET_STRING_ELT(
-      abbreviation, i,
-      Rf_mkCharLenCE(info.abbrev.c_str(), info.abbrev.size(), CE_UTF8)
-    );
+    SET_STRING_ELT(abbreviation, i, abbrev);
   }
   
   return abbreviation;
