@@ -750,3 +750,16 @@ test_that("parsing a local time skipped by daylight saving gives NA", {
   expect_equal(format(x[2]), "2025-10-05 03:30:00 AEDT")
 })
 
+
+test_that("continuous zoned days round trip to the same instant", {
+  # A day count near 20000 holds a time to about 3e-7 seconds, so allow 1e-6
+  tz <- "Australia/Melbourne"
+  times <- c("00:00:00", "01:15:00", "03:30:00", "07:45:12.5", "12:00:00", "23:59:59")
+  # Spring-forward (23 hours), fall-back (25 hours) and an ordinary day
+  for (day in c("2025-10-05", "2025-04-06", "2025-06-15")) {
+    p <- as.POSIXct(paste(day, times), tz = tz)
+    d <- mixtime(p, cal_gregorian$day(1L, tz = tz), discrete = FALSE)
+    err <- as.numeric(as.POSIXct(d)) - as.numeric(p)
+    expect_true(all(abs(err) < 1e-6), info = day)
+  }
+})
