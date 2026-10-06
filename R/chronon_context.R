@@ -100,24 +100,9 @@ context_is_naive <- function(ctx) {
   length(ctx) > 0L && any(vapply(ctx, function(v) anyNA(v), logical(1L)))
 }
 
+# Context values are compared by their underlying value, ignoring mt_naive.
 context_equal <- function(x, y) {
-  if (!identical(names(x), names(y))) {
-    return(FALSE)
-  }
-  same <- mapply(
-    function(a, b) {
-      a <- unclass(a)
-      b <- unclass(b)
-      if (is.numeric(a) && is.numeric(b)) {
-        a <- as.double(a)
-        b <- as.double(b)
-      }
-      identical(a, b)
-    },
-    x,
-    y
-  )
-  all(same)
+  props_equal(lapply(x, unclass), lapply(y, unclass))
 }
 
 # Both chronons store local values in the same context, so the context-blind

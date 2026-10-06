@@ -60,14 +60,19 @@ granule_identical <- function(x, y) {
   if (!identical(S7_class_id(x), S7_class_id(y))) {
     return(FALSE)
   }
-  px <- props(x)
-  py <- props(y)
-  if (!identical(names(px), names(py))) {
+  props_equal(props(x), props(y))
+}
+
+# Are the named property lists `x` and `y` the same, treating integer and
+# double values as equal? Classes are kept, so a naive property (mt_naive)
+# differs from an explicit one with the same value unless both are numeric.
+props_equal <- function(x, y) {
+  if (!identical(names(x), names(y))) {
     return(FALSE)
   }
-  for (nm in names(px)) {
-    a <- px[[nm]]
-    b <- py[[nm]]
+  for (nm in names(x)) {
+    a <- x[[nm]]
+    b <- y[[nm]]
     same <- if (is.numeric(a) && is.numeric(b)) {
       identical(as.double(a), as.double(b))
     } else {
