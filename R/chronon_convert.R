@@ -3,10 +3,12 @@
 #' @param x A linear time object (of class `mt_linear`)
 #' @param to The target chronon to convert to (a time granule object)
 #' @param discrete If `TRUE`, the number of target chronons since Unix epoch
-#' @param ... Additional arguments for methods.
 #' that `x` falls into is returned as an integer. If `FALSE`, a fractional
 #' number of target chronons is returned (analagous to time using a continuous
 #' time model).
+#' @param graph If `TRUE`, convert the stored values without regard to the
+#' chronons' context (e.g. time zone).
+#' @param ... Additional arguments for methods.
 #'
 #' @return A numeric or integer representing the time since Unix epoch in terms of the target
 #' chronon's precision.
@@ -27,52 +29,45 @@
 #' @keywords internal
 chronon_convert <- S7::new_generic("chronon_convert", "x")
 
-chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
+chronon_convert_impl <- function(x, from, to, discrete) {
   # Inherit granule properties from `from` if not given in `to` granule
   to <- granule_inherit_props(to, from)
+  x <- as.double(vec_data(x))
+  chronon_check_context(from, to)
 
-  # Handle timezones
-  # TODO - Generalise for converting to any different granule attribute
-  # (e.g. locA -> locB)
-
-  is_tz_conv <- S7_inherits(from, mt_tz_unit) && S7_inherits(to, mt_tz_unit)
-  if (is_tz_conv) {
-    if (is.na(tz_name(from)) && !is.na(tz_name(to))) {
-      cli::cli_abort(
-        "Cannot convert from timezone-naive chronon to timezone-aware chronon.",
-        call = NULL
-      )
-    }
+  if (granule_identical(from, to)) {
+    x <- if (discrete) floor_ulp(x) else x
+  } else if (chronon_shares_frame(from, to)) {
+    # Same context, stored as local values: the context-blind graph applies.
+    x <- chronon_convert_graph(x, from, to, discrete)
+  } else if (chronon_drops_context(from, to)) {
+    # Zoned -> naive keeps the local wall-clock reading.
+    x <- chronon_convert_graph(chronon_to_local(from, x), from, to, discrete)
+  } else if (chronon_gains_context(from, to)) {
+    # Naive -> located reads the naive value as the local wall-clock reading.
+    x <- chronon_convert_graph(x, from, to)
+    x <- chronon_from_local(to, x, discrete)
+  } else {
+    # Otherwise go through absolute time (UTC seconds).
+    x <- chronon_from_utc(to, chronon_to_utc(from, x), discrete)
   }
 
-  # Find path along convertable time units
+  if (discrete) as.integer(x) else x
+}
+
+# Context-blind conversion of `x` between chronons along the chronon_divmod
+# graph. Properties such as a time zone are ignored, so `x` must already be in
+# the frame the graph expects (UTC, or local wall-clock time).
+chronon_convert_graph <- function(x, from, to, discrete = FALSE) {
   path <- S7_graph_dispatch(chronon_divmod_graph(), from, to)
 
-  # Convert to target tz naive time for standard chronon boundaries
-  # Skipped if:
-  # * target tz is UTC (since that matches the internal representation)
-  is_tz_utc <- identical(tz_name(to), "UTC") || identical(tz, "UTC")
-  # * target is not a timezone-aware mt_tz_unit
-  is_tz_aware <- is_tz_conv && !is.na(tz_name(to))
-
-  if (!is_tz_utc && is_tz_aware) {
-    x <- tz_to_local(x, from, tz_name(to))
-  } else if (is_tz_conv && is.na(tz_name(to)) && !is.na(tz_name(from))) {
-    # Converting from tz-aware to tz-naive - shift into the local wall-clock
-    # domain the naive `to` chronon will read `x` as.
-    x <- tz_to_local(x, from, tz_name(from))
-  }
-
-  # Convert between time points
   if (length(path) == 1L) {
     # Simple direct conversion by cardinality
-    x <- vec_data(x) / chronon_cardinality(from, to, at = x)
+    x <- x / chronon_cardinality(from, to, at = x)
   } else {
     # Convert along the path of time granules
     path[[1]] <- from
-    prop_from <- S7::prop_names(from)
     path[[length(path)]] <- to
-    prop_to <- S7::prop_names(to)
     # Initialise intermediate classes with 1L and adjacent properties
     path[c(-1, -length(path))] <- lapply(
       path[c(-1, -length(path))],
@@ -97,23 +92,18 @@ chronon_convert_impl <- function(x, from, to, discrete, tz = NULL) {
     }
   }
 
-  # Undo the pre-conversion shift, for time zoned data.
-  # Skipped if:
-  # * target tz is NA (since that indicates a timezone-naive chronon)
-  # * target tz is UTC (since that matches the internal representation)
-  if (!is_tz_utc && is_tz_aware) {
-    x <- tz_to_utc(x, to, tz_name(to), discrete = discrete, boundary = length(path) > 1L)
-  } else if (discrete) {
-    # Nudge by a few ULPs to avoid floating-point errors accumulated along
-    # the path conversion landing just below an exact unit boundary.
-    x <- as.integer(floor(x + 8 * .Machine$double.eps * pmax(abs(x), 1)))
-  }
-
-  x
+  if (discrete) floor_ulp(x) else x
 }
 
-method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, ...) {
-  chronon_convert_impl(vec_data(x), attr(x, "chronon"), to, discrete)
+# Floor, after nudging up by a few ULPs so that floating-point error
+# accumulated along a conversion can't drop a value that lands just below an
+# exact unit boundary into the previous unit.
+floor_ulp <- function(x) {
+  floor(x + 8 * .Machine$double.eps * pmax(abs(x), 1))
+}
+
+method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, graph = FALSE, ...) {
+  chronon_convert_dispatch(vec_data(x), attr(x, "chronon"), to, discrete, graph)
 }
 
 method(chronon_convert, class_mixtime) <- vecvec::vecvec_apply_fn(
@@ -125,7 +115,18 @@ method(chronon_convert, S7::class_any) <- function(
   x,
   to,
   discrete = FALSE,
+  graph = FALSE,
   ...
 ) {
-  chronon_convert_impl(as.numeric(x), chronon_glb(x), to, discrete)
+  chronon_convert_dispatch(as.numeric(x), chronon_glb(x), to, discrete, graph)
+}
+
+# `graph = TRUE` converts the stored values without regard to context (see
+# chronon_convert_graph()).
+chronon_convert_dispatch <- function(x, from, to, discrete, graph) {
+  if (!graph) {
+    return(chronon_convert_impl(x, from, to, discrete))
+  }
+  x <- chronon_convert_graph(as.double(x), from, granule_inherit_props(to, from), discrete)
+  if (discrete) as.integer(x) else x
 }

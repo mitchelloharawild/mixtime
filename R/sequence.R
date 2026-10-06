@@ -173,16 +173,20 @@
     align_value <- NULL
     # Increment by 1 since the time point chronon is rebased with `by`
     arg <- list(by = 1L)
-    # `chronon_divmod()`/`chronon_decompose()` work on a UTC(-shaped) numeric
-    # value, but for the clamped path a `by` boundary (e.g. "start of month")
-    # is defined on the local wall clock, so shift into local time first for
-    # that case - the same convention `chronon_parts()` uses. Regular
-    # (fixed-cardinality) `by` granules like hour/day are stepped as raw
-    # durations instead (matching e.g. `seq.POSIXt()`), so they're left alone.
+    # For the clamped path a `by` boundary (e.g. "start of month") is defined on
+    # the local wall clock of `by`'s context, so `chronon_divmod()`/
+    # `chronon_decompose()` work on local values - the same convention
+    # `chronon_parts()` uses. Regular (fixed-cardinality) `by` granules like
+    # hour/day are stepped as raw durations instead (matching e.g.
+    # `seq.POSIXt()`), so they're left alone.
+    local_chronon <- chronon_in_context(chronon, by)
     to_by_domain <- if (is.null(path)) {
       function(x) x
     } else {
-      function(x) tz_to_local(x, chronon, tz_name(by))
+      function(x) {
+        x <- chronon_convert_impl(x, chronon, local_chronon, discrete = FALSE)
+        chronon_to_local(local_chronon, x)
+      }
     }
     if (!missing_from) {
       # Convert `from` into `by` chronons
@@ -225,10 +229,10 @@
     # If sequenced by an irregular cardinality (`path` is non-NULL), use
     # clamping to return component-by-component valid time points.
     #
-    # Otherwise, regular cardinality can be directly converted and always
-    # produce valid time points.
+    # Otherwise, regular cardinality can be directly converted (as raw
+    # durations, like the divmod above) and always produce valid time points.
     if (is.null(path)) {
-      res <- chronon_convert_impl(
+      res <- chronon_convert_graph(
         res,
         by,
         chronon,
@@ -255,10 +259,10 @@
       if (on_invalid == "reject" && any(recomposed$invalid)) {
         warn_invalid_reject(recomposed$invalid)
       }
-      # `chronon_recompose()` stays in the local-shifted domain used by
-      # `align_value` above - undo the shift to recover the true `chronon`
-      # value.
-      res <- tz_to_utc(recomposed$value, chronon, tz_name(by))
+      # `chronon_recompose()` stays in the local domain used by `align_value`
+      # above - convert back to stored `chronon` values.
+      res <- chronon_from_local(local_chronon, recomposed$value)
+      res <- chronon_convert_impl(res, local_chronon, chronon, discrete = FALSE)
     }
 
     # Restore integer type for discrete time input

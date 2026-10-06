@@ -538,3 +538,47 @@ test_that("Fractional phase interpolation: day midpoint approx solar noon", {
   muc_noon2    <- as.POSIXct(linear_time(date2 * 2 + 1,   muc_ampm))
   expect_equal(as.numeric(muc_day_mid2), as.numeric(muc_noon2), tolerance = 300)
 })
+
+# ---------------------------------------------------------------------------
+# Cross-location conversion between two same-class solar chronons
+#
+# The chronon_divmod graph keys nodes by class only, so two
+# `cal_time_solar$second` granules that differ only in lat/lon are
+# indistinguishable to it. A change of location must go through absolute (UTC)
+# time instead of dropping the location change and returning `x` unchanged.
+# ---------------------------------------------------------------------------
+test_that("chronon_convert_impl() shifts a solar chronon between two locations", {
+  utc <- cal_time_civil$second(1L, tz = "UTC")
+  mel <- cal_time_solar$second(1L, lat = -37.8136, lon = 144.9631)
+  syd <- cal_time_solar$second(1L, lat = -33.8688, lon = 151.2093)
+
+  x <- as.numeric(as.POSIXct("2024-06-15 12:00:00", tz = "UTC"))
+  at_mel <- chronon_convert_impl(x, utc, mel, discrete = FALSE)
+
+  result <- chronon_convert_impl(at_mel, mel, syd, discrete = FALSE)
+
+  # Going via the UTC bridge by hand gives the true, location-aware answer -
+  # the real longitude-driven solar-time gap between Melbourne and Sydney.
+  back <- chronon_convert_impl(at_mel, mel, utc, discrete = FALSE)
+  expected <- chronon_convert_impl(back, utc, syd, discrete = FALSE)
+
+  expect_equal(result, expected)
+  # Before the fix, the same-class shortcut returned `at_mel` unchanged.
+  expect_false(isTRUE(all.equal(result, at_mel)))
+})
+
+test_that("chronon_convert_impl() leaves a same-location solar conversion unaffected", {
+  # A same-location, cross-unit conversion (second -> day) must still take
+  # the ordinary fixed-cardinality graph path, not the canonical-domain
+  # round trip meant only for a genuine location change.
+  mel <- cal_time_solar$second(1L, lat = -37.8136, lon = 144.9631)
+  mel_day <- cal_time_solar$day(1L, lat = -37.8136, lon = 144.9631)
+
+  x <- as.numeric(as.POSIXct("2024-06-15 12:00:00", tz = "UTC"))
+  at_mel <- chronon_convert_impl(x, cal_time_civil$second(1L, tz = "UTC"), mel, discrete = FALSE)
+
+  expect_equal(
+    chronon_convert_impl(at_mel, mel, mel_day, discrete = FALSE),
+    at_mel / 86400
+  )
+})

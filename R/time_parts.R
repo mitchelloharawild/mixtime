@@ -21,14 +21,12 @@
 chronon_parts <- function(x, linear = list(), cyclical = list()) {
   start_tu <- attr(x, "chronon")
 
-  # Shift the time points into local time, truncating the offset for discrete
-  # time models so they remain whole chronons. A continuous time model keeps
-  # its fractional position instead of flooring it away here.
+  # Read the time points as local wall-clock values. A continuous time model
+  # keeps its fractional position instead of flooring it away here.
   x <- vec_data(x)
   discrete <- is.integer(x)
-  offset <- tz_offset_impl(x, start_tu)
-  x <- x + if (discrete) trunc(offset) else offset
-  if (discrete) x <- floor(x)
+  x <- chronon_to_local(start_tu, x)
+  if (discrete) x <- floor_ulp(x)
 
   # The two granules of a cyclical part: the chronon is the finer unit (the
   # desired output unit) and the cycle the coarser unit it repeats within.

@@ -9,11 +9,15 @@
 duration_shift <- function(time, dur, on_invalid = "clamp") {
   time_data <- S7_data(time)
   time_chronon <- time@chronon
-  dur_chronon <- dur@chronon
+  dur_chronon <- granule_inherit_props(dur@chronon, time_chronon)
+
+  # Calendar arithmetic keeps the local wall-clock reading ("same clock time,
+  # N units later"), so it works on local values.
+  local <- chronon_to_local(time_chronon, as.numeric(time_data))
 
   if (chronon_needs_clamping(time_chronon, dur_chronon)) {
     path <- chronon_longest_path(time_chronon, dur_chronon)
-    decomposed <- chronon_decompose(as.numeric(time_data), path)
+    decomposed <- chronon_decompose(local, path)
     div <- decomposed$div[[length(path)]] + S7_data(dur)
     recomposed <- chronon_recompose(
       div,
@@ -25,22 +29,13 @@ duration_shift <- function(time, dur, on_invalid = "clamp") {
     if (on_invalid == "reject" && any(recomposed$invalid)) {
       warn_invalid_reject(recomposed$invalid)
     }
-    new_time_data <- as.numeric(recomposed$value)
+    local <- as.numeric(recomposed$value)
   } else {
-    dur_chronon <- granule_inherit_props(dur_chronon, time_chronon)
-    at <- chronon_convert_impl(
-      as.numeric(time_data),
-      time_chronon,
-      dur_chronon,
-      discrete = FALSE
-    )
-    new_time_data <- chronon_convert_impl(
-      at + S7_data(dur),
-      dur_chronon,
-      time_chronon,
-      discrete = FALSE
-    )
+    at <- chronon_convert_graph(local, time_chronon, dur_chronon)
+    local <- chronon_convert_graph(at + S7_data(dur), dur_chronon, time_chronon)
   }
+
+  new_time_data <- chronon_from_local(time_chronon, local)
 
   shift <- as.numeric(new_time_data) - time_data
   # Preserve integer type for discrete time points
@@ -98,12 +93,6 @@ method(`-`, list(mt_time, mt_time)) <- function(e1, e2) {
   tu <- chronon_glb_impl(list(x_chronon, y_chronon))
   cx <- chronon_convert(e1, tu, discrete = FALSE)
   cy <- chronon_convert(e2, tu, discrete = FALSE)
-  # When a TZ-aware operand uses a coarser granule than the common chronon, the conversion
-  # produces a wall-clock value rather than a UTC-aligned value (the TZ offset cancels in
-  # same-TZ coarser->finer conversions). Subtract the TZ offset at the wall-clock position
-  # to realign to UTC.
-  cx <- tz_wall_clock_to_utc(cx, x_chronon, tu)
-  cy <- tz_wall_clock_to_utc(cy, y_chronon, tu)
   mt_duration(cx - cy, chronon = tu)
 }
 
@@ -292,29 +281,4 @@ method(`/`, list(S7::class_any, mt_time)) <- function(e1, e2) {
     "Division is only supported between two durations, or a duration divided by a number.",
     call. = FALSE
   )
-}
-
-# --- helpers ----------------------------------------------------------------------
-
-# Correct wall-clock -> UTC alignment for coarser-granule TZ-aware operands.
-# When from_chronon has a non-UTC TZ and is a different (coarser) class than to_chronon,
-# the chronon_convert result is a wall-clock value (the offset was added then canceled).
-# Subtracting the TZ offset at that position restores the true UTC-equivalent value.
-tz_wall_clock_to_utc <- function(value, from_chronon, to_chronon) {
-  if (!S7_inherits(from_chronon, mt_tz_unit)) {
-    return(value)
-  }
-  from_tz <- tz_name(from_chronon)
-  if (is.na(from_tz) || from_tz == "UTC") {
-    return(value)
-  }
-  # Same granule class: offset already cancelled correctly (no correction needed)
-  if (
-    identical(S7::S7_class(from_chronon)@name, S7::S7_class(to_chronon)@name)
-  ) {
-    return(value)
-  }
-  # Coarser granule: subtract the TZ offset at the wall-clock position
-  tzo <- get_tz_offset(as.double(value), from_tz)
-  value - tzo
 }

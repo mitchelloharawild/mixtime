@@ -61,14 +61,10 @@ method(time_floor, S7::class_any) <- function(x, granule, ...) {
 
 # Shared boundary-rounding logic for time_round()/time_ceiling()/time_floor().
 #
-# The timezone offset is applied while `x` is still expressed in its own
-# native chronon (which always converts to/from itself exactly - a 1:1
-# ratio), and only then converted into the granule's units for rounding.
-# Applying the offset *after* converting into the granule would require
-# scaling it by `chronon_cardinality()`, which for granules like `quarter()`
-# is a variable, context-dependent conversion (the number of seconds in a
-# quarter isn't fixed) - and can only be approximated (e.g. by an average
-# quarter length), leaking drift into the rounded boundary.
+# `x` is converted into a continuous position in the granule's units, rounded
+# to a whole granule, and converted back. Context (e.g. a time zone) is handled
+# by the conversions, so a rounded boundary is the granule's local boundary
+# (e.g. local midnight).
 time_round_impl <- function(x, granule, round_fn) {
   if (is.character(granule)) granule <- parse_time_unit(granule)
   if (S7_inherits(granule, mt_unit)) granule <- duration(1L, granule)
@@ -84,20 +80,11 @@ time_round_impl <- function(x, granule, round_fn) {
   # Native numeric value of `x`, in its own chronon (an exact conversion)
   res <- chronon_convert(x, chronon)
 
-  # Apply timezone offsets (UTC -> tz) while still in the exact native unit
-  res <- tz_to_local(res, chronon, tz_name(by))
-
-  # Convert the (now local wall-clock) instant into the granule's units and round it
-  res <- chronon_convert_impl(res, from = chronon, to = by, discrete = FALSE, tz = "UTC")
+  res <- chronon_convert_impl(res, from = chronon, to = by, discrete = FALSE)
   res <- round_fn(res)
+  res <- chronon_convert_impl(res, from = by, to = chronon, discrete = FALSE)
 
-  # Convert the rounded boundary back to the native chronon (still local wall-clock)
-  res <- chronon_convert_impl(res, from = by, to = chronon, discrete = FALSE, tz = "UTC")
-
-  # Undo timezone offsets (tz -> UTC)
-  res <- tz_to_utc(res, chronon, tz_name(by))
-
-  if (is.integer(x)) res <- as.integer(res)
+  if (is.integer(x)) res <- as.integer(floor_ulp(res))
   attributes(res) <- attributes(x)
   res
 }

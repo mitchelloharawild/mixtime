@@ -40,6 +40,23 @@
   `duration(2L, hour(3L))` shows `"6 hours"` (not `"2 hours"`) and the
   chronon of a 3-hourly time vector reads `"3 hours"` (e.g. in
   `time_chronon()` and `str()`), not `"1 hour"`.
+* Time-zone-aware days, weeks, months and years now start at local midnight,
+  so `as.POSIXct(mixtime(x, month(tz = "Australia/Melbourne")))` returns 00:00
+  AEDT instead of 11:00. Previously a conversion to UTC read the local label
+  as a UTC one.
+* Conversions of time-zone-aware times now account for daylight saving
+  changes: a day that is 23 or 25 hours long is converted by its real length,
+  and the two instants that share a clock reading when daylight saving ends
+  are kept apart, including in hourly data.
+* The fraction through a continuous time-zone-aware time (e.g. a week) is now
+  the fraction through that unit in its own time zone, so `floor()` of a
+  continuous time always gives the matching discrete time.
+* Calendar arithmetic on time-zone-aware times (e.g. adding months) now keeps
+  the local clock time. A local time that occurs twice when daylight saving
+  ends resolves to its first occurrence.
+* Converting solar time to time-zone-aware civil time now accounts for the
+  time zone, and converting solar time between two locations now accounts for
+  the change of location.
 
 # mixtime 0.3.0
 

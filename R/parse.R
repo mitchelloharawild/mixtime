@@ -458,7 +458,8 @@ time_parse_recast <- function(x, chronon, cycle, discrete) {
       is.na(tz_name(from)) && !is.na(tz_name(chronon))
   ) {
     from <- granule_inherit_props(from, mt_tz_unit(tz = tz_name(chronon)))
-    if (tz_name(from) != "UTC") data <- tz_to_utc(data, from, tz_name(from), discrete = discrete)
+    data <- chronon_from_local(from, data, discrete = discrete)
+    if (discrete) data <- as.integer(data)
   }
 
   if (!identical(chronon, from)) {

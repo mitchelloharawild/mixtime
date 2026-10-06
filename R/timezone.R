@@ -67,16 +67,14 @@ method(tz_offset, mt_time) <- function(
 }
 
 tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
-  offset_s <- rep(0L, length(x))
-
   # Naive and UTC time has no time zone offsets
   if (is.na(tz) || tz == "UTC") {
-    return(offset_s)
+    return(rep(0, length(x)))
   }
 
-  tu_s <- cal_time_civil$second(1L, tz = "UTC")
-  time_s <- chronon_convert_impl(x, chronon, tu_s, FALSE, "UTC")
-  offset_s <- get_tz_offset(as.double(time_s), tz)
+  tu_s <- tu_utc_second()
+  time_s <- chronon_to_utc(chronon, x)
+  offset_s <- tz_offset_at(time_s, tz)
   nz_offset <- !is.na(offset_s) & offset_s != 0
   if (!any(nz_offset)) {
     return(rep(0, length(x)))
@@ -90,156 +88,198 @@ tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
   offset_s
 }
 
-# Shift a `chronon`-native numeric value from UTC into the local wall-clock
-# domain of `tz`, expressed as if it were UTC. `chronon_divmod()`,
-# `chronon_decompose()`/`chronon_recompose()`, and `chronon_convert_impl()`
-# (when called with `tz = "UTC"`) are all tz-blind and work in this shifted
-# domain - see `time_round_impl()` and `seq.mixtime::mt_time()`.
-tz_to_local <- function(x, chronon, tz) {
-  x + tz_offset_impl(x, chronon, tz = tz)
+# --- time zone context ----------------------------------------------------------
+#
+# A zoned chronon divides absolute time into buckets: the spans between
+# consecutive local boundaries of the chronon (e.g. local midnights for a day).
+# A stored value is the bucket's index plus the elapsed fraction of that bucket,
+# so a day that is 23 or 25 hours long still runs from 0 to 1.
+#
+# The index is the bucket's local label less the whole-unit part of the UTC
+# offset. For a day (or longer) the offset is under one unit, so the index is
+# the local label. For an hour in a whole-hour zone it is the UTC hour, which
+# keeps the two local 02:00 hours at the end of daylight saving distinct.
+#
+# A naive or UTC zone has no offsets, so its values are local and use the
+# defaults (R/chronon_context.R).
+
+tz_has_offset <- function(chronon) {
+  tz <- chronon@tz
+  !is.na(tz) && tz != "UTC"
 }
 
-# Undo `tz_to_local()`, recovering the true (UTC) `chronon` value. A second
-# pass re-evaluates the offset at the candidate raw instant rather than
-# reusing the forward offset, since a value that falls in a DST gap/overlap
-# can have a different offset there than at its own local-shifted value.
-#
-# TODO(perf): this approximates gap/overlap resolution with two
-# `tz_offset_impl()` round trips (each its own `chronon_convert_impl()` +
-# `get_tz_offset()` C call). The vendored `date`/`tzdb` library already has a
-# purpose-built, single-lookup primitive for exactly this -
-# `date::time_zone::to_sys(local_time, choose::earliest|latest)` (see
-# tzdb's `include/date/tz.h`) - which is what `as.POSIXct()` itself relies on.
-# Wiring up a new cpp11-registered resolver around that would both halve the
-# lookup cost and replace this two-sample approximation with the library's
-# real resolution logic, at the cost of touching `src/` (new registered
-# function, regenerated `src/cpp11.cpp`/`R/cpp11.R` bindings, recompile).
-# Left as pure R for now since the 2x cost is negligible at realistic
-# `seq()`/`time_round()` sizes.
-tz_to_utc <- function(x, chronon, tz, discrete = FALSE, boundary = TRUE) {
-  tzo <- tz_offset_impl(
-    x - tz_offset_impl(x, chronon, tz = tz),
-    chronon,
-    tz = tz
-  )
-
-  if (discrete) {
-    if (boundary) {
-      # A boundary conversion (`chronon_convert_impl()`'s multi-hop path) has
-      # already resolved which `chronon` bucket the local-shifted value falls
-      # into via a real divmod - the offset is spent, so only a leftover
-      # *whole*-unit remainder (never seen with real-world offsets, but kept
-      # for safety) still needs correcting; floor(x) - trunc(tzo) keeps that
-      # correction separate from the local-bucket alignment so a fractional
-      # offset can't borrow across a unit boundary and land a whole unit off.
-      nudge <- 8 * .Machine$double.eps * pmax(abs(x), 1)
-      as.integer(floor(x + nudge) - trunc(tzo))
-    } else {
-      # No divmod happened between the matching tz_to_local() shift and this
-      # call (e.g. a same-chronon or pure-ratio conversion), so the offset is
-      # still fully outstanding in `x` and must be subtracted whole, before
-      # flooring - not floored away first and only partly corrected after.
-      shifted <- x - tzo
-      nudge <- 8 * .Machine$double.eps * pmax(abs(shifted), 1)
-      as.integer(floor(shifted + nudge))
-    }
-  } else {
-    x - tzo
-  }
+# UTC offset (seconds) in effect at UTC instants `s`.
+tz_offset_at <- function(s, tz) {
+  s <- as.double(s)
+  s[!is.finite(s)] <- NA_real_
+  as.double(get_tz_offset(s, tz))
 }
 
-# Resolve the true (real-elapsed) start of the `unit_size`-second bucket that
-# the true instant `sec` (raw UTC seconds) falls into, plus that bucket's
-# nominal index. Used by chronon_convert_impl()'s contracting-direction
-# tz-aware branch to give two instants that share a local wall-clock reading
-# during a DST fall-back overlap (or a transition day's non-nominal span)
-# distinct, real-elapsed positions - see
-# _dev/tz_transitions_real_elapsed.md.
-#
-# `sec`'s own offset (`get_tz_offset()` at a true instant is never ambiguous)
-# finds the unshifted local reading and, from it, a naive ("as if UTC")
-# nominal boundary label. That label itself is then re-resolved to a true
-# instant: convergence is checked over two steps (not one) before falling
-# back to `offset_here`, since a first pass can land on a real moment far
-# away with a very different offset in effect - one non-match doesn't yet
-# mean the label is genuinely ambiguous, just that it hasn't converged yet.
-tz_resolve_boundary <- function(sec, tz, unit_size) {
-  offset_here <- get_tz_offset(sec, tz)
-  local_reading <- sec + offset_here
-  label_start <- floor(local_reading / unit_size) * unit_size
-
-  off_b <- get_tz_offset(label_start - get_tz_offset(label_start, tz), tz)
-  off_c <- get_tz_offset(label_start - off_b, tz)
-  offset <- ifelse(off_b == off_c, off_c, offset_here)
-
+# Offsets either side of any transition near UTC instants `s`.
+tz_offsets_around <- function(s, tz) {
   list(
-    start = label_start - offset,
-    index = label_start / unit_size - trunc(offset / unit_size)
+    before = tz_offset_at(s - 172800, tz),
+    after = tz_offset_at(s + 172800, tz)
   )
 }
 
-# Inverse of the contracting mapping `here$index + (sec - here$start) /
-# (after$start - here$start)` (tz_resolve_boundary(), assembled in
-# chronon_convert_impl()'s contracting branch): given a real-elapsed
-# `bucket_index + fraction` value `v` in that same domain, recover the raw
-# UTC seconds `sec` it came from. Used by the expanding-direction branch to
-# round-trip values the contracting branch produced.
-#
-# Not a closed-form inversion: near a DST fall-back, the forward mapping
-# anchors an ambiguous local label to one occurrence (see the "here"/"after"
-# resolution in tz_resolve_boundary()) and lets *both* real instants sharing
-# that label extend from it - positions on either side of the anchor's own
-# bucket, not each with an independently resolvable one. So this instead
-# treats the forward mapping as the oracle and fixed-point-iterates: guess a
-# raw-seconds candidate, see which anchor ("here") the forward mapping would
-# resolve it to, invert the (exactly linear, once the anchor is right)
-# `index`/`start`/width relationship to get a better candidate, and repeat
-# until the anchor stops changing. `v * unit_size` (nominal, ignoring tz)
-# seeds the first guess; offsets don't accumulate over time, so this is
-# always within one realistic single transition of converging, per
-# tz_resolve_boundary()'s own "1.5x nominal size clears one transition"
-# assumption - a few iterations comfortably cover it.
-tz_resolve_boundary_inverse <- function(v, tz, unit_size, max_iter = 4L) {
-  here <- tz_resolve_boundary(v * unit_size, tz, unit_size)
-  sec <- NULL
-  for (i in seq_len(max_iter)) {
-    after <- tz_resolve_boundary(here$start + unit_size * 1.5, tz, unit_size)
-    width <- after$start - here$start
-    sec <- here$start + (v - here$index) * width
-
-    next_here <- tz_resolve_boundary(sec, tz, unit_size)
-    stable <- next_here$index == here$index
-    if (all(stable)) {
-      break
-    }
-    here$start[!stable] <- next_here$start[!stable]
-    here$index[!stable] <- next_here$index[!stable]
-  }
-  sec
+# Apply `f` to the unique values of `x` only. Many values usually share a
+# bucket, and calendar conversions (e.g. of months) are comparatively slow.
+by_unique <- function(x, f) {
+  u <- unique(x)
+  f(u)[match(x, u)]
 }
 
-# TRUE if chronon_convert_impl()'s expanding-direction real-elapsed branch
-# (`from` coarser than `to`, tz-aware, e.g. day -> second - see
-# R/chronon_convert.R) applies to this (from, to) pair. When it does, the
-# conversion already returns a fully-resolved absolute instant, so
-# tz_wall_clock_to_utc() (R/arithmetic.R) - written for chronon_convert_impl()'s
-# older, only-partially-cancelling behaviour on a cross-class tz-aware
-# conversion - must not apply its own correction on top of it.
-chronon_tz_expanding_resolved <- function(from, to) {
-  if (!S7_inherits(from, mt_tz_unit) || !S7_inherits(to, mt_tz_unit)) {
-    return(FALSE)
+# UTC instant at which bucket `i` of `chronon` starts.
+tz_bucket_start <- function(chronon, i) {
+  by_unique(i, function(i) tz_bucket_start_impl(chronon, i))
+}
+
+tz_bucket_start_impl <- function(chronon, i) {
+  tz <- chronon@tz
+  tu_s <- tu_utc_second()
+  # The local start of label `i`, and the unit's nominal length (seconds)
+  local <- chronon_convert_graph(i, chronon, tu_s)
+  unit <- chronon_convert_graph(i + 1, chronon, tu_s) - local
+  around <- tz_offsets_around(local, tz)
+
+  # UTC start of elements `k`, numbered with UTC offsets `offset`
+  start_with <- function(offset, k) {
+    shift <- trunc(offset / unit[k])
+    s <- local[k]
+    shifted <- (shift != 0) %in% TRUE
+    s[shifted] <- chronon_convert_graph(i[k][shifted] + shift[shifted], chronon, tu_s)
+    s - offset
   }
-  # `from`'s tz decides whether its values are local labels; a UTC `to` still
-  # needs resolving (its values are true instants), a naive `to` does not.
-  from_tz <- tz_name(from)
-  if (is.na(from_tz) || from_tz == "UTC" || is.na(tz_name(to))) {
-    return(FALSE)
+
+  # Away from a transition the offset is known. A local boundary that falls in
+  # a gap also keeps this start (numbered with the offset before the gap),
+  # which is the transition itself.
+  start <- start_with(around$before, seq_along(i))
+
+  # Near a transition, try the offset either side of it and keep the earliest
+  # start that is consistent with its offset.
+  near <- which((around$before != around$after) %in% TRUE)
+  if (length(near)) {
+    candidate <- function(offset) {
+      s <- start_with(offset[near], near)
+      s[!((tz_offset_at(s, tz) == offset[near]) %in% TRUE)] <- NA
+      s
+    }
+    found <- pmin(candidate(around$before), candidate(around$after), na.rm = TRUE)
+    start[near] <- ifelse(is.na(found), start[near], found)
   }
-  if (!chronon_fixed_reachable(to, from) || chronon_cardinality(to, from) <= 1) {
-    return(FALSE)
+  start
+}
+
+# Local label of bucket `i` of `chronon`.
+tz_bucket_label <- function(chronon, i) {
+  tu_s <- tu_utc_second()
+  by_unique(i, function(i) {
+    local <- chronon_convert_graph(i, chronon, tu_s)
+    unit <- chronon_convert_graph(i + 1, chronon, tu_s) - local
+    around <- tz_offsets_around(local, chronon@tz)
+
+    # Away from a transition the label follows from the offset
+    label <- i + trunc(around$before / unit)
+
+    near <- (around$before != around$after) %in% TRUE
+    if (any(near)) {
+      s <- tz_bucket_start_impl(chronon, i[near])
+      label[near] <- chronon_convert_graph(
+        s + tz_offset_at(s, chronon@tz),
+        tu_s,
+        chronon,
+        discrete = TRUE
+      )
+    }
+    label
+  })
+}
+
+# Nominal length (seconds) of local label `label` of `chronon`.
+tz_label_length <- function(chronon, label) {
+  tu_s <- tu_utc_second()
+  by_unique(label, function(label) {
+    chronon_convert_graph(label + 1, chronon, tu_s) -
+      chronon_convert_graph(label, chronon, tu_s)
+  })
+}
+
+method(chronon_is_local, mt_tz_unit) <- function(chronon) {
+  !tz_has_offset(chronon)
+}
+
+method(chronon_to_utc, mt_tz_unit) <- function(chronon, x) {
+  if (!tz_has_offset(chronon)) {
+    return(chronon_convert_graph(x, chronon, tu_utc_second()))
   }
-  tu_s <- cal_time_civil$second(1L, tz = "UTC")
-  chronon_cardinality(tu_s, from) <= 86400
+  i <- floor_ulp(x)
+  f <- x - i
+  s <- tz_bucket_start(chronon, i)
+  frac <- (f != 0) %in% TRUE
+  if (any(frac)) {
+    end <- tz_bucket_start(chronon, i[frac] + 1)
+    s[frac] <- s[frac] + f[frac] * (end - s[frac])
+  }
+  s
+}
+
+method(chronon_from_utc, mt_tz_unit) <- function(chronon, x, discrete = FALSE) {
+  tu_s <- tu_utc_second()
+  if (!tz_has_offset(chronon)) {
+    return(chronon_convert_graph(x, tu_s, chronon, discrete))
+  }
+  offset <- tz_offset_at(x, chronon@tz)
+  label <- chronon_convert_graph(x + offset, tu_s, chronon, discrete = TRUE)
+  i <- label - trunc(offset / tz_label_length(chronon, label))
+  if (discrete) {
+    return(i)
+  }
+  bounds <- tz_bucket_start(chronon, c(i, i + 1))
+  start <- bounds[seq_along(i)]
+  end <- bounds[-seq_along(i)]
+  i + (x - start) / (end - start)
+}
+
+method(chronon_to_local, mt_tz_unit) <- function(chronon, x) {
+  if (!tz_has_offset(chronon)) {
+    return(as.double(x))
+  }
+  i <- floor_ulp(x)
+  tz_bucket_label(chronon, i) + (x - i)
+}
+
+method(chronon_from_local, mt_tz_unit) <- function(chronon, x, discrete = FALSE) {
+  if (!tz_has_offset(chronon)) {
+    return(if (discrete) floor_ulp(x) else as.double(x))
+  }
+  label <- floor_ulp(x)
+  unit <- tz_label_length(chronon, label)
+  local <- by_unique(label, function(label) {
+    chronon_convert_graph(label, chronon, tu_utc_second())
+  })
+  around <- tz_offsets_around(local, tz = chronon@tz)
+
+  # Away from a transition the bucket follows from the label and its offset.
+  # A label that falls in a gap keeps this bucket (numbered with the offset
+  # before the gap), which moves it forward by the size of the gap.
+  i <- label - trunc(around$before / unit)
+
+  # Near a transition, try the offset either side of it and keep the earliest
+  # bucket whose label matches.
+  near <- (around$before != around$after) %in% TRUE
+  if (any(near)) {
+    candidate <- function(offset) {
+      ic <- label[near] - trunc(offset[near] / unit[near])
+      ic[(tz_bucket_label(chronon, ic) != label[near]) %in% TRUE] <- NA
+      ic
+    }
+    found <- pmin(candidate(around$before), candidate(around$after), na.rm = TRUE)
+    i[near] <- ifelse(is.na(found), i[near], found)
+  }
+
+  if (discrete) i else i + (x - label)
 }
 
 #' Get timezone abbreviation
@@ -266,14 +306,14 @@ tz_abbreviation <- function(x, tz = tz_name(x)) {
 
   # TODO: Handle timezone changes within chronon using [before]/[after]
   if (any(tz_given)) {
-    # Evaluated at the chronon's naive (tz-blind) start (`tz = "UTC"`): a
+    # Evaluated at the chronon's context-blind start (`graph = TRUE`): a
     # sub-day chronon's index is UTC-based, so this is its true instant, while
     # a day (or coarser) index is a local label, giving one stable,
     # day-representative abbreviation.
     naive_utc <- as.double(chronon_convert(
       x[tz_given],
-      cal_time_civil$second(1L, tz = "UTC"),
-      tz = "UTC"
+      tu_utc_second(),
+      graph = TRUE
     ))
     tz_abbr[tz_given] <- get_tz_abbreviation(naive_utc, tz[tz_given])
   }

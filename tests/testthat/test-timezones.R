@@ -251,6 +251,30 @@ test_that("tz_offset() of a POSIXct states one offset per element", {
   expect_equal(tz_name(chronon_glb(offset)), "Australia/Melbourne")
 })
 
+test_that("tz_offset() of a mixtime matches each timezone's own offsets", {
+  mel <- as.POSIXct("2024-04-06", tz = "Australia/Melbourne") + 0:47 * 3600
+  ber <- as.POSIXct("2024-03-30", tz = "Europe/Berlin") + 0:47 * 3600
+  x <- c(mixtime(mel), mixtime(ber))[c(rbind(1:48, 49:96))]
+  offset <- tz_offset(x)
+
+  expect_true(is_mixtime(offset))
+  expect_true(all(time_is_duration(offset)))
+  # Each element keeps its own zone's offset, in its own chronon (hours here),
+  # including across each zone's daylight saving transition.
+  expect_equal(
+    as.numeric(offset),
+    c(rbind(
+      as.numeric(tz_offset(mixtime(mel))),
+      as.numeric(tz_offset(mixtime(ber)))
+    ))
+  )
+  expect_setequal(as.numeric(offset), c(1, 2, 10, 11))
+
+  # Long vectors stay fast: offsets are computed per timezone, not per element.
+  long <- mixtime(as.POSIXct("2024-01-01", tz = "Australia/Melbourne") + 0:9999 * 3600)
+  expect_lt(system.time(tz_offset(long))[["elapsed"]], 5)
+})
+
 test_that("tz_transitions() of a range with no transitions is an empty table", {
   transitions <- tz_transitions(
     as.POSIXct("2024-06-01", tz = "America/New_York"),
@@ -261,14 +285,11 @@ test_that("tz_transitions() of a range with no transitions is an empty table", {
   expect_named(transitions, c("time", "offset_before", "offset_after"))
 })
 
-test_that("tz_to_utc() discrete rounding keeps fractional-offset midnights on the right day", {
-  # Regression test for the discrete branch of tz_to_utc(): naively flooring
-  # `x - tzo` (rather than `floor(x) - trunc(tzo)`) lets the fractional parts
-  # of the local-shifted value and the re-derived offset interact and borrow
-  # across a day boundary, silently landing on the wrong calendar day. This
-  # only shows up for zones with a fractional-hour UTC offset, right near
-  # local midnight, so whole-hour zones (as used elsewhere in this file)
-  # don't exercise it.
+test_that("discrete days keep fractional-offset midnights on the right day", {
+  # Zones with a fractional-hour UTC offset, right near local midnight, where
+  # the fractional parts of the time and offset could borrow across a day
+  # boundary. Whole-hour zones (as used elsewhere in this file) don't exercise
+  # it.
 
   # Asia/Kolkata: UTC+5:30, just after local midnight
   kolkata <- as.POSIXct("2024-06-15 00:00:30", tz = "Asia/Kolkata")
@@ -287,11 +308,9 @@ test_that("tz_to_utc() discrete rounding keeps fractional-offset midnights on th
   expect_equal(format(date(new_york, tz = "America/New_York")), "2024-06-15 EDT")
 })
 
-test_that("tz_to_utc() discrete rounding resolves DST gap/overlap to the correct local day", {
-  # The offset used by tz_to_utc() is re-derived at the candidate raw instant
-  # (a second `tz_offset_impl()` pass), rather than reused from the forward
-  # shift, precisely so a value near a DST transition doesn't pick up the
-  # wrong side of it.
+test_that("discrete days resolve DST gap/overlap to the correct local day", {
+  # Times near a DST transition must not pick up the offset from the wrong
+  # side of it.
 
   # America/New_York spring-forward gap, 2024-03-10: 02:00 -> 03:00, and the
   # fall-back overlap, 2024-11-03: 02:00 occurs twice
@@ -331,13 +350,12 @@ test_that("tz_to_utc() discrete rounding resolves DST gap/overlap to the correct
   )
 })
 
-test_that("tz_to_utc() discrete rounding survives the shift/unshift ULP chain", {
-  # The shift/unshift pair in chronon_convert_impl() (tz_to_local() before
-  # the path conversion, tz_to_utc() after it) chains enough floating-point
-  # operations that a value exactly on a `to`-boundary can land a few ULPs
-  # below it. A bare floor() in the discrete branch then drops a whole unit -
-  # this hit Europe/London specifically (seq() starting one second before
-  # `from`), fixed with a small ULP-relative nudge before flooring.
+test_that("discrete rounding survives floating-point error at unit boundaries", {
+  # A conversion chains enough floating-point operations that a value exactly
+  # on a `to`-boundary can land a few ULPs below it. A bare floor() then drops
+  # a whole unit - this hit Europe/London specifically (seq() starting one
+  # second before `from`), fixed with a small ULP-relative nudge before
+  # flooring.
   w <- cal_isoweek$week(1L)
   zones <- c(
     "UTC",
@@ -364,6 +382,39 @@ test_that("tz_to_utc() discrete rounding survives the shift/unshift ULP chain", 
   }
 })
 
+test_that("mixtime()/datetime() preserve both instants across a DST fall-back overlap", {
+  # Melbourne falls back 03:00 AEDT -> 02:00 AEST on 2024-04-07, so local
+  # wall-clock 02:00-02:45 occurs twice. Building `before`/`after` from
+  # unambiguous absolute-time arithmetic (rather than an ambiguous literal
+  # string, which has its own separate resolution question) means they are
+  # genuinely distinct instants that happen to share a local reading.
+  #
+  # Regression test: converting through the local wall-clock reading maps
+  # both instants to the same ambiguous reading, after which nothing can
+  # recover which instant `before` came from.
+  before <- as.POSIXct(
+    as.POSIXct("2024-04-06 15:30:00", tz = "UTC"),
+    tz = "Australia/Melbourne"
+  )
+  after <- as.POSIXct(
+    as.POSIXct("2024-04-06 16:30:00", tz = "UTC"),
+    tz = "Australia/Melbourne"
+  )
+  expect_false(identical(as.numeric(before), as.numeric(after)))
+
+  expect_equal(format(as.POSIXct(mixtime(before)), tz = "UTC"), "2024-04-06 15:30:00")
+  expect_equal(format(as.POSIXct(mixtime(after)), tz = "UTC"), "2024-04-06 16:30:00")
+  expect_equal(format(as.POSIXct(datetime(before)), tz = "UTC"), "2024-04-06 15:30:00")
+  expect_equal(format(as.POSIXct(datetime(after)), tz = "UTC"), "2024-04-06 16:30:00")
+
+  # A 15-minute series spanning the whole transition round-trips exactly,
+  # point for point, on both sides of it.
+  series <- as.POSIXct("2024-04-06 21:00:00", tz = "Australia/Melbourne") +
+    (0:36) * 900
+  roundtrip <- format(as.POSIXct(datetime(series)), tz = "UTC")
+  expect_equal(roundtrip, format(series, tz = "UTC"))
+})
+
 test_that("comparing a zoned time against a naive one uses wall-clock time", {
   # Regression test: comparison used to convert the zoned operand to its true
   # (UTC) absolute instant while leaving the naive operand untouched, mixing
@@ -386,4 +437,221 @@ test_that("comparing a zoned time against a naive one uses wall-clock time", {
   melb <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "Australia/Melbourne"))
   utc <- datetime(as.POSIXct("2015-01-01 00:00:00", tz = "UTC"))
   expect_true(melb < utc)
+})
+
+# --- Zoned chronons across a DST transition -------------------------------
+#
+# A zoned chronon's value is the index of its local bucket (e.g. a local day)
+# plus the elapsed fraction of that bucket, so conversions between zoned
+# chronons keep distinct instants distinct and reflect a 23 or 25 hour day.
+
+test_that("chronon_convert() to a coarser tz-aware chronon preserves both instants across a DST fall-back overlap", {
+  # `before`/`after` are exactly 1 real hour apart (see "mixtime()/datetime()
+  # preserve both instants..." above for how they're constructed
+  # unambiguously), so converting to an hour-granularity chronon in the same
+  # zone must keep them distinguishable, and converting back to seconds must
+  # recover each exactly.
+  before <- mixtime(as.POSIXct(
+    as.POSIXct("2024-04-06 15:30:00", tz = "UTC"),
+    tz = "Australia/Melbourne"
+  ))
+  after <- mixtime(as.POSIXct(
+    as.POSIXct("2024-04-06 16:30:00", tz = "UTC"),
+    tz = "Australia/Melbourne"
+  ))
+
+  hr <- cal_gregorian$hour(1L, tz = "Australia/Melbourne")
+  sec <- cal_gregorian$second(1L, tz = "Australia/Melbourne")
+
+  before_hr <- chronon_convert(before, hr, discrete = FALSE)
+  after_hr <- chronon_convert(after, hr, discrete = FALSE)
+
+  # Exactly 1 hour apart in real time, so they must stay distinguishable as
+  # hour-granule values too - not both collapse to the same fractional hour.
+  expect_false(isTRUE(all.equal(as.numeric(before_hr), as.numeric(after_hr))))
+
+  # And the conversion must round-trip: going back to seconds recovers the
+  # original UTC instants exactly, for both.
+  before_rt <- as.POSIXct(
+    chronon_convert(
+      linear_time(before_hr, chronon = hr, discrete = FALSE),
+      sec,
+      discrete = TRUE
+    ),
+    origin = "1970-01-01",
+    tz = "UTC"
+  )
+  after_rt <- as.POSIXct(
+    chronon_convert(
+      linear_time(after_hr, chronon = hr, discrete = FALSE),
+      sec,
+      discrete = TRUE
+    ),
+    origin = "1970-01-01",
+    tz = "UTC"
+  )
+  expect_equal(format(before_rt, tz = "UTC"), "2024-04-06 15:30:00")
+  expect_equal(format(after_rt, tz = "UTC"), "2024-04-06 16:30:00")
+})
+
+test_that("chronon_convert() to a continuous day position reflects true elapsed hours across a DST transition", {
+  # Melbourne's fall-back day 2024-04-07 has 25 real hours (03:00 AEDT ->
+  # 02:00 AEST repeats the 02:xx hour), so a continuous "day" position built
+  # from hourly ticks should advance by 1/25 per hour on this day, not the
+  # nominal 1/24. It must also land on the integer boundary at the following
+  # local midnight, agreeing with the discrete day.
+  day_start <- as.POSIXct("2024-04-06 13:00:00", tz = "UTC") # 2024-04-07 00:00 AEDT
+  hourly <- as.POSIXct(day_start + (0:25) * 3600, tz = "Australia/Melbourne") # 26 ticks over the 25-hour day
+
+  # From both the detected (hourly) chronon and an explicit second chronon
+  for (x in list(
+    mixtime(hourly),
+    mixtime(hourly, cal_gregorian$second(1L, tz = "Australia/Melbourne"))
+  )) {
+    day_pos <- as.numeric(chronon_convert(
+      x,
+      cal_gregorian$day(1L, tz = "Australia/Melbourne"),
+      discrete = FALSE
+    ))
+
+    # Every real hour is a distinct point in continuous day-space, including
+    # the two local 02:00 readings either side of the transition.
+    expect_length(unique(day_pos), 26)
+
+    # Each step is 1/25 of the (25-real-hour) day, uniformly - not 1/24 with a
+    # doubled-up jump where the two local 02:00 readings collapse.
+    expect_equal(diff(day_pos), rep(1 / 25, 25), tolerance = 1e-9)
+
+    # A full local day is exactly 1.0 day-units later, landing exactly back on
+    # an integer boundary that agrees with the (already-correct) discrete day
+    # index for the same instant.
+    expect_equal(day_pos[26] - day_pos[1], 1, tolerance = 1e-9)
+    expect_equal(day_pos[26] %% 1, 0, tolerance = 1e-9)
+    expect_equal(
+      floor(day_pos[26]),
+      as.numeric(date(hourly[26], tz = "Australia/Melbourne"))
+    )
+  }
+})
+
+test_that("tz-aware day mixtime round trips to local midnight via as.POSIXct()", {
+  # Regression: as.POSIXct() converted to a UTC second chronon, which skipped
+  # all tz handling and read the local day label as a UTC day
+  # (2025-01-01 11:00 AEDT rather than 00:00). Includes both Melbourne DST
+  # transition dates (fall-back 2025-04-06, spring-forward 2025-10-05).
+  tz <- "Australia/Melbourne"
+  x <- as.POSIXct(
+    c("2025-01-01", "2025-01-02", "2025-04-06", "2025-10-05"),
+    tz = tz
+  )
+  for (discrete in c(TRUE, FALSE)) {
+    m <- mixtime(x, cal_gregorian$day(1L, tz = tz), discrete = discrete)
+    expect_equal(as.POSIXct(m), x, ignore_attr = TRUE)
+    expect_equal(format(as.POSIXct(m), tz = tz), format(x))
+  }
+
+  # Sub-day instants on transition days floor to that day's local midnight
+  y <- as.POSIXct(
+    c("2025-04-06 12:34:56", "2025-04-06 02:30:00", "2025-10-05 03:30:00"),
+    tz = tz
+  )
+  m <- mixtime(y, cal_gregorian$day(1L, tz = tz))
+  expect_equal(
+    format(as.POSIXct(m), "%Y-%m-%d %H:%M:%S", tz = tz),
+    c("2025-04-06 00:00:00", "2025-04-06 00:00:00", "2025-10-05 00:00:00")
+  )
+})
+
+test_that("tz-aware days cast to POSIXct at local midnight", {
+  tz <- "Australia/Melbourne"
+  d <- as.POSIXct(c("2025-01-01", "2025-01-02", "2025-04-06", "2025-10-05"), tz = tz)
+  day <- cal_gregorian$day(1L, tz = tz)
+  expect_equal(as.POSIXct(mixtime(d, day)), d)
+  expect_equal(as.POSIXct(mixtime(d, day, discrete = FALSE)), d)
+  # Sub-day times floor to local midnight
+  expect_equal(as.POSIXct(mixtime(d + 3600 * c(5, 23.5, 20, 12), day)), d)
+  # Day labels on transition days are unchanged (naive-start abbreviation)
+  expect_equal(
+    tz_abbreviation(mixtime(as.POSIXct(c("2024-04-07", "2024-10-06"), tz = tz), day)),
+    c("AEST", "AEDT")
+  )
+  expect_equal(tz_abbreviation(mixtime(as.POSIXct("2024-04-07 00:00:00", tz = tz))), "AEDT")
+})
+
+test_that("zoned months, weeks and years start at local midnight", {
+  tz <- "Australia/Melbourne"
+  for (chronon in list(
+    cal_gregorian$month(1L, tz = tz),
+    cal_isoweek$week(1L, tz = tz),
+    cal_gregorian$year(1L, tz = tz)
+  )) {
+    # 2025-04-01 is AEDT midnight, which is on the previous day in UTC
+    x <- as.POSIXct(c("2025-01-01", "2025-04-01", "2025-03-31"), tz = tz)
+    start <- as.POSIXct(time_floor(mixtime(x), chronon), tz = tz)
+    for (discrete in c(TRUE, FALSE)) {
+      m <- mixtime(x, chronon, discrete = discrete)
+      expect_equal(as.POSIXct(mixtime(m, chronon, discrete = TRUE)), start, ignore_attr = TRUE)
+      expect_equal(format(start, "%H:%M:%S"), rep("00:00:00", 3))
+    }
+    # A continuous position floors to the discrete one
+    y <- as.POSIXct("2025-01-01", tz = tz) + 86400 * 0:400 + 3600 * 13
+    expect_equal(
+      floor(as.numeric(mixtime(y, chronon, discrete = FALSE))),
+      as.numeric(mixtime(y, chronon))
+    )
+  }
+})
+
+test_that("hourly data keeps both hours at the end of daylight saving", {
+  tz <- "Australia/Melbourne"
+  h <- as.POSIXct("2025-04-05 14:00:00", tz = "UTC") + 3600 * 0:4
+  attr(h, "tzone") <- tz
+  m <- mixtime(h)
+  expect_length(unique(as.numeric(m)), 5)
+  expect_equal(as.numeric(as.POSIXct(m)), as.numeric(h))
+  expect_equal(
+    format(m),
+    paste("2025-04-06", c("01h AEDT", "02h AEDT", "02h AEST", "03h AEST", "04h AEST"))
+  )
+})
+
+test_that("the fraction through a zoned chronon is in its own time zone", {
+  # Brisbane has no daylight saving: 2026-08-19 02:24 AEST is 30% through
+  # ISO week 34 (2 days 2.4 hours of 7 days), but only 24% through that week
+  # in UTC, which starts 10 hours later.
+  x <- as.POSIXct("2026-08-19 02:24", tz = "Australia/Brisbane")
+  fmt <- "{lin(year)} W{cyc(week, year)} {frac(.time)}"
+  bne <- mixtime(x, cal_isoweek$week(1L, tz = "Australia/Brisbane"), discrete = FALSE)
+  utc <- mixtime(x, cal_isoweek$week(1L, tz = "UTC"), discrete = FALSE)
+  expect_equal(format(bne, fmt), "2026 W34 30.0%")
+  expect_equal(format(utc, fmt), "2026 W34 24.0%")
+})
+
+test_that("calendar arithmetic on zoned times keeps the local clock time", {
+  tz <- "Australia/Melbourne"
+  x <- mixtime(as.POSIXct("2025-01-31 10:00", tz = tz))
+  expect_equal(
+    as.POSIXct(x + duration(1L, cal_gregorian$month(1L))),
+    as.POSIXct("2025-02-28 10:00", tz = tz),
+    ignore_attr = TRUE
+  )
+  # A local time that occurs twice resolves to its first occurrence
+  x <- mixtime(as.POSIXct("2025-04-05 02:30", tz = tz))
+  expect_equal(
+    format(x + duration(1L, cal_gregorian$day(1L))),
+    "2025-04-06 02:30:00 AEDT"
+  )
+})
+
+test_that("solar time converts to zoned civil time through absolute time", {
+  tz <- "Australia/Melbourne"
+  x <- as.numeric(as.POSIXct("2025-01-01 00:00", tz = tz))
+  utc <- cal_time_civil$second(1L, tz = "UTC")
+  solar <- cal_time_solar$second(1L, lat = -37.8, lon = 144.96)
+  day <- cal_gregorian$day(1L, tz = tz)
+  at_solar <- chronon_convert_impl(x, utc, solar, discrete = FALSE)
+  expect_equal(
+    chronon_convert_impl(at_solar, solar, day, discrete = FALSE),
+    chronon_convert_impl(x, utc, day, discrete = FALSE)
+  )
 })
