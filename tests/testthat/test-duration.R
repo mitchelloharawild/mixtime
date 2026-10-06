@@ -217,6 +217,21 @@ test_that("irregular duration conversions error instead of assuming a position",
   )
 })
 
+test_that("discrete duration conversion counts whole granules towards zero", {
+  expect_equal(as.numeric(duration(days(-4L), cal_isoweek$week(1L), discrete = TRUE)), 0)
+  expect_equal(as.numeric(duration(days(-10L), cal_isoweek$week(1L), discrete = TRUE)), -1)
+  expect_equal(as.numeric(duration(days(10L), cal_isoweek$week(1L), discrete = TRUE)), 1)
+  expect_equal(
+    as.numeric(vctrs::vec_cast(days(-4L)@x[[1L]], weeks(1L)@x[[1L]])),
+    0
+  )
+  # Floating-point error doesn't lose a whole granule
+  expect_equal(
+    as.numeric(duration(duration(-0.3, cal_gregorian$hour(1L)), cal_gregorian$second(1L), discrete = TRUE)),
+    -1080
+  )
+})
+
 test_that("zero-length durations can be built and converted", {
   # The element-wise duration predicate is `NA` for a zero-length input, so
   # zero-length magnitudes must be routed by class rather than by value.

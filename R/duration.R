@@ -11,9 +11,9 @@
 #'  `day(1L)`. Chronons from a specific calendar can also be used (e.g.
 #'  `cal_gregorian$month(1L)`). Defaults to the time chronon of the input
 #'  `data` (`time_chronon(data)`).
-#' @param discrete Logical. If `TRUE` (default), returns integer durations 
-#'   always rounding down (discrete time model). If `FALSE`, returns fractional 
-#'   durations (continuous time model).
+#' @param discrete Logical. If `TRUE` (default), returns integer durations
+#'   counting whole granules, rounding towards zero (discrete time model). If
+#'   `FALSE`, returns fractional durations (continuous time model).
 #' @param calendar Calendar system used to evaluate `chronon`. Defaults to
 #'   `time_calendar(data)` for existing time objects. Common options include
 #'   [cal_gregorian] and [cal_isoweek].
@@ -82,7 +82,9 @@ duration <- function(
       }
     )
     x <- as.numeric(raw) * cardinality
-    if (discrete) x <- as.integer(floor(x))
+    # Discrete durations count whole granules, so a partial granule of either
+    # sign is dropped (-4 days is 0 weeks, not -1).
+    if (discrete) x <- as.integer(trunc(round_ulp(x)))
     return(new_mixtime(mt_duration(x, chronon = chronon)))
   }
 

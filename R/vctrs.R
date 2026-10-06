@@ -134,7 +134,8 @@ mt_cast_time_time <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (S7_inherits(to, mt_duration)) {
     discrete <- is.integer(vec_data(to))
     x <- as.numeric(x) * chronon_cardinality(attr(to, "chronon"), attr(x, "chronon"))
-    if (discrete) x <- as.integer(x)
+    # Whole granules only, as in `duration()`
+    if (discrete) x <- as.integer(trunc(round_ulp(x)))
     attributes(x) <- attributes(to)
     return(x)
   }

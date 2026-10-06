@@ -22,8 +22,8 @@ in the context of \code{calendar}. Use unquoted expressions like \code{month(1L)
 \code{data} (\code{time_chronon(data)}).}
 
 \item{discrete}{Logical. If \code{TRUE} (default), returns integer durations
-always rounding down (discrete time model). If \code{FALSE}, returns fractional
-durations (continuous time model).}
+counting whole granules, rounding towards zero (discrete time model). If
+\code{FALSE}, returns fractional durations (continuous time model).}
 
 \item{calendar}{Calendar system used to evaluate \code{chronon}. Defaults to
 \code{time_calendar(data)} for existing time objects. Common options include
