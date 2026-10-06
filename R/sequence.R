@@ -168,7 +168,13 @@
     by <- granule_inherit_props(by, chronon)
     # A negative `by` steps backwards by whole units of `by`
     step <- if (by@n < 0) -1L else 1L
-    by@n <- abs(by@n)
+    # Shift by multiples of `by`'s single unit, as `+` does (`months(18L)` is
+    # 18 months, not one 18-month window). Calendar shifts add to the unit's
+    # count after decomposing the anchor once, which only matches repeated
+    # shifts of a multi-unit `by` window when its size divides the calendar
+    # cycle (e.g. 18 months drift against years).
+    by_n <- abs(by@n)
+    by@n <- 1L
 
     missing_on_invalid <- is.character(on_invalid) && length(on_invalid) > 1L
     on_invalid <- match.arg(on_invalid)
@@ -191,14 +197,14 @@
     } else if (missing_to) {
       step * (seq_len(length.out) - 1L)
     } else if (chronon_shift_is_exact(local_chronon, by)) {
-      # Whole `by` units of real time from `from` to `to`
+      # Whole `by` steps of real time from `from` to `to`
       d <- chronon_to_utc(chronon, as.numeric(to)) -
         chronon_to_utc(chronon, anchor)
-      d <- d / chronon_fixed_seconds(by)
+      d <- d / (chronon_fixed_seconds(by) * by_n)
       seq.int(0L, step * floor_ulp(step * d), by = step)
     } else {
-      # Whole `by` units of the local calendar from `from` to `to`, found by
-      # shifting `to` left by `from`'s offset into its `by` unit.
+      # Whole units of the local calendar from `from` to `to`, found by
+      # shifting `to` left by `from`'s offset into its unit.
       from_divmod <- chronon_divmod(chronon, by, to_local(anchor))
       to_divmod <- chronon_divmod(
         chronon,
@@ -207,14 +213,16 @@
       )
       # Stepping backwards, round up to stay at or after `to`
       to_div <- to_divmod$div + (step < 0 & to_divmod$mod != 0)
-      seq.int(0L, to_div - from_divmod$div, by = step)
+      # Whole `by` steps within those units
+      n_steps <- floor(step * (to_div - from_divmod$div) / by_n)
+      seq.int(0L, step * n_steps, by = step)
     }
 
     shifted <- chronon_shift(
       chronon,
       anchor,
       by,
-      k,
+      k * by_n,
       on_invalid,
       discrete = is.integer(ptype)
     )

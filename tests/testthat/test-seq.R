@@ -564,3 +564,55 @@ test_that("seq.mixtime shifts multi-unit chronons by calendar units", {
     ))
   )
 })
+
+test_that("seq.mixtime steps by months that don't divide a year", {
+  from <- date("2020-01-31")
+
+  # Chaining `+` (no step is clamped from a month-end in Jan/Jul)
+  chained <- format(from)
+  x <- from
+  for (i in 1:3) {
+    x <- x + months(18L)
+    chained <- c(chained, format(x))
+  }
+  result <- seq(from, by = months(18L), length.out = 4L)
+  expect_equal(format(result), chained)
+  expect_equal(
+    format(result),
+    c("2020-01-31", "2021-07-31", "2023-01-31", "2024-07-31")
+  )
+
+  # Each time point is a single shift of the anchor, like `+`
+  for (by in list(months(5L), months(7L), months(-7L), months(13L))) {
+    result <- seq(from, by = by, length.out = 8L, on_invalid = "clamp")
+    expect_equal(format(result), format(from + by * (0:7)))
+  }
+
+  # Granule `by` and `to`
+  expect_equal(
+    format(seq(from, date("2024-07-31"), by = cal_gregorian$month(18L))),
+    format(result <- from + months(18L) * (0:3))
+  )
+  expect_equal(
+    format(seq(from, date("2024-07-30"), by = months(18L))),
+    format(result[1:3])
+  )
+  expect_equal(
+    format(seq(date("2024-07-31"), from, by = months(-18L))),
+    format(rev(result))
+  )
+  expect_equal(
+    format(seq(date("2024-07-31"), date("2020-02-01"), by = months(-18L))),
+    format(rev(result)[1:3])
+  )
+  expect_equal(
+    format(seq(to = date("2024-07-31"), by = months(18L), length.out = 4L)),
+    format(result)
+  )
+
+  # Overflowing past month-end
+  expect_equal(
+    format(seq(from, by = months(5L), length.out = 3L, on_invalid = "overflow")),
+    c("2020-01-31", "2020-07-01", "2020-12-01")
+  )
+})
