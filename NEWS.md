@@ -57,6 +57,10 @@
 * Converting solar time to time-zone-aware civil time now accounts for the
   time zone, and converting solar time between two locations now accounts for
   the change of location.
+* `tz_abbreviation()` (and so `format()`) now labels a time-zone-aware time by
+  the zone in effect when it starts, so a day on which daylight saving ends
+  reads as daylight time (e.g. `"2015-04-05 AEDT"` in Melbourne, previously
+  `"AEST"`).
 
 # mixtime 0.3.0
 

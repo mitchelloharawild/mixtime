@@ -306,16 +306,10 @@ tz_abbreviation <- function(x, tz = tz_name(x)) {
 
   # TODO: Handle timezone changes within chronon using [before]/[after]
   if (any(tz_given)) {
-    # Evaluated at the chronon's context-blind start (`graph = TRUE`): a
-    # sub-day chronon's index is UTC-based, so this is its true instant, while
-    # a day (or coarser) index is a local label, giving one stable,
-    # day-representative abbreviation.
-    naive_utc <- as.double(chronon_convert(
-      x[tz_given],
-      tu_utc_second(),
-      graph = TRUE
-    ))
-    tz_abbr[tz_given] <- get_tz_abbreviation(naive_utc, tz[tz_given])
+    # Evaluated at the instant each time starts (e.g. local midnight for a
+    # day), or at the time itself for a continuous time model.
+    start <- as.double(chronon_convert(x[tz_given], tu_utc_second()))
+    tz_abbr[tz_given] <- get_tz_abbreviation(start, tz[tz_given])
   }
 
   tz_abbr

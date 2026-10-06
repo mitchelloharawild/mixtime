@@ -6,8 +6,6 @@
 #' that `x` falls into is returned as an integer. If `FALSE`, a fractional
 #' number of target chronons is returned (analagous to time using a continuous
 #' time model).
-#' @param graph If `TRUE`, convert the stored values without regard to the
-#' chronons' context (e.g. time zone).
 #' @param ... Additional arguments for methods.
 #'
 #' @return A numeric or integer representing the time since Unix epoch in terms of the target
@@ -102,8 +100,8 @@ floor_ulp <- function(x) {
   floor(x + 8 * .Machine$double.eps * pmax(abs(x), 1))
 }
 
-method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, graph = FALSE, ...) {
-  chronon_convert_dispatch(vec_data(x), attr(x, "chronon"), to, discrete, graph)
+method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, ...) {
+  chronon_convert_impl(vec_data(x), attr(x, "chronon"), to, discrete)
 }
 
 method(chronon_convert, class_mixtime) <- vecvec::vecvec_apply_fn(
@@ -115,18 +113,7 @@ method(chronon_convert, S7::class_any) <- function(
   x,
   to,
   discrete = FALSE,
-  graph = FALSE,
   ...
 ) {
-  chronon_convert_dispatch(as.numeric(x), chronon_glb(x), to, discrete, graph)
-}
-
-# `graph = TRUE` converts the stored values without regard to context (see
-# chronon_convert_graph()).
-chronon_convert_dispatch <- function(x, from, to, discrete, graph) {
-  if (!graph) {
-    return(chronon_convert_impl(x, from, to, discrete))
-  }
-  x <- chronon_convert_graph(as.double(x), from, granule_inherit_props(to, from), discrete)
-  if (discrete) as.integer(x) else x
+  chronon_convert_impl(as.numeric(x), chronon_glb(x), to, discrete)
 }

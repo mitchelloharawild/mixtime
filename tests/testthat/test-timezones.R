@@ -339,14 +339,15 @@ test_that("discrete days resolve DST gap/overlap to the correct local day", {
     )
   )
 
-  # Australia/Melbourne fall-back day itself (2015-04-05)
+  # Australia/Melbourne fall-back day itself (2015-04-05), labelled by the
+  # zone in effect when it starts
   melbourne <- as.POSIXct(
     c("2015-04-04 23:59:58", "2015-04-05 23:59:58", "2015-04-06 00:00:02"),
     tz = "Australia/Melbourne"
   )
   expect_equal(
     format(date(melbourne, tz = "Australia/Melbourne")),
-    c("2015-04-04 AEDT", "2015-04-05 AEST", "2015-04-06 AEST")
+    c("2015-04-04 AEDT", "2015-04-05 AEDT", "2015-04-06 AEST")
   )
 })
 
@@ -570,10 +571,10 @@ test_that("tz-aware days cast to POSIXct at local midnight", {
   expect_equal(as.POSIXct(mixtime(d, day, discrete = FALSE)), d)
   # Sub-day times floor to local midnight
   expect_equal(as.POSIXct(mixtime(d + 3600 * c(5, 23.5, 20, 12), day)), d)
-  # Day labels on transition days are unchanged (naive-start abbreviation)
+  # Days on transition days are labelled by the zone in effect at their start
   expect_equal(
     tz_abbreviation(mixtime(as.POSIXct(c("2024-04-07", "2024-10-06"), tz = tz), day)),
-    c("AEST", "AEDT")
+    c("AEDT", "AEST")
   )
   expect_equal(tz_abbreviation(mixtime(as.POSIXct("2024-04-07 00:00:00", tz = tz))), "AEDT")
 })
