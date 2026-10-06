@@ -709,3 +709,11 @@ test_that("time zone lookups match one-at-a-time lookups in any order", {
     mapply(function(s, z) get_tz_abbreviation(s, z), x, zones, USE.NAMES = FALSE)
   )
 })
+
+test_that("fractional times before 1970 use the offset of the second they fall in", {
+  # New York's 1960 transition: half a second before it is still EST
+  tz <- "America/New_York"
+  t0 <- as.numeric(as.POSIXct("1960-04-24 03:00:00", tz = tz))
+  expect_equal(get_tz_offset(c(t0 - 1, t0 - 0.5, t0), tz), c(-18000, -18000, -14400))
+  expect_equal(get_tz_abbreviation(t0 - 0.5, tz), "EST")
+})

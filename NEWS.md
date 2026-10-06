@@ -69,6 +69,9 @@
   had an empty time zone, which `mixtime()` rejected. `mixtime()` now also
   reads a `POSIXct` with an empty time zone as the local time zone, like base
   R does.
+* A fractional time before 1970 within a second of a time zone transition
+  (e.g. half a second before New York's 1960 change to daylight time) used the
+  offset from after the transition.
 
 # mixtime 0.3.0
 
