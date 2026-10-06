@@ -1,43 +1,76 @@
 # --- shared helpers ---------------------------------------------------------------
 
-# Shift a time point by a duration
+# Shift stored values `x` of `chronon` by `n` units of `unit`, used by both
+# time point arithmetic and seq(). `x` and `n` are recycled.
 #
 # Shifts involving time and duration chronons with irregular cardinalities are
 # computed with calendar-field arithmetic, clamping any components that are
 # invalid (e.g. 2026-01-31 + months(1) -> 2026-02-28, not 2026-03-03). See
 # chronon_recompose() for the `on_invalid` resolutions.
-duration_shift <- function(time, dur, on_invalid = "clamp") {
-  time_data <- S7_data(time)
-  time_chronon <- time@chronon
-  dur_chronon <- granule_inherit_props(dur@chronon, time_chronon)
+#
+# Returns the shifted stored values, and which of them needed resolving.
+chronon_shift <- function(
+  chronon,
+  x,
+  unit,
+  n,
+  on_invalid = "clamp",
+  discrete = FALSE
+) {
+  # Shift in `unit`'s context (e.g. by days of another time zone).
+  ctx_chronon <- chronon_in_context(chronon, unit)
+  x <- chronon_convert_impl(x, chronon, ctx_chronon, discrete = FALSE)
+  invalid <- rep_len(FALSE, max(length(x), length(n)))
 
   # Calendar arithmetic keeps the local wall-clock reading ("same clock time,
   # N units later"), so it works on local values.
-  local <- chronon_to_local(time_chronon, as.numeric(time_data))
+  local <- chronon_to_local(ctx_chronon, x)
 
-  if (chronon_needs_clamping(time_chronon, dur_chronon)) {
-    path <- chronon_longest_path(time_chronon, dur_chronon)
+  if (chronon_needs_clamping(ctx_chronon, unit)) {
+    path <- chronon_longest_path(ctx_chronon, unit)
     decomposed <- chronon_decompose(local, path)
-    div <- decomposed$div[[length(path)]] + S7_data(dur)
+    div <- decomposed$div[[length(path)]] + n
     recomposed <- chronon_recompose(
       div,
       decomposed$mod,
       path,
       on_invalid,
-      discrete = is.integer(time_data)
+      discrete = discrete
     )
-    if (on_invalid == "reject" && any(recomposed$invalid)) {
-      warn_invalid_reject(recomposed$invalid)
-    }
     local <- as.numeric(recomposed$value)
+    invalid <- recomposed$invalid
   } else {
-    at <- chronon_convert_graph(local, time_chronon, dur_chronon)
-    local <- chronon_convert_graph(at + S7_data(dur), dur_chronon, time_chronon)
+    at <- chronon_convert_graph(local, ctx_chronon, unit)
+    local <- chronon_convert_graph(at + n, unit, ctx_chronon)
+  }
+  x <- chronon_from_local(ctx_chronon, local)
+
+  list(
+    value = chronon_convert_impl(x, ctx_chronon, chronon, discrete = FALSE),
+    invalid = invalid
+  )
+}
+
+# Shift a time point by a duration
+duration_shift <- function(time, dur, on_invalid = "clamp") {
+  time_data <- S7_data(time)
+  time_chronon <- time@chronon
+  # The time point's context applies, rather than one given to the duration.
+  dur_chronon <- chronon_in_context(dur@chronon, time_chronon)
+
+  shifted <- chronon_shift(
+    time_chronon,
+    as.numeric(time_data),
+    dur_chronon,
+    S7_data(dur),
+    on_invalid,
+    discrete = is.integer(time_data)
+  )
+  if (on_invalid == "reject" && any(shifted$invalid)) {
+    warn_invalid_reject(shifted$invalid)
   }
 
-  new_time_data <- chronon_from_local(time_chronon, local)
-
-  shift <- as.numeric(new_time_data) - time_data
+  shift <- shifted$value - time_data
   # Preserve integer type for discrete time points
   if (is.integer(time_data)) {
     shift <- as.integer(round(shift))
