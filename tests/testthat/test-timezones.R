@@ -275,6 +275,24 @@ test_that("tz_offset() of a mixtime matches each timezone's own offsets", {
   expect_lt(system.time(tz_offset(long))[["elapsed"]], 5)
 })
 
+test_that("tz_offset() of a mixtime keeps one granule per chronon", {
+  mel <- "Australia/Melbourne"
+  hours <- mixtime(
+    as.POSIXct("2023-04-01 20:00", tz = mel) + 0:1 * 3600,
+    chronon = cal_gregorian$hour(1L, tz = mel)
+  )
+  days <- mixtime(
+    as.POSIXct("2023-04-03", tz = mel) + 0:1 * 86400,
+    chronon = cal_gregorian$day(1L, tz = mel)
+  )
+  offset <- tz_offset(c(hours, days))
+
+  # Each granule's offsets sit directly in `@x`, not nested in another mixtime.
+  expect_length(offset@x, 2L)
+  expect_false(any(vapply(offset@x, is_mixtime, logical(1L))))
+  expect_equal(as.numeric(offset), c(11, 11, 10 / 24, 10 / 24))
+})
+
 test_that("tz_transitions() of a range with no transitions is an empty table", {
   transitions <- tz_transitions(
     as.POSIXct("2024-06-01", tz = "America/New_York"),

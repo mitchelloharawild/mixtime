@@ -62,8 +62,10 @@ method(tz_offset, mt_time) <- function(
   tz = tz_name(attr(x, "chronon")),
   ...
 ) {
+  # A bare `mt_duration`, not a `mixtime`: the `mixtime` method combines these
+  # granule by granule, and wrapping each one would nest a mixtime inside it.
   chronon <- attr(x, "chronon")
-  duration(tz_offset_impl(as.numeric(x), chronon, tz), chronon = chronon)
+  mt_duration(tz_offset_impl(as.numeric(x), chronon, tz), chronon = chronon)
 }
 
 tz_offset_impl <- function(x, chronon, tz = tz_name(chronon)) {
