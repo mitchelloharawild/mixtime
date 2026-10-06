@@ -229,10 +229,9 @@
     res <- shifted$value
 
     if (missing_on_invalid && any(shifted$invalid & !shifted$skipped)) {
-      seq_part <- chronon_divmod(chronon, by, to_local(anchor))$mod
       cli::cli_warn(c(
-        "The cycle offset ({time_granule_label(chronon, seq_part + 1L)}) has produced time points that overflow the {time_unit_plural(by, 1L)} cycle.",
-        "!" = "Clamping to the last valid time points in the cycle, {.code on_invalid = \"clamp\"} (the default).",
+        "Some time points in the sequence fall past the end of a shorter {time_unit_plural(by, 1L)}.",
+        "!" = "Clamping them to the last valid time point in that {time_unit_plural(by, 1L)}, {.code on_invalid = \"clamp\"} (the default).",
         "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
       ))
     }

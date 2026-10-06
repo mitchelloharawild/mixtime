@@ -367,14 +367,14 @@ test_that("seq.mixtime messages describe the granules involved", {
   )
   expect_warning(
     seq(date("2020-01-31"), by = months(1L), length.out = 3L),
-    "31 days"
+    "past the end of a shorter month"
   )
 })
 
 test_that("seq.mixtime with negative-magnitude `by` clamps and steps backwards", {
   expect_warning(
     result <- seq(date("2020-03-31"), by = "-1 month", length.out = 3),
-    "31 days"
+    "past the end of a shorter month"
   )
   expect_equal(format(result), c("2020-03-31", "2020-02-29", "2020-01-31"))
 
