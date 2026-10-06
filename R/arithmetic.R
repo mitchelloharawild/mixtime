@@ -20,6 +20,13 @@ chronon_shift <- function(
   on_invalid = "clamp",
   discrete = FALSE
 ) {
+  # A duration has no position, so a multi-unit `unit` (e.g. 18 months) is a
+  # count of its single unit, not a window counted from the epoch.
+  if (unit@n != 1L) {
+    n <- n * unit@n
+    unit@n <- 1L
+  }
+
   # Calendar shifts decompose through the chronon's class (e.g. minute -> hour
   # -> day -> year), which is only defined for single-unit chronons. A
   # multi-unit chronon (e.g. 30 minutes) is shifted as its single unit.

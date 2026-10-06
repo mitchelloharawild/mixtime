@@ -581,3 +581,17 @@ test_that("time_shift() resolves local times skipped by daylight saving with on_
     "2011-12-31 10:00:00 +14"
   )
 })
+
+test_that("multi-unit durations shift by their single unit, not epoch windows", {
+  x <- date("2020-01-31")
+  expect_equal(
+    format(x + duration(1L, cal_gregorian$month(18L))),
+    format(x + months(18L))
+  )
+  expect_equal(format(x + duration(1L, cal_gregorian$month(5L))), "2020-06-30")
+  expect_equal(format(date("2020-07-31") - duration(1L, cal_gregorian$month(5L))), "2020-02-29")
+  expect_equal(
+    format(time_shift(x, duration(1L, cal_gregorian$month(5L)), on_invalid = "overflow")),
+    "2020-07-01"
+  )
+})
