@@ -38,16 +38,21 @@
 
 \item{along.with}{Take the length from this argument (alternative to \code{length.out}).}
 
-\item{on_invalid}{How to handle time points that overflow the cycle when
-using a \code{by} argument with different time granule than the sequence chronon.
-Options are:
+\item{on_invalid}{How to handle time points that don't exist, either
+because they overflow the cycle when using a \code{by} argument with different
+time granule than the sequence chronon, or because they fall in the local
+time skipped when daylight saving starts. Options are:
 \itemize{
 \item \code{"clamp"} (default): Reduce the overflowing component to its last valid
-value, preserving finer components (e.g., the time of day)
+value, preserving finer components (e.g., the time of day). A skipped
+local time moves back by the size of the gap (02:30 becomes 01:30)
 \item \code{"nearest"}: Use the end of the cycle, so finer components are not
 preserved. For discrete time this is the last chronon within the cycle;
-for continuous time it is the end of that chronon
-\item \code{"overflow"}: Allow time points to overflow into the next cycle
+for continuous time it is the end of that chronon. A skipped local time
+becomes the end of the valid time before the gap
+\item \code{"overflow"}: Allow time points to overflow into the next cycle. A
+skipped local time moves forward by the size of the gap (02:30 becomes
+03:30)
 \item \code{"reject"}: Return \code{NA} with a warning
 }
 

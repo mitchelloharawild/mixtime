@@ -62,17 +62,33 @@ chronon_to_local <- S7::new_generic(
 )
 method(chronon_to_local, mt_unit) <- function(chronon, x) as.double(x)
 
-# Local wall-clock values -> stored values. A local reading that occurs more
-# than once (e.g. when daylight saving ends) resolves to its earliest
-# occurrence, and one that doesn't occur (e.g. when daylight saving starts)
-# moves forward by the size of the gap.
+# Local wall-clock values -> stored values, returned as `$value` along with
+# which local readings were `$invalid`. A local reading that occurs more than
+# once (e.g. when daylight saving ends) resolves to its earliest occurrence.
+# One that doesn't occur (e.g. when daylight saving starts) is invalid, and is
+# resolved like other invalid time points (see chronon_recompose()):
+#
+# * "clamp": back by the size of the gap, keeping finer fields (02:30 in a
+#   skipped 02:00-03:00 hour -> 01:30, before the gap).
+# * "nearest": the end of the valid time before the gap. For discrete time
+#   this is its last chronon; for continuous time it is the transition itself.
+# * "overflow": forward by the size of the gap (02:30 -> 03:30, after it).
+# * "reject": NA.
 chronon_from_local <- S7::new_generic(
   "chronon_from_local",
   "chronon",
-  function(chronon, x, discrete = FALSE) S7::S7_dispatch()
+  function(chronon, x, discrete = FALSE, on_invalid = "clamp") S7::S7_dispatch()
 )
-method(chronon_from_local, mt_unit) <- function(chronon, x, discrete = FALSE) {
-  if (discrete) floor_ulp(x) else as.double(x)
+method(chronon_from_local, mt_unit) <- function(
+  chronon,
+  x,
+  discrete = FALSE,
+  on_invalid = "clamp"
+) {
+  list(
+    value = if (discrete) floor_ulp(x) else as.double(x),
+    invalid = rep_len(FALSE, length(x))
+  )
 }
 
 # Whether shifting `chronon`'s values by `unit` (see chronon_shift()) is exact

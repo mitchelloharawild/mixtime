@@ -277,9 +277,17 @@ method(chronon_to_local, mt_tz_unit) <- function(chronon, x) {
   tz_bucket_label(chronon, i) + (x - i)
 }
 
-method(chronon_from_local, mt_tz_unit) <- function(chronon, x, discrete = FALSE) {
+method(chronon_from_local, mt_tz_unit) <- function(
+  chronon,
+  x,
+  discrete = FALSE,
+  on_invalid = "clamp"
+) {
   if (!tz_has_offset(chronon)) {
-    return(if (discrete) floor_ulp(x) else as.double(x))
+    return(list(
+      value = if (discrete) floor_ulp(x) else as.double(x),
+      invalid = rep_len(FALSE, length(x))
+    ))
   }
   label <- floor_ulp(x)
   starts <- tz_label_starts(chronon)
@@ -288,13 +296,12 @@ method(chronon_from_local, mt_tz_unit) <- function(chronon, x, discrete = FALSE)
   around <- tz_offsets_around(local, tz = chronon@tz)
 
   # Away from a transition the bucket follows from the label and its offset.
-  # A label that falls in a gap keeps this bucket (numbered with the offset
-  # before the gap), which moves it forward by the size of the gap.
   i <- label - trunc(around$before / unit)
 
   # Near a transition, try the offset either side of it and keep the earliest
-  # bucket whose label matches.
+  # bucket whose label matches. A label that matches neither falls in a gap.
   near <- (around$before != around$after) %in% TRUE
+  gap <- rep_len(FALSE, length(x))
   if (any(near)) {
     candidate <- function(offset) {
       ic <- label[near] - trunc(offset[near] / unit[near])
@@ -302,10 +309,51 @@ method(chronon_from_local, mt_tz_unit) <- function(chronon, x, discrete = FALSE)
       ic
     }
     found <- pmin(candidate(around$before), candidate(around$after), na.rm = TRUE)
-    i[near] <- ifelse(is.na(found), i[near], found)
+    i[near] <- found
+    gap[near] <- is.na(found) & !is.na(label[near])
   }
 
-  if (discrete) i else i + (x - label)
+  value <- if (discrete) i else i + (x - label)
+  if (any(gap)) {
+    value[gap] <- tz_resolve_gap(
+      chronon,
+      x[gap],
+      around$before[gap],
+      around$after[gap],
+      discrete,
+      on_invalid
+    )
+  }
+  list(value = value, invalid = gap)
+}
+
+# Stored values for local readings `x` of `chronon` that fall in a gap, where
+# the UTC offset changes from `before` to `after` (see chronon_from_local()).
+tz_resolve_gap <- function(chronon, x, before, after, discrete, on_invalid) {
+  if (on_invalid == "reject") {
+    return(rep(NA_real_, length(x)))
+  }
+  local <- chronon_convert_graph(x, chronon, tu_utc_second())
+  if (on_invalid != "nearest") {
+    # The local reading read with the offset after the gap moves it back by the
+    # size of the gap, and with the offset before moves it forward.
+    s <- local - if (on_invalid == "clamp") after else before
+    return(chronon_from_utc(chronon, s, discrete))
+  }
+  # The transition lies between those two readings
+  s <- mapply(
+    function(from, to) {
+      tr <- get_tz_transitions(from, to + 1, chronon@tz)
+      tr$time[tr$offset_before != tr$offset_after][1L]
+    },
+    local - after,
+    local - before
+  )
+  if (discrete) {
+    chronon_from_utc(chronon, s, discrete = TRUE) - 1
+  } else {
+    chronon_from_utc(chronon, s)
+  }
 }
 
 #' Get timezone abbreviation

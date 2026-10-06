@@ -53,7 +53,16 @@
   continuous time always gives the matching discrete time.
 * Calendar arithmetic on time-zone-aware times (e.g. adding months) now keeps
   the local clock time. A local time that occurs twice when daylight saving
-  ends resolves to its first occurrence.
+  ends resolves to its first occurrence. A local time skipped when daylight
+  saving starts is invalid, and is resolved like other invalid time points
+  (e.g. 31 January plus one month): by default it is clamped back by the size
+  of the gap, keeping its minutes (02:30 becomes 01:30 when clocks go forward
+  from 02:00 to 03:00). `time_shift()` and `seq()` resolve it with their
+  `on_invalid` argument: `"nearest"` gives the end of the time before the gap,
+  `"overflow"` moves it forward by the gap (03:30), and `"reject"` gives `NA`.
+* Parsing a local time skipped when daylight saving starts (e.g.
+  `datetime("2025-10-05 02:30:00", tz = "Australia/Melbourne")`) now gives `NA`
+  with a warning, like other invalid times such as `"2026-02-30"`.
 * Adding or subtracting hours, minutes or seconds on time-zone-aware times
   now moves by real time across daylight saving changes, so 02:30 AEDT plus
   one hour is 02:30 AEST when daylight saving ends (previously 03:30 AEST, two
@@ -63,8 +72,8 @@
   clock time across daylight saving changes, so a daily sequence at 10:00
   stays at 10:00 (previously it moved to 09:00 when daylight saving ended).
   Each element of `seq()` now matches adding a duration to the start, so a
-  time moved forward by daylight saving starting returns to its clock time on
-  the following day.
+  time adjusted because daylight saving skipped it returns to its clock time
+  on the following day.
 * Converting solar time to time-zone-aware civil time now accounts for the
   time zone, and converting solar time between two locations now accounts for
   the change of location.

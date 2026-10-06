@@ -405,38 +405,61 @@ test_that("seq.mixtime by day keeps the local clock time across daylight saving"
     )
   )
 
-  # Each day is counted from the start, so a time moved forward by the gap
-  # returns to its clock time on the following day.
-  result <- seq(
-    datetime("2025-10-04 02:30:00", tz = tz),
-    by = "1 day",
-    length.out = 3
+  # Each day is counted from the start. A local time skipped when daylight
+  # saving starts is clamped back by the size of the gap (with a warning, as
+  # for other invalid time points), and returns to its clock time the
+  # following day.
+  expect_warning(
+    result <- seq(
+      datetime("2025-10-04 02:30:00", tz = tz),
+      by = "1 day",
+      length.out = 3
+    ),
+    "skipped"
   )
   expect_equal(
     format(result),
     c(
       "2025-10-04 02:30:00 AEST",
-      "2025-10-05 03:30:00 AEDT",
+      "2025-10-05 01:30:00 AEST",
       "2025-10-06 02:30:00 AEDT"
     )
   )
+  expect_equal(diff(as.numeric(result)) / 3600, c(23, 24))
+
+  # The other `on_invalid` options, without a warning
+  x <- datetime("2025-10-04 02:30:00", tz = tz)
+  expect_no_warning(
+    result_overflow <- seq(x, by = "1 day", length.out = 3, on_invalid = "overflow")
+  )
+  expect_equal(format(result_overflow)[2], "2025-10-05 03:30:00 AEDT")
+  expect_equal(
+    format(seq(x, by = "1 day", length.out = 3, on_invalid = "nearest"))[2],
+    "2025-10-05 01:59:59 AEST"
+  )
+  expect_warning(
+    result_reject <- seq(x, by = "1 day", length.out = 3, on_invalid = "reject"),
+    "did not exist"
+  )
+  expect_equal(is.na(result_reject), c(FALSE, TRUE, FALSE))
 
   # A time moved forward past `to` is left out
+  to <- datetime("2025-10-05 03:00:00", tz = tz)
   expect_equal(
-    format(seq(
-      datetime("2025-10-04 02:30:00", tz = tz),
-      datetime("2025-10-05 03:00:00", tz = tz),
-      by = "1 day"
-    )),
+    format(suppressWarnings(seq(x, to, by = "1 day"))),
+    c("2025-10-04 02:30:00 AEST", "2025-10-05 01:30:00 AEST")
+  )
+  expect_equal(
+    format(seq(x, to, by = "1 day", on_invalid = "overflow")),
     "2025-10-04 02:30:00 AEST"
   )
   # Right aligned to `to`
   expect_equal(
-    format(seq(
+    format(suppressWarnings(seq(
       to = datetime("2025-10-06 02:30:00", tz = tz),
       by = "1 day",
       length.out = 3
-    )),
+    ))),
     format(result)
   )
 })

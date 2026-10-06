@@ -424,10 +424,15 @@ test_that("units shorter than a day add real time across the start of daylight s
 })
 
 test_that("units of a day or longer keep the clock time across daylight saving", {
-  # A local time that doesn't exist moves forward by the size of the gap
+  # A local time that doesn't exist is clamped back by the size of the gap,
+  # keeping its minutes, like other invalid time points
   x <- datetime("2025-10-04 02:30:00", tz = "Australia/Melbourne")
-  expect_equal(format(x + days(1L)), "2025-10-05 03:30:00 AEDT")
+  expect_equal(format(x + days(1L)), "2025-10-05 01:30:00 AEST")
   expect_equal(format(x + days(2L)), "2025-10-06 02:30:00 AEDT")
+  expect_equal(
+    format(datetime("2025-10-06 02:30:00", tz = "Australia/Melbourne") - days(1L)),
+    "2025-10-05 01:30:00 AEST"
+  )
 
   # A local time that occurs twice resolves to its first occurrence
   x <- datetime("2025-04-05 02:30:00", tz = "Australia/Melbourne")
@@ -524,4 +529,55 @@ test_that("time_shift() accepts character durations and validates `by`", {
   )
   expect_error(time_shift(date("2021-01-31"), date("2021-01-31")), "duration")
   expect_error(time_shift(date("2021-01-31"), months(1L), on_invalid = "bad"))
+})
+
+test_that("time_shift() resolves local times skipped by daylight saving with on_invalid", {
+  # Melbourne goes forward from 02:00 AEST to 03:00 AEDT on 2025-10-05
+  tz <- "Australia/Melbourne"
+  x <- datetime("2025-10-04 02:30:00", tz = tz)
+  expect_equal(format(time_shift(x, days(1L))), "2025-10-05 01:30:00 AEST")
+  expect_equal(
+    format(time_shift(x, days(1L), on_invalid = "nearest")),
+    "2025-10-05 01:59:59 AEST"
+  )
+  expect_equal(
+    format(time_shift(x, days(1L), on_invalid = "overflow")),
+    "2025-10-05 03:30:00 AEDT"
+  )
+  expect_warning(
+    res <- time_shift(x, days(1L), on_invalid = "reject"),
+    "did not exist"
+  )
+  expect_true(is.na(res))
+
+  # Continuous time: "nearest" is the transition itself
+  xc <- mixtime(as.POSIXct("2025-10-04 02:30", tz = tz), discrete = FALSE)
+  expect_equal(
+    as.numeric(time_shift(xc, days(1L), on_invalid = "nearest")),
+    as.numeric(as.POSIXct("2025-10-05 03:00", tz = tz))
+  )
+
+  # Discrete hours: the hour skipped clamps to the hour before it
+  h <- mixtime(as.POSIXct("2025-10-04 02:00", tz = tz), cal_gregorian$hour(1L, tz = tz))
+  expect_equal(format(time_shift(h, days(1L))), "2025-10-05 01h AEST")
+  expect_equal(
+    format(time_shift(h, days(1L), on_invalid = "overflow")),
+    "2025-10-05 03h AEDT"
+  )
+
+  # Every minute in the skipped hour gives the same durations
+  for (m in c("02:00", "02:10", "02:59")) {
+    y <- datetime(paste0("2025-10-04 ", m, ":00"), tz = tz)
+    steps <- c(y, y + days(1L), y + days(2L))
+    expect_equal(diff(as.numeric(steps)) / 3600, c(23, 24), info = m)
+  }
+
+  # Samoa skipped all of 2011-12-30
+  apia <- "Pacific/Apia"
+  d <- mixtime(as.POSIXct("2011-12-29 10:00", tz = apia))
+  expect_equal(format(time_shift(d, days(1L))), "2011-12-29 10:00:00 -10")
+  expect_equal(
+    format(time_shift(d, days(1L), on_invalid = "overflow")),
+    "2011-12-31 10:00:00 +14"
+  )
 })

@@ -5,10 +5,13 @@
 #
 # Shifts involving time and duration chronons with irregular cardinalities are
 # computed with calendar-field arithmetic, clamping any components that are
-# invalid (e.g. 2026-01-31 + months(1) -> 2026-02-28, not 2026-03-03). See
-# chronon_recompose() for the `on_invalid` resolutions.
+# invalid (e.g. 2026-01-31 + months(1) -> 2026-02-28, not 2026-03-03). A local
+# time skipped by daylight saving is invalid in the same way. See
+# chronon_recompose() and chronon_from_local() for the `on_invalid`
+# resolutions.
 #
-# Returns the shifted stored values, and which of them needed resolving.
+# Returns the shifted stored values, which of them needed resolving, and which
+# of those were local times skipped by a time zone change.
 chronon_shift <- function(
   chronon,
   x,
@@ -21,6 +24,7 @@ chronon_shift <- function(
   ctx_chronon <- chronon_in_context(chronon, unit)
   x <- chronon_convert_impl(x, chronon, ctx_chronon, discrete = FALSE)
   invalid <- NULL
+  skipped <- NULL
 
   if (chronon_shift_is_exact(ctx_chronon, unit)) {
     # Exact arithmetic adds real time ("N hours later"), on absolute time.
@@ -48,12 +52,21 @@ chronon_shift <- function(
       at <- chronon_convert_graph(local, ctx_chronon, unit)
       local <- chronon_convert_graph(at + n, unit, ctx_chronon)
     }
-    x <- chronon_from_local(ctx_chronon, local)
+    resolved <- chronon_from_local(
+      ctx_chronon,
+      local,
+      discrete = discrete,
+      on_invalid = on_invalid
+    )
+    x <- resolved$value
+    skipped <- resolved$invalid
+    invalid <- if (is.null(invalid)) skipped else invalid | skipped
   }
 
   list(
     value = chronon_convert_impl(x, ctx_chronon, chronon, discrete = FALSE),
-    invalid = invalid %||% rep_len(FALSE, length(x))
+    invalid = invalid %||% rep_len(FALSE, length(x)),
+    skipped = skipped %||% rep_len(FALSE, length(x))
   )
 }
 
@@ -166,8 +179,10 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 #' points that don't exist in the target granule are resolved. Shifting by a
 #' duration with an irregular relationship to the time points' chronon (e.g.
 #' days within months) can produce time points that don't exist, such as
-#' shifting 31 January by one month. The `+` and `-` operators always use
-#' `on_invalid = "clamp"`.
+#' shifting 31 January by one month. In a time zone, shifting by days or
+#' longer keeps the local clock time, which may have been skipped when daylight
+#' saving starts (e.g. 02:30 on the day clocks go forward from 02:00 to 03:00).
+#' The `+` and `-` operators always use `on_invalid = "clamp"`.
 #'
 #' @param x A time point vector.
 #' @param by A time [duration()] (e.g., `months(1L)`), or a character string
@@ -175,13 +190,16 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 #' @param on_invalid How to resolve time points that don't exist in the target
 #'   granule:
 #'   * `"clamp"` (default): Reduce the invalid component to its last valid
-#'     value, preserving finer components (e.g., the time of day).
+#'     value, preserving finer components (e.g., the time of day). A skipped
+#'     local time moves back by the size of the gap (02:30 becomes 01:30).
 #'   * `"nearest"`: Use the end of the target granule, so finer components are
 #'     not preserved. For discrete time this is the last chronon within the
 #'     granule (e.g., 23:59:59 on the last day); for continuous time it is the
-#'     end of that chronon (e.g., 00:00:00 on the following day).
+#'     end of that chronon (e.g., 00:00:00 on the following day). A skipped
+#'     local time becomes the end of the valid time before the gap.
 #'   * `"overflow"`: Allow the invalid component to overflow into the next
-#'     granule.
+#'     granule. A skipped local time moves forward by the size of the gap
+#'     (02:30 becomes 03:30).
 #'   * `"reject"`: Return `NA` with a warning.
 #'
 #' @return A time point vector of the same type as `x`.
@@ -195,6 +213,12 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 #'
 #' # Shifting backwards
 #' time_shift(date("2021-03-31"), months(-1L), on_invalid = "overflow")
+#'
+#' # 02:30 doesn't exist on 2025-10-05 in Melbourne (clocks go forward at 02:00)
+#' x <- datetime(as.POSIXct("2025-10-04 02:30", tz = "Australia/Melbourne"))
+#' time_shift(x, days(1L))
+#' time_shift(x, days(1L), on_invalid = "nearest")
+#' time_shift(x, days(1L), on_invalid = "overflow")
 #'
 #' @export
 time_shift <- new_generic(

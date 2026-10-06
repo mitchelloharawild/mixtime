@@ -15,15 +15,20 @@
 #'   * A time [duration()] object (e.g., `years(1L)`, `months(1L)`, `days(1L)`)
 #' @param length.out Desired length of the sequence (alternative to `to`).
 #' @param along.with Take the length from this argument (alternative to `length.out`).
-#' @param on_invalid How to handle time points that overflow the cycle when
-#'   using a `by` argument with different time granule than the sequence chronon.
-#'   Options are:
+#' @param on_invalid How to handle time points that don't exist, either
+#'   because they overflow the cycle when using a `by` argument with different
+#'   time granule than the sequence chronon, or because they fall in the local
+#'   time skipped when daylight saving starts. Options are:
 #'   * `"clamp"` (default): Reduce the overflowing component to its last valid
-#'     value, preserving finer components (e.g., the time of day)
+#'     value, preserving finer components (e.g., the time of day). A skipped
+#'     local time moves back by the size of the gap (02:30 becomes 01:30)
 #'   * `"nearest"`: Use the end of the cycle, so finer components are not
 #'     preserved. For discrete time this is the last chronon within the cycle;
-#'     for continuous time it is the end of that chronon
-#'   * `"overflow"`: Allow time points to overflow into the next cycle
+#'     for continuous time it is the end of that chronon. A skipped local time
+#'     becomes the end of the valid time before the gap
+#'   * `"overflow"`: Allow time points to overflow into the next cycle. A
+#'     skipped local time moves forward by the size of the gap (02:30 becomes
+#'     03:30)
 #'   * `"reject"`: Return `NA` with a warning
 #'
 #'   This is relevant when the starting time point has an offset that doesn't
@@ -215,11 +220,19 @@
     )
     res <- shifted$value
 
-    if (missing_on_invalid && any(shifted$invalid)) {
+    if (missing_on_invalid && any(shifted$invalid & !shifted$skipped)) {
       seq_part <- chronon_divmod(chronon, by, to_local(anchor))$mod
       cli::cli_warn(c(
         "The cycle offset ({time_granule_label(chronon, seq_part + 1L)}) has produced time points that overflow the {time_unit_plural(by, 1L)} cycle.",
         "!" = "Clamping to the last valid time points in the cycle, {.code on_invalid = \"clamp\"} (the default).",
+        "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
+      ))
+    }
+    if (missing_on_invalid && any(shifted$skipped)) {
+      n_skipped <- sum(shifted$skipped)
+      cli::cli_warn(c(
+        "{n_skipped} time point{?s} in the sequence {?falls/fall} in local time skipped by a time zone change (e.g. when daylight saving starts).",
+        "!" = "Moving {cli::qty(n_skipped)}{?it/them} back by the size of the gap, {.code on_invalid = \"clamp\"} (the default).",
         "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
       ))
     }
@@ -228,7 +241,7 @@
     }
 
     if (!missing_from && !missing_to) {
-      # A local time that doesn't exist moves forward, which can pass `to`
+      # A local time that doesn't exist can move forward, past `to`
       to <- as.numeric(to)
       past <- step * (res - to) > 8 * .Machine$double.eps * pmax(abs(to), 1)
       res <- res[!(past %in% TRUE)]

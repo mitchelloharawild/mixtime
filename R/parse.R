@@ -458,7 +458,13 @@ time_parse_recast <- function(x, chronon, cycle, discrete) {
       is.na(tz_name(from)) && !is.na(tz_name(chronon))
   ) {
     from <- granule_inherit_props(from, mt_tz_unit(tz = tz_name(chronon)))
-    data <- chronon_from_local(from, data, discrete = discrete)
+    # A local time that doesn't exist (skipped by a daylight saving change)
+    # fails to parse, like any other invalid time.
+    resolved <- chronon_from_local(from, data, discrete = discrete, on_invalid = "reject")
+    data <- resolved$value
+    if (any(resolved$invalid)) {
+      time_parse_warn_skipped(sum(resolved$invalid), tz_name(from))
+    }
     if (discrete) data <- as.integer(data)
   }
 
@@ -479,6 +485,17 @@ time_parse_warn_failures <- function(bad, show = 5L) {
     c(
       "{n} value{?s} failed to parse and {cli::qty(n)} {?was/were} set to {.code NA}.",
       "x" = "{.val {utils::head(bad, show)}}{if (n > show) paste0(', and ', n - show, ' more') else ''}"
+    ),
+    class = "mixtime_parse_failure",
+    call = NULL
+  )
+}
+
+time_parse_warn_skipped <- function(n, tz) {
+  cli::cli_warn(
+    c(
+      "{n} value{?s} {?does/do} not exist in time zone {.val {tz}} and {cli::qty(n)} {?was/were} set to {.code NA}.",
+      "i" = "{cli::qty(n)}{?It falls/They fall} in local time skipped by a time zone change (e.g. when daylight saving starts)."
     ),
     class = "mixtime_parse_failure",
     call = NULL

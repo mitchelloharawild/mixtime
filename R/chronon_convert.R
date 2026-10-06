@@ -44,7 +44,7 @@ chronon_convert_impl <- function(x, from, to, discrete) {
   } else if (chronon_gains_context(from, to)) {
     # Naive -> located reads the naive value as the local wall-clock reading.
     x <- chronon_convert_graph(x, from, to)
-    x <- chronon_from_local(to, x, discrete)
+    x <- chronon_from_local(to, x, discrete)$value
   } else {
     # Otherwise go through absolute time (UTC seconds).
     x <- chronon_from_utc(to, chronon_to_utc(from, x), discrete)

@@ -735,3 +735,18 @@ test_that("fractional times before 1970 use the offset of the second they fall i
   expect_equal(get_tz_offset(c(t0 - 1, t0 - 0.5, t0), tz), c(-18000, -18000, -14400))
   expect_equal(get_tz_abbreviation(t0 - 0.5, tz), "EST")
 })
+
+test_that("parsing a local time skipped by daylight saving gives NA", {
+  # Melbourne goes forward from 02:00 AEST to 03:00 AEDT on 2025-10-05, like
+  # an invalid date (e.g. "2026-02-30") fails to parse
+  expect_warning(
+    x <- datetime(
+      c("2025-10-05 02:30:00", "2025-10-05 03:30:00"),
+      tz = "Australia/Melbourne"
+    ),
+    "does not exist"
+  )
+  expect_equal(is.na(x), c(TRUE, FALSE))
+  expect_equal(format(x[2]), "2025-10-05 03:30:00 AEDT")
+})
+
