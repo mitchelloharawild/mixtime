@@ -220,6 +220,8 @@ test_that("S7_graph_dispatch_multi() reports a failed group even when one of its
     )
   )
 
+  # Compare by class id rather than a literal name: under testthat these
+  # classes pick up the package of the test environment ("mixtime::...").
   tree_classes <- function(t) c(S7_class_id(t$node), unlist(lapply(t$children, tree_classes)))
   classes <- tree_classes(dispatch$tree)
 
@@ -233,9 +235,9 @@ test_that("S7_graph_dispatch_multi() reports a failed group even when one of its
   # via any co-located path with `y1`. A caller matching by class id alone
   # (as chronon_parts()'s traverse() used to) would be fooled by this into
   # treating the failed group as satisfied.
-  expect_true("tu_bug_y2" %in% classes)
+  expect_true(S7_class_id(tu_bug_y2) %in% classes)
   # `y1` was never reached at all: nothing besides the failed group asked for it.
-  expect_false("tu_bug_y1" %in% classes)
+  expect_false(S7_class_id(tu_bug_y1) %in% classes)
 })
 
 test_that("chronon_parts() reports a group as missing, not a wrong value, when it fails to co-locate despite one member being reachable elsewhere", {
