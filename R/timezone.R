@@ -130,17 +130,42 @@ by_unique <- function(x, f) {
   f(u)[match(x, u)]
 }
 
-# UTC instant at which bucket `i` of `chronon` starts.
-tz_bucket_start <- function(chronon, i) {
-  by_unique(i, function(i) tz_bucket_start_impl(chronon, i))
+# Local start (seconds) of labels of `chronon`, as a lookup function. Each
+# distinct label is converted once however often it is looked up, so one
+# operation can ask for a label's start, its end (the next label's start) and
+# its neighbours' without converting them again.
+tz_label_starts <- function(chronon) {
+  tu_s <- tu_utc_second()
+  label <- double()
+  start <- double()
+  function(x) {
+    pos <- match(x, label)
+    missing <- is.na(pos)
+    if (any(missing)) {
+      new <- unique(x[missing])
+      pos[missing] <- length(label) + match(x[missing], new)
+      label <<- c(label, new)
+      start <<- c(start, chronon_convert_graph(new, chronon, tu_s))
+    }
+    start[pos]
+  }
 }
 
-tz_bucket_start_impl <- function(chronon, i) {
+# Nominal length (seconds) of local labels `label`, from their local `starts`.
+tz_label_length <- function(starts, label) {
+  starts(label + 1) - starts(label)
+}
+
+# UTC instant at which bucket `i` of `chronon` starts.
+tz_bucket_start <- function(chronon, i, starts = tz_label_starts(chronon)) {
+  by_unique(i, function(i) tz_bucket_start_impl(chronon, i, starts))
+}
+
+tz_bucket_start_impl <- function(chronon, i, starts) {
   tz <- chronon@tz
-  tu_s <- tu_utc_second()
   # The local start of label `i`, and the unit's nominal length (seconds)
-  local <- chronon_convert_graph(i, chronon, tu_s)
-  unit <- chronon_convert_graph(i + 1, chronon, tu_s) - local
+  local <- starts(i)
+  unit <- tz_label_length(starts, i)
   around <- tz_offsets_around(local, tz)
 
   # UTC start of elements `k`, numbered with UTC offsets `offset`
@@ -148,7 +173,7 @@ tz_bucket_start_impl <- function(chronon, i) {
     shift <- trunc(offset / unit[k])
     s <- local[k]
     shifted <- (shift != 0) %in% TRUE
-    s[shifted] <- chronon_convert_graph(i[k][shifted] + shift[shifted], chronon, tu_s)
+    s[shifted] <- starts(i[k][shifted] + shift[shifted])
     s - offset
   }
 
@@ -173,11 +198,10 @@ tz_bucket_start_impl <- function(chronon, i) {
 }
 
 # Local label of bucket `i` of `chronon`.
-tz_bucket_label <- function(chronon, i) {
-  tu_s <- tu_utc_second()
+tz_bucket_label <- function(chronon, i, starts = tz_label_starts(chronon)) {
   by_unique(i, function(i) {
-    local <- chronon_convert_graph(i, chronon, tu_s)
-    unit <- chronon_convert_graph(i + 1, chronon, tu_s) - local
+    local <- starts(i)
+    unit <- tz_label_length(starts, i)
     around <- tz_offsets_around(local, chronon@tz)
 
     # Away from a transition the label follows from the offset
@@ -185,24 +209,15 @@ tz_bucket_label <- function(chronon, i) {
 
     near <- (around$before != around$after) %in% TRUE
     if (any(near)) {
-      s <- tz_bucket_start_impl(chronon, i[near])
+      s <- tz_bucket_start_impl(chronon, i[near], starts)
       label[near] <- chronon_convert_graph(
         s + tz_offset_at(s, chronon@tz),
-        tu_s,
+        tu_utc_second(),
         chronon,
         discrete = TRUE
       )
     }
     label
-  })
-}
-
-# Nominal length (seconds) of local label `label` of `chronon`.
-tz_label_length <- function(chronon, label) {
-  tu_s <- tu_utc_second()
-  by_unique(label, function(label) {
-    chronon_convert_graph(label + 1, chronon, tu_s) -
-      chronon_convert_graph(label, chronon, tu_s)
   })
 }
 
@@ -216,10 +231,11 @@ method(chronon_to_utc, mt_tz_unit) <- function(chronon, x) {
   }
   i <- floor_ulp(x)
   f <- x - i
-  s <- tz_bucket_start(chronon, i)
+  starts <- tz_label_starts(chronon)
+  s <- tz_bucket_start(chronon, i, starts)
   frac <- (f != 0) %in% TRUE
   if (any(frac)) {
-    end <- tz_bucket_start(chronon, i[frac] + 1)
+    end <- tz_bucket_start(chronon, i[frac] + 1, starts)
     s[frac] <- s[frac] + f[frac] * (end - s[frac])
   }
   s
@@ -232,11 +248,12 @@ method(chronon_from_utc, mt_tz_unit) <- function(chronon, x, discrete = FALSE) {
   }
   offset <- tz_offset_at(x, chronon@tz)
   label <- chronon_convert_graph(x + offset, tu_s, chronon, discrete = TRUE)
-  i <- label - trunc(offset / tz_label_length(chronon, label))
+  starts <- tz_label_starts(chronon)
+  i <- label - trunc(offset / tz_label_length(starts, label))
   if (discrete) {
     return(i)
   }
-  bounds <- tz_bucket_start(chronon, c(i, i + 1))
+  bounds <- tz_bucket_start(chronon, c(i, i + 1), starts)
   start <- bounds[seq_along(i)]
   end <- bounds[-seq_along(i)]
   i + (x - start) / (end - start)
@@ -255,10 +272,9 @@ method(chronon_from_local, mt_tz_unit) <- function(chronon, x, discrete = FALSE)
     return(if (discrete) floor_ulp(x) else as.double(x))
   }
   label <- floor_ulp(x)
-  unit <- tz_label_length(chronon, label)
-  local <- by_unique(label, function(label) {
-    chronon_convert_graph(label, chronon, tu_utc_second())
-  })
+  starts <- tz_label_starts(chronon)
+  local <- starts(label)
+  unit <- tz_label_length(starts, label)
   around <- tz_offsets_around(local, tz = chronon@tz)
 
   # Away from a transition the bucket follows from the label and its offset.
@@ -272,7 +288,7 @@ method(chronon_from_local, mt_tz_unit) <- function(chronon, x, discrete = FALSE)
   if (any(near)) {
     candidate <- function(offset) {
       ic <- label[near] - trunc(offset[near] / unit[near])
-      ic[(tz_bucket_label(chronon, ic) != label[near]) %in% TRUE] <- NA
+      ic[(tz_bucket_label(chronon, ic, starts) != label[near]) %in% TRUE] <- NA
       ic
     }
     found <- pmin(candidate(around$before), candidate(around$after), na.rm = TRUE)
