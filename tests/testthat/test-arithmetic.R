@@ -352,21 +352,39 @@ test_that("adding two time points errors", {
 # Timezone-aware time - date subtraction (issue #97)
 # ---------------------------------------------------------------------------
 
-test_that("datetime() - date() uses the date's timezone for its day boundary", {
+test_that("datetime() - datetime() of a date's start uses the date's timezone for its day boundary", {
   # 2026-06-16 09:30:00 AEST = 2026-06-15 23:30:00 UTC = 2026-06-16 01:30:00 CEST
   t <- datetime("2026-06-16 09:30:00", tz = "Australia/Melbourne")
+  time_of_day <- function(tz) {
+    datetime(t, tz = tz) - datetime(date(t, tz = tz, discrete = TRUE))
+  }
 
   # Melbourne date: 2026-06-16 AEST; time-of-day in Melbourne = 9h30m = 34200s
-  result_mel <- t - date(t, tz = "Australia/Melbourne", discrete = TRUE)
-  expect_equal(as.double(result_mel), 34200)
+  expect_equal(as.double(time_of_day("Australia/Melbourne")), 34200)
 
   # Berlin date: 2026-06-16 CEST; time-of-day in Berlin = 1h30m = 5400s
-  result_ber <- t - date(t, tz = "Europe/Berlin", discrete = TRUE)
-  expect_equal(as.double(result_ber), 5400)
+  expect_equal(as.double(time_of_day("Europe/Berlin")), 5400)
 
   # UTC date: 2026-06-15 UTC; time-of-day in UTC = 23h30m = 84600s
-  result_utc <- t - date(t, tz = "UTC", discrete = TRUE)
-  expect_equal(as.double(result_utc), 84600)
+  expect_equal(as.double(time_of_day("UTC")), 84600)
+})
+
+test_that("subtracting discrete time points of different chronons errors", {
+  # Which day of 2027 would be measured from is indeterminate
+  expect_error(year(2027L) - date("2026-08-21"), "indeterminate")
+  expect_error(date("2026-08-21") - year(2027L), "indeterminate")
+  expect_error(yearmonth("2027-01") - date("2026-08-21"), "indeterminate")
+  # Discrete times in different time zones are different chronons
+  t <- datetime("2026-06-16 09:30:00", tz = "Australia/Melbourne")
+  expect_error(t - date(t, tz = "UTC", discrete = TRUE), "indeterminate")
+  expect_error(t - datetime(t, tz = "UTC"), "indeterminate")
+})
+
+test_that("continuous time points of different chronons can be subtracted", {
+  expect_equal(
+    as.double(year(2027.5) - date("2026-08-21", discrete = FALSE)),
+    315.5
+  )
 })
 
 test_that("datetime() with a timezone can be shifted by durations with a regular cardinality", {

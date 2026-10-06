@@ -166,6 +166,21 @@ S7::method(vec_math, mt_time) <- function(.fn, .x, ...) {
 method(`-`, list(mt_time, mt_time)) <- function(e1, e2) {
   x_chronon <- e1@chronon
   y_chronon <- e2@chronon
+  # A discrete time point spans a whole chronon (e.g. year(2027L) spans 365
+  # days), so its difference from a time point of another chronon depends on
+  # which instant within it is measured from. Only continuous time points are
+  # instants that can be compared across chronons.
+  discrete <- c(is.integer(S7_data(e1)), is.integer(S7_data(e2)))
+  if (!identical(x_chronon, y_chronon) && any(discrete)) {
+    cli::cli_abort(
+      c(
+        "The difference between time points of different chronons is indeterminate when either is discrete.",
+        "x" = "A discrete {.field {time_granule_label(if (discrete[1]) x_chronon else y_chronon)}} spans a period of time, not a single instant.",
+        "i" = "Convert the time points to a common chronon, or use continuous time points."
+      ),
+      call. = FALSE
+    )
+  }
   tu <- chronon_glb_impl(list(x_chronon, y_chronon))
   cx <- chronon_convert(e1, tu, discrete = FALSE)
   cy <- chronon_convert(e2, tu, discrete = FALSE)
