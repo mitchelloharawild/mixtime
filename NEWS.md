@@ -60,6 +60,9 @@
   from 02:00 to 03:00). `time_shift()` and `seq()` resolve it with their
   `on_invalid` argument: `"nearest"` gives the end of the time before the gap,
   `"overflow"` moves it forward by the gap (03:30), and `"reject"` gives `NA`.
+* Shifting or `seq()`-ing times with a multi-unit chronon (e.g. half-hourly
+  times) by days, months or years no longer errors with "Cannot determine
+  whether 30 minutes nest within 1 year".
 * Parsing a local time skipped when daylight saving starts (e.g.
   `datetime("2025-10-05 02:30:00", tz = "Australia/Melbourne")`) now gives `NA`
   with a warning, like other invalid times such as `"2026-02-30"`.

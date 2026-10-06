@@ -524,3 +524,43 @@ test_that("seq.mixtime matches adding durations to its start", {
     }
   }
 })
+
+test_that("seq.mixtime shifts multi-unit chronons by calendar units", {
+  # Half-hourly time zone aware times, like tsibbledata::vic_elec
+  x <- as.POSIXct("2024-04-06 02:30:00", tz = "Australia/Melbourne") +
+    1800 * (0:3)
+  half_hourly <- mixtime(x, chronon = cal_gregorian$minute(30L))
+  minutely <- mixtime(x, chronon = cal_gregorian$minute(1L))
+  for (by in list(
+    cal_gregorian$day(1L),
+    cal_gregorian$month(1L),
+    cal_gregorian$year(1L)
+  )) {
+    result <- seq(half_hourly[1L], by = by, length.out = 4L)
+    expect_equal(
+      format(result),
+      format(seq(minutely[1L], by = by, length.out = 4L))
+    )
+    expect_equal(
+      as.numeric(result),
+      as.numeric(half_hourly[1L] + duration(0:3, by))
+    )
+  }
+
+  # Across the daylight saving change the local clock time is kept
+  start <- mixtime(
+    as.POSIXct("2024-10-05 02:30:00", tz = "Australia/Melbourne"),
+    chronon = cal_gregorian$minute(30L)
+  )
+  expect_equal(
+    format(seq(start, by = cal_gregorian$day(1L), length.out = 3L)),
+    format(seq(
+      mixtime(
+        as.POSIXct("2024-10-05 02:30:00", tz = "Australia/Melbourne"),
+        chronon = cal_gregorian$minute(1L)
+      ),
+      by = cal_gregorian$day(1L),
+      length.out = 3L
+    ))
+  )
+})

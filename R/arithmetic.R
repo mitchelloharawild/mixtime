@@ -20,6 +20,23 @@ chronon_shift <- function(
   on_invalid = "clamp",
   discrete = FALSE
 ) {
+  # Calendar shifts decompose through the chronon's class (e.g. minute -> hour
+  # -> day -> year), which is only defined for single-unit chronons. A
+  # multi-unit chronon (e.g. 30 minutes) is shifted as its single unit.
+  if (chronon@n != 1L) {
+    base <- chronon
+    base@n <- 1L
+    x <- chronon_convert_impl(x, chronon, base, discrete = FALSE)
+    shifted <- chronon_shift(base, x, unit, n, on_invalid, discrete)
+    shifted$value <- chronon_convert_impl(
+      shifted$value,
+      base,
+      chronon,
+      discrete = FALSE
+    )
+    return(shifted)
+  }
+
   # Shift in `unit`'s context (e.g. by days of another time zone).
   ctx_chronon <- chronon_in_context(chronon, unit)
   x <- chronon_convert_impl(x, chronon, ctx_chronon, discrete = FALSE)
