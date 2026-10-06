@@ -64,6 +64,11 @@
 * `format()` of a continuous time no longer shows a time just below its true
   value when floating-point error leaves it a fraction of a second short (e.g.
   `"03:29:59 100.0%"` instead of `"03:30:00 0.0%"`).
+* `as.POSIXct()` of a mixtime now keeps its time zone (or uses UTC when it
+  has several), so `mixtime(as.POSIXct(x))` round trips. Previously the result
+  had an empty time zone, which `mixtime()` rejected. `mixtime()` now also
+  reads a `POSIXct` with an empty time zone as the local time zone, like base
+  R does.
 
 # mixtime 0.3.0
 

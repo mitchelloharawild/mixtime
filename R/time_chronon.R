@@ -65,10 +65,16 @@ S7::method(time_chronon, S7::new_S3_class("POSIXt")) <- function(x) {
   # POSIXct is a chronon of the observed interval with time zone information
   x <- as.POSIXct(x)
   tz <- attr(x, "tzone") %||% "UTC"
+  # An empty time zone is the session's local time zone (as in base R): the TZ
+  # environment variable, or else the system time zone.
+  if (identical(tz, "")) {
+    tz <- Sys.getenv("TZ")
+    if (!nzchar(tz)) tz <- Sys.timezone()
+  }
   # Measure the interval in local (wall clock) seconds, so that e.g. daily
   # observations at local midnight are whole days across DST transitions.
   x <- as.numeric(x)
-  local <- x + get_tz_offset(x, if (tz == "") Sys.timezone() else tz)
+  local <- x + get_tz_offset(x, tz)
   duration(
     rep(1L, length(x)),
     chronon = chronon_from_interval(

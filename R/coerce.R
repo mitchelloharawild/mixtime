@@ -8,8 +8,19 @@ S7::method(as.double, mt_time) <- function(x, ...) vctrs::vec_cast(x, double())
 #' @export
 S7::method(as.Date, mt_linear) <- function(x, ...) vctrs::vec_cast(x, vctrs::new_date())
 #' @export
-S7::method(as.POSIXct, mt_linear) <- function(x, tz = "", ...) {
+S7::method(as.POSIXct, mt_linear) <- function(x, tz = posixct_tz(x), ...) {
   vctrs::vec_cast(x, vctrs::new_datetime(tzone = tz))
+}
+#' @export
+S7::method(as.POSIXct, class_mixtime) <- function(x, tz = posixct_tz(x), ...) {
+  vecvec::unvecvec(x, ptype = vctrs::new_datetime(tzone = tz))
+}
+
+# The time zone of a POSIXct converted from `x` defaults to the chronon's own
+# zone, or UTC if `x` has several (or naive) time zones.
+posixct_tz <- function(x) {
+  tz <- unique(tz_name(x))
+  if (length(tz) == 1L && !is.na(tz)) tz else "UTC"
 }
 
 #' Convert a time class into a mixtime

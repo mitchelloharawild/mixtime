@@ -656,3 +656,31 @@ test_that("solar time converts to zoned civil time through absolute time", {
     chronon_convert_impl(x, utc, day, discrete = FALSE)
   )
 })
+
+test_that("as.POSIXct() keeps the time zone of a mixtime for round trips", {
+  # Regression: as.POSIXct() returned a POSIXct with an empty time zone, which
+  # mixtime() then rejected.
+  tz <- "Australia/Brisbane"
+  x <- as.POSIXct("2026-08-19 02:24", tz = tz)
+  w <- mixtime(x, cal_isoweek$week(1L, tz = tz), discrete = FALSE)
+  expect_equal(attr(as.POSIXct(w), "tzone"), tz)
+  expect_equal(tz_name(mixtime(as.POSIXct(w))), tz)
+  expect_equal(as.POSIXct(mixtime(x)), x)
+  # An explicit time zone is still respected
+  expect_equal(attr(as.POSIXct(w, tz = "UTC"), "tzone"), "UTC")
+  # Several time zones fall back to UTC
+  m <- c(mixtime(x), mixtime(as.POSIXct("2026-08-19 02:24", tz = "UTC")))
+  expect_equal(attr(as.POSIXct(m), "tzone"), "UTC")
+})
+
+test_that("mixtime() reads an empty POSIXct time zone as the local time zone", {
+  old <- Sys.getenv("TZ", unset = NA)
+  on.exit(if (is.na(old)) Sys.unsetenv("TZ") else Sys.setenv(TZ = old))
+  Sys.setenv(TZ = "America/New_York")
+
+  x <- as.POSIXct("2026-08-19 02:24", tz = "")
+  m <- mixtime(x)
+  expect_equal(tz_name(m), "America/New_York")
+  expect_equal(format(m), "2026-08-19 02:24:00 EDT")
+  expect_equal(as.numeric(as.POSIXct(m)), as.numeric(x))
+})
