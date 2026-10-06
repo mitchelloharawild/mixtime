@@ -100,6 +100,10 @@
   but not 11), as is shifting continuous times. This applies to `+`, `-`,
   `time_shift()`, and `seq()`.
 
+* Added `chronon_cardinality_is_fixed()` to test whether the number of one
+  time granule in another is constant (e.g. 12 months in a year), or depends
+  on where in time it is measured (e.g. days in a month).
+
 ## Improvements
 
 * Comparing a discrete time (a span) with a continuous time at the start of

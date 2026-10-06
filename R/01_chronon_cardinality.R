@@ -102,6 +102,40 @@ chronon_cardinality_fixed <- S7::new_generic(
   function(x, y, ...) S7::S7_dispatch() * y@n / x@n
 )
 
+#' Test whether the cardinality between time granules is fixed
+#'
+#' Tests whether the number of `x` time granules in a `y` time granule is a
+#' constant (e.g. 12 months in a year, 24 hours in a day), or instead depends
+#' on where in time it is measured (e.g. 28 to 31 days in a month, 52 or 53
+#' weeks in a year). A fixed cardinality can be found with
+#' [chronon_cardinality()] alone, while an irregular one also needs a time
+#' point `at`.
+#'
+#' The cardinality is fixed when the granules are of the same time unit, or are
+#' connected only by [chronon_cardinality_fixed()] relationships. Granules with
+#' no relationship between them don't have a fixed cardinality.
+#'
+#' @inheritParams chronon_cardinality
+#'
+#' @return A single logical value.
+#'
+#' @examples
+#' # There are always 12 months in a year
+#' with(cal_gregorian, chronon_cardinality_is_fixed(month(1L), year(1L)))
+#'
+#' # The number of days in a month varies
+#' with(cal_gregorian, chronon_cardinality_is_fixed(day(1L), month(1L)))
+#'
+#' # The order of the granules doesn't matter
+#' with(cal_gregorian, chronon_cardinality_is_fixed(day(1L), hour(1L)))
+#'
+#' @export
+chronon_cardinality_is_fixed <- function(x, y) {
+  S7_class_id(x) == S7_class_id(y) ||
+    chronon_fixed_reachable(x, y) ||
+    chronon_fixed_reachable(y, x)
+}
+
 # #' @rdname chronon_cardinality
 method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL, ...) {
   # Check if x and y are the same class

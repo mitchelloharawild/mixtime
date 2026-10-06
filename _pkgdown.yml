@@ -175,6 +175,7 @@ reference:
 - subtitle: "Calendar arithmetic"
   contents:
   - chronon_cardinality
+  - chronon_cardinality_is_fixed
   - chronon_traverse
   - chronon_divmod
   - chronon_epoch
