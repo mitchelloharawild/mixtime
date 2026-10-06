@@ -28,6 +28,10 @@ writable::doubles get_tz_offset(
     p_time_zone = mixtime::zone_name_load(zone_name);
   }
   
+  // The offset period of the previous lookup, reused while times stay in it
+  date::sys_info info;
+  bool cached = false;
+
   for (R_xlen_t i = 0; i < size; ++i) {
     if (ISNA(posixct[i])) {
       offset[i] = NA_REAL;
@@ -40,10 +44,14 @@ writable::doubles get_tz_offset(
     } else {
       const std::string zone_name_elt = r_string(zone[i]);
       p_time_zone_elt = mixtime::zone_name_load(zone_name_elt);
+      cached = false;
     }
     
     const date::sys_seconds tp = mixtime::posixct_to_sys_time(posixct[i]);
-    const date::sys_info info = mixtime::get_sys_info(tp, p_time_zone_elt);
+    if (!cached || tp < info.begin || tp >= info.end) {
+      info = mixtime::get_sys_info(tp, p_time_zone_elt);
+      cached = true;
+    }
     
     offset[i] = static_cast<double>(info.offset.count());
   }

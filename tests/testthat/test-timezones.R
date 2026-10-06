@@ -684,3 +684,17 @@ test_that("mixtime() reads an empty POSIXct time zone as the local time zone", {
   expect_equal(format(m), "2026-08-19 02:24:00 EDT")
   expect_equal(as.numeric(as.POSIXct(m)), as.numeric(x))
 })
+
+test_that("time zone lookups match one-at-a-time lookups in any order", {
+  # Offsets and abbreviations reuse the previous lookup while times stay in
+  # the same period, so cover shuffled times either side of transitions.
+  tz <- "Australia/Melbourne"
+  x <- as.numeric(as.POSIXct("2024-03-30", tz = tz)) + 1800 * (0:400)
+  x <- c(sample(x), NA, x)
+  one_at_a_time <- vapply(x, function(s) get_tz_offset(s, tz), numeric(1L))
+  expect_equal(get_tz_offset(x, tz), one_at_a_time)
+  expect_equal(
+    get_tz_abbreviation(x, tz),
+    vapply(x, function(s) get_tz_abbreviation(s, tz), character(1L))
+  )
+})
