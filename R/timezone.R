@@ -119,10 +119,8 @@ tz_offset_at <- function(s, tz) {
 
 # Offsets either side of any transition near UTC instants `s`.
 tz_offsets_around <- function(s, tz) {
-  list(
-    before = tz_offset_at(s - 172800, tz),
-    after = tz_offset_at(s + 172800, tz)
-  )
+  offset <- tz_offset_at(c(s - 172800, s + 172800), tz)
+  list(before = offset[seq_along(s)], after = offset[-seq_along(s)])
 }
 
 # Apply `f` to the unique values of `x` only. Many values usually share a
@@ -188,12 +186,12 @@ tz_bucket_start_impl <- function(chronon, i, starts) {
   # start that is consistent with its offset.
   near <- which((around$before != around$after) %in% TRUE)
   if (length(near)) {
-    candidate <- function(offset) {
-      s <- start_with(offset[near], near)
-      s[!((tz_offset_at(s, tz) == offset[near]) %in% TRUE)] <- NA
-      s
-    }
-    found <- pmin(candidate(around$before), candidate(around$after), na.rm = TRUE)
+    # Both candidates in one batch: those with the offset before, then after.
+    offset <- c(around$before[near], around$after[near])
+    candidate <- start_with(offset, c(near, near))
+    candidate[!((tz_offset_at(candidate, tz) == offset) %in% TRUE)] <- NA
+    before <- seq_along(near)
+    found <- pmin(candidate[before], candidate[-before], na.rm = TRUE)
     start[near] <- ifelse(is.na(found), start[near], found)
   }
   start
@@ -303,12 +301,13 @@ method(chronon_from_local, mt_tz_unit) <- function(
   near <- (around$before != around$after) %in% TRUE
   gap <- rep_len(FALSE, length(x))
   if (any(near)) {
-    candidate <- function(offset) {
-      ic <- label[near] - trunc(offset[near] / unit[near])
-      ic[(tz_bucket_label(chronon, ic, starts) != label[near]) %in% TRUE] <- NA
-      ic
-    }
-    found <- pmin(candidate(around$before), candidate(around$after), na.rm = TRUE)
+    # Both candidates in one batch: those with the offset before, then after.
+    offset <- c(around$before[near], around$after[near])
+    candidate <- rep(label[near], 2L) - trunc(offset / rep(unit[near], 2L))
+    matched <- tz_bucket_label(chronon, candidate, starts) == rep(label[near], 2L)
+    candidate[!(matched %in% TRUE)] <- NA
+    before <- seq_len(sum(near))
+    found <- pmin(candidate[before], candidate[-before], na.rm = TRUE)
     i[near] <- found
     gap[near] <- is.na(found) & !is.na(label[near])
   }
