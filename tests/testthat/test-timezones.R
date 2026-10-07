@@ -31,6 +31,27 @@ test_that("get_tz_offset works with vector input", {
   expect_equal(offsets[2], -14400) # Summer
 })
 
+test_that("get_tz_offset is exact after the end of the transition table", {
+  utc <- function(x) as.numeric(as.POSIXct(x, tz = "UTC"))
+
+  # Daylight saving in New York starts at 07:00 UTC on 12 March 2045
+  start <- utc("2045-03-12 07:00:00")
+  x <- c(start - 1, start, utc("2100-01-01"), utc("2100-07-01"))
+  expected <- c(-18000, -14400, -18000, -14400)
+  expect_identical(get_tz_offset(x, "America/New_York"), expected)
+
+  # Lord Howe Island's daylight saving is 30 minutes
+  x <- c(utc("2060-01-15"), utc("2060-07-15"))
+  expect_identical(get_tz_offset(x, "Australia/Lord_Howe"), c(39600, 37800))
+
+  # The order of the lookups doesn't change their results
+  x <- seq(utc("1900-01-01"), utc("2400-01-01"), length.out = 20011)
+  one_by_one <- vapply(x, get_tz_offset, double(1), zone = "Europe/Dublin")
+  expect_identical(get_tz_offset(rev(x), "Europe/Dublin"), rev(one_by_one))
+  shuffle <- sample(length(x))
+  expect_identical(get_tz_offset(x[shuffle], "Europe/Dublin"), one_by_one[shuffle])
+})
+
 test_that("get_tz_abbreviation returns correct abbreviations", {
   winter <- as.POSIXct("2024-01-15 12:00:00", tz = "America/New_York")
   summer <- as.POSIXct("2024-07-15 12:00:00", tz = "America/New_York")

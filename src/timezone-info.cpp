@@ -8,7 +8,133 @@
 #include <R.h>
 #include <Rinternals.h>
 
+#include <algorithm>
+#include <unordered_map>
+#include <vector>
+
 using namespace cpp11;
+
+namespace {
+
+// Offset periods are cached per zone for instants in these years. Each lookup
+// in tzdb costs a few microseconds (much more after its transition table
+// ends, where daylight saving rules are evaluated), while a binary search of
+// the cache costs nanoseconds. Outside these years tzdb is asked directly.
+const date::sys_seconds cache_from{date::sys_days{date::year{1000} / 1 / 1}};
+const date::sys_seconds cache_to{date::sys_days{date::year{4000} / 1 / 1}};
+
+// At most this many periods are cached for each zone (about 640 KB)
+constexpr std::size_t max_cached_periods = 10000;
+
+// Contiguous offset periods of a zone, in order, exactly as tzdb gives them,
+// and the position of the last one looked up
+struct zone_periods {
+  std::vector<date::sys_info> periods;
+  std::size_t last = 0;
+};
+
+std::unordered_map<const date::time_zone*, zone_periods>& period_cache() {
+  static std::unordered_map<const date::time_zone*, zone_periods> cache;
+  return cache;
+}
+
+// Holds a period that tzdb gives outside the cache
+date::sys_info& uncached_sys_info() {
+  static date::sys_info info;
+  return info;
+}
+
+const date::sys_info& lookup_uncached(
+    const date::sys_seconds tp,
+    const date::time_zone* p_time_zone) {
+  date::sys_info& info = uncached_sys_info();
+  info = mixtime::get_sys_info(tp, p_time_zone);
+  return info;
+}
+
+// The offset period containing `tp`, as tzdb would give it. The cache only
+// grows from what tzdb returns, period by period towards `tp`, so it holds
+// just the span of the instants looked up. The result is valid until the next
+// lookup.
+const date::sys_info& lookup_sys_info(
+    const date::sys_seconds tp,
+    const date::time_zone* p_time_zone) {
+
+  if (tp < cache_from || tp >= cache_to) {
+    return lookup_uncached(tp, p_time_zone);
+  }
+
+  zone_periods& zone = period_cache()[p_time_zone];
+  std::vector<date::sys_info>& periods = zone.periods;
+
+  if (periods.empty()) {
+    periods.push_back(mixtime::get_sys_info(tp, p_time_zone));
+    zone.last = 0;
+    return periods.back();
+  }
+
+  if (tp >= periods.back().end) {
+    // Walk forward from the end of the cache. Every period start asked for
+    // is at most `tp`, so within the cached years.
+    while (periods.size() < max_cached_periods) {
+      const date::sys_seconds end = periods.back().end;
+      date::sys_info next = mixtime::get_sys_info(end, p_time_zone);
+      if (next.begin != end || next.end <= end) {
+        break;
+      }
+      periods.push_back(std::move(next));
+      if (tp < periods.back().end) {
+        zone.last = periods.size() - 1;
+        return periods.back();
+      }
+    }
+    return lookup_uncached(tp, p_time_zone);
+  }
+
+  if (tp < periods.front().begin) {
+    // Walk backward from the start of the cache, then prepend the periods
+    // found in one go
+    std::vector<date::sys_info> earlier;
+    date::sys_seconds begin = periods.front().begin;
+    bool found = false;
+    while (periods.size() + earlier.size() < max_cached_periods) {
+      date::sys_info prev = mixtime::get_sys_info(
+        begin - std::chrono::seconds{1}, p_time_zone
+      );
+      if (prev.end != begin || prev.begin >= begin) {
+        break;
+      }
+      begin = prev.begin;
+      earlier.push_back(std::move(prev));
+      if (tp >= begin) {
+        found = true;
+        break;
+      }
+    }
+    periods.insert(periods.begin(), earlier.rbegin(), earlier.rend());
+    zone.last = 0;
+    return found ? periods.front() : lookup_uncached(tp, p_time_zone);
+  }
+
+  // Sorted times usually move on to the next period
+  const std::size_t next = zone.last + 1;
+  if (next < periods.size() && periods[next].begin <= tp && tp < periods[next].end) {
+    zone.last = next;
+    return periods[next];
+  }
+
+  // Otherwise, the last period starting at or before `tp`
+  const auto it = std::upper_bound(
+    periods.begin(), periods.end(), tp,
+    [](const date::sys_seconds& t, const date::sys_info& p) {
+      return t < p.begin;
+    }
+  );
+  zone.last = static_cast<std::size_t>(it - periods.begin()) - 1;
+  return periods[zone.last];
+}
+
+} // namespace
 
 // Get just the UTC offset for a vector of times (simplified version)
 [[cpp11::register]]
@@ -31,7 +157,9 @@ writable::doubles get_tz_offset(
   // The zone and offset period of the previous lookup, reused while times
   // stay in them
   SEXP zone_elt = R_NilValue;
-  date::sys_info info;
+  date::sys_seconds begin;
+  date::sys_seconds end;
+  double period_offset = 0;
   bool cached = false;
 
   for (R_xlen_t i = 0; i < size; ++i) {
@@ -49,12 +177,15 @@ writable::doubles get_tz_offset(
     }
     
     const date::sys_seconds tp = mixtime::posixct_to_sys_time(posixct[i]);
-    if (!cached || tp < info.begin || tp >= info.end) {
-      info = mixtime::get_sys_info(tp, p_time_zone);
+    if (!cached || tp < begin || tp >= end) {
+      const date::sys_info& info = lookup_sys_info(tp, p_time_zone);
+      begin = info.begin;
+      end = info.end;
+      period_offset = static_cast<double>(info.offset.count());
       cached = true;
     }
     
-    offset[i] = static_cast<double>(info.offset.count());
+    offset[i] = period_offset;
   }
   
   return offset;
@@ -99,7 +230,7 @@ writable::strings get_tz_abbreviation(
     
     const date::sys_seconds tp = mixtime::posixct_to_sys_time(posixct[i]);
     if (!cached || tp < info.begin || tp >= info.end) {
-      info = mixtime::get_sys_info(tp, p_time_zone);
+      info = lookup_sys_info(tp, p_time_zone);
       // Kept reachable by `abbreviation`, which it is stored in straight away
       abbrev = Rf_mkCharLenCE(info.abbrev.c_str(), info.abbrev.size(), CE_UTF8);
       cached = true;
