@@ -49,3 +49,38 @@ test_that("units with no monotone path still convert", {
     chronon_convert_impl(2611L, cal_isoweek$week(1L), cal_gregorian$month(1L), discrete = TRUE)
   )
 })
+
+test_that("non-finite values convert elementwise, keeping +/-Inf and NA", {
+  day <- cal_gregorian$day(1L)
+  month <- cal_gregorian$month(1L)
+  year <- cal_gregorian$year(1L)
+  second <- cal_gregorian$second(1L)
+  x <- c(5.5, NA, Inf, -Inf, 31)
+
+  pairs <- list(
+    list(day, month), list(month, day), list(day, year), list(year, day),
+    list(second, month), list(month, second), list(day, second)
+  )
+  for (p in pairs) {
+    res <- chronon_convert_impl(x, p[[1]], p[[2]], discrete = FALSE)
+    expect_identical(res[2:4], c(NA, Inf, -Inf))
+    # Each element converts as it would on its own
+    expect_identical(
+      res,
+      vapply(x, chronon_convert_impl, numeric(1L), p[[1]], p[[2]], FALSE)
+    )
+  }
+
+  expect_identical(
+    chronon_convert_impl(c(Inf, -Inf), day, month, discrete = FALSE),
+    c(Inf, -Inf)
+  )
+
+  # The UTC frame goes through the same graph
+  utc_month <- cal_gregorian$month(1L, tz = "UTC")
+  expect_identical(chronon_to_utc(utc_month, c(Inf, -Inf, NA)), c(Inf, -Inf, NA))
+  expect_identical(
+    chronon_from_utc(utc_month, c(Inf, -Inf, NA)),
+    c(Inf, -Inf, NA)
+  )
+})

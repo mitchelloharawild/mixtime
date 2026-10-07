@@ -59,9 +59,14 @@ chronon_convert_impl <- function(x, from, to, discrete) {
 chronon_convert_graph <- function(x, from, to, discrete = FALSE) {
   path <- S7_graph_dispatch(chronon_divmod_graph(), from, to)
 
+  # Only finite values have a position to convert: NA stays NA and +/-Inf is
+  # the same infinite count in any chronon.
+  finite <- is.finite(x)
+  y <- x[finite]
+
   if (length(path) == 1L) {
     # Simple direct conversion by cardinality
-    x <- x / chronon_cardinality(from, to, at = x)
+    y <- y / chronon_cardinality(from, to, at = y)
   } else {
     # Convert along the path of time granules
     path[[1]] <- from
@@ -76,19 +81,19 @@ chronon_convert_graph <- function(x, from, to, discrete = FALSE) {
     )
 
     # Convert chronons along the path
-    not_na <- !is.na(x)
     for (i in seq(2, length.out = length(path) - 1)) {
-      res <- chronon_divmod_dispatch(path[[i - 1L]], path[[i]], x[not_na])
-      x[not_na] <- res$div
+      res <- chronon_divmod_dispatch(path[[i - 1L]], path[[i]], y)
+      y <- res$div
       nz_mod <- res$mod != 0
       part <- chronon_cardinality(
         path[[i - 1L]],
         path[[i]],
         floor(res$div[nz_mod])
       )
-      x[not_na][nz_mod] <- x[not_na][nz_mod] + res$mod[nz_mod] / part
+      y[nz_mod] <- y[nz_mod] + res$mod[nz_mod] / part
     }
   }
+  x[finite] <- y
 
   if (discrete) floor_ulp(x) else x
 }
