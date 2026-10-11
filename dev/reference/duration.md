@@ -33,9 +33,9 @@ duration(
 
 - discrete:
 
-  Logical. If `TRUE` (default), returns integer durations always
-  rounding down (discrete time model). If `FALSE`, returns fractional
-  durations (continuous time model).
+  Logical. If `TRUE` (default), returns integer durations counting whole
+  granules, rounding towards zero (discrete time model). If `FALSE`,
+  returns fractional durations (continuous time model).
 
 - calendar:
 

@@ -48,6 +48,6 @@ The following time units are available in the lunar calendar systems.
 t <- linear_time(Sys.Date(), cal_time_lunar$month(1L))
 datetime(t, tz = "Australia/Melbourne")
 #> <mixtime[1]>
-#> [1] 2026-09-11 13:28:03 AEST
+#> [1] 2026-10-11 02:51:08 AEDT
 
 ```

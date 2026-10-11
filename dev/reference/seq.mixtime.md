@@ -63,18 +63,24 @@ seq(
 
 - on_invalid:
 
-  How to handle time points that overflow the cycle when using a `by`
-  argument with different time granule than the sequence chronon.
-  Options are:
+  How to handle time points that don't exist, either because they
+  overflow the cycle when using a `by` argument with different time
+  granule than the sequence chronon, or because they fall in the local
+  time skipped when daylight saving starts. Options are:
 
   - `"clamp"` (default): Reduce the overflowing component to its last
-    valid value, preserving finer components (e.g., the time of day)
+    valid value, preserving finer components (e.g., the time of day). A
+    skipped local time moves back by the size of the gap (02:30 becomes
+    01:30)
 
   - `"nearest"`: Use the end of the cycle, so finer components are not
     preserved. For discrete time this is the last chronon within the
-    cycle; for continuous time it is the end of that chronon
+    cycle; for continuous time it is the end of that chronon. A skipped
+    local time becomes the end of the valid time before the gap
 
-  - `"overflow"`: Allow time points to overflow into the next cycle
+  - `"overflow"`: Allow time points to overflow into the next cycle. A
+    skipped local time moves forward by the size of the gap (02:30
+    becomes 03:30)
 
   - `"reject"`: Return `NA` with a warning
 
@@ -99,6 +105,12 @@ A mixtime vector containing the sequence.
 For linear time types (Date, POSIXct, yearmonth, etc.), sequences
 progress forward or backward in time. For cyclical time types
 (month_of_year, day_of_week, etc.), sequences wrap around cyclically.
+
+Each time point is `from` (or `to`, if `from` is missing) shifted by a
+whole number of `by` steps, matching `from + duration(k, by)`. For
+time-zone-aware times, steps of a day or longer keep the local clock
+time, while shorter steps (e.g. hours) are real time across daylight
+saving changes.
 
 ## Examples
 
@@ -138,10 +150,9 @@ seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))
 
 # Handling invalid dates with on_invalid
 seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses clamp
-#> Warning: The cycle offset (31 days) has produced time points that overflow the month
-#> cycle.
-#> ! Clamping to the last valid time points in the cycle, `on_invalid = "clamp"`
-#>   (the default).
+#> Warning: Some time points in the sequence fall past the end of a shorter month.
+#> ! Clamping them to the last valid time point in that month, `on_invalid =
+#>   "clamp"` (the default).
 #> ℹ Specify `on_invalid` explicitly to suppress this warning.
 #> <mixtime[3]>
 #> [1] 2020-01-31 2020-02-29 2020-03-31

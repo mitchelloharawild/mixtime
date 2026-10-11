@@ -55,12 +55,12 @@ the specified `chronon` and `cycle`.
 # Create a mixtime for today
 mixtime(Sys.Date())
 #> <mixtime[1]>
-#> [1] 2026-10-05
+#> [1] 2026-10-11
 
 # Create a mixtime for the current date and time
 mixtime(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-10-05 13:11:18
+#> [1] 2026-10-11 03:18:11
 
 # Convert time from tsibble classes to mixtime
 mixtime(tsibble::yearmonth("2024 Jan"))
@@ -70,34 +70,34 @@ mixtime(tsibble::yearmonth("2024 Jan"))
 # Create a mixtime for the time of day (cyclical time)
 mixtime(Sys.time(), cycle = cal_gregorian$day(1L))
 #> <mixtime[1]>
-#> [1] 13:11:18
+#> [1] 03:18:11
 
 # Specify a timezone for the chronon
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = Sys.timezone()))
 #> <mixtime[1]>
-#> [1] 2026-10-05 13:11:18
+#> [1] 2026-10-11 03:18:11
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = "Pacific/Honolulu"))
 #> <mixtime[1]>
-#> [1] 2026-10-05 03:11:18 HST
+#> [1] 2026-10-10 17:18:11 HST
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = "Australia/Melbourne"))
 #> <mixtime[1]>
-#> [1] 2026-10-06 00:11:18 AEDT
+#> [1] 2026-10-11 14:18:11 AEDT
 
 # Dates (and all granularities) can have timezones
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = Sys.timezone()))
 #> <mixtime[1]>
-#> [1] 2026-10-05
+#> [1] 2026-10-11
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = "Pacific/Honolulu"))
 #> <mixtime[1]>
-#> [1] 2026-10-05 HST
+#> [1] 2026-10-10 HST
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = "Australia/Melbourne"))
 #> <mixtime[1]>
-#> [1] 2026-10-06 AEDT
+#> [1] 2026-10-11 AEDT
 
 # Continuous time tracks progress within the chronon
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = Sys.timezone()), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-10-05 55.0%
+#> [1] 2026-10-11 13.8%
 
 # Mixtime can combine different granularities and timezones in a vector
 now <- Sys.time()
@@ -110,5 +110,5 @@ c(
   mixtime(now, chronon = cal_gregorian$month(1L))
 )
 #> <mixtime[3]>
-#> [1] 2026-10-05 13:11:18 2026-10-05 13:11    2026 Oct           
+#> [1] 2026-10-11 03:18:11 2026-10-11 03:18    2026 Oct           
 ```

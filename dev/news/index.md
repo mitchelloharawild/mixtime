@@ -25,6 +25,7 @@
 
 ### Improvements
 
+- Performance improvements for temporal operations with time zones.
 - Generalised the default parse strings used by
   [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
   [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
@@ -60,6 +61,76 @@
   chronon of a 3-hourly time vector reads `"3 hours"` (e.g. in
   [`time_chronon()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_chronon.md)
   and [`str()`](https://rdrr.io/r/utils/str.html)), not `"1 hour"`.
+- Time-zone-aware days, weeks, months and years now start at local
+  midnight, so
+  `as.POSIXct(mixtime(x, month(tz = "Australia/Melbourne")))` returns
+  00:00 AEDT instead of 11:00. Previously a conversion to UTC read the
+  local label as a UTC one.
+- Conversions of time-zone-aware times now account for daylight saving
+  changes: a day that is 23 or 25 hours long is converted by its real
+  length, and the two instants that share a clock reading when daylight
+  saving ends are kept apart, including in hourly data.
+- The fraction through a continuous time-zone-aware time (e.g. a week)
+  is now the fraction through that unit in its own time zone, so
+  [`floor()`](https://rdrr.io/r/base/Round.html) of a continuous time
+  always gives the matching discrete time.
+- Calendar arithmetic on time-zone-aware times (e.g. adding months) now
+  keeps the local clock time. A local time that occurs twice when
+  daylight saving ends resolves to its first occurrence. A local time
+  skipped when daylight saving starts is invalid, and is resolved like
+  other invalid time points (e.g. 31 January plus one month): by default
+  it is clamped back by the size of the gap, keeping its minutes (02:30
+  becomes 01:30 when clocks go forward from 02:00 to 03:00).
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md)
+  and [`seq()`](https://rdrr.io/r/base/seq.html) resolve it with their
+  `on_invalid` argument: `"nearest"` gives the end of the time before
+  the gap, `"overflow"` moves it forward by the gap (03:30), and
+  `"reject"` gives `NA`.
+- Shifting or [`seq()`](https://rdrr.io/r/base/seq.html)-ing times with
+  a multi-unit chronon (e.g. half-hourly times) by days, months or years
+  no longer errors with “Cannot determine whether 30 minutes nest within
+  1 year”.
+- Parsing a local time skipped when daylight saving starts (e.g.
+  `datetime("2025-10-05 02:30:00", tz = "Australia/Melbourne")`) now
+  gives `NA` with a warning, like other invalid times such as
+  `"2026-02-30"`.
+- Adding or subtracting hours, minutes or seconds on time-zone-aware
+  times now moves by real time across daylight saving changes, so 02:30
+  AEDT plus one hour is 02:30 AEST when daylight saving ends (previously
+  03:30 AEST, two real hours later). Days and longer units keep the
+  local clock time, so `hours(24L)` and `days(1L)` differ on a 23 or 25
+  hour day.
+- [`seq()`](https://rdrr.io/r/base/seq.html) of time-zone-aware times by
+  days (or weeks) now keeps the local clock time across daylight saving
+  changes, so a daily sequence at 10:00 stays at 10:00 (previously it
+  moved to 09:00 when daylight saving ended). Each element of
+  [`seq()`](https://rdrr.io/r/base/seq.html) now matches adding a
+  duration to the start, so a time adjusted because daylight saving
+  skipped it returns to its clock time on the following day.
+- Converting solar time to time-zone-aware civil time now accounts for
+  the time zone, and converting solar time between two locations now
+  accounts for the change of location.
+- [`tz_abbreviation()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_abbreviation.md)
+  (and so [`format()`](https://rdrr.io/r/base/format.html)) now labels a
+  time-zone-aware time by the zone in effect when it starts, so a day on
+  which daylight saving ends reads as daylight time
+  (e.g. `"2015-04-05 AEDT"` in Melbourne, previously `"AEST"`).
+- [`format()`](https://rdrr.io/r/base/format.html) of a continuous time
+  no longer shows a time just below its true value when floating-point
+  error leaves it a fraction of a second short (e.g. `"03:29:59 100.0%"`
+  instead of `"03:30:00 0.0%"`).
+- [`as.POSIXct()`](https://rdrr.io/r/base/as.POSIXlt.html) of a mixtime
+  now keeps its time zone (or uses UTC when it has several), so
+  `mixtime(as.POSIXct(x))` round trips. Previously the result had an
+  empty time zone, which
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  rejected.
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  now also reads a `POSIXct` with an empty time zone as the local time
+  zone, like base R does.
+- A fractional time before 1970 within a second of a time zone
+  transition (e.g. half a second before New York’s 1960 change to
+  daylight time) used the offset from after the transition.
 
 ## mixtime 0.3.0
 

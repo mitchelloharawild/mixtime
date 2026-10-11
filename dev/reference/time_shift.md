@@ -4,8 +4,11 @@ Shifts time points by a duration, like `x + by`, with control over how
 time points that don't exist in the target granule are resolved.
 Shifting by a duration with an irregular relationship to the time
 points' chronon (e.g. days within months) can produce time points that
-don't exist, such as shifting 31 January by one month. The `+` and `-`
-operators always use `on_invalid = "clamp"`.
+don't exist, such as shifting 31 January by one month. In a time zone,
+shifting by days or longer keeps the local clock time, which may have
+been skipped when daylight saving starts (e.g. 02:30 on the day clocks
+go forward from 02:00 to 03:00). The `+` and `-` operators always use
+`on_invalid = "clamp"`.
 
 ## Usage
 
@@ -31,15 +34,19 @@ time_shift(x, by, on_invalid = c("clamp", "nearest", "overflow", "reject"))
   How to resolve time points that don't exist in the target granule:
 
   - `"clamp"` (default): Reduce the invalid component to its last valid
-    value, preserving finer components (e.g., the time of day).
+    value, preserving finer components (e.g., the time of day). A
+    skipped local time moves back by the size of the gap (02:30 becomes
+    01:30).
 
   - `"nearest"`: Use the end of the target granule, so finer components
     are not preserved. For discrete time this is the last chronon within
     the granule (e.g., 23:59:59 on the last day); for continuous time it
-    is the end of that chronon (e.g., 00:00:00 on the following day).
+    is the end of that chronon (e.g., 00:00:00 on the following day). A
+    skipped local time becomes the end of the valid time before the gap.
 
   - `"overflow"`: Allow the invalid component to overflow into the next
-    granule.
+    granule. A skipped local time moves forward by the size of the gap
+    (02:30 becomes 03:30).
 
   - `"reject"`: Return `NA` with a warning.
 
@@ -71,4 +78,16 @@ time_shift(x, months(1L), on_invalid = "reject")
 time_shift(date("2021-03-31"), months(-1L), on_invalid = "overflow")
 #> <mixtime[1]>
 #> [1] 2021-03-03
+
+# 02:30 doesn't exist on 2025-10-05 in Melbourne (clocks go forward at 02:00)
+x <- datetime(as.POSIXct("2025-10-04 02:30", tz = "Australia/Melbourne"))
+time_shift(x, days(1L))
+#> <mixtime[1]>
+#> [1] 2025-10-05 01:30:00 AEST
+time_shift(x, days(1L), on_invalid = "nearest")
+#> <mixtime[1]>
+#> [1] 2025-10-05 01:59:59 AEST
+time_shift(x, days(1L), on_invalid = "overflow")
+#> <mixtime[1]>
+#> [1] 2025-10-05 03:30:00 AEDT
 ```
