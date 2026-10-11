@@ -47,8 +47,10 @@ NULL
 # `interval_relation()`. A discrete value spans a whole common-chronon unit
 # ([v, v+1)); a continuous value is a zero-width instant ([v, v)).
 linear_compare <- function(op, e1, e2) {
-  if (!S7_inherits(e1, mt_linear)) e1 <- vec_cast(e1, e2)
-  if (!S7_inherits(e2, mt_linear)) e2 <- vec_cast(e2, e1)
+  x_time <- S7_inherits(e1, mt_linear)
+  y_time <- S7_inherits(e2, mt_linear)
+  if (!x_time) e1 <- vec_cast(e1, e2)
+  if (!y_time) e2 <- vec_cast(e2, e1)
 
   x_chronon <- e1@chronon
   y_chronon <- e2@chronon
@@ -56,6 +58,15 @@ linear_compare <- function(op, e1, e2) {
   yv <- S7_data(e2)
   x_discrete <- is.integer(xv)
   y_discrete <- is.integer(yv)
+
+  if (op %in% c("==", "!=") && x_discrete != y_discrete) {
+    warn_span_instant_equality(
+      if (x_discrete) yv else xv,
+      side = if (x_discrete) 2L else 1L,
+      is_time = if (x_discrete) y_time else x_time,
+      rewrap = "linear_time"
+    )
+  }
 
   if (identical(x_chronon, y_chronon)) {
     # No conversion needed: a shared chronon unit is always exactly 1 wide
@@ -76,6 +87,81 @@ linear_compare <- function(op, e1, e2) {
   }
 
   interval_relation(op, list(x_start, x_end), list(y_start, y_end))
+}
+
+# A span (discrete) is never equal to an instant (continuous). When every
+# instant sits exactly on the start of its chronon (e.g. `year(2015)`), the
+# instant was most likely meant as the span it starts, so hint at the fix,
+# rewritten from the code used for the instant's operand where possible.
+warn_span_instant_equality <- function(instant, side, is_time, rewrap = NULL) {
+  instant <- instant[!is.na(instant)]
+  if (!length(instant) || any(instant != floor(instant))) return(invisible())
+
+  expr <- compare_operand_expr(side)
+  fix <- if (!is.null(expr)) span_operand_fix(expr, is_time, rewrap)
+  hint <- if (is.null(fix)) {
+    "To compare spans, create both from integers (e.g. {.code year(2015L)} rather than {.code year(2015)})."
+  } else {
+    "To compare spans, use {.code {deparse1(fix)}} instead of {.code {deparse1(expr)}}."
+  }
+  cli::cli_warn(
+    c(
+      "Comparing time spans with instants, which are never equal.",
+      "i" = "Discrete (integer) times span their chronon, while continuous (double) times are instants.",
+      "i" = hint
+    ),
+    class = "mixtime_warning_span_instant",
+    call = NULL
+  )
+}
+
+# The code for operand `side` (1 or 2) of the `==`/`!=` call that was written,
+# taken from the outermost S3 `Ops` dispatch frame (vecvec or S7), whose call
+# still holds the unevaluated operands.
+compare_operand_expr <- function(side) {
+  frames <- sys.frames()
+  calls <- sys.calls()
+  for (i in seq_along(frames)) {
+    generic <- get0(".Generic", envir = frames[[i]], inherits = FALSE)
+    if (identical(generic, "==") || identical(generic, "!=")) {
+      call <- calls[[i]]
+      if (length(call) == 3L) return(call[[side + 1L]])
+      return(NULL)
+    }
+  }
+  NULL
+}
+
+# Rewrite an instant's code into code for the span it starts:
+# * a numeric literal becomes an integer literal (`2026` -> `2026L`)
+# * a call with a numeric literal first argument has it made integer
+#   (`year(2015)` -> `year(2015L)`)
+# * a plain numeric operand is truncated (`myvar` -> `as.integer(myvar)`)
+# * any other time is made discrete with `rewrap` (`linear_time(myvar)`)
+span_operand_fix <- function(expr, is_time, rewrap) {
+  if (is_double_literal(expr)) return(as_integer_literal(expr))
+  if (is.call(expr) && length(expr) >= 2L && is_double_literal(expr[[2L]])) {
+    expr[[2L]] <- as_integer_literal(expr[[2L]])
+    return(expr)
+  }
+  if (!is_time) return(call("as.integer", expr))
+  if (!is.null(rewrap)) return(call(rewrap, expr))
+  NULL
+}
+
+is_double_literal <- function(expr) {
+  if (is.call(expr) && identical(expr[[1L]], quote(`-`)) && length(expr) == 2L) {
+    expr <- expr[[2L]]
+  }
+  is.double(expr) && length(expr) == 1L && is.finite(expr) && expr == floor(expr)
+}
+
+as_integer_literal <- function(expr) {
+  if (is.call(expr)) {
+    expr[[2L]] <- as.integer(expr[[2L]])
+    return(expr)
+  }
+  as.integer(expr)
 }
 
 method(`==`, list(mt_linear, class_any)) <- function(e1, e2) linear_compare("==", e1, e2)
@@ -240,8 +326,10 @@ cyclical_position <- function(x, chronon, cycle) {
 # As `linear_compare()`, but positions are first reduced to their place
 # within the shared cycle before forming half-open interval endpoints.
 cyclical_compare <- function(op, e1, e2) {
-  if (!S7_inherits(e1, mt_cyclical)) e1 <- vec_cast(e1, e2)
-  if (!S7_inherits(e2, mt_cyclical)) e2 <- vec_cast(e2, e1)
+  x_time <- S7_inherits(e1, mt_cyclical)
+  y_time <- S7_inherits(e2, mt_cyclical)
+  if (!x_time) e1 <- vec_cast(e1, e2)
+  if (!y_time) e2 <- vec_cast(e2, e1)
 
   # A cycle is a modulus, not a unit, so differing cycles have no common cycle
   cycle <- cycle_common(e1@cycle, e2@cycle)
@@ -255,6 +343,14 @@ cyclical_compare <- function(op, e1, e2) {
   yv <- S7_data(e2)
   x_discrete <- is.integer(xv)
   y_discrete <- is.integer(yv)
+
+  if (op %in% c("==", "!=") && x_discrete != y_discrete) {
+    warn_span_instant_equality(
+      if (x_discrete) yv else xv,
+      side = if (x_discrete) 2L else 1L,
+      is_time = if (x_discrete) y_time else x_time
+    )
+  }
 
   if (identical(x_chronon, y_chronon)) {
     # No conversion needed: a shared chronon unit is always exactly 1 wide
