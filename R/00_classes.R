@@ -179,7 +179,7 @@ mt_cyclical <- S7::new_class(
 #' mixtime vectors. S3 methods can be defined using the `mixtime::mixtime` 
 #' class.
 #' 
-#' @param x A list of `"mt_time"` vectors, see [new_time()] for details.
+#' @param x A list of `"mt_time"` vectors, see [mt_linear()] for details.
 #' @inheritParams vecvec::class_vecvec
 #'
 #' @return When used as a class definition (e.g., in `S7::method(generic,

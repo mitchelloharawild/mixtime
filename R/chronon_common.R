@@ -161,6 +161,6 @@ chronon_lub_impl <- function(chronons, .ptype = NULL) {
 #' @rdname chronon_glb
 #' @export
 chronon_common <- function(x, .ptype = NULL, ...) {
-  lifecycle::deprecate_soft("0.3.0.9000", "chronon_common()", "chronon_glb()")
+  lifecycle::deprecate_soft("0.4.0", "chronon_common()", "chronon_glb()")
   chronon_glb(x, .ptype = .ptype, ...)
 }

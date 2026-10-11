@@ -7,7 +7,7 @@
 class_mixtime(x = list(), i = seq_len(sum(lengths(x))))
 }
 \arguments{
-\item{x}{A list of \code{"mt_time"} vectors, see \code{\link[=new_time]{new_time()}} for details.}
+\item{x}{A list of \code{"mt_time"} vectors, see \code{\link[=mt_linear]{mt_linear()}} for details.}
 
 \item{i}{A vector of integers specifying the location of each element in \code{x}
 as if they were combined in order. The values in \code{i} must be between 1 and

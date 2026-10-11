@@ -3,7 +3,7 @@
 #' Creates a `mixtime` vector, which can contain time points of different 
 #' granularities (e.g. monthly and quarterly) in a single vector via `vecvec`.
 #' 
-#' @param x A mixtime time vector (created with [new_time()]) to wrap in a mixtime class.
+#' @param x A mixtime time vector (e.g. created with [mt_linear()]) to wrap in a mixtime class.
 #' 
 #' @return A `mixtime` object, which allows mixed-type time vectors to coexist in a single vector.
 #' 

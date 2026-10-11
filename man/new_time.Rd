@@ -7,58 +7,13 @@
 new_time(x = integer(), chronon = mt_unit(1L), cycle = NULL, class = NULL)
 }
 \arguments{
-\item{x}{A numeric vector of time points, integers for discrete time or
-doubles for continuous time.}
-
-\item{chronon}{A time granule object representing the smallest indivisible time
-granule (chronon) for the time vector (e.g. \code{cal_gregorian$day(1L)}).}
-
-\item{cycle}{An optional time granule object representing the cycle for cyclical
-time (e.g. \code{cal_gregorian$week(1L)} for day-of-week). If not provided, the
-time vector will be treated as linear time.}
-
-\item{class}{An optional character vector of additional S3 classes to assign
-to the resulting time vector. This allows for further subclassing of
-\code{mt_time} for specific time types (e.g. linear, cyclical, durations, etc.).}
-}
-\value{
-A \code{mt_time} vector representing the time points in \code{x} according to
-the specified \code{chronon} and \code{cycle}.
+\item{x, chronon, cycle, class}{Ignored.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#defunct}{\figure{lifecycle-defunct.svg}{options: alt='[Defunct]'}}}{\strong{[Defunct]}}
 
-\code{new_time()} was the low-level constructor for \code{mt_time} vectors. It has been
-deprecated in favour of calling the concrete time class constructors directly:
+\code{new_time()} was the low-level constructor for \code{mt_time} vectors. It is now
+defunct; call the concrete time class constructors directly instead:
 \code{\link[=mt_linear]{mt_linear()}} for linear time, \code{\link[=mt_duration]{mt_duration()}} for durations, and
 \code{\link[=mt_cyclical]{mt_cyclical()}} for cyclical time.
-
-Creates a \code{mixtime} time vector at a specific time point, with a specified
-chronon and optional cycle. The \code{chronon} defines the smallest indivisible
-time granule for the time vector, while the \code{cycle} allows for cyclical time
-representations (e.g. day-of-week, month-of-year).
-}
-\examples{
-# Create a continuous mixtime time vector for today
-new_time(
-  as.double(Sys.Date()),
-  chronon = cal_gregorian$day(1L, tz = Sys.timezone()),
-  class = "mt_linear"
-)
-
-# Create a discrete mixtime time vector for the current date and time
-new_time(
-  as.integer(Sys.time()),
-  chronon = cal_gregorian$second(1L, tz = Sys.timezone()),
-  class = "mt_linear"
-)
-
-# Create a discrete mixtime time vector for the time of day (cyclical time)
-new_time(
-  as.integer(Sys.time()), 
-  chronon = cal_gregorian$second(1L, tz = Sys.timezone()), 
-  cycle = cal_gregorian$day(1L, tz = Sys.timezone()),
-  class = "mt_cyclical"
-)
-
 }

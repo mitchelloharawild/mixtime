@@ -7,7 +7,7 @@
 new_mixtime(x = mt_linear())
 }
 \arguments{
-\item{x}{A mixtime time vector (created with \code{\link[=new_time]{new_time()}}) to wrap in a mixtime class.}
+\item{x}{A mixtime time vector (e.g. created with \code{\link[=mt_linear]{mt_linear()}}) to wrap in a mixtime class.}
 }
 \value{
 A \code{mixtime} object, which allows mixed-type time vectors to coexist in a single vector.
