@@ -1,4 +1,4 @@
-# mixtime (development version)
+# mixtime 0.4.0
 
 ## New features
 
@@ -8,12 +8,19 @@
   (starts/started by), `%d%`/`%di%` (during/contains), and `%f%`/`%fi%`
   (finishes/finished by) - completing the set alongside the existing `==`.
 
-* `chronon_common()` has been renamed to `chronon_glb()`, calling out that it
-  finds the *greatest lower bound* (the finest common chronon) explicitly in
-  its name. Added `chronon_lub()`, the dual operation that finds the
-  *least upper bound* (the coarsest chronon that every input chronon evenly
-  aggregates into). `chronon_common()` is retained as a deprecated alias for
-  `chronon_glb()`.
+* Added `chronon_glb()` and `chronon_lub()`, which find the *greatest lower
+  bound* (the finest common chronon) and the *least upper bound* (the
+  coarsest chronon that every input chronon evenly aggregates into) of a set
+  of chronons.
+
+## Deprecated
+
+* `chronon_common()` is deprecated in favour of `chronon_glb()`, which names
+  the *greatest lower bound* it finds explicitly and distinguishes it from its
+  dual, `chronon_lub()`.
+
+* `new_time()`, deprecated in 0.3.0, is now defunct. Use `mt_linear()`,
+  `mt_duration()`, or `mt_cyclical()` instead.
 
 ## Improvements
 
@@ -22,7 +29,7 @@
   `yearquarter()` to accept strings that are accepted by tsibble equivalents for
   ease of migration (with the intentional exception of dates and datetimes, 
   which need to be parsed first with `date()` or `datetime()`).
-* Parsing named labels (e.g. month and weekday names) are now case-insensitive.
+* Parsing named labels (e.g. month and weekday names) is now case-insensitive.
 * The chronon of `Date` and `POSIXct` objects is now identified from the
   interval between observations (like tsibble's interval), rather than always
   being 1 day or 1 second. For example, `mixtime()` on hourly datetimes now
@@ -31,14 +38,9 @@
 
 ## Bug fixes
 
-* `chronon_cardinality_fixed()` returned the unit-granule constant `1` for a
-  pair sharing the same time unit at different granule sizes (e.g.
-  `chronon_cardinality_fixed(day(1L), day(10L))`), ignoring the requested
-  sizes entirely instead of scaling by them like `chronon_cardinality()`
-  does for the same case.
 * `chronon_cardinality_fixed()` now scales its result by the granule sizes
-  (`n`) of both arguments for every pair of time units, not only for granules
-  of the same unit (e.g. there are 4 `minute(15L)` in `hour(1L)`, not 60).
+  (`n`) of both arguments, like `chronon_cardinality()` does (e.g. there are 4
+  `minute(15L)` in `hour(1L)`, not 60, and 10 `day(1L)` in `day(10L)`, not 1).
   Methods still return the ratio between unit granules.
 * Durations of multi-unit chronons now print with the chronon's size, so
   `duration(2L, hour(3L))` shows `"6 hours"` (not `"2 hours"`) and the
