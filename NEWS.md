@@ -31,10 +31,12 @@
 
 ## Improvements
 
-* `==` and `!=` between a discrete time (a span) and a continuous time at the
-  start of its chronon (an instant, such as `year(2015)`) now warn that they
-  are never equal, suggesting the code for the intended span (e.g.
-  `year(2015L)`, `2026L`, or `as.integer(myvar)`).
+* Comparing a discrete time (a span) with a continuous time at the start of
+  its chronon (an instant, such as `year(2015)`) now warns when reading the
+  instant as a span would change the result: `==` and `!=` (never equal), and
+  the orderings that measure against the instant's end (e.g. `span > instant`
+  and `span <= instant`). The warning suggests code for the intended span
+  (e.g. `year(2015L)`, `2026L`, or `as.integer(myvar)`).
 * Performance improvements for temporal operations with time zones.
 * Generalised the default parse strings used by `yearweek()`, `yearmonth()`, and
   `yearquarter()` to accept strings that are accepted by tsibble equivalents for

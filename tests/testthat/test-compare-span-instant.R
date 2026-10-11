@@ -1,7 +1,13 @@
 span_instant_hint <- function(expr) {
   w <- tryCatch(expr, mixtime_warning_span_instant = function(w) w)
   expect_s3_class(w, "mixtime_warning_span_instant")
-  cli::ansi_strip(conditionMessage(w))
+  gsub("\\s+", " ", cli::ansi_strip(conditionMessage(w)))
+}
+
+# Evaluate `code` as user code would be, outside of any package namespace
+# (`R CMD check` runs tests inside mixtime's namespace).
+user_code <- function(code, env = parent.frame()) {
+  eval(substitute(code), list2env(as.list(env), parent = globalenv()))
 }
 
 test_that("comparing a span with an instant at its start warns", {
@@ -23,25 +29,103 @@ test_that("the span/instant hint rewrites the code used for the instant", {
   myvar <- 2015
   mv <- year(2015)
 
-  expect_match(span_instant_hint(x == 2026), "use `2026L` instead of `2026`", fixed = TRUE)
-  expect_match(span_instant_hint(x == -1), "use `-1L` instead of `-1`", fixed = TRUE)
+  expect_match(span_instant_hint(user_code(x == 2026)), "use `2026L` instead of `2026`", fixed = TRUE)
+  expect_match(span_instant_hint(user_code(x == -1)), "use `-1L` instead of `-1`", fixed = TRUE)
   expect_match(
-    span_instant_hint(year(2015) != x),
+    span_instant_hint(user_code(year(2015) != x)),
     "use `year(2015L)` instead of `year(2015)`", fixed = TRUE
   )
   expect_match(
-    span_instant_hint(x == myvar),
+    span_instant_hint(user_code(x == myvar)),
     "use `as.integer(myvar)` instead of `myvar`", fixed = TRUE
   )
   expect_match(
-    span_instant_hint(x == mv),
+    span_instant_hint(user_code(x == mv)),
     "use `linear_time(mv)` instead of `mv`", fixed = TRUE
   )
-  # dplyr re-signals the warning under its own class
-  expect_warning(
-    dplyr::filter(data.frame(t = x), t == year(2015)),
+  # evaluated in a data mask, as in dplyr::filter()
+  expect_match(
+    span_instant_hint(user_code(
+      rlang::eval_tidy(quote(t == year(2015)), data = list(t = x))
+    )),
     "use `year(2015L)` instead of `year(2015)`", fixed = TRUE
   )
+})
+
+test_that("the span/instant hint falls back when the code isn't the user's", {
+  x <- year(2015L)
+  mv <- year(2015)
+  general <- "create both from integers (e.g. `year(2015L)` rather than `year(2015)`)"
+
+  # names local to a package's code
+  pkg_compare <- function(a, b) a == b
+  environment(pkg_compare) <- asNamespace("stats")
+  expect_match(span_instant_hint(pkg_compare(x, mv)), general, fixed = TRUE)
+  expect_match(span_instant_hint(Map(`==`, list(x), list(mv))), general, fixed = TRUE)
+
+  # an integer first argument needn't make a call setting `discrete` discrete
+  expect_match(
+    span_instant_hint(user_code(
+      x == linear_time(2015, chronon = cal_gregorian$year(1L), discrete = FALSE)
+    )),
+    general, fixed = TRUE
+  )
+
+  # evaluated objects injected into the call
+  expect_match(span_instant_hint(do.call("==", list(x, mv))), general, fixed = TRUE)
+  expect_match(span_instant_hint(rlang::inject(x == !!mv)), general, fixed = TRUE)
+})
+
+test_that("ordering warns exactly when reading the instant as its span differs", {
+  x <- year(2014:2018)
+  for (op in c("<", "<=", ">", ">=")) {
+    f <- match.fun(op)
+    for (instant_left in c(FALSE, TRUE)) {
+      compare <- function(y) if (instant_left) f(y, x) else f(x, y)
+      differs <- !identical(compare(year(2016L)), suppressWarnings(compare(year(2016))))
+      warned <- FALSE
+      withCallingHandlers(
+        compare(year(2016)),
+        mixtime_warning_span_instant = function(w) {
+          warned <<- TRUE
+          invokeRestart("muffleWarning")
+        }
+      )
+      expect(
+        warned == differs,
+        sprintf("`%s` with the instant on the %s: warned %s, differs %s",
+          op, if (instant_left) "left" else "right", warned, differs)
+      )
+    }
+  }
+})
+
+test_that("the ordering hint names the operator", {
+  x <- year(2016L)
+  expect_match(
+    span_instant_hint(user_code(x > year(2016))),
+    "`>` between time spans and instants compares with the instant, not the span it starts.",
+    fixed = TRUE
+  )
+  expect_match(
+    span_instant_hint(user_code(x <= year(2016))),
+    "use `year(2016L)` instead of `year(2016)`", fixed = TRUE
+  )
+})
+
+test_that("a mixed-granularity comparison warns once", {
+  jan <- as.Date("2015-01-01")
+  spans <- c(year(2015L), yearmonth(jan))
+  instants <- c(year(2015), yearmonth(jan, discrete = FALSE))
+  n <- 0L
+  withCallingHandlers(
+    spans == instants,
+    mixtime_warning_span_instant = function(w) {
+      n <<- n + 1L
+      invokeRestart("muffleWarning")
+    }
+  )
+  expect_identical(n, 1L)
 })
 
 test_that("no span/instant hint when the comparison is intended", {
@@ -49,8 +133,9 @@ test_that("no span/instant hint when the comparison is intended", {
   expect_no_warning(year(2015) == year(2015))
   # an instant part-way through a chronon is clearly an instant
   expect_no_warning(year(2015L) == year(2015.5))
-  # ordering a span and an instant is well defined
-  expect_no_warning(year(2015L) <= year(2015))
+  # ordering only by starts agrees whether the instant is read as a span
+  expect_no_warning(year(2015L) >= year(2015))
+  expect_no_warning(year(2015L) < year(2015))
   expect_no_warning(year(NA_integer_) == year(NA_real_))
 })
 

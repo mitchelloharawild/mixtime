@@ -59,8 +59,9 @@ linear_compare <- function(op, e1, e2) {
   x_discrete <- is.integer(xv)
   y_discrete <- is.integer(yv)
 
-  if (op %in% c("==", "!=") && x_discrete != y_discrete) {
-    warn_span_instant_equality(
+  if (x_discrete != y_discrete) {
+    warn_span_instant(
+      op,
       if (x_discrete) yv else xv,
       side = if (x_discrete) 2L else 1L,
       is_time = if (x_discrete) y_time else x_time,
@@ -89,15 +90,33 @@ linear_compare <- function(op, e1, e2) {
   interval_relation(op, list(x_start, x_end), list(y_start, y_end))
 }
 
-# A span (discrete) is never equal to an instant (continuous). When every
-# instant sits exactly on the start of its chronon (e.g. `year(2015)`), the
-# instant was most likely meant as the span it starts, so hint at the fix,
-# rewritten from the code used for the instant's operand where possible.
-warn_span_instant_equality <- function(instant, side, is_time, rewrap = NULL) {
+# A span (discrete) is never equal to an instant (continuous), and ordering
+# that measures against an instant's (zero-width) end differs from measuring
+# against the end of the span it starts (`year(2016L) > year(2016)` is TRUE).
+# When every instant sits exactly on the start of its chronon (e.g.
+# `year(2016)`), the instant was most likely meant as the span it starts, so
+# hint at the fix, rewritten from the code used for the instant's operand where
+# possible. Measures against the instant's start are unaffected, as that is
+# where the span starts too.
+warn_span_instant <- function(op, instant, side, is_time, rewrap = NULL) {
+  # `a <= b` compares both ends, `a > b` uses the end of `b` and `a < b` the end
+  # of `a`, while `a >= b` only compares starts (see `mt_linear-compare`).
+  ambiguous <- c("==", "!=", "<=", if (side == 2L) ">" else "<")
+  if (!op %in% ambiguous) return(invisible())
   instant <- instant[!is.na(instant)]
   if (!length(instant) || any(instant != floor(instant))) return(invisible())
 
-  expr <- compare_operand_expr(side)
+  # Warn once per comparison, rather than once per granularity group that
+  # vecvec compares separately within a mixed vector.
+  dispatch <- compare_dispatch_frame()
+  if (!is.null(dispatch)) {
+    if (isTRUE(get0(".mixtime_span_instant_warned", envir = dispatch$env, inherits = FALSE))) {
+      return(invisible())
+    }
+    assign(".mixtime_span_instant_warned", TRUE, envir = dispatch$env)
+  }
+
+  expr <- if (!is.null(dispatch)) compare_operand_expr(dispatch, side)
   fix <- if (!is.null(expr)) span_operand_fix(expr, is_time, rewrap)
   hint <- if (is.null(fix)) {
     "To compare spans, create both from integers (e.g. {.code year(2015L)} rather than {.code year(2015)})."
@@ -106,7 +125,11 @@ warn_span_instant_equality <- function(instant, side, is_time, rewrap = NULL) {
   }
   cli::cli_warn(
     c(
-      "Comparing time spans with instants, which are never equal.",
+      if (op %in% c("==", "!=")) {
+        "Comparing time spans with instants, which are never equal."
+      } else {
+        "{.code {op}} between time spans and instants compares with the instant, not the span it starts."
+      },
       "i" = "Discrete (integer) times span their chronon, while continuous (double) times are instants.",
       "i" = hint
     ),
@@ -115,31 +138,58 @@ warn_span_instant_equality <- function(instant, side, is_time, rewrap = NULL) {
   )
 }
 
-# The code for operand `side` (1 or 2) of the `==`/`!=` call that was written,
-# taken from the outermost S3 `Ops` dispatch frame (vecvec or S7), whose call
-# still holds the unevaluated operands.
-compare_operand_expr <- function(side) {
+# The outermost S3 `Ops` dispatch frame (vecvec or S7) of the comparison call
+# that was written, as `list(env, call)`; its call still holds the unevaluated
+# operands.
+compare_dispatch_frame <- function() {
   frames <- sys.frames()
-  calls <- sys.calls()
   for (i in seq_along(frames)) {
     generic <- get0(".Generic", envir = frames[[i]], inherits = FALSE)
-    if (identical(generic, "==") || identical(generic, "!=")) {
-      call <- calls[[i]]
-      if (length(call) == 3L) return(call[[side + 1L]])
-      return(NULL)
+    if (is.character(generic) && generic %in% c("==", "!=", "<", "<=", ">", ">=")) {
+      return(list(env = frames[[i]], call = sys.call(i)))
     }
   }
   NULL
+}
+
+# The code for operand `side` (1 or 2) of the comparison in `dispatch`. `NULL`
+# (for the general hint) unless it is code the user wrote: comparisons made
+# inside a package's code would show names local to that code, and calls built
+# by `do.call()` or `!!` hold already-evaluated objects rather than code.
+compare_operand_expr <- function(dispatch, side) {
+  call <- dispatch$call
+  if (length(call) != 3L) return(NULL)
+  # S3 dispatch records the environment the comparison was evaluated in
+  # (e.g. a data mask), which belongs to a package when its code made it
+  caller <- get0(".GenericCallEnv", envir = dispatch$env, inherits = FALSE)
+  if (is.null(caller) || isNamespace(topenv(caller))) return(NULL)
+  expr <- call[[side + 1L]]
+  if (is_plain_code(expr)) expr
+}
+
+# Whether `expr` is code (symbols, calls and bare scalar constants) rather than
+# an evaluated object injected into a call.
+is_plain_code <- function(expr) {
+  if (is.symbol(expr)) return(TRUE)
+  if (is.call(expr)) {
+    args <- as.list(expr)
+    args <- args[!vapply(args, identical, logical(1L), quote(expr = ))]
+    return(all(vapply(args, is_plain_code, logical(1L))))
+  }
+  is.atomic(expr) && length(expr) <= 1L && is.null(attributes(expr))
 }
 
 # Rewrite an instant's code into code for the span it starts:
 # * a numeric literal becomes an integer literal (`2026` -> `2026L`)
 # * a call with a numeric literal first argument has it made integer
 #   (`year(2015)` -> `year(2015L)`)
+# * a call setting `discrete` gets the general hint, as an integer first
+#   argument needn't make it discrete
 # * a plain numeric operand is truncated (`myvar` -> `as.integer(myvar)`)
 # * any other time is made discrete with `rewrap` (`linear_time(myvar)`)
 span_operand_fix <- function(expr, is_time, rewrap) {
   if (is_double_literal(expr)) return(as_integer_literal(expr))
+  if (is.call(expr) && "discrete" %in% names(expr)) return(NULL)
   if (is.call(expr) && length(expr) >= 2L && is_double_literal(expr[[2L]])) {
     expr[[2L]] <- as_integer_literal(expr[[2L]])
     return(expr)
@@ -344,8 +394,9 @@ cyclical_compare <- function(op, e1, e2) {
   x_discrete <- is.integer(xv)
   y_discrete <- is.integer(yv)
 
-  if (op %in% c("==", "!=") && x_discrete != y_discrete) {
-    warn_span_instant_equality(
+  if (x_discrete != y_discrete) {
+    warn_span_instant(
+      op,
       if (x_discrete) yv else xv,
       side = if (x_discrete) 2L else 1L,
       is_time = if (x_discrete) y_time else x_time
