@@ -19,7 +19,8 @@
 }
 \arguments{
 \item{e1, e2}{\code{mt_linear} vectors (or values castable to one, such as
-plain numeric vectors sharing the other operand's chronon).}
+plain numeric vectors in the other operand's chronon, read from its epoch
+as \code{\link[=mixtime]{mixtime()}} reads them, so \code{year(x) == 2026L} compares with 2026).}
 }
 \value{
 A logical vector.

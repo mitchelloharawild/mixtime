@@ -92,6 +92,12 @@ mt_cast_to_POSIXct <- function(x, to, ...) {
 
 # --- casts from a base type to a time vector ---
 mt_cast_from_numeric <- function(x, to, ...) {
+  # Bare numbers are read as `mixtime()` reads them, so a time point counts from
+  # its chronon's epoch (e.g. 2026 is the year 2026). Durations have no epoch.
+  if (!S7_inherits(to, mt_duration)) {
+    epoch <- chronon_epoch(attr(to, "chronon"))
+    if (epoch != 0L) x <- x - epoch
+  }
   attributes(x) <- attributes(to)
   x
 }

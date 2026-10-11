@@ -19,7 +19,8 @@
 }
 \arguments{
 \item{e1, e2}{\code{mt_cyclical} vectors sharing a cycle (or values castable to one,
-such as plain numeric vectors sharing the other operand's chronon).}
+such as plain numeric vectors in the other operand's chronon, read from
+its epoch as \code{\link[=mixtime]{mixtime()}} reads them).}
 }
 \value{
 A logical vector.

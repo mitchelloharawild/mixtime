@@ -25,7 +25,8 @@
 #' of Allen's 13 base relations are documented in [allen-interval-algebra].
 #' 
 #' @param e1,e2 `mt_linear` vectors (or values castable to one, such as
-#'   plain numeric vectors sharing the other operand's chronon).
+#'   plain numeric vectors in the other operand's chronon, read from its epoch
+#'   as [mixtime()] reads them, so `year(x) == 2026L` compares with 2026).
 #'
 #' @return A logical vector.
 #'
@@ -205,7 +206,8 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #' is not treated as circular.
 #'
 #' @param e1,e2 `mt_cyclical` vectors sharing a cycle (or values castable to one,
-#'   such as plain numeric vectors sharing the other operand's chronon).
+#'   such as plain numeric vectors in the other operand's chronon, read from
+#'   its epoch as [mixtime()] reads them).
 #'
 #' @return A logical vector.
 #'
@@ -366,7 +368,8 @@ interval_relation <- function(op, e1, e2) {
 #' 
 #' @param e1,e2 `mt_linear` or `mt_cyclical` vectors sharing a mode of time
 #'   (and, for `mt_cyclical`, a cycle) - or values castable to one, such as
-#'   plain numeric vectors sharing the other operand's chronon. `mt_duration`
+#'   plain numeric vectors in the other operand's chronon, read from its epoch
+#'   as [mixtime()] reads them. `mt_duration`
 #'   has no interval to compare and so is not supported.
 #'
 #' @return A logical vector.

@@ -43,7 +43,8 @@ e1 \%fi\% e2
 \arguments{
 \item{e1, e2}{\code{mt_linear} or \code{mt_cyclical} vectors sharing a mode of time
 (and, for \code{mt_cyclical}, a cycle) - or values castable to one, such as
-plain numeric vectors sharing the other operand's chronon. \code{mt_duration}
+plain numeric vectors in the other operand's chronon, read from its epoch
+as \code{\link[=mixtime]{mixtime()}} reads them. \code{mt_duration}
 has no interval to compare and so is not supported.}
 }
 \value{

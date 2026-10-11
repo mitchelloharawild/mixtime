@@ -22,6 +22,13 @@
 * `new_time()`, deprecated in 0.3.0, is now defunct. Use `mt_linear()`,
   `mt_duration()`, or `mt_cyclical()` instead.
 
+## Breaking changes
+
+* Bare numbers compared with (or cast to) a linear or cyclical time are now
+  read as `mixtime()` reads them, counting from the chronon's epoch, so
+  `year(x) == 2026L` compares with the year 2026. Previously the number was a
+  raw count of chronons since 1970 (2026 was the year 3996).
+
 ## Improvements
 
 * Performance improvements for temporal operations with time zones.
