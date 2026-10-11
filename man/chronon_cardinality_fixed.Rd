@@ -14,23 +14,23 @@ chronon_cardinality_fixed(x, y, ...)
 \item{...}{Additional arguments for methods.}
 }
 \value{
-A single number describing how many unit \code{x} time granules fit
-into a unit \code{y} time granule.
+A single number describing how many \code{x} time granules fit into a
+\code{y} time granule.
 }
 \description{
 A restricted variant of \code{\link[=chronon_cardinality]{chronon_cardinality()}} for time granule pairs
 whose relationship is a constant, context-independent number (e.g., 60
 seconds in a minute, 24 hours in a day). Unlike \code{chronon_cardinality()},
 methods for this generic do not receive (and must not need) an \code{at} time
-point, and should return the number of unit (\code{n = 1L}) \code{x} granules that
-fit within one unit \code{y} granule.
+point. Methods should ignore the granule sizes (\code{n}) of \code{x} and \code{y}, and
+return the number of unit (\code{n = 1L}) \code{x} granules that fit within one unit
+\code{y} granule. The generic scales this by the requested granule sizes.
 }
 \details{
 Defining a method for \code{chronon_cardinality_fixed()} automatically provides
-a \code{chronon_cardinality()} method for the pair (scaled by the requested
-granule sizes via the \code{list(mt_unit, mt_unit)} fallback method), and marks
-the relationship as safe to use for \code{\link[=chronon_divmod]{chronon_divmod()}}'s graph traversal,
-where variable (context-dependent) cardinalities cannot be used since no
-\code{at} is available mid-traversal.
+a \code{chronon_cardinality()} method for the pair, and marks the relationship
+as safe to use for \code{\link[=chronon_divmod]{chronon_divmod()}}'s graph traversal, where variable
+(context-dependent) cardinalities cannot be used since no \code{at} is available
+mid-traversal.
 }
 \keyword{internal}

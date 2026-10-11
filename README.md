@@ -86,7 +86,7 @@ library(mixtime)
 #> Attaching package: 'mixtime'
 #> The following objects are masked from 'package:base':
 #> 
-#>     date, months, quarters
+#>     %o%, date, months, quarters
 demo_time <- as.POSIXct("2026-02-22 18:30:42", tz = "UTC")
 demo_date <- as.Date("2026-02-22")
 ```

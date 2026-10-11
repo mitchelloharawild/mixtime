@@ -36,6 +36,10 @@
   `chronon_cardinality_fixed(day(1L), day(10L))`), ignoring the requested
   sizes entirely instead of scaling by them like `chronon_cardinality()`
   does for the same case.
+* `chronon_cardinality_fixed()` now scales its result by the granule sizes
+  (`n`) of both arguments for every pair of time units, not only for granules
+  of the same unit (e.g. there are 4 `minute(15L)` in `hour(1L)`, not 60).
+  Methods still return the ratio between unit granules.
 * Durations of multi-unit chronons now print with the chronon's size, so
   `duration(2L, hour(3L))` shows `"6 hours"` (not `"2 hours"`) and the
   chronon of a 3-hourly time vector reads `"3 hours"` (e.g. in
