@@ -37,25 +37,33 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0" id="mixtime-040">mixtime 0.4.0<a class="anchor" aria-label="anchor" href="#mixtime-040"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-0-4-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-0"></a></h3>
 <ul><li><p>Added the twelve remaining base relations of Allen’s interval algebra as infix operators - <code>%p%</code>/<code>%pi%</code> (precedes/preceded by), <code>%m%</code>/<code>%mi%</code> (meets/met by), <code>%o%</code>/<code>%oi%</code> (overlaps/overlapped by), <code>%s%</code>/<code>%si%</code> (starts/started by), <code>%d%</code>/<code>%di%</code> (during/contains), and <code>%f%</code>/<code>%fi%</code> (finishes/finished by) - completing the set alongside the existing <code>==</code>.</p></li>
-<li><p><code><a href="../reference/chronon_glb.html">chronon_common()</a></code> has been renamed to <code><a href="../reference/chronon_glb.html">chronon_glb()</a></code>, calling out that it finds the <em>greatest lower bound</em> (the finest common chronon) explicitly in its name. Added <code><a href="../reference/chronon_glb.html">chronon_lub()</a></code>, the dual operation that finds the <em>least upper bound</em> (the coarsest chronon that every input chronon evenly aggregates into). <code><a href="../reference/chronon_glb.html">chronon_common()</a></code> is retained as a deprecated alias for <code><a href="../reference/chronon_glb.html">chronon_glb()</a></code>.</p></li>
+<li><p>Added <code><a href="../reference/chronon_glb.html">chronon_glb()</a></code> and <code><a href="../reference/chronon_glb.html">chronon_lub()</a></code>, which find the <em>greatest lower bound</em> (the finest common chronon) and the <em>least upper bound</em> (the coarsest chronon that every input chronon evenly aggregates into) of a set of chronons.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
-<ul><li>Performance improvements for temporal operations with time zones.</li>
+<h3 id="deprecated-0-4-0">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated-0-4-0"></a></h3>
+<ul><li><p><code><a href="../reference/chronon_glb.html">chronon_common()</a></code> is deprecated in favour of <code><a href="../reference/chronon_glb.html">chronon_glb()</a></code>, which names the <em>greatest lower bound</em> it finds explicitly and distinguishes it from its dual, <code><a href="../reference/chronon_glb.html">chronon_lub()</a></code>.</p></li>
+<li><p><code><a href="../reference/new_time.html">new_time()</a></code>, deprecated in 0.3.0, is now defunct. Use <code><a href="../reference/mt_time-class.html">mt_linear()</a></code>, <code><a href="../reference/mt_time-class.html">mt_duration()</a></code>, or <code><a href="../reference/mt_time-class.html">mt_cyclical()</a></code> instead.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-0-4-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4-0"></a></h3>
+<ul><li>Bare numbers compared with (or cast to) a linear or cyclical time are now read as <code><a href="../reference/mixtime.html">mixtime()</a></code> reads them, counting from the chronon’s epoch, so <code>year(x) == 2026L</code> compares with the year 2026. Previously the number was a raw count of chronons since 1970 (2026 was the year 3996).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-0-4-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-4-0"></a></h3>
+<ul><li>Comparing a discrete time (a span) with a continuous time at the start of its chronon (an instant, such as <code>year(2015)</code>) now warns when reading the instant as a span would change the result: <code>==</code> and <code>!=</code> (never equal), and the orderings that measure against the instant’s end (e.g. <code>span &gt; instant</code> and <code>span &lt;= instant</code>). The warning suggests code for the intended span (e.g. <code>year(2015L)</code>, <code>2026L</code>, or <code>as.integer(myvar)</code>).</li>
+<li>Performance improvements for temporal operations with time zones.</li>
 <li>Generalised the default parse strings used by <code><a href="../reference/linear_time_helpers.html">yearweek()</a></code>, <code><a href="../reference/linear_time_helpers.html">yearmonth()</a></code>, and <code><a href="../reference/linear_time_helpers.html">yearquarter()</a></code> to accept strings that are accepted by tsibble equivalents for ease of migration (with the intentional exception of dates and datetimes, which need to be parsed first with <code><a href="../reference/linear_time_helpers.html">date()</a></code> or <code><a href="../reference/linear_time_helpers.html">datetime()</a></code>).</li>
-<li>Parsing named labels (e.g. month and weekday names) are now case-insensitive.</li>
+<li>Parsing named labels (e.g. month and weekday names) is now case-insensitive.</li>
 <li>The chronon of <code>Date</code> and <code>POSIXct</code> objects is now identified from the interval between observations (like tsibble’s interval), rather than always being 1 day or 1 second. For example, <code><a href="../reference/mixtime.html">mixtime()</a></code> on hourly datetimes now produces 1 hour chronons. A multiple of a unit is used only when every observation is aligned to it, so conversion never loses information.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-0-4-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0"></a></h3>
 <ul><li>
-<code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> returned the unit-granule constant <code>1</code> for a pair sharing the same time unit at different granule sizes (e.g. <code>chronon_cardinality_fixed(day(1L), day(10L))</code>), ignoring the requested sizes entirely instead of scaling by them like <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> does for the same case.</li>
-<li>
-<code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> now scales its result by the granule sizes (<code>n</code>) of both arguments for every pair of time units, not only for granules of the same unit (e.g. there are 4 <code>minute(15L)</code> in <code>hour(1L)</code>, not 60). Methods still return the ratio between unit granules.</li>
+<code><a href="../reference/chronon_cardinality_fixed.html">chronon_cardinality_fixed()</a></code> now scales its result by the granule sizes (<code>n</code>) of both arguments, like <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> does (e.g. there are 4 <code>minute(15L)</code> in <code>hour(1L)</code>, not 60, and 10 <code>day(1L)</code> in <code>day(10L)</code>, not 1). Methods still return the ratio between unit granules.</li>
 <li>Durations of multi-unit chronons now print with the chronon’s size, so <code>duration(2L, hour(3L))</code> shows <code>"6 hours"</code> (not <code>"2 hours"</code>) and the chronon of a 3-hourly time vector reads <code>"3 hours"</code> (e.g. in <code><a href="../reference/time_chronon.html">time_chronon()</a></code> and <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code>), not <code>"1 hour"</code>.</li>
 <li>Time-zone-aware days, weeks, months and years now start at local midnight, so <code>as.POSIXct(mixtime(x, month(tz = "Australia/Melbourne")))</code> returns 00:00 AEDT instead of 11:00. Previously a conversion to UTC read the local label as a UTC one.</li>
 <li>Conversions of time-zone-aware times now account for daylight saving changes: a day that is 23 or 25 hours long is converted by its real length, and the two instants that share a clock reading when daylight saving ends are kept apart, including in hourly data.</li>

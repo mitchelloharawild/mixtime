@@ -14,8 +14,8 @@ new_mixtime(x = mt_linear())
 
 - x:
 
-  A mixtime time vector (created with
-  [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md))
+  A mixtime time vector (e.g. created with
+  [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md))
   to wrap in a mixtime class.
 
 ## Value

@@ -161,7 +161,8 @@ that intervals are non-degenerate (i.e. end &gt; start, not end &gt;= start).</p
 <dl><dt id="arg-e-e-">e1, e2<a class="anchor" aria-label="anchor" href="#arg-e-e-"></a></dt>
 <dd><p><code>mt_linear</code> or <code>mt_cyclical</code> vectors sharing a mode of time
 (and, for <code>mt_cyclical</code>, a cycle) - or values castable to one, such as
-plain numeric vectors sharing the other operand's chronon. <code>mt_duration</code>
+plain numeric vectors in the other operand's chronon, read from its epoch
+as <code><a href="mixtime.html">mixtime()</a></code> reads them. <code>mt_duration</code>
 has no interval to compare and so is not supported.</p></dd>
 
 </dl></div>

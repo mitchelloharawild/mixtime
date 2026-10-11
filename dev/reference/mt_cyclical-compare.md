@@ -57,7 +57,10 @@ e1 >= e2
 - e1, e2:
 
   `mt_cyclical` vectors sharing a cycle (or values castable to one, such
-  as plain numeric vectors sharing the other operand's chronon).
+  as plain numeric vectors in the other operand's chronon, read from its
+  epoch as
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  reads them).
 
 ## Value
 

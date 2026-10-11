@@ -1,6 +1,6 @@
 # Changelog
 
-## mixtime (development version)
+## mixtime 0.4.0
 
 ### New features
 
@@ -11,20 +11,49 @@
   (finishes/finished by) - completing the set alongside the existing
   `==`.
 
-- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
-  has been renamed to
-  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md),
-  calling out that it finds the *greatest lower bound* (the finest
-  common chronon) explicitly in its name. Added
+- Added
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  and
   [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md),
-  the dual operation that finds the *least upper bound* (the coarsest
-  chronon that every input chronon evenly aggregates into).
-  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
-  is retained as a deprecated alias for
-  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md).
+  which find the *greatest lower bound* (the finest common chronon) and
+  the *least upper bound* (the coarsest chronon that every input chronon
+  evenly aggregates into) of a set of chronons.
+
+### Deprecated
+
+- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  is deprecated in favour of
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md),
+  which names the *greatest lower bound* it finds explicitly and
+  distinguishes it from its dual,
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md).
+
+- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md),
+  deprecated in 0.3.0, is now defunct. Use
+  [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
+  [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
+  or
+  [`mt_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
+  instead.
+
+### Breaking changes
+
+- Bare numbers compared with (or cast to) a linear or cyclical time are
+  now read as
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  reads them, counting from the chronon’s epoch, so `year(x) == 2026L`
+  compares with the year 2026. Previously the number was a raw count of
+  chronons since 1970 (2026 was the year 3996).
 
 ### Improvements
 
+- Comparing a discrete time (a span) with a continuous time at the start
+  of its chronon (an instant, such as `year(2015)`) now warns when
+  reading the instant as a span would change the result: `==` and `!=`
+  (never equal), and the orderings that measure against the instant’s
+  end (e.g. `span > instant` and `span <= instant`). The warning
+  suggests code for the intended span (e.g. `year(2015L)`, `2026L`, or
+  `as.integer(myvar)`).
 - Performance improvements for temporal operations with time zones.
 - Generalised the default parse strings used by
   [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
@@ -37,7 +66,7 @@
   [`date()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
   or
   [`datetime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)).
-- Parsing named labels (e.g. month and weekday names) are now
+- Parsing named labels (e.g. month and weekday names) is now
   case-insensitive.
 - The chronon of `Date` and `POSIXct` objects is now identified from the
   interval between observations (like tsibble’s interval), rather than
@@ -50,17 +79,12 @@
 ### Bug fixes
 
 - [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
-  returned the unit-granule constant `1` for a pair sharing the same
-  time unit at different granule sizes (e.g.
-  `chronon_cardinality_fixed(day(1L), day(10L))`), ignoring the
-  requested sizes entirely instead of scaling by them like
+  now scales its result by the granule sizes (`n`) of both arguments,
+  like
   [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
-  does for the same case.
-- [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_fixed.md)
-  now scales its result by the granule sizes (`n`) of both arguments for
-  every pair of time units, not only for granules of the same unit
-  (e.g. there are 4 `minute(15L)` in `hour(1L)`, not 60). Methods still
-  return the ratio between unit granules.
+  does (e.g. there are 4 `minute(15L)` in `hour(1L)`, not 60, and 10
+  `day(1L)` in `day(10L)`, not 1). Methods still return the ratio
+  between unit granules.
 - Durations of multi-unit chronons now print with the chronon’s size, so
   `duration(2L, hour(3L))` shows `"6 hours"` (not `"2 hours"`) and the
   chronon of a 3-hourly time vector reads `"3 hours"` (e.g. in

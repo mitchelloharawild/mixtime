@@ -75,8 +75,10 @@ e1 %fi% e2
 
   `mt_linear` or `mt_cyclical` vectors sharing a mode of time (and, for
   `mt_cyclical`, a cycle) - or values castable to one, such as plain
-  numeric vectors sharing the other operand's chronon. `mt_duration` has
-  no interval to compare and so is not supported.
+  numeric vectors in the other operand's chronon, read from its epoch as
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  reads them. `mt_duration` has no interval to compare and so is not
+  supported.
 
 ## Value
 

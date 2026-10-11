@@ -262,7 +262,7 @@ multiple time granularities.
 - [`class_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/class_mixtime.md)
   : Base S7 class for mixtime vector objects
 - [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md)
-  **\[deprecated\]** : Constructor for mixtime time vectors
+  **\[defunct\]** : Constructor for mixtime time vectors
 - [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/as_mixtime.md)
   : Convert a time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_mixtime.md)

@@ -51,7 +51,9 @@ e1 >= e2
 - e1, e2:
 
   `mt_linear` vectors (or values castable to one, such as plain numeric
-  vectors sharing the other operand's chronon).
+  vectors in the other operand's chronon, read from its epoch as
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  reads them, so `year(x) == 2026L` compares with 2026).
 
 ## Value
 
