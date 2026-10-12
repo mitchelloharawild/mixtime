@@ -44,6 +44,16 @@
   distinguishes it from its dual,
   [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md).
 
+- Converting a discrete time to a chronon it doesn’t nest within is
+  deprecated, since the result is temporally indeterminate. For example,
+  `day_of_week(yearmonth(x))` (which day of the month?) and
+  `yearmonth(yearweek(x))` (a week can straddle two months) now warn,
+  and still use the start of each time point. This will become an error
+  in the next release. Continuous time points are instants that are
+  always determinate and convert as before. The internal
+  `chronon_convert()` gains an `allow_indeterminate` argument, which
+  still allows it by default.
+
 - [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md),
   deprecated in 0.3.0, is now defunct. Use
   [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
@@ -53,14 +63,6 @@
   instead.
 
 ### Breaking changes
-
-- Converting a discrete time to a chronon it doesn’t nest within is now
-  an error, since the result is temporally indeterminate. For example,
-  `day_of_week(yearmonth(x))` (which day of the month?) and
-  `yearmonth(yearweek(x))` (a week can straddle two months) previously
-  used the start of each time point. Continuous times are instants and
-  convert as before. The internal `chronon_convert()` gains an
-  `allow_indeterminate` argument, which still allows it by default.
 
 - Bare numbers compared with (or cast to) a linear or cyclical time are
   now read as
