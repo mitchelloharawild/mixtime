@@ -2,6 +2,7 @@
 % Please edit documentation in R/sequence.R
 \name{seq.mixtime::mixtime}
 \alias{seq.mixtime::mixtime}
+\alias{seq.mixtime}
 \alias{seq.mixtime::mt_time}
 \title{Generate sequences of mixtime values}
 \usage{

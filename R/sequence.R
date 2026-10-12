@@ -88,6 +88,7 @@
 #' seq(day_of_week(0L), day_of_week(6L), by = 1)
 #'
 #' @rdname seq.mixtime
+#' @aliases seq.mixtime
 #' @method seq mixtime::mixtime
 #' @export
 `seq.mixtime::mixtime` <- function(...) {
