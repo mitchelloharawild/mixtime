@@ -50,7 +50,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-0-4-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4-0"></a></h3>
-<ul><li>Bare numbers compared with (or cast to) a linear or cyclical time are now read as <code><a href="../reference/mixtime.html">mixtime()</a></code> reads them, counting from the chronon’s epoch, so <code>year(x) == 2026L</code> compares with the year 2026. Previously the number was a raw count of chronons since 1970 (2026 was the year 3996).</li>
+<ul><li><p>Converting a discrete time to a chronon it doesn’t nest within is now an error, since the result is temporally indeterminate. For example, <code>day_of_week(yearmonth(x))</code> (which day of the month?) and <code>yearmonth(yearweek(x))</code> (a week can straddle two months) previously used the start of each time point. Continuous times are instants and convert as before. The internal <code>chronon_convert()</code> gains an <code>allow_indeterminate</code> argument, which still allows it by default.</p></li>
+<li><p>Bare numbers compared with (or cast to) a linear or cyclical time are now read as <code><a href="../reference/mixtime.html">mixtime()</a></code> reads them, counting from the chronon’s epoch, so <code>year(x) == 2026L</code> compares with the year 2026. Previously the number was a raw count of chronons since 1970 (2026 was the year 3996).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-0-4-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-4-0"></a></h3>

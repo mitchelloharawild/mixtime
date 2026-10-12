@@ -99,10 +99,10 @@ month_of_year(Sys.Date())
 #> [1] Oct
 day_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] D284
+#> [1] D285
 day_of_week(Sys.Date())
 #> <mixtime[1]>
-#> [1] Sun
+#> [1] Mon
 day_of_week(as.Date("2025-12-15") + 0:6)
 #> <mixtime[7]>
 #> [1] Mon Tue Wed Thu Fri Sat Sun
