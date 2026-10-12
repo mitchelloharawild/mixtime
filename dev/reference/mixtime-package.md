@@ -21,8 +21,10 @@ astronomical time systems.
 - `mixtime.on_invalid`: The default strategy for resolving time points
   that don't exist, such as 31 January plus one month, used by `+`, `-`,
   [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md)
-  and seq(). One of `"clamp"` (the default), `"previous"`, `"next"`,
-  `"overflow"`, `"reject"`, or `"error"`. See
+  and
+  [seq()](https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.md).
+  One of `"clamp"` (the default), `"previous"`, `"next"`, `"overflow"`,
+  `"reject"`, or `"error"`. See
   [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md)
   for details.
 
