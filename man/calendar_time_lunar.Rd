@@ -37,9 +37,8 @@ The following time units are available in the lunar calendar systems.
 }
 }
 \examples{
-# Find the time of a new moon in the Gregorian calendar
-t <- linear_time(Sys.Date(), cal_time_lunar$month(1L))
-datetime(t, tz = "Australia/Melbourne")
+# Find the time of the most recent new moon in the Gregorian calendar
+time_floor(datetime(Sys.time(), tz = "Australia/Melbourne"), cal_time_lunar$month(1L))
 
 
 }

@@ -100,14 +100,22 @@ method(time_is_determinate_at, mt_time) <- function(x, granule, ...) {
   # Coerce a bare granule generator (e.g. cal_gregorian$month) into a unit.
   if (!S7_inherits(granule, mt_unit)) granule <- granule(1L)
 
-  # Continuous (fractional) time tracks progress within its chronon and so
-  # resolves any finer granule exactly; discrete (integer) time cannot subdivide
-  # below its chronon, so a finer granule is temporally indeterminate.
-  ok <- !is.integer(vec_data(x)) || chronon_nests_in(attr(x, "chronon"), granule)
+  ok <- chronon_is_determinate_at(
+    attr(x, "chronon"), granule, discrete = is.integer(vec_data(x))
+  )
   out <- rep(ok, length(x))
   # A missing or infinite time is not a determinate instant of any granule.
   out[is.na(x) | is.infinite(vec_data(x))] <- NA
   out
+}
+
+# Whether time of `chronon` is determinate at `granule`: the rule behind
+# time_is_determinate_at(), shared with callers that only have chronons.
+# Continuous (fractional) time tracks progress within its chronon and so
+# resolves any finer granule exactly; discrete (integer) time cannot subdivide
+# below its chronon, so a granule it doesn't nest within is indeterminate.
+chronon_is_determinate_at <- function(chronon, granule, discrete) {
+  !discrete || chronon_nests_in(chronon, granule)
 }
 
 #' Test whether a granule is completed at a time point

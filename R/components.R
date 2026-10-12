@@ -149,11 +149,11 @@ component_parts <- function(x_time, specs, calendar) {
   # A component finer than the input chronon is temporally indeterminate in
   # discrete time (the month of a year() is undefined), so its value is NA
   # everywhere and it takes no part in the decomposition; continuous time
-  # resolves finer granules exactly. This is time_is_determinate_at()'s per-part
-  # rule (specials are handled separately below via `keep`).
+  # resolves finer granules exactly (specials are handled separately below via
+  # `keep`).
   determinable <- vapply(
     evaled,
-    function(spec) !discrete || chronon_nests_in(chronon, spec[[1L]]),
+    function(spec) chronon_is_determinate_at(chronon, spec[[1L]], discrete),
     logical(1L)
   )
 

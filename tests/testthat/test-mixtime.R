@@ -271,3 +271,36 @@ test_that("Date/POSIXct chronons are identified from the observed interval", {
   # Without an interval, the chronon is a day
   expect_equal(chronon_of(as.Date("2024-01-01")), cal_gregorian$day(1L))
 })
+
+test_that("converting discrete time to a chronon it doesn't nest within errors", {
+  d <- as.Date("2026-10-12")
+  # Which day (or week) of a month is indeterminate
+  expect_error(day_of_week(yearmonth(d)), class = "mixtime_error_indeterminate")
+  expect_error(date(yearmonth(d)), class = "mixtime_error_indeterminate")
+  expect_error(yearweek(yearmonth(d)), class = "mixtime_error_indeterminate")
+  # A week can straddle two months
+  expect_error(yearmonth(yearweek(d)), class = "mixtime_error_indeterminate")
+  expect_error(month_of_year(yearweek(d)), class = "mixtime_error_indeterminate")
+  # Base classes are discrete
+  expect_error(datetime(d), class = "mixtime_error_indeterminate")
+
+  # Coarser (nested) targets are determinate
+  expect_equal(year(yearmonth(d)), year(d))
+  expect_equal(month_of_year(date(d)), month_of_year(d))
+  # Continuous time is an instant, so any chronon is determinate
+  expect_equal(day_of_week(yearmonth(d, discrete = FALSE)), day_of_week(d))
+})
+
+test_that("chronon_convert() allows indeterminate conversion unless asked not to", {
+  ym <- yearmonth(as.Date("2026-10-12"))
+  day <- cal_gregorian$day(1L)
+  expect_equal(chronon_convert(ym, day), as.numeric(as.Date("2026-10-01")))
+  expect_error(
+    chronon_convert(ym, day, allow_indeterminate = FALSE),
+    class = "mixtime_error_indeterminate"
+  )
+  expect_error(
+    chronon_convert(as.Date("2026-10-12"), cal_gregorian$hour(1L), allow_indeterminate = FALSE),
+    class = "mixtime_error_indeterminate"
+  )
+})

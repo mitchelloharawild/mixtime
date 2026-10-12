@@ -24,6 +24,14 @@
 
 ## Breaking changes
 
+* Converting a discrete time to a chronon it doesn't nest within is now an
+  error, since the result is temporally indeterminate. For example,
+  `day_of_week(yearmonth(x))` (which day of the month?) and
+  `yearmonth(yearweek(x))` (a week can straddle two months) previously used
+  the start of each time point. Continuous times are instants and convert as
+  before. The internal `chronon_convert()` gains an `allow_indeterminate` argument,
+  which still allows it by default.
+
 * Bare numbers compared with (or cast to) a linear or cyclical time are now
   read as `mixtime()` reads them, counting from the chronon's epoch, so
   `year(x) == 2026L` compares with the year 2026. Previously the number was a

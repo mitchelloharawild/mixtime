@@ -6,6 +6,10 @@
 #' that `x` falls into is returned as an integer. If `FALSE`, a fractional
 #' number of target chronons is returned (analagous to time using a continuous
 #' time model).
+#' @param allow_indeterminate Whether to allow a conversion that is temporally
+#' indeterminate, i.e. a discrete `x` whose chronon does not nest within `to`
+#' (such as the day of a month). If `TRUE` (the default), each time point is
+#' converted from its start. If `FALSE`, the conversion errors.
 #' @param ... Additional arguments for methods.
 #'
 #' @return A numeric or integer representing the time since Unix epoch in terms of the target
@@ -115,8 +119,16 @@ round_ulp <- function(x) {
   x
 }
 
-method(chronon_convert, mt_linear) <- function(x, to, discrete = FALSE, ...) {
-  chronon_convert_impl(vec_data(x), attr(x, "chronon"), to, discrete)
+method(chronon_convert, mt_linear) <- function(
+  x,
+  to,
+  discrete = FALSE,
+  allow_indeterminate = TRUE,
+  ...
+) {
+  from <- attr(x, "chronon")
+  if (!allow_indeterminate) check_convert_determinate(x, from, to)
+  chronon_convert_impl(vec_data(x), from, to, discrete)
 }
 
 method(chronon_convert, class_mixtime) <- vecvec::vecvec_apply_fn(
@@ -128,7 +140,30 @@ method(chronon_convert, S7::class_any) <- function(
   x,
   to,
   discrete = FALSE,
+  allow_indeterminate = TRUE,
   ...
 ) {
-  chronon_convert_impl(as.numeric(x), chronon_glb(x), to, discrete)
+  from <- chronon_glb(x)
+  if (!allow_indeterminate) check_convert_determinate(x, from, to)
+  chronon_convert_impl(as.numeric(x), from, to, discrete)
+}
+
+# A discrete time spans its whole chronon, so converting it to a chronon it
+# doesn't nest within is temporally indeterminate (e.g. the day of the week of
+# a month). Checked once from the chronons rather than element-wise; times from
+# other classes (Date, POSIXct, ...) are discrete.
+check_convert_determinate <- function(x, from, to) {
+  discrete <- !S7_inherits(x, mt_time) || is.integer(vec_data(x))
+  if (chronon_is_determinate_at(from, to, discrete)) {
+    return(invisible())
+  }
+  cli::cli_abort(
+    c(
+      "Cannot convert {time_granule_label(from)} to {time_granule_label(to)}, the result is temporally indeterminate.",
+      "x" = "A discrete {.field {time_granule_label(from)}} spans a period of time that {time_granule_label(to)} cannot identify.",
+      "i" = "Convert from a time point at least as precise as {time_granule_label(to)}, or use continuous time."
+    ),
+    class = "mixtime_error_indeterminate",
+    call = NULL
+  )
 }

@@ -132,7 +132,8 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
       data <- chronon_convert(
         data,
         chronon,
-        discrete = discrete
+        discrete = discrete,
+        allow_indeterminate = FALSE
       )
     }
   }

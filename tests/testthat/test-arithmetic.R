@@ -356,7 +356,8 @@ test_that("datetime() - datetime() of a date's start uses the date's timezone fo
   # 2026-06-16 09:30:00 AEST = 2026-06-15 23:30:00 UTC = 2026-06-16 01:30:00 CEST
   t <- datetime("2026-06-16 09:30:00", tz = "Australia/Melbourne")
   time_of_day <- function(tz) {
-    datetime(t, tz = tz) - datetime(date(t, tz = tz, discrete = TRUE))
+    x <- datetime(t, tz = tz)
+    x - time_floor(x, cal_gregorian$day(1L))
   }
 
   # Melbourne date: 2026-06-16 AEST; time-of-day in Melbourne = 9h30m = 34200s
