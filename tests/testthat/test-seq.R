@@ -362,6 +362,24 @@ test_that("seq.mixtime on_invalid = 'error' errors on invalid time points", {
   )
 })
 
+test_that("seq.mixtime uses the mixtime.on_invalid option without warning", {
+  rlang::local_options(mixtime.on_invalid = "next")
+  expect_no_warning(
+    result <- seq(date("2020-01-31"), length.out = 3, by = "1 month")
+  )
+  expect_equal(format(result), c("2020-01-31", "2020-03-01", "2020-03-31"))
+
+  # Setting the option to "clamp" also silences the warning
+  rlang::local_options(mixtime.on_invalid = "clamp")
+  expect_no_warning(seq(date("2020-01-31"), length.out = 3, by = "1 month"))
+
+  rlang::local_options(mixtime.on_invalid = "bad")
+  expect_error(
+    seq(date("2020-01-31"), length.out = 3, by = "1 month"),
+    "mixtime.on_invalid"
+  )
+})
+
 test_that("seq.mixtime on_invalid = 'reject' gives NA with a warning", {
   expect_warning(
     result <- seq(

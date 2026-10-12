@@ -594,6 +594,26 @@ test_that("time_shift() on_invalid = 'error' errors on invalid time points", {
   expect_error(time_shift(x, days(1L), on_invalid = "nearest"))
 })
 
+test_that("the mixtime.on_invalid option sets the default strategy", {
+  x <- datetime("2021-01-30 09:30:00")
+  rlang::local_options(mixtime.on_invalid = "next")
+  expect_equal(format(time_shift(x, months(1L))), "2021-03-01 00:00:00")
+  expect_equal(format(x + months(1L)), "2021-03-01 00:00:00")
+  expect_equal(format(x - months(-1L)), "2021-03-01 00:00:00")
+  # An explicit argument takes precedence
+  expect_equal(
+    format(time_shift(x, months(1L), on_invalid = "clamp")),
+    "2021-02-28 09:30:00"
+  )
+
+  rlang::local_options(mixtime.on_invalid = "error")
+  expect_error(x + months(1L), "did not exist")
+
+  rlang::local_options(mixtime.on_invalid = "bad")
+  expect_error(x + months(1L), "mixtime.on_invalid")
+  expect_error(time_shift(x, months(1L)), "mixtime.on_invalid")
+})
+
 test_that("time_shift() accepts character durations and validates `by`", {
   expect_equal(
     format(time_shift(date("2021-01-31"), "1 month", on_invalid = "previous")),

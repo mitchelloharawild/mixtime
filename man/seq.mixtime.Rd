@@ -13,7 +13,7 @@
   by,
   length.out = NULL,
   along.with = NULL,
-  on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error"),
+  on_invalid = getOption("mixtime.on_invalid", "clamp"),
   ...
 )
 }
@@ -41,9 +41,10 @@
 \item{on_invalid}{How to handle time points that don't exist, either
 because they overflow the cycle when using a \code{by} argument with different
 time granule than the sequence chronon, or because they fall in the local
-time skipped when daylight saving starts. Options are:
+time skipped when daylight saving starts. Defaults to the
+\code{mixtime.on_invalid} option, or \code{"clamp"} if it isn't set. Options are:
 \itemize{
-\item \code{"clamp"} (default): Reduce the overflowing component to its last valid
+\item \code{"clamp"}: Reduce the overflowing component to its last valid
 value, preserving finer components (e.g., the time of day). A skipped
 local time moves back by the size of the gap (02:30 becomes 01:30)
 \item \code{"previous"}: Use the end of the cycle, so finer components are not
@@ -68,8 +69,9 @@ will overflow in months with fewer than 31 days (e.g., February). With
 Feb 28/29). With \code{"next"}, they move to the first day of the next month,
 and with \code{"overflow"}, the extra days carry into the next month.
 
-If not explicitly specified and overflow occurs, a warning is issued with
-the default \code{"clamp"} behavior applied. See \code{\link[=time_shift]{time_shift()}} for shifting
+If neither \code{on_invalid} nor the \code{mixtime.on_invalid} option is set and
+overflow occurs, a warning is issued with the default \code{"clamp"} behavior
+applied. See \code{\link[=time_shift]{time_shift()}} for shifting
 time points with the same options.}
 }
 \value{

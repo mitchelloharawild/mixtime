@@ -18,8 +18,9 @@
 #' @param on_invalid How to handle time points that don't exist, either
 #'   because they overflow the cycle when using a `by` argument with different
 #'   time granule than the sequence chronon, or because they fall in the local
-#'   time skipped when daylight saving starts. Options are:
-#'   * `"clamp"` (default): Reduce the overflowing component to its last valid
+#'   time skipped when daylight saving starts. Defaults to the
+#'   `mixtime.on_invalid` option, or `"clamp"` if it isn't set. Options are:
+#'   * `"clamp"`: Reduce the overflowing component to its last valid
 #'     value, preserving finer components (e.g., the time of day). A skipped
 #'     local time moves back by the size of the gap (02:30 becomes 01:30)
 #'   * `"previous"`: Use the end of the cycle, so finer components are not
@@ -43,8 +44,9 @@
 #'   Feb 28/29). With `"next"`, they move to the first day of the next month,
 #'   and with `"overflow"`, the extra days carry into the next month.
 #'
-#'   If not explicitly specified and overflow occurs, a warning is issued with
-#'   the default `"clamp"` behavior applied. See [time_shift()] for shifting
+#'   If neither `on_invalid` nor the `mixtime.on_invalid` option is set and
+#'   overflow occurs, a warning is issued with the default `"clamp"` behavior
+#'   applied. See [time_shift()] for shifting
 #'   time points with the same options.
 #' @param ... Additional arguments passed to the underlying sequence method.
 #'
@@ -108,7 +110,7 @@
   by,
   length.out = NULL,
   along.with = NULL,
-  on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error"),
+  on_invalid = getOption("mixtime.on_invalid", "clamp"),
   ...
 ) {
   if (!is.null(along.with)) {
@@ -194,8 +196,11 @@
   by_n <- abs(by@n)
   by@n <- 1L
 
-  missing_on_invalid <- is.character(on_invalid) && length(on_invalid) > 1L
-  on_invalid <- match.arg(on_invalid)
+  # Warn when clamping by default, unless the default was chosen with the
+  # `mixtime.on_invalid` option
+  missing_on_invalid <- missing(on_invalid) &&
+    is.null(getOption("mixtime.on_invalid"))
+  check_on_invalid(on_invalid)
 
   # Each time point is shifted from an anchor by a whole number of `by` units
   # (`anchor + duration(k, by)`), rather than from the previous time point.
@@ -246,7 +251,7 @@
     cli::cli_warn(c(
       "Some time points in the sequence fall past the end of a shorter {time_unit_plural(by, 1L)}.",
       "!" = "Clamping them to the last valid time point in that {time_unit_plural(by, 1L)}, {.code on_invalid = \"clamp\"} (the default).",
-      "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
+      "i" = "Specify {.arg on_invalid}, or set the {.code mixtime.on_invalid} option, to suppress this warning."
     ))
   }
   if (missing_on_invalid && any(shifted$skipped)) {
@@ -254,7 +259,7 @@
     cli::cli_warn(c(
       "{n_skipped} time point{?s} in the sequence {?falls/fall} in local time skipped by a time zone change (e.g. when daylight saving starts).",
       "!" = "Moving {cli::qty(n_skipped)}{?it/them} back by the size of the gap, {.code on_invalid = \"clamp\"} (the default).",
-      "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
+      "i" = "Specify {.arg on_invalid}, or set the {.code mixtime.on_invalid} option, to suppress this warning."
     ))
   }
   signal_invalid(shifted$invalid, on_invalid)

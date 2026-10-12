@@ -1,3 +1,10 @@
+#' @section Package options:
+#' * `mixtime.on_invalid`: The default strategy for resolving time points that
+#'   don't exist, such as 31 January plus one month, used by `+`, `-`,
+#'   [time_shift()] and [seq()][seq.mixtime]. One of `"clamp"` (the default),
+#'   `"previous"`, `"next"`, `"overflow"`, `"reject"`, or `"error"`. See
+#'   [time_shift()] for details.
+#'
 #' @keywords internal
 "_PACKAGE"
 

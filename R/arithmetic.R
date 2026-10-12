@@ -95,7 +95,12 @@ chronon_shift <- function(
 }
 
 # Shift a time point by a duration
-duration_shift <- function(time, dur, on_invalid = "clamp") {
+duration_shift <- function(
+  time,
+  dur,
+  on_invalid = getOption("mixtime.on_invalid", "clamp")
+) {
+  check_on_invalid(on_invalid, call = NULL)
   time_data <- S7_data(time)
   time_chronon <- time@chronon
   # The time point's context applies, rather than one given to the duration.
@@ -219,14 +224,16 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 #' shifting 31 January by one month. In a time zone, shifting by days or
 #' longer keeps the local clock time, which may have been skipped when daylight
 #' saving starts (e.g. 02:30 on the day clocks go forward from 02:00 to 03:00).
-#' The `+` and `-` operators always use `on_invalid = "clamp"`.
+#' The `+` and `-` operators use the default strategy, set by the
+#' `mixtime.on_invalid` option (`"clamp"` unless set).
 #'
 #' @param x A time point vector.
 #' @param by A time [duration()] (e.g., `months(1L)`), or a character string
 #'   specifying one (e.g., `"1 month"`).
 #' @param on_invalid How to resolve time points that don't exist in the target
-#'   granule:
-#'   * `"clamp"` (default): Reduce the invalid component to its last valid
+#'   granule. Defaults to the `mixtime.on_invalid` option, or `"clamp"` if it
+#'   isn't set:
+#'   * `"clamp"`: Reduce the invalid component to its last valid
 #'     value, preserving finer components (e.g., the time of day). A skipped
 #'     local time moves back by the size of the gap (02:30 becomes 01:30).
 #'   * `"previous"`: Use the last valid time point before the invalid one, the
@@ -276,7 +283,7 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 time_shift <- new_generic(
   "time_shift",
   "x",
-  function(x, by, on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error")) {
+  function(x, by, on_invalid = getOption("mixtime.on_invalid", "clamp")) {
     S7::S7_dispatch()
   }
 )
@@ -284,9 +291,8 @@ method(time_shift, class_mixtime) <- vecvec::vecvec_apply_fn(time_shift)
 method(time_shift, mt_time) <- function(
   x,
   by,
-  on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error")
+  on_invalid = getOption("mixtime.on_invalid", "clamp")
 ) {
-  on_invalid <- rlang::arg_match(on_invalid)
   if (is.character(by)) {
     by <- parse_time_unit(by)
   }

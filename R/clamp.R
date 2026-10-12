@@ -151,6 +151,23 @@ chronon_recompose <- function(
   list(value = value, invalid = invalid)
 }
 
+on_invalid_strategies <- c("clamp", "previous", "next", "overflow", "reject", "error")
+
+# Validate an `on_invalid` strategy, which defaults to the `mixtime.on_invalid`
+# option.
+check_on_invalid <- function(on_invalid, call = rlang::caller_env()) {
+  if (!(rlang::is_string(on_invalid) && on_invalid %in% on_invalid_strategies)) {
+    cli::cli_abort(
+      c(
+        "{.arg on_invalid} must be one of {.or {.val {on_invalid_strategies}}}.",
+        "i" = "The default is set by the {.code mixtime.on_invalid} option."
+      ),
+      call = call
+    )
+  }
+  on_invalid
+}
+
 # Signal invalid time points for the "reject" (warning) and "error" strategies.
 signal_invalid <- function(invalid, on_invalid) {
   if (!any(invalid)) {

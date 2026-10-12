@@ -4,11 +4,7 @@
 \alias{time_shift}
 \title{Shift time points by a duration}
 \usage{
-time_shift(
-  x,
-  by,
-  on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error")
-)
+time_shift(x, by, on_invalid = getOption("mixtime.on_invalid", "clamp"))
 }
 \arguments{
 \item{x}{A time point vector.}
@@ -17,9 +13,10 @@ time_shift(
 specifying one (e.g., \code{"1 month"}).}
 
 \item{on_invalid}{How to resolve time points that don't exist in the target
-granule:
+granule. Defaults to the \code{mixtime.on_invalid} option, or \code{"clamp"} if it
+isn't set:
 \itemize{
-\item \code{"clamp"} (default): Reduce the invalid component to its last valid
+\item \code{"clamp"}: Reduce the invalid component to its last valid
 value, preserving finer components (e.g., the time of day). A skipped
 local time moves back by the size of the gap (02:30 becomes 01:30).
 \item \code{"previous"}: Use the last valid time point before the invalid one, the
@@ -56,7 +53,8 @@ days within months) can produce time points that don't exist, such as
 shifting 31 January by one month. In a time zone, shifting by days or
 longer keeps the local clock time, which may have been skipped when daylight
 saving starts (e.g. 02:30 on the day clocks go forward from 02:00 to 03:00).
-The \code{+} and \code{-} operators always use \code{on_invalid = "clamp"}.
+The \code{+} and \code{-} operators use the default strategy, set by the
+\code{mixtime.on_invalid} option (\code{"clamp"} unless set).
 }
 \examples{
 x <- datetime("2021-01-30 09:30:00")

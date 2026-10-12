@@ -9,6 +9,17 @@
 
 Flexible time classes for time series analysis and forecasting with mixed temporal granularities. Supports linear and cyclical time representations in discrete and continuous forms, with timezone support, across multiple calendar systems including Gregorian and ISO week date calendars. Time points are stored numerically relative to a chronon; an atomic time granule defined by time units of a calendar. Calendrical arithmetic enables conversion between time granules (e.g. days to months) and calendar systems. Multi-unit arithmetic allows for temporal analysis with other granules of common calendars (e.g. fortnights are 2-week units). Time vectors of different granularities (e.g. monthly and quarterly) can be combined in a single vector, making 'mixtime' ideal for data that changes observation frequency over time or requires temporal reconciliation across scales. The package is extensible, allowing users to define custom calendars that build upon civil and astronomical time systems.
 }
+\section{Package options}{
+
+\itemize{
+\item \code{mixtime.on_invalid}: The default strategy for resolving time points that
+don't exist, such as 31 January plus one month, used by \code{+}, \code{-},
+\code{\link[=time_shift]{time_shift()}} and \link[=seq.mixtime]{seq()}. One of \code{"clamp"} (the default),
+\code{"previous"}, \code{"next"}, \code{"overflow"}, \code{"reject"}, or \code{"error"}. See
+\code{\link[=time_shift]{time_shift()}} for details.
+}
+}
+
 \seealso{
 Useful links:
 \itemize{

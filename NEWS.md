@@ -20,6 +20,10 @@
   03:00). `"error"` throws an error instead of returning `NA` like
   `"reject"`.
 
+* The new `mixtime.on_invalid` option sets the default `on_invalid` strategy
+  for `time_shift()`, `seq()`, and the `+` and `-` operators, which otherwise
+  clamp. `seq()` no longer warns about clamping when the option is set.
+
 ## Deprecated
 
 * `chronon_common()` is deprecated in favour of `chronon_glb()`, which names
