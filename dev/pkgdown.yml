@@ -5,7 +5,7 @@ articles:
   extending-mixtime: extending-mixtime.html
   invalid-time-points: invalid-time-points.html
   time-format-strings: time-format-strings.html
-last_built: 2026-10-12T10:07Z
+last_built: 2026-10-12T10:21Z
 urls:
   reference: https://pkg.mitchelloharawild.com/mixtime/reference
   article: https://pkg.mitchelloharawild.com/mixtime/articles

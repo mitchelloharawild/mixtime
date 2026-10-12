@@ -104,7 +104,7 @@ linear_time(Sys.time(), chronon = day(1L), discrete = TRUE)
 #> [1] 2026-10-12
 linear_time(Sys.time(), chronon = day(1L), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-10-12 42.2%
+#> [1] 2026-10-12 43.2%
 
 # ISO week calendar with week-day structure
 linear_time(
