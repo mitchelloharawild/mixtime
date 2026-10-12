@@ -272,17 +272,23 @@ test_that("Date/POSIXct chronons are identified from the observed interval", {
   expect_equal(chronon_of(as.Date("2024-01-01")), cal_gregorian$day(1L))
 })
 
-test_that("converting discrete time to a chronon it doesn't nest within errors", {
+# TODO: Restore these to `expect_error(class = "mixtime_error_indeterminate")`
+# once the deprecation warning is escalated to an error in the next release.
+test_that("converting discrete time to a chronon it doesn't nest within is deprecated", {
   d <- as.Date("2026-10-12")
   # Which day (or week) of a month is indeterminate
-  expect_error(day_of_week(yearmonth(d)), class = "mixtime_error_indeterminate")
-  expect_error(date(yearmonth(d)), class = "mixtime_error_indeterminate")
-  expect_error(yearweek(yearmonth(d)), class = "mixtime_error_indeterminate")
+  lifecycle::expect_deprecated(day_of_week(yearmonth(d)))
+  lifecycle::expect_deprecated(date(yearmonth(d)))
+  lifecycle::expect_deprecated(yearweek(yearmonth(d)))
   # A week can straddle two months
-  expect_error(yearmonth(yearweek(d)), class = "mixtime_error_indeterminate")
-  expect_error(month_of_year(yearweek(d)), class = "mixtime_error_indeterminate")
+  lifecycle::expect_deprecated(yearmonth(yearweek(d)))
+  lifecycle::expect_deprecated(month_of_year(yearweek(d)))
   # Base classes are discrete
-  expect_error(datetime(d), class = "mixtime_error_indeterminate")
+  lifecycle::expect_deprecated(datetime(d))
+
+  # Until then, each time point is converted from its start
+  lifecycle::expect_deprecated(x <- date(yearmonth(d)))
+  expect_equal(x, date(as.Date("2026-10-01")))
 
   # Coarser (nested) targets are determinate
   expect_equal(year(yearmonth(d)), year(d))

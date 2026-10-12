@@ -129,11 +129,29 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
 
     # Cast from Date, POSIXct, etc.
     if (!is.numeric(data) || !is.null(attributes(data))) {
-      data <- chronon_convert(
-        data,
-        chronon,
-        discrete = discrete,
-        allow_indeterminate = FALSE
+      # TODO: Escalate this deprecation warning to an error in the next release,
+      # by removing the handler (and `mixtime_user_env()`) and leaving
+      # `allow_indeterminate = FALSE`.
+      frame <- sys.nframe()
+      data <- tryCatch(
+        chronon_convert(
+          data,
+          chronon,
+          discrete = discrete,
+          allow_indeterminate = FALSE
+        ),
+        mixtime_error_indeterminate = function(cnd) {
+          lifecycle::deprecate_warn(
+            "0.4.0",
+            I("Converting a discrete time to a chronon it doesn't nest within"),
+            details = c(
+              i = "The result is temporally indeterminate, so each time point is converted from its start.",
+              i = "This will become an error in the next release. Convert from a time point that is precise enough, or use continuous time."
+            ),
+            user_env = mixtime_user_env(frame)
+          )
+          chronon_convert(data, chronon, discrete = discrete)
+        }
       )
     }
   }
@@ -145,6 +163,24 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
       mt_cyclical(data, chronon = chronon, cycle = cycle)
     }
   )
+}
+
+# The environment that called into mixtime, past mixtime's own wrappers (e.g.
+# `yearmonth()` -> `linear_time()` -> `mixtime()`), so that deprecation warnings
+# name the package responsible, and are recognised as direct calls by lifecycle
+# (which `lifecycle::expect_deprecated()` needs to warn on every call).
+# `frame` is the number of the frame to start from, i.e. `mixtime()`'s own.
+mixtime_user_env <- function(frame) {
+  ns <- topenv(environment(mixtime_user_env))
+  parents <- sys.parents()
+  i <- frame
+  while (i > 0L && identical(topenv(environment(sys.function(i))), ns)) {
+    # Frames can be their own parent (e.g. under dplyr's data masking), so stop
+    # rather than loop if the walk no longer moves outwards.
+    if (parents[i] >= i) break
+    i <- parents[i]
+  }
+  if (i == 0L) globalenv() else sys.frame(i)
 }
 
 #' Check if an object is a mixtime
