@@ -40,6 +40,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul>
 </li>
@@ -157,7 +158,7 @@ format(
   datetime(Sys.time(), tz = "UTC"), 
   format = paste(fmt_time, "{tz(.time)}", fmt_time_mel)
 )
-#> [1] "2026-10-12 02:56:01 UTC (02:56:01 AEDT)"
+#> [1] "2026-10-12 04:28:59 UTC (04:28:59 AEDT)"
 ```
 -->
 <p>For example, the lunar phase can be added to a date format string by

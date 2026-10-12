@@ -74,6 +74,17 @@
   end of the target granule, rather than whichever valid time point is
   closest.
 
+- Shifting a discrete time point by a duration it doesn’t nest within is
+  now an error, since the result is temporally indeterminate, matching
+  the conversions refused by time constructors. For example,
+  `yearweek(x) + years(1L)` (a week can straddle two years) previously
+  shifted the start of the week, giving results such as `2020 W01` plus
+  one year being `2020 W53`. Shifting by a whole number of chronons is
+  still allowed (a week by 14 days, but not 11), as is shifting
+  continuous times. This applies to `+`, `-`,
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md),
+  and [`seq()`](https://rdrr.io/r/base/seq.html).
+
 ### Improvements
 
 - Comparing a discrete time (a span) with a continuous time at the start

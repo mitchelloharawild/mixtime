@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -55,6 +56,7 @@
 <ul><li><p>Converting a discrete time to a chronon it doesn’t nest within is now an error, since the result is temporally indeterminate. For example, <code>day_of_week(yearmonth(x))</code> (which day of the month?) and <code>yearmonth(yearweek(x))</code> (a week can straddle two months) previously used the start of each time point. Continuous times are instants and convert as before. The internal <code>chronon_convert()</code> gains an <code>allow_indeterminate</code> argument, which still allows it by default.</p></li>
 <li><p>Bare numbers compared with (or cast to) a linear or cyclical time are now read as <code><a href="../reference/mixtime.html">mixtime()</a></code> reads them, counting from the chronon’s epoch, so <code>year(x) == 2026L</code> compares with the year 2026. Previously the number was a raw count of chronons since 1970 (2026 was the year 3996).</p></li>
 <li><p>The <code>on_invalid</code> strategy <code>"nearest"</code> is renamed to <code>"previous"</code>, the backward counterpart of the new <code>"next"</code>. It always resolves to the end of the target granule, rather than whichever valid time point is closest.</p></li>
+<li><p>Shifting a discrete time point by a duration it doesn’t nest within is now an error, since the result is temporally indeterminate, matching the conversions refused by time constructors. For example, <code>yearweek(x) + years(1L)</code> (a week can straddle two years) previously shifted the start of the week, giving results such as <code>2020 W01</code> plus one year being <code>2020 W53</code>. Shifting by a whole number of chronons is still allowed (a week by 14 days, but not 11), as is shifting continuous times. This applies to <code>+</code>, <code>-</code>, <code><a href="../reference/time_shift.html">time_shift()</a></code>, and <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq()</a></code>.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-0-4-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-4-0"></a></h3>
