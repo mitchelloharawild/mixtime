@@ -7,7 +7,7 @@
 
 [![R-CMD-check](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mitchelloharawild/mixtime/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/mixtime)](https://CRAN.R-project.org/package=mixtime)
 <!-- badges: end -->
