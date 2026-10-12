@@ -13,7 +13,7 @@
   by,
   length.out = NULL,
   along.with = NULL,
-  on_invalid = c("clamp", "nearest", "overflow", "reject"),
+  on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error"),
   ...
 )
 }
@@ -46,21 +46,27 @@ time skipped when daylight saving starts. Options are:
 \item \code{"clamp"} (default): Reduce the overflowing component to its last valid
 value, preserving finer components (e.g., the time of day). A skipped
 local time moves back by the size of the gap (02:30 becomes 01:30)
-\item \code{"nearest"}: Use the end of the cycle, so finer components are not
+\item \code{"previous"}: Use the end of the cycle, so finer components are not
 preserved. For discrete time this is the last chronon within the cycle;
-for continuous time it is the end of that chronon. A skipped local time
-becomes the end of the valid time before the gap
+for continuous time it is the end of that chronon, the same instant as
+\code{"next"}. A skipped local time becomes the end of the valid time before
+the gap (01:59:59)
+\item \code{"next"}: Use the start of the following cycle, so finer components are
+not preserved. A skipped local time becomes the start of the valid time
+after the gap (03:00)
 \item \code{"overflow"}: Allow time points to overflow into the next cycle. A
 skipped local time moves forward by the size of the gap (02:30 becomes
 03:30)
 \item \code{"reject"}: Return \code{NA} with a warning
+\item \code{"error"}: Throw an error
 }
 
 This is relevant when the starting time point has an offset that doesn't
 exist in all cycles. For example, starting on day 31 with \code{by = "1 month"}
 will overflow in months with fewer than 31 days (e.g., February). With
 \code{"clamp"}, these will be adjusted to the last day of the month (e.g.,
-Feb 28/29). With \code{"overflow"}, the extra days carry into the next month.
+Feb 28/29). With \code{"next"}, they move to the first day of the next month,
+and with \code{"overflow"}, the extra days carry into the next month.
 
 If not explicitly specified and overflow occurs, a warning is issued with
 the default \code{"clamp"} behavior applied. See \code{\link[=time_shift]{time_shift()}} for shifting
@@ -102,6 +108,7 @@ seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))
 # Handling invalid dates with on_invalid
 seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses clamp
 seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "clamp")
+seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "next")
 seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 
 # Cyclical time sequences

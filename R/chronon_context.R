@@ -70,10 +70,13 @@ method(chronon_to_local, mt_unit) <- function(chronon, x) as.double(x)
 #
 # * "clamp": back by the size of the gap, keeping finer fields (02:30 in a
 #   skipped 02:00-03:00 hour -> 01:30, before the gap).
-# * "nearest": the end of the valid time before the gap. For discrete time
-#   this is its last chronon; for continuous time it is the transition itself.
+# * "previous": the end of the valid time before the gap. For discrete time
+#   this is its last chronon (01:59:59); for continuous time it is the
+#   transition itself, the same instant as "next".
+# * "next": the start of the valid time after the gap, the transition itself
+#   (03:00).
 # * "overflow": forward by the size of the gap (02:30 -> 03:30, after it).
-# * "reject": NA.
+# * "reject", "error": NA (callers signal the warning or error).
 chronon_from_local <- S7::new_generic(
   "chronon_from_local",
   "chronon",

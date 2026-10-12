@@ -332,16 +332,33 @@ test_that("seq.mixtime on_invalid = 'overflow' lets the day-of-month overflow in
   expect_equal(format(result), c("2020-01-31", "2020-03-02", "2020-03-31"))
 })
 
-test_that("seq.mixtime on_invalid = 'nearest' uses the last chronon of the cycle", {
+test_that("seq.mixtime on_invalid = 'previous' uses the last chronon of the cycle", {
   result <- seq(
     datetime("2021-01-31 09:30:00"),
     length.out = 3,
     by = "1 month",
-    on_invalid = "nearest"
+    on_invalid = "previous"
   )
   expect_equal(
     format(result),
     c("2021-01-31 09:30:00", "2021-02-28 23:59:59", "2021-03-31 09:30:00")
+  )
+})
+
+test_that("seq.mixtime on_invalid = 'next' uses the start of the following cycle", {
+  result <- seq(
+    date("2020-01-31"),
+    length.out = 3,
+    by = "1 month",
+    on_invalid = "next"
+  )
+  expect_equal(format(result), c("2020-01-31", "2020-03-01", "2020-03-31"))
+})
+
+test_that("seq.mixtime on_invalid = 'error' errors on invalid time points", {
+  expect_error(
+    seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "error"),
+    "did not exist"
   )
 })
 
@@ -434,8 +451,12 @@ test_that("seq.mixtime by day keeps the local clock time across daylight saving"
   )
   expect_equal(format(result_overflow)[2], "2025-10-05 03:30:00 AEDT")
   expect_equal(
-    format(seq(x, by = "1 day", length.out = 3, on_invalid = "nearest"))[2],
+    format(seq(x, by = "1 day", length.out = 3, on_invalid = "previous"))[2],
     "2025-10-05 01:59:59 AEST"
+  )
+  expect_equal(
+    format(seq(x, by = "1 day", length.out = 3, on_invalid = "next"))[2],
+    "2025-10-05 03:00:00 AEDT"
   )
   expect_warning(
     result_reject <- seq(x, by = "1 day", length.out = 3, on_invalid = "reject"),

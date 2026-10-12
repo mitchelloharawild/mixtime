@@ -109,9 +109,7 @@ duration_shift <- function(time, dur, on_invalid = "clamp") {
     on_invalid,
     discrete = is.integer(time_data)
   )
-  if (on_invalid == "reject" && any(shifted$invalid)) {
-    warn_invalid_reject(shifted$invalid)
-  }
+  signal_invalid(shifted$invalid, on_invalid)
 
   shift <- shifted$value - time_data
   # Preserve integer type for discrete time points
@@ -231,24 +229,38 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 #'   * `"clamp"` (default): Reduce the invalid component to its last valid
 #'     value, preserving finer components (e.g., the time of day). A skipped
 #'     local time moves back by the size of the gap (02:30 becomes 01:30).
-#'   * `"nearest"`: Use the end of the target granule, so finer components are
-#'     not preserved. For discrete time this is the last chronon within the
-#'     granule (e.g., 23:59:59 on the last day); for continuous time it is the
-#'     end of that chronon (e.g., 00:00:00 on the following day). A skipped
-#'     local time becomes the end of the valid time before the gap.
+#'   * `"previous"`: Use the last valid time point before the invalid one, the
+#'     end of the target granule, so finer components are not preserved. For
+#'     discrete time this is the last chronon within the granule (e.g.,
+#'     23:59:59 on the last day); for continuous time it is the end of that
+#'     chronon, the same instant as `"next"`. A skipped local time becomes the
+#'     end of the valid time before the gap (01:59:59).
+#'   * `"next"`: Use the first valid time point after the invalid one, the
+#'     start of the following granule, so finer components are not preserved
+#'     (e.g., 00:00:00 on the first day of the following month). A skipped
+#'     local time becomes the start of the valid time after the gap (03:00).
 #'   * `"overflow"`: Allow the invalid component to overflow into the next
 #'     granule. A skipped local time moves forward by the size of the gap
 #'     (02:30 becomes 03:30).
 #'   * `"reject"`: Return `NA` with a warning.
+#'   * `"error"`: Throw an error.
+#'
+#'   `"previous"` and `"next"` preserve the order of the time points being
+#'   shifted, although distinct time points may become equal. `"clamp"` and
+#'   `"overflow"` do not: shifting `1955-01-29 23:00:00` and
+#'   `1955-01-31 08:00:00` by one month clamps them to `1955-02-28 23:00:00`
+#'   and `1955-02-28 08:00:00`, reversing their order.
 #'
 #' @return A time point vector of the same type as `x`.
 #'
 #' @examples
 #' x <- datetime("2021-01-30 09:30:00")
 #' time_shift(x, months(1L))
-#' time_shift(x, months(1L), on_invalid = "nearest")
+#' time_shift(x, months(1L), on_invalid = "previous")
+#' time_shift(x, months(1L), on_invalid = "next")
 #' time_shift(x, months(1L), on_invalid = "overflow")
 #' time_shift(x, months(1L), on_invalid = "reject")
+#' try(time_shift(x, months(1L), on_invalid = "error"))
 #'
 #' # Shifting backwards
 #' time_shift(date("2021-03-31"), months(-1L), on_invalid = "overflow")
@@ -256,14 +268,15 @@ method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
 #' # 02:30 doesn't exist on 2025-10-05 in Melbourne (clocks go forward at 02:00)
 #' x <- datetime(as.POSIXct("2025-10-04 02:30", tz = "Australia/Melbourne"))
 #' time_shift(x, days(1L))
-#' time_shift(x, days(1L), on_invalid = "nearest")
+#' time_shift(x, days(1L), on_invalid = "previous")
+#' time_shift(x, days(1L), on_invalid = "next")
 #' time_shift(x, days(1L), on_invalid = "overflow")
 #'
 #' @export
 time_shift <- new_generic(
   "time_shift",
   "x",
-  function(x, by, on_invalid = c("clamp", "nearest", "overflow", "reject")) {
+  function(x, by, on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error")) {
     S7::S7_dispatch()
   }
 )
@@ -271,7 +284,7 @@ method(time_shift, class_mixtime) <- vecvec::vecvec_apply_fn(time_shift)
 method(time_shift, mt_time) <- function(
   x,
   by,
-  on_invalid = c("clamp", "nearest", "overflow", "reject")
+  on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error")
 ) {
   on_invalid <- rlang::arg_match(on_invalid)
   if (is.character(by)) {

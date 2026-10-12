@@ -22,20 +22,26 @@
 #'   * `"clamp"` (default): Reduce the overflowing component to its last valid
 #'     value, preserving finer components (e.g., the time of day). A skipped
 #'     local time moves back by the size of the gap (02:30 becomes 01:30)
-#'   * `"nearest"`: Use the end of the cycle, so finer components are not
+#'   * `"previous"`: Use the end of the cycle, so finer components are not
 #'     preserved. For discrete time this is the last chronon within the cycle;
-#'     for continuous time it is the end of that chronon. A skipped local time
-#'     becomes the end of the valid time before the gap
+#'     for continuous time it is the end of that chronon, the same instant as
+#'     `"next"`. A skipped local time becomes the end of the valid time before
+#'     the gap (01:59:59)
+#'   * `"next"`: Use the start of the following cycle, so finer components are
+#'     not preserved. A skipped local time becomes the start of the valid time
+#'     after the gap (03:00)
 #'   * `"overflow"`: Allow time points to overflow into the next cycle. A
 #'     skipped local time moves forward by the size of the gap (02:30 becomes
 #'     03:30)
 #'   * `"reject"`: Return `NA` with a warning
+#'   * `"error"`: Throw an error
 #'
 #'   This is relevant when the starting time point has an offset that doesn't
 #'   exist in all cycles. For example, starting on day 31 with `by = "1 month"`
 #'   will overflow in months with fewer than 31 days (e.g., February). With
 #'   `"clamp"`, these will be adjusted to the last day of the month (e.g.,
-#'   Feb 28/29). With `"overflow"`, the extra days carry into the next month.
+#'   Feb 28/29). With `"next"`, they move to the first day of the next month,
+#'   and with `"overflow"`, the extra days carry into the next month.
 #'
 #'   If not explicitly specified and overflow occurs, a warning is issued with
 #'   the default `"clamp"` behavior applied. See [time_shift()] for shifting
@@ -72,6 +78,7 @@
 #' # Handling invalid dates with on_invalid
 #' seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses clamp
 #' seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "clamp")
+#' seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "next")
 #' seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 #'
 #' # Cyclical time sequences
@@ -101,7 +108,7 @@
   by,
   length.out = NULL,
   along.with = NULL,
-  on_invalid = c("clamp", "nearest", "overflow", "reject"),
+  on_invalid = c("clamp", "previous", "next", "overflow", "reject", "error"),
   ...
 ) {
   if (!is.null(along.with)) {
@@ -250,9 +257,7 @@
       "i" = "Specify {.arg on_invalid} explicitly to suppress this warning."
     ))
   }
-  if (on_invalid == "reject" && any(shifted$invalid)) {
-    warn_invalid_reject(shifted$invalid)
-  }
+  signal_invalid(shifted$invalid, on_invalid)
 
   if (!missing_from && !missing_to) {
     # A local time that doesn't exist can move forward, past `to`

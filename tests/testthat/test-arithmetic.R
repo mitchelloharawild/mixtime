@@ -469,10 +469,10 @@ test_that("time_shift() defaults to clamping, matching `+`", {
   expect_equal(format(time_shift(x, months(1L))), format(x + months(1L)))
 })
 
-test_that("time_shift() on_invalid = 'nearest' uses the last chronon of the target granule", {
+test_that("time_shift() on_invalid = 'previous' uses the last chronon of the target granule", {
   x <- datetime("2021-01-30 09:30:00")
   expect_equal(
-    format(time_shift(x, months(1L), on_invalid = "nearest")),
+    format(time_shift(x, months(1L), on_invalid = "previous")),
     "2021-02-28 23:59:59"
   )
   # Valid time points are unaffected
@@ -480,24 +480,24 @@ test_that("time_shift() on_invalid = 'nearest' uses the last chronon of the targ
     format(time_shift(
       datetime(c("2021-01-15 09:30:00", "2021-01-31 12:00:00")),
       months(1L),
-      on_invalid = "nearest"
+      on_invalid = "previous"
     )),
     c("2021-02-15 09:30:00", "2021-02-28 23:59:59")
   )
-  # With day chronons, nearest and clamp agree
+  # With day chronons, previous and clamp agree
   expect_equal(
-    format(time_shift(date("2024-02-29"), years(1L), on_invalid = "nearest")),
+    format(time_shift(date("2024-02-29"), years(1L), on_invalid = "previous")),
     "2025-02-28"
   )
 })
 
-test_that("time_shift() on_invalid = 'nearest' uses the end of the last chronon for continuous time", {
+test_that("time_shift() on_invalid = 'previous' uses the end of the last chronon for continuous time", {
   # The end of the last second (and day) is the start of the next granule
   expect_equal(
     format(time_shift(
       datetime("2021-01-30 09:30:00", discrete = FALSE),
       months(1L),
-      on_invalid = "nearest"
+      on_invalid = "previous"
     )),
     format(datetime("2021-03-01 00:00:00", discrete = FALSE))
   )
@@ -505,10 +505,44 @@ test_that("time_shift() on_invalid = 'nearest' uses the end of the last chronon 
     format(time_shift(
       date("2021-01-31", discrete = FALSE),
       months(1L),
-      on_invalid = "nearest"
+      on_invalid = "previous"
     )),
     format(date("2021-03-01", discrete = FALSE))
   )
+})
+
+test_that("time_shift() on_invalid = 'next' uses the start of the following granule", {
+  expect_equal(
+    format(time_shift(
+      datetime(c("2021-01-15 09:30:00", "2021-01-30 09:30:00")),
+      months(1L),
+      on_invalid = "next"
+    )),
+    c("2021-02-15 09:30:00", "2021-03-01 00:00:00")
+  )
+  # Unlike "clamp" and "previous", day chronons move to the next month
+  expect_equal(
+    format(time_shift(date("1955-01-31"), months(1L), on_invalid = "next")),
+    "1955-03-01"
+  )
+  expect_equal(
+    format(time_shift(date("2024-02-29"), years(1L), on_invalid = "next")),
+    "2025-03-01"
+  )
+  # Continuous time: "next" is the same instant as "previous"
+  xc <- datetime("2021-01-30 09:30:00", discrete = FALSE)
+  expect_equal(
+    format(time_shift(xc, months(1L), on_invalid = "next")),
+    format(time_shift(xc, months(1L), on_invalid = "previous"))
+  )
+})
+
+test_that("time_shift() on_invalid 'previous' and 'next' preserve order, 'clamp' doesn't", {
+  x <- datetime(c("1955-01-29 23:00:00", "1955-01-31 08:00:00", "1955-02-01 00:00:00"))
+  expect_false(!is.unsorted(as.numeric(time_shift(x, months(1L), on_invalid = "clamp"))))
+  expect_false(!is.unsorted(as.numeric(time_shift(x, months(1L), on_invalid = "overflow"))))
+  expect_false(is.unsorted(as.numeric(time_shift(x, months(1L), on_invalid = "previous"))))
+  expect_false(is.unsorted(as.numeric(time_shift(x, months(1L), on_invalid = "next"))))
 })
 
 test_that("time_shift() on_invalid = 'overflow' carries into the next granule", {
@@ -541,9 +575,28 @@ test_that("time_shift() on_invalid = 'reject' gives NA with a warning", {
   expect_no_warning(time_shift(date("2020-01-15"), months(1L), on_invalid = "reject"))
 })
 
+test_that("time_shift() on_invalid = 'error' errors on invalid time points", {
+  expect_error(
+    time_shift(
+      date(c("2020-01-15", "2020-01-31")),
+      months(1L),
+      on_invalid = "error"
+    ),
+    "1 time point did not exist in the target granule, at position 2"
+  )
+  expect_equal(
+    format(time_shift(date("2020-01-15"), months(1L), on_invalid = "error")),
+    "2020-02-15"
+  )
+  x <- datetime("2025-10-04 02:30:00", tz = "Australia/Melbourne")
+  expect_error(time_shift(x, days(1L), on_invalid = "error"), "did not exist")
+  # "nearest" was renamed to "previous"
+  expect_error(time_shift(x, days(1L), on_invalid = "nearest"))
+})
+
 test_that("time_shift() accepts character durations and validates `by`", {
   expect_equal(
-    format(time_shift(date("2021-01-31"), "1 month", on_invalid = "nearest")),
+    format(time_shift(date("2021-01-31"), "1 month", on_invalid = "previous")),
     "2021-02-28"
   )
   expect_error(time_shift(date("2021-01-31"), date("2021-01-31")), "duration")
@@ -556,8 +609,12 @@ test_that("time_shift() resolves local times skipped by daylight saving with on_
   x <- datetime("2025-10-04 02:30:00", tz = tz)
   expect_equal(format(time_shift(x, days(1L))), "2025-10-05 01:30:00 AEST")
   expect_equal(
-    format(time_shift(x, days(1L), on_invalid = "nearest")),
+    format(time_shift(x, days(1L), on_invalid = "previous")),
     "2025-10-05 01:59:59 AEST"
+  )
+  expect_equal(
+    format(time_shift(x, days(1L), on_invalid = "next")),
+    "2025-10-05 03:00:00 AEDT"
   )
   expect_equal(
     format(time_shift(x, days(1L), on_invalid = "overflow")),
@@ -569,10 +626,14 @@ test_that("time_shift() resolves local times skipped by daylight saving with on_
   )
   expect_true(is.na(res))
 
-  # Continuous time: "nearest" is the transition itself
+  # Continuous time: "previous" and "next" are the transition itself
   xc <- mixtime(as.POSIXct("2025-10-04 02:30", tz = tz), discrete = FALSE)
   expect_equal(
-    as.numeric(time_shift(xc, days(1L), on_invalid = "nearest")),
+    as.numeric(time_shift(xc, days(1L), on_invalid = "previous")),
+    as.numeric(as.POSIXct("2025-10-05 03:00", tz = tz))
+  )
+  expect_equal(
+    as.numeric(time_shift(xc, days(1L), on_invalid = "next")),
     as.numeric(as.POSIXct("2025-10-05 03:00", tz = tz))
   )
 

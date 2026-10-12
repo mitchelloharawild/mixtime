@@ -329,11 +329,11 @@ method(chronon_from_local, mt_tz_unit) <- function(
 # Stored values for local readings `x` of `chronon` that fall in a gap, where
 # the UTC offset changes from `before` to `after` (see chronon_from_local()).
 tz_resolve_gap <- function(chronon, x, before, after, discrete, on_invalid) {
-  if (on_invalid == "reject") {
+  if (on_invalid %in% c("reject", "error")) {
     return(rep(NA_real_, length(x)))
   }
   local <- chronon_convert_graph(x, chronon, tu_utc_second())
-  if (on_invalid != "nearest") {
+  if (!on_invalid %in% c("previous", "next")) {
     # The local reading read with the offset after the gap moves it back by the
     # size of the gap, and with the offset before moves it forward.
     s <- local - if (on_invalid == "clamp") after else before
@@ -349,7 +349,7 @@ tz_resolve_gap <- function(chronon, x, before, after, discrete, on_invalid) {
     local - before
   )
   if (discrete) {
-    chronon_from_utc(chronon, s, discrete = TRUE) - 1
+    chronon_from_utc(chronon, s, discrete = TRUE) - (on_invalid == "previous")
   } else {
     chronon_from_utc(chronon, s)
   }

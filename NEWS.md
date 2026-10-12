@@ -13,6 +13,13 @@
   coarsest chronon that every input chronon evenly aggregates into) of a set
   of chronons.
 
+* `time_shift()` and `seq()` gain two `on_invalid` strategies. `"next"`
+  resolves an invalid time point to the start of the following granule, so
+  `date("1955-01-31")` plus one month is `1955-03-01`, and a local time
+  skipped by daylight saving moves to the end of the gap (02:30 becomes
+  03:00). `"error"` throws an error instead of returning `NA` like
+  `"reject"`.
+
 ## Deprecated
 
 * `chronon_common()` is deprecated in favour of `chronon_glb()`, which names
@@ -36,6 +43,10 @@
   read as `mixtime()` reads them, counting from the chronon's epoch, so
   `year(x) == 2026L` compares with the year 2026. Previously the number was a
   raw count of chronons since 1970 (2026 was the year 3996).
+
+* The `on_invalid` strategy `"nearest"` is renamed to `"previous"`, the
+  backward counterpart of the new `"next"`. It always resolves to the end of
+  the target granule, rather than whichever valid time point is closest.
 
 ## Improvements
 
@@ -85,8 +96,9 @@
   (e.g. 31 January plus one month): by default it is clamped back by the size
   of the gap, keeping its minutes (02:30 becomes 01:30 when clocks go forward
   from 02:00 to 03:00). `time_shift()` and `seq()` resolve it with their
-  `on_invalid` argument: `"nearest"` gives the end of the time before the gap,
-  `"overflow"` moves it forward by the gap (03:30), and `"reject"` gives `NA`.
+  `on_invalid` argument: `"previous"` gives the end of the time before the
+  gap, `"next"` the start of the time after it (03:00), `"overflow"` moves it
+  forward by the gap (03:30), and `"reject"` gives `NA`.
 * Shifting or `seq()`-ing times with a multi-unit chronon (e.g. half-hourly
   times) by days, months or years no longer errors with "Cannot determine
   whether 30 minutes nest within 1 year".
