@@ -1,0 +1,233 @@
+---
+title: "Resolving invalid time points"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Resolving invalid time points}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message = FALSE}
+library(mixtime)
+```
+
+Some temporal operations produce time points that don't exist. Adding one month to 31 January asks for 31 February, and adding one day to 02:30 on the day before daylight saving starts could produce a local time in the transition that the clocks skip. There is no single correct answer to these operations, so mixtime resolves them with one of several strategies you can choose. This vignette describes where invalid time points come from, the strategies available, and what each of them preserves.
+
+## How invalid time points arise
+
+### Irregular cardinality
+
+Calendar arithmetic shifts a time point by decomposing it into calendar components, shifting the component that matches the duration, and recomposing the result. Adding one month to `2021-01-31 09:30:00` decomposes it into the month (January 2021), and finer components (day of the month 31 at time of day 09:30), then increments the month to February 2021 producing the invalid time point of `2021-02-31 09:30:00`.
+
+Recomposing only fails when a component's valid range depends on the components around it. There are always 24 hours in a day and 60 minutes in an hour, so shifting by hours or minutes never produces an invalid time of day. These granularities have a *regular cardinality*. The number of days in a month varies from 28 to 31, so the day of the month has an *irregular cardinality* with respect to months, and day 31 is invalid in February.
+
+```{r}
+# Valid: day 15 exists in every month
+date("2021-01-15") + months(1L)
+
+# Invalid: February 2021 has no day 31
+datetime("2021-01-31 09:30:00") + months(1L)
+```
+
+Only the invalid component needs resolving. In the example above, the month and the time of day are both still valid, and only the day of the month is out of range.
+
+The same problem arises wherever one granularity doesn't fit a whole number of times into another, such as leap days within years, or the 53rd week of a long ISO week year.
+
+```{r}
+# 2025 has no 29 February
+date("2024-02-29") + years(1L)
+
+# The ISO week year 2021 has no 53rd week
+time_shift(yearweek("2020 W53"), years(1L, calendar = cal_isoweek))
+```
+
+### Daylight saving time
+
+Shifting a time zone aware time point by days or longer keeps its local clock time: one day after 09:00 is 09:00 the next day, even if the day is only 23 hours long. When daylight saving starts, the clocks skip part of the day, and a local time in that gap doesn't exist.
+
+In Melbourne, the clocks went forward from 02:00 to 03:00 on 5 October 2025, so 02:30 that day never happened.
+
+```{r}
+x <- datetime("2025-10-04 02:30:00", tz = "Australia/Melbourne")
+x + days(1L)
+```
+
+Shifting by hours, minutes or seconds adds elapsed time instead, so it never lands in a gap. Twenty-four hours after 02:30 is 03:30, since one hour was skipped.
+
+```{r}
+x + hours(24L)
+```
+
+When daylight saving ends, the clocks repeat part of the day, and a local time in the overlap happens twice. Such a time is *ambiguous* rather than invalid, and mixtime resolves it to its earliest occurrence (equivalent to 24 hours for day increments).
+
+```{r}
+datetime("2025-04-05 02:30:00", tz = "Australia/Melbourne") + days(1L)
+```
+
+### Parsing
+
+Text describing a time point that doesn't exist fails to parse, and becomes `NA` with a warning. This includes dates that don't exist in the calendar, and local times skipped in the time zone.
+
+```{r}
+date("2026-02-30")
+datetime("2025-10-05 02:30:00", tz = "Australia/Melbourne")
+```
+
+The rest of this vignette describes resolving invalid results from operations, which is controlled with the `on_invalid` argument.
+
+## Resolution strategies
+
+`time_shift()` and `seq()` resolve invalid time points with their `on_invalid` argument. The table below shows each strategy applied to the invalid `2021-02-31 09:30:00`, from adding one month to `2021-01-31 09:30:00`. Each strategy keeps a different aspect of the intended result, at the expense of others.
+
+| `on_invalid` | Result | Preserves | Sacrifices |
+|---|---|---|---|
+| `"clamp"` (default) | `2021-02-28 09:30:00` | target month; finer components | target distance; order |
+| `"previous"` | `2021-02-28 23:59:59` | target month; order | finer components |
+| `"next"` | `2021-03-01 00:00:00` | order | target month; finer components |
+| `"overflow"` | `2021-03-03 09:30:00` | offset from the start of the target month; finer components | target month; order |
+| `"reject"` | `NA` with a warning | every invariant, by producing no result | a result |
+| `"error"` | an error | every invariant, by producing no result | a result |
+
+```{r}
+x <- datetime("2021-01-31 09:30:00")
+```
+
+### Clamp
+
+`"clamp"` reduces the invalid component to the last value in its valid range, leaving the other components unchanged. The day of the month becomes 28, and the time of day stays at 09:30. This is the default, and what most people expect from adding months.
+
+```{r}
+time_shift(x, months(1L), on_invalid = "clamp")
+```
+
+### Previous and next
+
+`"previous"` and `"next"` resolve to the valid time points either side of the invalid one. `"previous"` gives the last time point in the target month, and `"next"` gives the first time point in the month after it. Neither keeps the time of day, since the result is at a boundary of the target month.
+
+```{r}
+time_shift(x, months(1L), on_invalid = "previous")
+time_shift(x, months(1L), on_invalid = "next")
+```
+
+For dates, `"previous"` gives the same result as `"clamp"`, since there are no finer components to keep. `"next"` gives the first day of the following month.
+
+```{r}
+time_shift(date("2021-01-31"), months(1L), on_invalid = "previous")
+time_shift(date("2021-01-31"), months(1L), on_invalid = "next")
+```
+
+The last time point in February depends on the time point's chronon. For discrete time it is the last chronon in the month (the second starting at 23:59:59 above). Continuous time has no last instant before March, so `"previous"` gives the end of February, which is the same instant as the start of March given by `"next"`.
+
+```{r}
+xc <- datetime("2021-01-31 09:30:00", discrete = FALSE)
+time_shift(xc, months(1L), on_invalid = "previous") ==
+  time_shift(xc, months(1L), on_invalid = "next")
+```
+
+### Overflow
+
+`"overflow"` lets the invalid component carry into the following month. 31 February is three days past the end of February 2021, so it becomes 3 March, keeping the time of day.
+
+```{r}
+time_shift(x, months(1L), on_invalid = "overflow")
+```
+
+### Reject and error
+
+`"reject"` and `"error"` refuse to resolve invalid time points, since the operation doesn't have a single correct answer. `"reject"` replaces them with `NA` and warns, while `"error"` stops with an error that gives their positions.
+
+```{r}
+time_shift(x, months(1L), on_invalid = "reject")
+```
+
+```{r, error = TRUE}
+time_shift(x, months(1L), on_invalid = "error")
+```
+
+### Daylight saving time
+
+The same strategies resolve local times skipped by daylight saving. The gap is treated like the end of February: `"clamp"` moves back by the size of the gap, `"previous"` and `"next"` give the times either side of it, and `"overflow"` moves forward by the size of the gap.
+
+```{r}
+x <- datetime("2025-10-04 02:30:00", tz = "Australia/Melbourne")
+time_shift(x, days(1L), on_invalid = "clamp")
+time_shift(x, days(1L), on_invalid = "previous")
+time_shift(x, days(1L), on_invalid = "next")
+time_shift(x, days(1L), on_invalid = "overflow")
+```
+
+## Sequences
+
+`seq()` takes the same `on_invalid` argument. Each time point in the sequence is shifted from the start, rather than from the previous time point, so a time point clamped in February doesn't affect the rest of the sequence.
+
+Since a sequence can resolve many time points at once, `seq()` warns when it clamps without a strategy being chosen.
+
+```{r}
+seq(date("2021-01-31"), by = "1 month", length.out = 4)
+```
+
+Choosing a strategy explicitly silences the warning.
+
+```{r}
+seq(date("2021-01-31"), by = "1 month", length.out = 4, on_invalid = "clamp")
+seq(date("2021-01-31"), by = "1 month", length.out = 4, on_invalid = "next")
+```
+
+## Choosing a default
+
+The `+` and `-` operators can't take an `on_invalid` argument, so they use the default strategy. The default is set by the `mixtime.on_invalid` option, which is `"clamp"` unless set. The option also sets the default for `time_shift()` and `seq()`, and setting it silences the warning from `seq()`.
+
+```{r}
+date("2021-01-31") + months(1L)
+
+options(mixtime.on_invalid = "next")
+date("2021-01-31") + months(1L)
+seq(date("2021-01-31"), by = "1 month", length.out = 4)
+```
+
+Setting the option to `"error"` makes any invalid time point stop the analysis, which can be useful for checking that no time points are being silently resolved.
+
+```{r, error = TRUE}
+options(mixtime.on_invalid = "error")
+date("2021-01-31") + months(1L)
+```
+
+```{r}
+options(mixtime.on_invalid = NULL)
+```
+
+## Costs of resolving invalid time points
+
+Every strategy that produces a result changes the behaviour of the arithmetic, in ways worth knowing when choosing one.
+
+Calendar arithmetic is not associative. Adding one month twice clamps in February, and the lost days aren't recovered in March, whereas adding two months at once never passes through February.
+
+```{r}
+date("2021-01-31") + months(1L) + months(1L)
+date("2021-01-31") + months(2L)
+```
+
+Nor is it reversible. Adding and subtracting one month doesn't return to the starting date.
+
+```{r}
+date("2021-01-31") + months(1L) - months(1L)
+```
+
+Only `"previous"` and `"next"` preserve the order of the time points being shifted, although distinct time points may become equal. Clamping keeps the time of day, so a later day with an earlier time can end up before an earlier day with a later time. Overflowing carries further past the end of the month for later days, so 31 January can overtake 1 February.
+
+```{r}
+y <- datetime(c("2021-01-29 23:00:00", "2021-01-31 08:00:00"))
+time_shift(y, months(1L), on_invalid = "clamp")
+time_shift(y, months(1L), on_invalid = "previous")
+
+time_shift(date(c("2021-01-31", "2021-02-01")), months(1L), on_invalid = "overflow")
+```
+
+When the order of time points matters, such as when shifting the index of a time series, `"previous"` or `"next"` are safer choices than the default.
