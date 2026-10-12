@@ -614,6 +614,54 @@ test_that("the mixtime.on_invalid option sets the default strategy", {
   expect_error(time_shift(x, months(1L)), "mixtime.on_invalid")
 })
 
+test_that("shifting a discrete time by a duration it doesn't nest within is indeterminate", {
+  # A week can straddle two Gregorian years, months, or days
+  expect_error(yearweek("2020 W53") + years(1L), class = "mixtime_error_indeterminate")
+  expect_error(yearweek("2021 W05") + months(1L), class = "mixtime_error_indeterminate")
+  expect_error(yearweek("2021 W05") + days(11L), class = "mixtime_error_indeterminate")
+  expect_error(yearmonth("2021 Jan") + weeks(1L), class = "mixtime_error_indeterminate")
+  expect_error(date("2021-01-31") + hours(23L), class = "mixtime_error_indeterminate")
+  expect_error(
+    time_shift(yearweek("2020 W53"), years(1L), on_invalid = "next"),
+    class = "mixtime_error_indeterminate"
+  )
+
+  # A duration from another calendar says so
+  expect_error(
+    yearweek("2020 W53") + years(1L),
+    "1 year is from `cal_gregorian`, while 1 week is from `cal_isoweek`"
+  )
+  expect_error(
+    yearmonth("2021 Jan") + weeks(1L),
+    "1 week is from `cal_isoweek`, while 1 month is from `cal_gregorian`"
+  )
+  expect_no_match(
+    tryCatch(date("2021-01-31") + hours(23L), error = conditionMessage),
+    "is from"
+  )
+
+  # A whole number of chronons is determinate
+  expect_equal(format(yearweek("2021 W05") + days(14L)), "2021 W07")
+  expect_equal(format(yearweek("2021 W05") - days(7L)), "2021 W04")
+  expect_equal(format(date("2021-01-31") + hours(48L)), "2021-02-02")
+
+  # As is a duration the chronon nests within
+  expect_equal(
+    format(yearweek("2021 W05") + duration(1L, cal_isoweek$year(1L))),
+    "2022 W05"
+  )
+
+  # Continuous time is an instant, so shifts as before
+  expect_no_error(yearweek("2021 W05", discrete = FALSE) + years(1L))
+})
+
+test_that("shifting multi-unit chronons checks the whole chronon", {
+  x <- mixtime(as.POSIXct("2021-01-31 10:30", tz = "UTC"), cal_gregorian$minute(30L))
+  expect_equal(format(x + months(1L)), "2021-02-28 10:30")
+  expect_equal(format(x + hours(1L)), "2021-01-31 11:30")
+  expect_error(x + minutes(15L), class = "mixtime_error_indeterminate")
+})
+
 test_that("time_shift() accepts character durations and validates `by`", {
   expect_equal(
     format(time_shift(date("2021-01-31"), "1 month", on_invalid = "previous")),

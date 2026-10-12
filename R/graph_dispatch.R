@@ -317,6 +317,24 @@ chronon_nests_in_fixed <- function(chronon, granule) {
   chronon_nests_in_fixed_ratio(chronon, granule)
 }
 
+# Whether `n` units of `unit` are always a whole number of `chronon`s (14 days
+# are 2 weeks, but 11 days aren't), using only fixed cardinalities. A change of
+# UTC offset is ignored (a day in a time zone counts as 24 hours).
+chronon_fixed_multiple <- function(chronon, unit, n) {
+  ratio <- if (S7_class_id(chronon) == S7_class_id(unit)) {
+    unit@n / chronon@n
+  } else if (
+    chronon_fixed_reachable(chronon, unit) ||
+      chronon_fixed_reachable(unit, chronon)
+  ) {
+    chronon_cardinality(chronon, unit)
+  } else {
+    return((n == 0) %in% c(TRUE, NA))
+  }
+  k <- round_ulp(n * ratio)
+  (k == round(k)) %in% c(TRUE, NA)
+}
+
 S7_class_id <- function(x) {
   if (inherits(x, "S7_object") && !inherits(x, "S7_class")) {
     # An S7 object's class attribute already begins with its class id, so an

@@ -564,6 +564,17 @@ test_that("seq.mixtime matches adding durations to its start", {
   }
 })
 
+test_that("seq.mixtime refuses temporally indeterminate steps", {
+  expect_error(
+    seq(yearweek("2020 W01"), by = "1 year", length.out = 3),
+    class = "mixtime_error_indeterminate"
+  )
+  expect_equal(
+    format(seq(yearweek("2020 W01"), by = "14 days", length.out = 3)),
+    c("2020 W01", "2020 W03", "2020 W05")
+  )
+})
+
 test_that("seq.mixtime shifts multi-unit chronons by calendar units", {
   # Half-hourly time zone aware times, like tsibbledata::vic_elec
   x <- as.POSIXct("2024-04-06 02:30:00", tz = "Australia/Melbourne") +

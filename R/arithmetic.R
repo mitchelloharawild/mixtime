@@ -27,6 +27,8 @@ chronon_shift <- function(
     unit@n <- 1L
   }
 
+  if (discrete) check_shift_determinate(chronon, unit, n)
+
   # Calendar shifts decompose through the chronon's class (e.g. minute -> hour
   # -> day -> year), which is only defined for single-unit chronons. A
   # multi-unit chronon (e.g. 30 minutes) is shifted as its single unit.
@@ -91,6 +93,42 @@ chronon_shift <- function(
     value = chronon_convert_impl(x, ctx_chronon, chronon, discrete = FALSE),
     invalid = invalid %||% rep_len(FALSE, length(x)),
     skipped = skipped %||% rep_len(FALSE, length(x))
+  )
+}
+
+# A discrete time point spans its whole chronon, so shifting it is only
+# determinate when every instant within it shifts into the same chronon: when
+# the chronon nests within `unit` (calendar arithmetic shifts each instant's
+# components alike), or when the shift is a whole number of chronons (a week by
+# 14 days, but not 11). Otherwise, as for conversions (see
+# check_convert_determinate()), the shift is refused.
+check_shift_determinate <- function(chronon, unit, n) {
+  if (chronon_nests_in(chronon, unit)) {
+    return(invisible())
+  }
+  ok <- chronon_fixed_multiple(chronon, unit, n)
+  if (all(ok)) {
+    return(invisible())
+  }
+  by <- time_granule_label(unit, abs(n[!ok][[1L]]))
+  label <- time_granule_label(chronon)
+  # A duration from another calendar can share a name with one that would
+  # nest (a Gregorian year is not an ISO week-numbering year), so name both.
+  cal <- time_calendar(chronon)
+  unit_cal <- time_calendar(unit)
+  other_cal <- !is.null(cal) &&
+    !is.null(unit_cal) &&
+    !S7_class_id(unit) %in% vapply(cal, S7_class_id, character(1L))
+
+  cli::cli_abort(
+    c(
+      "Cannot shift {label} time points by {by}, the result is temporally indeterminate.",
+      "x" = "A discrete {.field {label}} spans a period of time that doesn't shift as a whole by {by}.",
+      "!" = if (other_cal) "{by} is from {.code {class(unit_cal)[[1L]]}}, while {label} is from {.code {class(cal)[[1L]]}}.",
+      "i" = "Shift by a duration that {label} {cli::qty(chronon@n)}nest{?s/} within or that is a multiple of {label}, or use continuous time."
+    ),
+    class = "mixtime_error_indeterminate",
+    call = NULL
   )
 }
 
