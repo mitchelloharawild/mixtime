@@ -235,9 +235,11 @@ directed_reachable <- function(from, to, start, end) {
 
 # TRUE if `chronon` nests within `granule` (no `chronon` block ever splits
 # across a `granule` boundary). Defers to the exact ratio check when a fixed
-# path connects the classes; over an irregular-only path, only `n = 1` is
-# provably safe (per-`at` divisibility isn't exhaustively checkable), so
-# `n > 1` errors instead of guessing.
+# path connects the classes; over an irregular-only path, `n = 1` always
+# nests, and `n > 1` nests when it nests within a single unit of an
+# intermediate granule that nests within `granule` (30 minutes nest within
+# days, which nest within months). Otherwise per-`at` divisibility isn't
+# exhaustively checkable, so it errors instead of guessing.
 chronon_nests_in <- function(chronon, granule) {
   if (S7_class_id(chronon) == S7_class_id(granule)) {
     return(chronon_nests_in_same_unit(chronon, granule))
@@ -250,6 +252,12 @@ chronon_nests_in <- function(chronon, granule) {
     return(FALSE)
   }
   if (chronon@n != 1L) {
+    path <- chronon_longest_path(chronon, granule)
+    for (via in path[-c(1L, length(path))]) {
+      if (chronon_nests_in_fixed(chronon, via) && chronon_nests_in(via, granule)) {
+        return(TRUE)
+      }
+    }
     cli::cli_abort(
       c(
         "Cannot determine whether {time_granule_label(chronon)} nest within {time_granule_label(granule)}.",

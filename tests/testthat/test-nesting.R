@@ -58,6 +58,11 @@ test_that("chronon_nests_in() checks @n for pairs only reachable via an irregula
   expect_error(chronon_nests_in(cal_gregorian$day(2L), cal_gregorian$month(1L)))
   expect_error(chronon_nests_in(cal_gregorian$day(7L), cal_gregorian$year(1L)))
 
+  # Unless it nests within a single unit of an intermediate granule that nests
+  # in turn (30 minutes nest within days, which nest within months)
+  expect_true(chronon_nests_in(cal_gregorian$minute(30L), cal_gregorian$month(1L)))
+  expect_true(chronon_nests_in(cal_gregorian$hour(6L), cal_gregorian$year(1L)))
+
   # No registered relationship at all is still a plain FALSE, not an error.
   expect_false(chronon_nests_in(cal_gregorian$month(1L), cal_time_lunar$phase(1L)))
 })
