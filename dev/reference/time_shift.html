@@ -6,14 +6,16 @@ days within months) can produce time points that don't exist, such as
 shifting 31 January by one month. In a time zone, shifting by days or
 longer keeps the local clock time, which may have been skipped when daylight
 saving starts (e.g. 02:30 on the day clocks go forward from 02:00 to 03:00).
-The + and - operators always use on_invalid = &quot;clamp&quot;."><meta property="og:description" content="Shifts time points by a duration, like x + by, with control over how time
+The + and - operators use the default strategy, set by the
+mixtime.on_invalid option (&quot;clamp&quot; unless set)."><meta property="og:description" content="Shifts time points by a duration, like x + by, with control over how time
 points that don't exist in the target granule are resolved. Shifting by a
 duration with an irregular relationship to the time points' chronon (e.g.
 days within months) can produce time points that don't exist, such as
 shifting 31 January by one month. In a time zone, shifting by days or
 longer keeps the local clock time, which may have been skipped when daylight
 saving starts (e.g. 02:30 on the day clocks go forward from 02:00 to 03:00).
-The + and - operators always use on_invalid = &quot;clamp&quot;."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg"><meta name="robots" content="noindex"></head><body>
+The + and - operators use the default strategy, set by the
+mixtime.on_invalid option (&quot;clamp&quot; unless set)."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg"><meta name="robots" content="noindex"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -59,12 +61,13 @@ days within months) can produce time points that don't exist, such as
 shifting 31 January by one month. In a time zone, shifting by days or
 longer keeps the local clock time, which may have been skipped when daylight
 saving starts (e.g. 02:30 on the day clocks go forward from 02:00 to 03:00).
-The <code>+</code> and <code>-</code> operators always use <code>on_invalid = "clamp"</code>.</p>
+The <code>+</code> and <code>-</code> operators use the default strategy, set by the
+<code>mixtime.on_invalid</code> option (<code>"clamp"</code> unless set).</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="va">by</span>, on_invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clamp"</span>, <span class="st">"nearest"</span>, <span class="st">"overflow"</span>, <span class="st">"reject"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="va">by</span>, on_invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"mixtime.on_invalid"</span>, <span class="st">"clamp"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -82,19 +85,30 @@ specifying one (e.g., <code>"1 month"</code>).</p></dd>
 
 <dt id="arg-on-invalid">on_invalid<a class="anchor" aria-label="anchor" href="#arg-on-invalid"></a></dt>
 <dd><p>How to resolve time points that don't exist in the target
-granule:</p><ul><li><p><code>"clamp"</code> (default): Reduce the invalid component to its last valid
+granule. Defaults to the <code>mixtime.on_invalid</code> option, or <code>"clamp"</code> if it
+isn't set:</p><ul><li><p><code>"clamp"</code>: Reduce the invalid component to its last valid
 value, preserving finer components (e.g., the time of day). A skipped
 local time moves back by the size of the gap (02:30 becomes 01:30).</p></li>
-<li><p><code>"nearest"</code>: Use the end of the target granule, so finer components are
-not preserved. For discrete time this is the last chronon within the
-granule (e.g., 23:59:59 on the last day); for continuous time it is the
-end of that chronon (e.g., 00:00:00 on the following day). A skipped
-local time becomes the end of the valid time before the gap.</p></li>
+<li><p><code>"previous"</code>: Use the last valid time point before the invalid one, the
+end of the target granule, so finer components are not preserved. For
+discrete time this is the last chronon within the granule (e.g.,
+23:59:59 on the last day); for continuous time it is the end of that
+chronon, the same instant as <code>"next"</code>. A skipped local time becomes the
+end of the valid time before the gap (01:59:59).</p></li>
+<li><p><code>"next"</code>: Use the first valid time point after the invalid one, the
+start of the following granule, so finer components are not preserved
+(e.g., 00:00:00 on the first day of the following month). A skipped
+local time becomes the start of the valid time after the gap (03:00).</p></li>
 <li><p><code>"overflow"</code>: Allow the invalid component to overflow into the next
 granule. A skipped local time moves forward by the size of the gap
 (02:30 becomes 03:30).</p></li>
 <li><p><code>"reject"</code>: Return <code>NA</code> with a warning.</p></li>
-</ul></dd>
+<li><p><code>"error"</code>: Throw an error.</p></li>
+</ul><p><code>"previous"</code> and <code>"next"</code> preserve the order of the time points being
+shifted, although distinct time points may become equal. <code>"clamp"</code> and
+<code>"overflow"</code> do not: shifting <code>1955-01-29 23:00:00</code> and
+<code>1955-01-31 08:00:00</code> by one month clamps them to <code>1955-02-28 23:00:00</code>
+and <code>1955-02-28 08:00:00</code>, reversing their order.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -108,18 +122,25 @@ granule. A skipped local time moves forward by the size of the gap
 <span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2021-02-28 09:30:00</span>
-<span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"previous"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2021-02-28 23:59:59</span>
+<span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"next"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2021-03-01 00:00:00</span>
 <span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"overflow"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2021-03-02 09:30:00</span>
 <span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"reject"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>1 time point did not exist in the target granule and was replaced with <span style="color: #0000BB;">"NA"</span>.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use `on_invalid = "clamp"` or `"nearest"` to resolve them to valid time</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>   points instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Set `on_invalid` to <span style="color: #0000BB;">"clamp"</span>, <span style="color: #0000BB;">"previous"</span>, <span style="color: #0000BB;">"next"</span>, or <span style="color: #0000BB;">"overflow"</span> to resolve</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   them to valid time points instead.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"error"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error : 1 time point did not exist in the target granule, at position 1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Set `on_invalid` to <span style="color: #0000BB;">"clamp"</span>, <span style="color: #0000BB;">"previous"</span>, <span style="color: #0000BB;">"next"</span>, or <span style="color: #0000BB;">"overflow"</span> to resolve</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   them to valid time points instead.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shifting backwards</span></span></span>
 <span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2021-03-31"</span><span class="op">)</span>, <span class="fu"><a href="duration_helpers.html">months</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"overflow"</span><span class="op">)</span></span></span>
@@ -131,9 +152,12 @@ granule. A skipped local time moves forward by the size of the gap
 <span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">days</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2025-10-05 01:30:00 AEST</span>
-<span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">days</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">days</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"previous"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2025-10-05 01:59:59 AEST</span>
+<span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">days</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"next"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2025-10-05 03:00:00 AEDT</span>
 <span class="r-in"><span><span class="fu">time_shift</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="duration_helpers.html">days</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, on_invalid <span class="op">=</span> <span class="st">"overflow"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2025-10-05 03:30:00 AEDT</span>

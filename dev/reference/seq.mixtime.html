@@ -59,7 +59,7 @@ month of year).</p>
 <span>  <span class="va">by</span>,</span>
 <span>  length.out <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  along.with <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  on_invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clamp"</span>, <span class="st">"nearest"</span>, <span class="st">"overflow"</span>, <span class="st">"reject"</span><span class="op">)</span>,</span>
+<span>  on_invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"mixtime.on_invalid"</span>, <span class="st">"clamp"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -102,24 +102,32 @@ month of year).</p>
 <dd><p>How to handle time points that don't exist, either
 because they overflow the cycle when using a <code>by</code> argument with different
 time granule than the sequence chronon, or because they fall in the local
-time skipped when daylight saving starts. Options are:</p><ul><li><p><code>"clamp"</code> (default): Reduce the overflowing component to its last valid
+time skipped when daylight saving starts. Defaults to the
+<code>mixtime.on_invalid</code> option, or <code>"clamp"</code> if it isn't set. Options are:</p><ul><li><p><code>"clamp"</code>: Reduce the overflowing component to its last valid
 value, preserving finer components (e.g., the time of day). A skipped
 local time moves back by the size of the gap (02:30 becomes 01:30)</p></li>
-<li><p><code>"nearest"</code>: Use the end of the cycle, so finer components are not
+<li><p><code>"previous"</code>: Use the end of the cycle, so finer components are not
 preserved. For discrete time this is the last chronon within the cycle;
-for continuous time it is the end of that chronon. A skipped local time
-becomes the end of the valid time before the gap</p></li>
+for continuous time it is the end of that chronon, the same instant as
+<code>"next"</code>. A skipped local time becomes the end of the valid time before
+the gap (01:59:59)</p></li>
+<li><p><code>"next"</code>: Use the start of the following cycle, so finer components are
+not preserved. A skipped local time becomes the start of the valid time
+after the gap (03:00)</p></li>
 <li><p><code>"overflow"</code>: Allow time points to overflow into the next cycle. A
 skipped local time moves forward by the size of the gap (02:30 becomes
 03:30)</p></li>
 <li><p><code>"reject"</code>: Return <code>NA</code> with a warning</p></li>
+<li><p><code>"error"</code>: Throw an error</p></li>
 </ul><p>This is relevant when the starting time point has an offset that doesn't
 exist in all cycles. For example, starting on day 31 with <code>by = "1 month"</code>
 will overflow in months with fewer than 31 days (e.g., February). With
 <code>"clamp"</code>, these will be adjusted to the last day of the month (e.g.,
-Feb 28/29). With <code>"overflow"</code>, the extra days carry into the next month.</p>
-<p>If not explicitly specified and overflow occurs, a warning is issued with
-the default <code>"clamp"</code> behavior applied. See <code><a href="time_shift.html">time_shift()</a></code> for shifting
+Feb 28/29). With <code>"next"</code>, they move to the first day of the next month,
+and with <code>"overflow"</code>, the extra days carry into the next month.</p>
+<p>If neither <code>on_invalid</code> nor the <code>mixtime.on_invalid</code> option is set and
+overflow occurs, a warning is issued with the default <code>"clamp"</code> behavior
+applied. See <code><a href="time_shift.html">time_shift()</a></code> for shifting
 time points with the same options.</p></dd>
 
 </dl></div>
@@ -178,12 +186,16 @@ time across daylight saving changes.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some time points in the sequence fall past the end of a shorter month.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Clamping them to the last valid time point in that month, `on_invalid =</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>   "clamp"` (the default).</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify `on_invalid` explicitly to suppress this warning.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify `on_invalid`, or set the `mixtime.on_invalid` option, to suppress</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   this warning.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-31 2020-02-29 2020-03-31</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span>, on_invalid <span class="op">=</span> <span class="st">"clamp"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-31 2020-02-29 2020-03-31</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span>, on_invalid <span class="op">=</span> <span class="st">"next"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-31 2020-03-01 2020-03-31</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2020-01-31"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="st">"1 month"</span>, on_invalid <span class="op">=</span> <span class="st">"overflow"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-01-31 2020-03-02 2020-03-31</span>

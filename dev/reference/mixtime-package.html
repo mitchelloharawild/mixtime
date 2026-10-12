@@ -46,6 +46,16 @@ Flexible time classes for time series analysis and forecasting with mixed tempor
 
 
     <div class="section level2">
+    <h2 id="package-options">Package options<a class="anchor" aria-label="anchor" href="#package-options"></a></h2>
+
+
+<ul><li><p><code>mixtime.on_invalid</code>: The default strategy for resolving time points that
+don't exist, such as 31 January plus one month, used by <code>+</code>, <code>-</code>,
+<code><a href="time_shift.html">time_shift()</a></code> and seq(). One of <code>"clamp"</code> (the default),
+<code>"previous"</code>, <code>"next"</code>, <code>"overflow"</code>, <code>"reject"</code>, or <code>"error"</code>. See
+<code><a href="time_shift.html">time_shift()</a></code> for details.</p></li>
+</ul></div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Useful links:</p><ul><li><p><a href="https://pkg.mitchelloharawild.com/mixtime/">https://pkg.mitchelloharawild.com/mixtime/</a></p></li>
 <li><p><a href="https://github.com/mitchelloharawild/mixtime" class="external-link">https://github.com/mitchelloharawild/mixtime</a></p></li>

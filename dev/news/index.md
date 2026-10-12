@@ -19,6 +19,22 @@
   the *least upper bound* (the coarsest chronon that every input chronon
   evenly aggregates into) of a set of chronons.
 
+- [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md)
+  and [`seq()`](https://rdrr.io/r/base/seq.html) gain two `on_invalid`
+  strategies. `"next"` resolves an invalid time point to the start of
+  the following granule, so `date("1955-01-31")` plus one month is
+  `1955-03-01`, and a local time skipped by daylight saving moves to the
+  end of the gap (02:30 becomes 03:00). `"error"` throws an error
+  instead of returning `NA` like `"reject"`.
+
+- The new `mixtime.on_invalid` option sets the default `on_invalid`
+  strategy for
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md),
+  [`seq()`](https://rdrr.io/r/base/seq.html), and the `+` and `-`
+  operators, which otherwise clamp.
+  [`seq()`](https://rdrr.io/r/base/seq.html) no longer warns about
+  clamping when the option is set.
+
 ### Deprecated
 
 - [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
@@ -52,6 +68,11 @@
   reads them, counting from the chronon’s epoch, so `year(x) == 2026L`
   compares with the year 2026. Previously the number was a raw count of
   chronons since 1970 (2026 was the year 3996).
+
+- The `on_invalid` strategy `"nearest"` is renamed to `"previous"`, the
+  backward counterpart of the new `"next"`. It always resolves to the
+  end of the target granule, rather than whichever valid time point is
+  closest.
 
 ### Improvements
 
@@ -120,9 +141,9 @@
   becomes 01:30 when clocks go forward from 02:00 to 03:00).
   [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md)
   and [`seq()`](https://rdrr.io/r/base/seq.html) resolve it with their
-  `on_invalid` argument: `"nearest"` gives the end of the time before
-  the gap, `"overflow"` moves it forward by the gap (03:30), and
-  `"reject"` gives `NA`.
+  `on_invalid` argument: `"previous"` gives the end of the time before
+  the gap, `"next"` the start of the time after it (03:00), `"overflow"`
+  moves it forward by the gap (03:30), and `"reject"` gives `NA`.
 - Shifting or [`seq()`](https://rdrr.io/r/base/seq.html)-ing times with
   a multi-unit chronon (e.g. half-hourly times) by days, months or years
   no longer errors with “Cannot determine whether 30 minutes nest within
