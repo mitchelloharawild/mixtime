@@ -39,6 +39,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>Converting a discrete time to a chronon it doesn’t nest within, deprecated in 0.4.0, is now an error, since the result is temporally indeterminate. For example, <code>day_of_week(yearmonth(x))</code> (which day of the month?) and <code>yearmonth(yearweek(x))</code> (a week can straddle two months) previously warned and used the start of each time point. Continuous time points are instants and convert as before.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="mixtime-040">mixtime 0.4.0<a class="anchor" aria-label="anchor" href="#mixtime-040"></a></h2>
