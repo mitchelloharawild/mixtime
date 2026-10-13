@@ -1,5 +1,14 @@
 # mixtime (development version)
 
+## Breaking changes
+
+* Converting a discrete time to a chronon it doesn't nest within, deprecated
+  in 0.4.0, is now an error, since the result is temporally indeterminate. For
+  example, `day_of_week(yearmonth(x))` (which day of the month?) and
+  `yearmonth(yearweek(x))` (a week can straddle two months) previously warned
+  and used the start of each time point. Continuous time points are instants
+  and convert as before.
+
 # mixtime 0.4.0
 
 ## New features
