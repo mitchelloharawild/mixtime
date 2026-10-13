@@ -199,7 +199,7 @@ options(mixtime.on_invalid = "error")
 date("2021-01-31") + months(1L)
 ```
 
-```{r}
+```{r, echo = FALSE}
 options(mixtime.on_invalid = NULL)
 ```
 
