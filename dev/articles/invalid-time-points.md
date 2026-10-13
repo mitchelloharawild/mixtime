@@ -352,11 +352,6 @@ date("2021-01-31") + months(1L)
 #>   them to valid time points instead.
 ```
 
-``` r
-
-options(mixtime.on_invalid = NULL)
-```
-
 ## Costs of resolving invalid time points
 
 Every strategy that produces a result changes the behaviour of the
