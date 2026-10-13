@@ -1,6 +1,211 @@
 # Changelog
 
+## mixtime 0.4.0
+
+### New features
+
+- Added the twelve remaining base relations of Allen’s interval algebra
+  as infix operators - `%p%`/`%pi%` (precedes/preceded by), `%m%`/`%mi%`
+  (meets/met by), `%o%`/`%oi%` (overlaps/overlapped by), `%s%`/`%si%`
+  (starts/started by), `%d%`/`%di%` (during/contains), and `%f%`/`%fi%`
+  (finishes/finished by) - completing the set alongside the existing
+  `==`.
+
+- Added
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  and
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md),
+  which find the *greatest lower bound* (the finest common chronon) and
+  the *least upper bound* (the coarsest chronon that every input chronon
+  evenly aggregates into) of a set of chronons.
+
+- [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md)
+  and [`seq()`](https://rdrr.io/r/base/seq.html) gain two `on_invalid`
+  strategies. `"next"` resolves an invalid time point to the start of
+  the following granule, so `date("1955-01-31")` plus one month is
+  `1955-03-01`, and a local time skipped by daylight saving moves to the
+  end of the gap (02:30 becomes 03:00). `"error"` throws an error
+  instead of returning `NA` like `"reject"`.
+
+- The new `mixtime.on_invalid` option sets the default `on_invalid`
+  strategy for
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md),
+  [`seq()`](https://rdrr.io/r/base/seq.html), and the `+` and `-`
+  operators, which otherwise clamp.
+  [`seq()`](https://rdrr.io/r/base/seq.html) no longer warns about
+  clamping when the option is set.
+
+### Deprecated
+
+- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  is deprecated in favour of
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md),
+  which names the *greatest lower bound* it finds explicitly and
+  distinguishes it from its dual,
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md).
+
+- Converting a discrete time to a chronon it doesn’t nest within is
+  deprecated, since the result is temporally indeterminate. For example,
+  `day_of_week(yearmonth(x))` (which day of the month?) and
+  `yearmonth(yearweek(x))` (a week can straddle two months) now warn,
+  and still use the start of each time point. This will become an error
+  in the next release. Continuous time points are instants that are
+  always determinate and convert as before. The internal
+  `chronon_convert()` gains an `allow_indeterminate` argument, which
+  still allows it by default.
+
+- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md),
+  deprecated in 0.3.0, is now defunct. Use
+  [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md),
+  [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md),
+  or
+  [`mt_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
+  instead.
+
+### Breaking changes
+
+- Bare numbers compared with (or cast to) a linear or cyclical time are
+  now read as
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+  reads them, counting from the chronon’s epoch, so `year(x) == 2026L`
+  compares with the year 2026. Previously the number was a raw count of
+  chronons since 1970 (2026 was the year 3996).
+
+- The `on_invalid` strategy `"nearest"` is renamed to `"previous"`, the
+  backward counterpart of the new `"next"`. It always resolves to the
+  end of the target granule, rather than whichever valid time point is
+  closest.
+
+- Shifting a discrete time point by a duration it doesn’t nest within is
+  now an error, since the result is temporally indeterminate, matching
+  the conversions refused by time constructors. For example,
+  `yearweek(x) + years(1L)` (a week can straddle two years) previously
+  shifted the start of the week, giving results such as `2020 W01` plus
+  one year being `2020 W53`. Shifting by a whole number of chronons is
+  still allowed (a week by 14 days, but not 11), as is shifting
+  continuous times. This applies to `+`, `-`,
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md),
+  and [`seq()`](https://rdrr.io/r/base/seq.html).
+
+### Improvements
+
+- Comparing a discrete time (a span) with a continuous time at the start
+  of its chronon (an instant, such as `year(2015)`) now warns when
+  reading the instant as a span would change the result: `==` and `!=`
+  (never equal), and the orderings that measure against the instant’s
+  end (e.g. `span > instant` and `span <= instant`). The warning
+  suggests code for the intended span (e.g. `year(2015L)`, `2026L`, or
+  `as.integer(myvar)`).
+- Performance improvements for temporal operations with time zones.
+- Generalised the default parse strings used by
+  [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  and
+  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  to accept strings that are accepted by tsibble equivalents for ease of
+  migration (with the intentional exception of dates and datetimes,
+  which need to be parsed first with
+  [`date()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  or
+  [`datetime()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)).
+- Parsing named labels (e.g. month and weekday names) is now
+  case-insensitive.
+- The chronon of `Date` and `POSIXct` objects is now identified from the
+  interval between observations (like tsibble’s interval), rather than
+  always being 1 day or 1 second. For example,
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+  on hourly datetimes now produces 1 hour chronons. A multiple of a unit
+  is used only when every observation is aligned to it, so conversion
+  never loses information.
+
+### Bug fixes
+
+- [`chronon_cardinality_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.md)
+  now scales its result by the granule sizes (`n`) of both arguments,
+  like
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+  does (e.g. there are 4 `minute(15L)` in `hour(1L)`, not 60, and 10
+  `day(1L)` in `day(10L)`, not 1). Methods still return the ratio
+  between unit granules.
+- Durations of multi-unit chronons now print with the chronon’s size, so
+  `duration(2L, hour(3L))` shows `"6 hours"` (not `"2 hours"`) and the
+  chronon of a 3-hourly time vector reads `"3 hours"` (e.g. in
+  [`time_chronon()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_chronon.md)
+  and [`str()`](https://rdrr.io/r/utils/str.html)), not `"1 hour"`.
+- Time-zone-aware days, weeks, months and years now start at local
+  midnight, so
+  `as.POSIXct(mixtime(x, month(tz = "Australia/Melbourne")))` returns
+  00:00 AEDT instead of 11:00. Previously a conversion to UTC read the
+  local label as a UTC one.
+- Conversions of time-zone-aware times now account for daylight saving
+  changes: a day that is 23 or 25 hours long is converted by its real
+  length, and the two instants that share a clock reading when daylight
+  saving ends are kept apart, including in hourly data.
+- The fraction through a continuous time-zone-aware time (e.g. a week)
+  is now the fraction through that unit in its own time zone, so
+  [`floor()`](https://rdrr.io/r/base/Round.html) of a continuous time
+  always gives the matching discrete time.
+- Calendar arithmetic on time-zone-aware times (e.g. adding months) now
+  keeps the local clock time. A local time that occurs twice when
+  daylight saving ends resolves to its first occurrence. A local time
+  skipped when daylight saving starts is invalid, and is resolved like
+  other invalid time points (e.g. 31 January plus one month): by default
+  it is clamped back by the size of the gap, keeping its minutes (02:30
+  becomes 01:30 when clocks go forward from 02:00 to 03:00).
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md)
+  and [`seq()`](https://rdrr.io/r/base/seq.html) resolve it with their
+  `on_invalid` argument: `"previous"` gives the end of the time before
+  the gap, `"next"` the start of the time after it (03:00), `"overflow"`
+  moves it forward by the gap (03:30), and `"reject"` gives `NA`.
+- Shifting or [`seq()`](https://rdrr.io/r/base/seq.html)-ing times with
+  a multi-unit chronon (e.g. half-hourly times) by days, months or years
+  no longer errors with “Cannot determine whether 30 minutes nest within
+  1 year”.
+- Parsing a local time skipped when daylight saving starts (e.g.
+  `datetime("2025-10-05 02:30:00", tz = "Australia/Melbourne")`) now
+  gives `NA` with a warning, like other invalid times such as
+  `"2026-02-30"`.
+- Adding or subtracting hours, minutes or seconds on time-zone-aware
+  times now moves by real time across daylight saving changes, so 02:30
+  AEDT plus one hour is 02:30 AEST when daylight saving ends (previously
+  03:30 AEST, two real hours later). Days and longer units keep the
+  local clock time, so `hours(24L)` and `days(1L)` differ on a 23 or 25
+  hour day.
+- [`seq()`](https://rdrr.io/r/base/seq.html) of time-zone-aware times by
+  days (or weeks) now keeps the local clock time across daylight saving
+  changes, so a daily sequence at 10:00 stays at 10:00 (previously it
+  moved to 09:00 when daylight saving ended). Each element of
+  [`seq()`](https://rdrr.io/r/base/seq.html) now matches adding a
+  duration to the start, so a time adjusted because daylight saving
+  skipped it returns to its clock time on the following day.
+- Converting solar time to time-zone-aware civil time now accounts for
+  the time zone, and converting solar time between two locations now
+  accounts for the change of location.
+- [`tz_abbreviation()`](https://pkg.mitchelloharawild.com/mixtime/reference/tz_abbreviation.md)
+  (and so [`format()`](https://rdrr.io/r/base/format.html)) now labels a
+  time-zone-aware time by the zone in effect when it starts, so a day on
+  which daylight saving ends reads as daylight time
+  (e.g. `"2015-04-05 AEDT"` in Melbourne, previously `"AEST"`).
+- [`format()`](https://rdrr.io/r/base/format.html) of a continuous time
+  no longer shows a time just below its true value when floating-point
+  error leaves it a fraction of a second short (e.g. `"03:29:59 100.0%"`
+  instead of `"03:30:00 0.0%"`).
+- [`as.POSIXct()`](https://rdrr.io/r/base/as.POSIXlt.html) of a mixtime
+  now keeps its time zone (or uses UTC when it has several), so
+  `mixtime(as.POSIXct(x))` round trips. Previously the result had an
+  empty time zone, which
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+  rejected.
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+  now also reads a `POSIXct` with an empty time zone as the local time
+  zone, like base R does.
+- A fractional time before 1970 within a second of a time zone
+  transition (e.g. half a second before New York’s 1960 change to
+  daylight time) used the offset from after the transition.
+
 ## mixtime 0.3.0
+
+CRAN release: 2026-08-24
 
 ### New features
 
@@ -346,13 +551,13 @@
   despite sharing a (naive) common chronon. Both operations convert
   their operands into a shared common chronon that correctly comes out
   naive when the operands disagree on timezone (see
-  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)),
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)),
   but converting an operand *into* that common chronon silently
   re-inherited the operand’s own timezone back (one conversion at a
   time), so a timezone-aware operand ended up at its true (UTC) absolute
   instant while a naive operand was left as-is - two different bases
   being compared/combined as if they were the same.
-  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)’s
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)’s
   naive result is now hardened so it can no longer be re-inherited into,
   and every operand converted into it lands on bare wall-clock time
   instead, the same way `datetime(x, tz = NA)` already strips a timezone
@@ -363,7 +568,7 @@
 - Substantially faster performance by caching the granule cardinality
   graph (used by `chronon_convert()`,
   [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md),
-  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
   and `time_parts()`) and tzdb names (used in operations with
   timezones).
 - Reworked time vectors to be built with S7 rather than vctrs for

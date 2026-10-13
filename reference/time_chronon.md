@@ -29,16 +29,34 @@ A time
 [`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md)
 vector representing the chronon of each value (e.g., `days(1L)`).
 
+## Details
+
+For [base::Date](https://rdrr.io/r/base/Dates.html) and
+[base::POSIXct](https://rdrr.io/r/base/DateTimeClasses.html) objects the
+chronon is identified from the greatest common divisor of the intervals
+between observations, in the same way as a tsibble's interval. For
+example, hourly datetimes have a 1 hour chronon rather than 1 second. A
+multiple of a unit (e.g. 3 hours) is only used if every observation
+falls on a boundary of that chronon; otherwise a single unit is used so
+that no information is lost when converting.
+
 ## Examples
 
 ``` r
 
-# The chronon of a Date object is 1 day
+# The chronon of a Date or POSIXct object is identified from the interval
+# between observations (as with tsibble's interval)
+time_chronon(Sys.Date() + 0:2)
+#> <mixtime[3]>
+#> [1] 1 day 1 day 1 day
+time_chronon(as.POSIXct("2024-01-01", tz = "UTC") + 3600 * 0:2)
+#> <mixtime[3]>
+#> [1] 1 hour 1 hour 1 hour
+
+# Without an interval, the chronon of a Date is 1 day and a POSIXct is 1 second
 time_chronon(Sys.Date())
 #> <mixtime[1]>
 #> [1] 1 day
-
-# The chronon of a POSIXct object is 1 second
 time_chronon(Sys.time())
 #> <mixtime[1]>
 #> [1] 1 second

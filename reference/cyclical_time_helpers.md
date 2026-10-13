@@ -96,13 +96,13 @@ for creating cyclical time helper functions
 
 month_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] Aug
+#> [1] Oct
 day_of_year(Sys.Date())
 #> <mixtime[1]>
-#> [1] D236
+#> [1] D286
 day_of_week(Sys.Date())
 #> <mixtime[1]>
-#> [1] Mon
+#> [1] Tue
 day_of_week(as.Date("2025-12-15") + 0:6)
 #> <mixtime[7]>
 #> [1] Mon Tue Wed Thu Fri Sat Sun

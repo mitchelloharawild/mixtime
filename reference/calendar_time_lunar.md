@@ -44,10 +44,9 @@ The following time units are available in the lunar calendar systems.
 ## Examples
 
 ``` r
-# Find the time of a new moon in the Gregorian calendar
-t <- linear_time(Sys.Date(), cal_time_lunar$month(1L))
-datetime(t, tz = "Australia/Melbourne")
+# Find the time of the most recent new moon in the Gregorian calendar
+time_floor(datetime(Sys.time(), tz = "Australia/Melbourne"), cal_time_lunar$month(1L))
 #> <mixtime[1]>
-#> [1] 2026-08-13 03:38:02 AEST
+#> [1] 2026-10-11 02:51:08 AEDT
 
 ```

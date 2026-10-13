@@ -5,18 +5,24 @@
 - **[Mitchell O'Hara-Wild](https://mitchelloharawild.com)**. Author,
   maintainer. [](https://orcid.org/0000-0001-6729-7695)
 
+- **Cynthia Huang**. Contributor.
+  [](https://orcid.org/0000-0002-9218-987X)
+
+- **[Rob Hyndman](http://robjhyndman.com)**. Contributor.
+  [](https://orcid.org/0000-0002-2140-5352)
+
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/mitchelloharawild/mixtime/blob/main/DESCRIPTION)
 
 O'Hara-Wild M (2026). *mixtime: Mixed Temporal Vectors and Operations*.
-R package version 0.3.0, <https://pkg.mitchelloharawild.com/mixtime/>.
+R package version 0.4.0, <https://pkg.mitchelloharawild.com/mixtime/>.
 
     @Manual{,
       title = {mixtime: Mixed Temporal Vectors and Operations},
       author = {Mitchell O'Hara-Wild},
       year = {2026},
-      note = {R package version 0.3.0},
+      note = {R package version 0.4.0},
       url = {https://pkg.mitchelloharawild.com/mixtime/},
     }

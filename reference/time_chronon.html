@@ -9,7 +9,7 @@ time object, such as continuous time or cyclical time representations."><meta pr
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,6 +21,7 @@ time object, such as continuous time or cyclical time representations."><meta pr
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -35,7 +36,7 @@ time object, such as continuous time or cyclical time representations."><meta pr
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Obtain the chronon of a time object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/R/time_chronon.R" class="external-link"><code>R/time_chronon.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/time_chronon.R" class="external-link"><code>R/time_chronon.R</code></a></small>
       <div class="d-none name"><code>time_chronon.Rd</code></div>
     </div>
 
@@ -66,16 +67,32 @@ time object, such as continuous time or cyclical time representations.</p>
     <p>A time <code><a href="duration.html">duration()</a></code> vector representing the chronon of each
 value (e.g., <code>days(1L)</code>).</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>For <a href="https://rdrr.io/r/base/Dates.html" class="external-link">base::Date</a> and <a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">base::POSIXct</a> objects the chronon is identified from
+the greatest common divisor of the intervals between observations, in the
+same way as a tsibble's interval. For example, hourly datetimes have a 1 hour
+chronon rather than 1 second. A multiple of a unit (e.g. 3 hours) is only
+used if every observation falls on a boundary of that chronon; otherwise a
+single unit is used so that no information is lost when converting.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The chronon of a Date object is 1 day</span></span></span>
+<span class="r-in"><span><span class="co"># The chronon of a Date or POSIXct object is identified from the interval</span></span></span>
+<span class="r-in"><span><span class="co"># between observations (as with tsibble's interval)</span></span></span>
+<span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 day 1 day 1 day</span>
+<span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2024-01-01"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span> <span class="op">+</span> <span class="fl">3600</span> <span class="op">*</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[3]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 hour 1 hour 1 hour</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Without an interval, the chronon of a Date is 1 day and a POSIXct is 1 second</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 day</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The chronon of a POSIXct object is 1 second</span></span></span>
 <span class="r-in"><span><span class="fu">time_chronon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 second</span>

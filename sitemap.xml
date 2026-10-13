@@ -4,11 +4,13 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/LICENSE.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/articles/extending-mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/articles/index.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/articles/invalid-time-points.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/articles/time-format-strings.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/authors.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/index.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/news/index.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/all.equal.mixtime-mt_time.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/calendar_gregorian.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/calendar_isoweek.html</loc></url>
@@ -18,11 +20,11 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.html</loc></url>
-<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_epoch.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format_attr.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_parse.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/circsum.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/class_mixtime.html</loc></url>
@@ -65,6 +67,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/time_is_determinate_at.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/time_round.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/tz_abbreviation.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/tz_name.html</loc></url>

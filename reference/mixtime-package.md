@@ -16,6 +16,18 @@ temporal reconciliation across scales. The package is extensible,
 allowing users to define custom calendars that build upon civil and
 astronomical time systems.
 
+## Package options
+
+- `mixtime.on_invalid`: The default strategy for resolving time points
+  that don't exist, such as 31 January plus one month, used by `+`, `-`,
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md)
+  and
+  [seq()](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md).
+  One of `"clamp"` (the default), `"previous"`, `"next"`, `"overflow"`,
+  `"reject"`, or `"error"`. See
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md)
+  for details.
+
 ## See also
 
 Useful links:
@@ -35,3 +47,11 @@ Authors:
 
 - Mitchell O'Hara-Wild <mail@mitchelloharawild.com>
   ([ORCID](https://orcid.org/0000-0001-6729-7695))
+
+Other contributors:
+
+- Cynthia Huang ([ORCID](https://orcid.org/0000-0002-9218-987X))
+  \[contributor\]
+
+- Rob Hyndman ([ORCID](https://orcid.org/0000-0002-2140-5352))
+  \[contributor\]

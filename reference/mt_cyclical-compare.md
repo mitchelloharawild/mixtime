@@ -24,7 +24,10 @@ discrete value spans the closed interval of its chronon, so
 
 - `a == b` iff `start(a) == start(b)` and `end(a) == end(b)`
 
-- `a < b` iff `end(a) < start(b)`, `a > b` iff `start(a) > end(b)`
+- `a < b`/`a > b` iff `a`/`b` ends at or before the other begins (a gap,
+  or just adjacency - see
+  [mt_linear-compare](https://pkg.mitchelloharawild.com/mixtime/reference/mt_linear-compare.md)
+  for why this includes adjacency)
 
 - `a <= b` iff `end(a) <= end(b)`, `a >= b` iff `start(a) >= start(b)`
 
@@ -54,7 +57,10 @@ e1 >= e2
 - e1, e2:
 
   `mt_cyclical` vectors sharing a cycle (or values castable to one, such
-  as plain numeric vectors sharing the other operand's chronon).
+  as plain numeric vectors in the other operand's chronon, read from its
+  epoch as
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
+  reads them).
 
 ## Value
 

@@ -17,7 +17,8 @@ shared cycle are reconciled as they are for mt_linear:
 both positions are expressed in the finest common chronon, and a discrete
 value spans the closed interval of its chronon, so
 a == b iff start(a) == start(b) and end(a) == end(b)
-a &amp;lt; b iff end(a) &amp;lt; start(b), a &amp;gt; b iff start(a) &amp;gt; end(b)
+a &amp;lt; b/a &amp;gt; b iff a/b ends at or before the other begins (a gap, or
+just adjacency - see mt_linear-compare for why this includes adjacency)
 a &amp;lt;= b iff end(a) &amp;lt;= end(b), a &amp;gt;= b iff start(a) &amp;gt;= start(b)
 
 
@@ -41,7 +42,8 @@ shared cycle are reconciled as they are for mt_linear:
 both positions are expressed in the finest common chronon, and a discrete
 value spans the closed interval of its chronon, so
 a == b iff start(a) == start(b) and end(a) == end(b)
-a &amp;lt; b iff end(a) &amp;lt; start(b), a &amp;gt; b iff start(a) &amp;gt; end(b)
+a &amp;lt; b/a &amp;gt; b iff a/b ends at or before the other begins (a gap, or
+just adjacency - see mt_linear-compare for why this includes adjacency)
 a &amp;lt;= b iff end(a) &amp;lt;= end(b), a &amp;gt;= b iff start(a) &amp;gt;= start(b)
 
 
@@ -55,7 +57,7 @@ is not treated as circular."><meta property="og:image" content="https://pkg.mitc
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,6 +69,7 @@ is not treated as circular."><meta property="og:image" content="https://pkg.mitc
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -81,7 +84,7 @@ is not treated as circular."><meta property="og:image" content="https://pkg.mitc
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Comparison operators for cyclical time (<code>mt_cyclical</code>)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/R/compare.R" class="external-link"><code>R/compare.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/compare.R" class="external-link"><code>R/compare.R</code></a></small>
       <div class="d-none name"><code>mt_cyclical-compare.Rd</code></div>
     </div>
 
@@ -100,7 +103,8 @@ day-of-year, and comparing them is an error. Differing <em>chronons</em> within 
 shared cycle are reconciled as they are for <a href="mt_linear-compare.html">mt_linear</a>:
 both positions are expressed in the finest common chronon, and a discrete
 value spans the closed interval of its chronon, so</p><ul><li><p><code>a == b</code> iff <code>start(a) == start(b)</code> and <code>end(a) == end(b)</code></p></li>
-<li><p><code>a &lt; b</code> iff <code>end(a) &lt; start(b)</code>, <code>a &gt; b</code> iff <code>start(a) &gt; end(b)</code></p></li>
+<li><p><code>a &lt; b</code>/<code>a &gt; b</code> iff <code>a</code>/<code>b</code> ends at or before the other begins (a gap, or
+just adjacency - see <a href="mt_linear-compare.html">mt_linear-compare</a> for why this includes adjacency)</p></li>
 <li><p><code>a &lt;= b</code> iff <code>end(a) &lt;= end(b)</code>, <code>a &gt;= b</code> iff <code>start(a) &gt;= start(b)</code></p></li>
 </ul><p>As for <code>mt_linear</code>, this is not a total order when chronons differ. Ordering
 follows the position within the cycle (so <code>Mon &lt; Wed</code>); the cycle's wrap-around
@@ -129,7 +133,8 @@ is not treated as circular.</p>
 
 <dl><dt id="arg-e-e-">e1, e2<a class="anchor" aria-label="anchor" href="#arg-e-e-"></a></dt>
 <dd><p><code>mt_cyclical</code> vectors sharing a cycle (or values castable to one,
-such as plain numeric vectors sharing the other operand's chronon).</p></dd>
+such as plain numeric vectors in the other operand's chronon, read from
+its epoch as <code><a href="mixtime.html">mixtime()</a></code> reads them).</p></dd>
 
 </dl></div>
     <div class="section level2">

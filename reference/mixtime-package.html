@@ -9,7 +9,7 @@ Flexible time classes for time series analysis and forecasting with mixed tempor
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,6 +21,7 @@ Flexible time classes for time series analysis and forecasting with mixed tempor
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -35,7 +36,7 @@ Flexible time classes for time series analysis and forecasting with mixed tempor
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>mixtime: Mixed Temporal Vectors and Operations</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/R/mixtime-package.R" class="external-link"><code>R/mixtime-package.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/mixtime-package.R" class="external-link"><code>R/mixtime-package.R</code></a></small>
       <div class="d-none name"><code>mixtime-package.Rd</code></div>
     </div>
 
@@ -45,6 +46,16 @@ Flexible time classes for time series analysis and forecasting with mixed tempor
     </div>
 
 
+    <div class="section level2">
+    <h2 id="package-options">Package options<a class="anchor" aria-label="anchor" href="#package-options"></a></h2>
+
+
+<ul><li><p><code>mixtime.on_invalid</code>: The default strategy for resolving time points that
+don't exist, such as 31 January plus one month, used by <code>+</code>, <code>-</code>,
+<code><a href="time_shift.html">time_shift()</a></code> and <a href="seq.mixtime.html">seq()</a>. One of <code>"clamp"</code> (the default),
+<code>"previous"</code>, <code>"next"</code>, <code>"overflow"</code>, <code>"reject"</code>, or <code>"error"</code>. See
+<code><a href="time_shift.html">time_shift()</a></code> for details.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Useful links:</p><ul><li><p><a href="https://pkg.mitchelloharawild.com/mixtime/">https://pkg.mitchelloharawild.com/mixtime/</a></p></li>
@@ -56,6 +67,8 @@ Flexible time classes for time series analysis and forecasting with mixed tempor
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p><strong>Maintainer</strong>: Mitchell O'Hara-Wild <a href="mailto:mail@mitchelloharawild.com">mail@mitchelloharawild.com</a> (<a href="https://orcid.org/0000-0001-6729-7695" class="external-link">ORCID</a>)</p>
 <p>Authors:</p><ul><li><p>Mitchell O'Hara-Wild <a href="mailto:mail@mitchelloharawild.com">mail@mitchelloharawild.com</a> (<a href="https://orcid.org/0000-0001-6729-7695" class="external-link">ORCID</a>)</p></li>
+</ul><p>Other contributors:</p><ul><li><p>Cynthia Huang (<a href="https://orcid.org/0000-0002-9218-987X" class="external-link">ORCID</a>) [contributor]</p></li>
+<li><p>Rob Hyndman (<a href="https://orcid.org/0000-0002-2140-5352" class="external-link">ORCID</a>) [contributor]</p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

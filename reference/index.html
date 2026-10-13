@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -165,6 +166,13 @@
 
         <dt>
 
+          <code><a href="time_shift.html">time_shift()</a></code>
+
+        </dt>
+        <dd>Shift time points by a duration</dd>
+
+        <dt>
+
           <code><a href="time_round.html">time_round()</a></code> <code><a href="time_round.html">time_ceiling()</a></code> <code><a href="time_round.html">time_floor()</a></code>
 
         </dt>
@@ -199,6 +207,13 @@
 
         </dt>
         <dd>Comparison operators for cyclical time (<code>mt_cyclical</code>)</dd>
+
+        <dt>
+
+          <code><a href="allen-interval-algebra.html">`%p%`</a></code> <code><a href="allen-interval-algebra.html">`%pi%`</a></code> <code><a href="allen-interval-algebra.html">`%m%`</a></code> <code><a href="allen-interval-algebra.html">`%mi%`</a></code> <code><a href="allen-interval-algebra.html">`%o%`</a></code> <code><a href="allen-interval-algebra.html">`%oi%`</a></code> <code><a href="allen-interval-algebra.html">`%s%`</a></code> <code><a href="allen-interval-algebra.html">`%si%`</a></code> <code><a href="allen-interval-algebra.html">`%d%`</a></code> <code><a href="allen-interval-algebra.html">`%di%`</a></code> <code><a href="allen-interval-algebra.html">`%f%`</a></code> <code><a href="allen-interval-algebra.html">`%fi%`</a></code>
+
+        </dt>
+        <dd>Allen's interval algebra for time vectors</dd>
       </dl></div><div class="section level2">
 
       <h3 id="time-components">Time Components<a class="anchor" aria-label="anchor" href="#time-components"></a></h3>
@@ -466,7 +481,7 @@
         <dt>
 
           <code><a href="new_time.html">new_time()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
+          <span class="badge lifecycle lifecycle-defunct">defunct</span>
         </dt>
         <dd>Constructor for mixtime time vectors</dd>
 
@@ -507,10 +522,10 @@
 
         <dt>
 
-          <code><a href="chronon_common.html">chronon_common()</a></code> <code><a href="chronon_common.html">chronon_common.mixtime()</a></code>
-
+          <code><a href="chronon_glb.html">chronon_glb()</a></code> <code><a href="chronon_glb.html">chronon_glb.mixtime()</a></code> <code><a href="chronon_glb.html">chronon_lub()</a></code> <code><a href="chronon_glb.html">chronon_lub.mixtime()</a></code> <code><a href="chronon_glb.html">chronon_common()</a></code>
+          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
         </dt>
-        <dd>Find the common chronon of a time object</dd>
+        <dd>Find the finest or coarsest common chronon of a time object</dd>
       </dl></div><div class="section level2">
 
       <h3 id="mixtime-accessors">Mixtime Accessors<a class="anchor" aria-label="anchor" href="#mixtime-accessors"></a></h3>

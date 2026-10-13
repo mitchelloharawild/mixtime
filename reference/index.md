@@ -79,6 +79,8 @@ Functions for manipulating and transforming time vectors.
 - [`seq(`*`<mixtime::mixtime>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
   [`seq(`*`<mixtime::mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.md)
   : Generate sequences of mixtime values
+- [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md)
+  : Shift time points by a duration
 - [`time_round()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md)
   [`time_ceiling()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md)
   [`time_floor()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_round.md)
@@ -117,6 +119,20 @@ Methods for comparing time vectors.
   :
 
   Comparison operators for cyclical time (`mt_cyclical`)
+
+- [`` `%p%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%pi%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%m%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%mi%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%o%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%oi%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%s%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%si%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%d%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%di%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%f%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  [`` `%fi%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
+  : Allen's interval algebra for time vectors
 
 ### Time Components
 
@@ -246,7 +262,7 @@ multiple time granularities.
 - [`class_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/class_mixtime.md)
   : Base S7 class for mixtime vector objects
 - [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
-  **\[deprecated\]** : Constructor for mixtime time vectors
+  **\[defunct\]** : Constructor for mixtime time vectors
 - [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
   : Convert a time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_mixtime.md)
@@ -262,9 +278,13 @@ multiple time granularities.
   : Test whether time is determinate at a granule's precision
 - [`time_is_complete_at()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_is_complete_at.md)
   : Test whether a granule is completed at a time point
-- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)
-  [`chronon_common.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_common.md)
-  : Find the common chronon of a time object
+- [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  [`chronon_glb.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  [`chronon_lub.mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  **\[deprecated\]** : Find the finest or coarsest common chronon of a
+  time object
 
 ### Mixtime Accessors
 

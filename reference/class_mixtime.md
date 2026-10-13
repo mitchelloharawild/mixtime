@@ -20,7 +20,7 @@ class_mixtime(x = list(), i = seq_len(sum(lengths(x))))
 - x:
 
   A list of `"mt_time"` vectors, see
-  [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
+  [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
   for details.
 
 - i:

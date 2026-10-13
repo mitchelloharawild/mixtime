@@ -3,13 +3,15 @@
 whose relationship is a constant, context-independent number (e.g., 60
 seconds in a minute, 24 hours in a day). Unlike chronon_cardinality(),
 methods for this generic do not receive (and must not need) an at time
-point, and should return the number of unit (n = 1L) x granules that
-fit within one unit y granule."><meta property="og:description" content="A restricted variant of chronon_cardinality() for time granule pairs
+point. Methods should ignore the granule sizes (n) of x and y, and
+return the number of unit (n = 1L) x granules that fit within one unit
+y granule. The generic scales this by the requested granule sizes."><meta property="og:description" content="A restricted variant of chronon_cardinality() for time granule pairs
 whose relationship is a constant, context-independent number (e.g., 60
 seconds in a minute, 24 hours in a day). Unlike chronon_cardinality(),
 methods for this generic do not receive (and must not need) an at time
-point, and should return the number of unit (n = 1L) x granules that
-fit within one unit y granule."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg"></head><body>
+point. Methods should ignore the granule sizes (n) of x and y, and
+return the number of unit (n = 1L) x granules that fit within one unit
+y granule. The generic scales this by the requested granule sizes."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mixtime/logo.svg"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +19,7 @@ fit within one unit y granule."><meta property="og:image" content="https://pkg.m
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +31,7 @@ fit within one unit y granule."><meta property="og:image" content="https://pkg.m
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -43,7 +46,7 @@ fit within one unit y granule."><meta property="og:image" content="https://pkg.m
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Fixed cardinality between time granules</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/R/01_chronon_cardinality.R" class="external-link"><code>R/01_chronon_cardinality.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/01_chronon_cardinality.R" class="external-link"><code>R/01_chronon_cardinality.R</code></a></small>
       <div class="d-none name"><code>chronon_cardinality_fixed.Rd</code></div>
     </div>
 
@@ -52,8 +55,9 @@ fit within one unit y granule."><meta property="og:image" content="https://pkg.m
 whose relationship is a constant, context-independent number (e.g., 60
 seconds in a minute, 24 hours in a day). Unlike <code><a href="chronon_cardinality.html">chronon_cardinality()</a></code>,
 methods for this generic do not receive (and must not need) an <code>at</code> time
-point, and should return the number of unit (<code>n = 1L</code>) <code>x</code> granules that
-fit within one unit <code>y</code> granule.</p>
+point. Methods should ignore the granule sizes (<code>n</code>) of <code>x</code> and <code>y</code>, and
+return the number of unit (<code>n = 1L</code>) <code>x</code> granules that fit within one unit
+<code>y</code> granule. The generic scales this by the requested granule sizes.</p>
     </div>
 
     <div class="section level2">
@@ -79,17 +83,16 @@ fit within one unit <code>y</code> granule.</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A single number describing how many unit <code>x</code> time granules fit
-into a unit <code>y</code> time granule.</p>
+    <p>A single number describing how many <code>x</code> time granules fit into a
+<code>y</code> time granule.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Defining a method for <code>chronon_cardinality_fixed()</code> automatically provides
-a <code><a href="chronon_cardinality.html">chronon_cardinality()</a></code> method for the pair (scaled by the requested
-granule sizes via the <code>list(mt_unit, mt_unit)</code> fallback method), and marks
-the relationship as safe to use for <code><a href="chronon_divmod.html">chronon_divmod()</a></code>'s graph traversal,
-where variable (context-dependent) cardinalities cannot be used since no
-<code>at</code> is available mid-traversal.</p>
+a <code><a href="chronon_cardinality.html">chronon_cardinality()</a></code> method for the pair, and marks the relationship
+as safe to use for <code><a href="chronon_divmod.html">chronon_divmod()</a></code>'s graph traversal, where variable
+(context-dependent) cardinalities cannot be used since no <code>at</code> is available
+mid-traversal.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

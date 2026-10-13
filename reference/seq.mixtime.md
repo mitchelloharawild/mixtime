@@ -17,7 +17,7 @@ seq(
   by,
   length.out = NULL,
   along.with = NULL,
-  on_invalid = c("nearest", "overflow"),
+  on_invalid = getOption("mixtime.on_invalid", "clamp"),
   ...
 )
 ```
@@ -63,24 +63,48 @@ seq(
 
 - on_invalid:
 
-  How to handle time points that overflow the cycle when using a `by`
-  argument with different time granule than the sequence chronon.
-  Options are:
+  How to handle time points that don't exist, either because they
+  overflow the cycle when using a `by` argument with different time
+  granule than the sequence chronon, or because they fall in the local
+  time skipped when daylight saving starts. Defaults to the
+  `mixtime.on_invalid` option, or `"clamp"` if it isn't set. Options
+  are:
 
-  - `"nearest"` (default): Adjust overflowing time points to the nearest
-    valid time point within the cycle
+  - `"clamp"`: Reduce the overflowing component to its last valid value,
+    preserving finer components (e.g., the time of day). A skipped local
+    time moves back by the size of the gap (02:30 becomes 01:30)
 
-  - `"overflow"`: Allow time points to overflow into the next cycle
+  - `"previous"`: Use the end of the cycle, so finer components are not
+    preserved. For discrete time this is the last chronon within the
+    cycle; for continuous time it is the end of that chronon, the same
+    instant as `"next"`. A skipped local time becomes the end of the
+    valid time before the gap (01:59:59)
+
+  - `"next"`: Use the start of the following cycle, so finer components
+    are not preserved. A skipped local time becomes the start of the
+    valid time after the gap (03:00)
+
+  - `"overflow"`: Allow time points to overflow into the next cycle. A
+    skipped local time moves forward by the size of the gap (02:30
+    becomes 03:30)
+
+  - `"reject"`: Return `NA` with a warning
+
+  - `"error"`: Throw an error
 
   This is relevant when the starting time point has an offset that
   doesn't exist in all cycles. For example, starting on day 31 with
   `by = "1 month"` will overflow in months with fewer than 31 days
-  (e.g., February). With `"nearest"`, these will be adjusted to the last
-  day of the month (e.g., Feb 28/29). With `"overflow"`, the extra days
+  (e.g., February). With `"clamp"`, these will be adjusted to the last
+  day of the month (e.g., Feb 28/29). With `"next"`, they move to the
+  first day of the next month, and with `"overflow"`, the extra days
   carry into the next month.
 
-  If not explicitly specified and overflow occurs, a warning is issued
-  with the default `"nearest"` behavior applied.
+  If neither `on_invalid` nor the `mixtime.on_invalid` option is set and
+  overflow occurs, a warning is issued with the default `"clamp"`
+  behavior applied. See
+  [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md)
+  for shifting time points with the same options.
 
 ## Value
 
@@ -91,6 +115,12 @@ A mixtime vector containing the sequence.
 For linear time types (Date, POSIXct, yearmonth, etc.), sequences
 progress forward or backward in time. For cyclical time types
 (month_of_year, day_of_week, etc.), sequences wrap around cyclically.
+
+Each time point is `from` (or `to`, if `from` is missing) shifted by a
+whole number of `by` steps, matching `from + duration(k, by)`. For
+time-zone-aware times, steps of a day or longer keep the local clock
+time, while shorter steps (e.g. hours) are real time across daylight
+saving changes.
 
 ## Examples
 
@@ -129,17 +159,20 @@ seq(date("2020-01-01"), date("2020-01-31"), by = cal_gregorian$day(7L))
 #> [1] 2020-01-01 2020-01-08 2020-01-15 2020-01-22 2020-01-29
 
 # Handling invalid dates with on_invalid
-seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses nearest
-#> Warning: The cycle offset (31 days) has produced time points that overflow the month
-#> cycle.
-#> ! Using the nearest valid time points in the cycle, `on_invalid = "nearest"`
-#>   (the default).
-#> ℹ Specify `on_invalid` explicitly to suppress this warning.
+seq(date("2020-01-31"), length.out = 3, by = "1 month")  # warns, uses clamp
+#> Warning: Some time points in the sequence fall past the end of a shorter month.
+#> ! Clamping them to the last valid time point in that month, `on_invalid =
+#>   "clamp"` (the default).
+#> ℹ Specify `on_invalid`, or set the `mixtime.on_invalid` option, to suppress
+#>   this warning.
 #> <mixtime[3]>
 #> [1] 2020-01-31 2020-02-29 2020-03-31
-seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "nearest")
+seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "clamp")
 #> <mixtime[3]>
 #> [1] 2020-01-31 2020-02-29 2020-03-31
+seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "next")
+#> <mixtime[3]>
+#> [1] 2020-01-31 2020-03-01 2020-03-31
 seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 #> <mixtime[3]>
 #> [1] 2020-01-31 2020-03-02 2020-03-31

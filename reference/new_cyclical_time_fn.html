@@ -15,7 +15,7 @@ granules form a cyclical time relationship (e.g., day of the week)."><meta prope
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@ granules form a cyclical time relationship (e.g., day of the week)."><meta prope
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -41,7 +42,7 @@ granules form a cyclical time relationship (e.g., day of the week)."><meta prope
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Cyclical time function factory</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/R/cyclical_time.R" class="external-link"><code>R/cyclical_time.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/cyclical_time.R" class="external-link"><code>R/cyclical_time.R</code></a></small>
       <div class="d-none name"><code>new_cyclical_time_fn.Rd</code></div>
     </div>
 
@@ -86,12 +87,12 @@ conversion if they don't exist in the calendar of the input data (e.g., <code>ca
 <span class="r-in"><span><span class="va">day_of_week</span> <span class="op">&lt;-</span> <span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu">week</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, default_calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cyclical_time_helpers.html">day_of_week</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Mon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Tue</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">month_of_year</span> <span class="op">&lt;-</span> <span class="fu">new_cyclical_time_fn</span><span class="op">(</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>, <span class="fu"><a href="linear_time_helpers.html">year</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cyclical_time_helpers.html">month_of_year</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Aug</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Oct</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

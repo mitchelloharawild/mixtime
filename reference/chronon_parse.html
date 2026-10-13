@@ -19,7 +19,7 @@ their return value with parse_format()."><meta property="og:image" content="http
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,7 @@ their return value with parse_format()."><meta property="og:image" content="http
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -45,7 +46,7 @@ their return value with parse_format()."><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Default parsing format strings for chronons</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/R/01_chronon_parse.R" class="external-link"><code>R/01_chronon_parse.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/01_chronon_parse.R" class="external-link"><code>R/01_chronon_parse.R</code></a></small>
       <div class="d-none name"><code>chronon_parse.Rd</code></div>
     </div>
 
@@ -109,8 +110,8 @@ for the single default format these are based on.</p></div>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{lin(year)}"</span>
 <span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">month</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{lin(year)}[-/,\\s]+{cyc(month,year)}"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "{cyc(month,year)}[-/,\\s]+{lin(year)}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "[[:space:]]*{lin(year)}(?:[-/,._[:space:]]*(?i:months?|mth|m)[-/,._[:space:]]*|[-/,._[:space:]]+|(?=[[:alpha:]])){cyc(month,year)}[[:space:]]*"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "[[:space:]]*(?:(?i:months?|mth|m)[-/,._[:space:]]*)?{cyc(month,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*"                                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"regex")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_gregorian</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -120,8 +121,8 @@ for the single default format these are based on.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"regex")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">chronon_parse_linear</span><span class="op">(</span><span class="va">cal_isoweek</span><span class="op">$</span><span class="fu">day</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{lin(year)}[-\\s]*[Ww]{cyc(week,year)}[-\\s]+{cyc(day,week)}"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "{cyc(day,week)}[-\\s]+[Ww]{cyc(week,year)}[-\\s]+{lin(year)}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "[[:space:]]*{lin(year)}[-/,._[:space:]]*(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{cyc(day,week)}[[:space:]]*"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "[[:space:]]*{cyc(day,week)}[-/,._[:space:]]+(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"regex")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>

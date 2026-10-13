@@ -9,7 +9,7 @@ granularities (e.g. monthly and quarterly) in a single vector via vecvec."><meta
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,6 +21,7 @@ granularities (e.g. monthly and quarterly) in a single vector via vecvec."><meta
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extending-mixtime.html">Extending mixtime</a></li>
+    <li><a class="dropdown-item" href="../articles/invalid-time-points.html">Resolving invalid time points</a></li>
     <li><a class="dropdown-item" href="../articles/time-format-strings.html">Time format strings</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -35,7 +36,7 @@ granularities (e.g. monthly and quarterly) in a single vector via vecvec."><meta
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Constructor for mixtime vectors</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/v0.3.0/R/mixtime.R" class="external-link"><code>R/mixtime.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mitchelloharawild/mixtime/blob/main/R/mixtime.R" class="external-link"><code>R/mixtime.R</code></a></small>
       <div class="d-none name"><code>new_mixtime.Rd</code></div>
     </div>
 
@@ -54,7 +55,7 @@ granularities (e.g. monthly and quarterly) in a single vector via <code>vecvec</
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A mixtime time vector (created with <code><a href="new_time.html">new_time()</a></code>) to wrap in a mixtime class.</p></dd>
+<dd><p>A mixtime time vector (e.g. created with <code><a href="mt_time-class.html">mt_linear()</a></code>) to wrap in a mixtime class.</p></dd>
 
 </dl></div>
     <div class="section level2">

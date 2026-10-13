@@ -66,8 +66,8 @@ for the single default format these are based on.
 chronon_parse_linear(cal_gregorian$year(1L))
 #> [1] "{lin(year)}"
 chronon_parse_linear(cal_gregorian$month(1L))
-#> [1] "{lin(year)}[-/,\\s]+{cyc(month,year)}"
-#> [2] "{cyc(month,year)}[-/,\\s]+{lin(year)}"
+#> [1] "[[:space:]]*{lin(year)}(?:[-/,._[:space:]]*(?i:months?|mth|m)[-/,._[:space:]]*|[-/,._[:space:]]+|(?=[[:alpha:]])){cyc(month,year)}[[:space:]]*"
+#> [2] "[[:space:]]*(?:(?i:months?|mth|m)[-/,._[:space:]]*)?{cyc(month,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*"                                 
 #> attr(,"regex")
 #> [1] TRUE
 chronon_parse_linear(cal_gregorian$day(1L))
@@ -77,8 +77,8 @@ chronon_parse_linear(cal_gregorian$day(1L))
 #> attr(,"regex")
 #> [1] TRUE
 chronon_parse_linear(cal_isoweek$day(1L))
-#> [1] "{lin(year)}[-\\s]*[Ww]{cyc(week,year)}[-\\s]+{cyc(day,week)}"
-#> [2] "{cyc(day,week)}[-\\s]+[Ww]{cyc(week,year)}[-\\s]+{lin(year)}"
+#> [1] "[[:space:]]*{lin(year)}[-/,._[:space:]]*(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{cyc(day,week)}[[:space:]]*"
+#> [2] "[[:space:]]*{cyc(day,week)}[-/,._[:space:]]+(?i:weeks?|wk|w)[-/,._[:space:]]*{cyc(week,year)}[-/,._[:space:]]+{lin(year)}[[:space:]]*"
 #> attr(,"regex")
 #> [1] TRUE
 
