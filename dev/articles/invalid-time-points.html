@@ -417,9 +417,10 @@ points are being silently resolved.</p>
 </h2>
 <p>Every strategy that produces a result changes the behaviour of the
 arithmetic, in ways worth knowing when choosing one.</p>
-<p>Calendar arithmetic is not associative. Adding one month twice clamps
-in February, and the lost days aren’t recovered in March, whereas adding
-two months at once never passes through February.</p>
+<p>Calendar arithmetic involving invalid dates is not associative.
+Adding one month twice clamps in February, and the lost days aren’t
+recovered in March, whereas adding two months at once never passes
+through February.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="st">"2021-01-31"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/duration_helpers.html">months</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>

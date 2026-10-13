@@ -13,6 +13,8 @@
 
 ## mixtime 0.4.0
 
+CRAN release: 2026-10-13
+
 ### New features
 
 - Added the twelve remaining base relations of Allen’s interval algebra

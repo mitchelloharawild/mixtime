@@ -357,9 +357,10 @@ date("2021-01-31") + months(1L)
 Every strategy that produces a result changes the behaviour of the
 arithmetic, in ways worth knowing when choosing one.
 
-Calendar arithmetic is not associative. Adding one month twice clamps in
-February, and the lost days aren’t recovered in March, whereas adding
-two months at once never passes through February.
+Calendar arithmetic involving invalid dates is not associative. Adding
+one month twice clamps in February, and the lost days aren’t recovered
+in March, whereas adding two months at once never passes through
+February.
 
 ``` r
 
