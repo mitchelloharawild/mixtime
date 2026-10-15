@@ -306,8 +306,8 @@ chronon_fixed_reachable <- function(chronon, granule) {
 # repeating the reachability check.
 chronon_nests_in_fixed_ratio <- function(chronon, granule) {
   ratio <- chronon_cardinality_fixed(
-    S7::S7_class(chronon)(1L),
-    S7::S7_class(granule)(1L)
+    S7::set_props(chronon, n = 1L),
+    S7::set_props(granule, n = 1L)
   )
   (ratio * granule@n) %% chronon@n == 0L
 }
@@ -608,7 +608,7 @@ S7_graph_dispatch_multi <- function(
   # Properties only need copying onto a constructed node when `start` holds one
   # that is not naive (e.g. a time zone) for it to inherit.
   start_informs <- any(
-    !is.naive(props(start)[setdiff(names(props(start)), "n")])
+    !is.naive(props(start)[setdiff(names(props(start)), c("n", "calendar"))])
   )
 
   resolve_tree <- function(node) {
@@ -624,6 +624,7 @@ S7_graph_dispatch_multi <- function(
       supplied[[finest]]
     } else {
       granule <- graph$classes[[node$node]](1L)
+      granule@calendar <- start@calendar
       if (start_informs) granule_inherit_props(granule, start) else granule
     }
 

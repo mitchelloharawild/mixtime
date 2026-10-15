@@ -38,9 +38,9 @@
 #' @name calendar_gregorian
 #' @export
 cal_gregorian <- new_calendar(
-  year = new_class("tu_year", parent = mt_tz_unit),
-  quarter = new_class("tu_quarter", parent = mt_tz_unit),
-  month = new_class("tu_month", parent = mt_tz_unit),
+  year = new_time_unit(name = "tu_year", parent = mt_tz_unit),
+  quarter = new_time_unit(name = "tu_quarter", parent = mt_tz_unit),
+  month = new_time_unit(name = "tu_month", parent = mt_tz_unit),
   inherit = cal_time_civil,
   class = "cal_gregorian"
 )

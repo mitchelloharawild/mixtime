@@ -45,7 +45,10 @@ chronon_longest_path <- function(from, to) {
   path[c(-1L, -length(path))] <- lapply(
     path[c(-1L, -length(path))],
     function(tu) {
-      granule_inherit_props(granule_inherit_props(tu(1L), to), from)
+      granule_inherit_props(
+        granule_inherit_props(tu(1L, calendar = NULL), to),
+        from
+      )
     }
   )
   path

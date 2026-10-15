@@ -212,7 +212,7 @@ method(`-`, list(mt_time, mt_time)) <- function(e1, e2) {
   # which instant within it is measured from. Only continuous time points are
   # instants that can be compared across chronons.
   discrete <- c(is.integer(S7_data(e1)), is.integer(S7_data(e2)))
-  if (!identical(x_chronon, y_chronon) && any(discrete)) {
+  if (!granule_identical(x_chronon, y_chronon) && any(discrete)) {
     cli::cli_abort(
       c(
         "The difference between time points of different chronons is indeterminate when either is discrete.",

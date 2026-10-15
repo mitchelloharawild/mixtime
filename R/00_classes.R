@@ -2,8 +2,8 @@
 #' 
 #' This class is the primitive class for time units, and should
 #' be extended from when creating new time units. A new class
-#' is typically created with S7 using: 
-#' `S7::new_class("tu_***", parent = mt_tz_unit)`
+#' is typically created with [new_time_unit()] using:
+#' `new_time_unit("tu_***", parent = mt_tz_unit)`
 #' 
 #' Time units are the building blocks of calendars in mixtime. Each unit
 #' represents a specific temporal component (e.g., day, month, year) and
@@ -48,6 +48,8 @@
 #' 
 #' @param n The step size of time granule. For example, `n = 2L` is 2 time 
 #'   units, and `cal_isoweek$week(2L)` would represent 2 weeks (a fortnight).
+#' @param calendar The calendar containing the unit. Calendar constructors
+#'   supply this automatically.
 #' 
 #' @return A time granule object of class `mt_unit`
 #' 
@@ -58,8 +60,8 @@
 #' 
 #' # Use these units to create a calendar
 #' my_calendar <- new_calendar(
-#'   day = S7::new_class("tu_my_day", parent = mt_unit),
-#'   month = S7::new_class("tu_my_month", parent = mt_tz_unit),
+#'   day = new_time_unit("tu_my_day", parent = mt_unit),
+#'   month = new_time_unit("tu_my_month", parent = mt_tz_unit),
 #'   class = "my_calendar"
 #' )
 #' 
@@ -75,6 +77,10 @@ mt_unit <- S7::new_class(
     n = S7::new_property(
       class = S7::class_numeric,
       default = 1L
+    ),
+    calendar = S7::new_property(
+      class = S7::class_any,
+      default = quote(attr(sys.function(), "cal")$calendar)
     )
   ),
   # validator = function(self) {
