@@ -1,5 +1,7 @@
 # mixtime (development version)
 
+* Updates for compatibility with development S7.
+
 ## Breaking changes
 
 * Converting a discrete time to a chronon it doesn't nest within, deprecated
@@ -8,10 +10,6 @@
   `yearmonth(yearweek(x))` (a week can straddle two months) previously warned
   and used the start of each time point. Continuous time points are instants
   and convert as before.
-
-## Bug fixes
-
-* `chronon_cardinality()` now uses inherited S7 methods for fixed and inverse cardinalities.
 
 # mixtime 0.4.0
 
