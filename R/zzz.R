@@ -1,6 +1,6 @@
 .onLoad <- function(...) {
   # Register S7 methods
-  S7::methods_register()
+  S7::S7_on_load()
 
   # Register vecvec methods
   vecvec::vecvec_register(
@@ -19,3 +19,9 @@
 
   invisible()
 }
+
+.onUnload <- function(...) {
+  S7::S7_on_unload()
+}
+
+S7::S7_on_build()
