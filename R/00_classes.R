@@ -1,3 +1,5 @@
+class_mt_calendar <- S7::new_S3_class("mt_calendar")
+
 #' Base S7 class for creating new time units
 #' 
 #' This class is the primitive class for time units, and should
@@ -79,7 +81,7 @@ mt_unit <- S7::new_class(
       default = 1L
     ),
     calendar = S7::new_property(
-      class = S7::class_any,
+      class = NULL | class_mt_calendar,
       default = quote(attr(sys.function(), "cal")$calendar)
     )
   ),

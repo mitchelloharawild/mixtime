@@ -26,6 +26,14 @@ test_that("ordinary calendar constructors retain their calendar", {
   )
 })
 
+test_that("unit calendars accept only calendars or NULL", {
+  for (calendar in list(cal_gregorian, cal_isoweek, NULL)) {
+    expect_identical(time_calendar(mt_unit(calendar = calendar)), calendar)
+  }
+  expect_null(time_calendar(mt_unit()))
+  expect_error(mt_unit(calendar = "invalid"), "@calendar must be")
+})
+
 test_that("custom unit constructors forward their calendar", {
   tu_custom_day <- new_time_unit(
     "tu_custom_day",
@@ -52,7 +60,10 @@ test_that("unit constructors retain property defaults and overrides", {
     properties = list(
       fiscal = S7::new_property(S7::class_logical, default = FALSE),
       n = S7::new_property(S7::class_numeric, default = 2L),
-      calendar = S7::new_property(S7::class_any, default = quote(cal_isoweek))
+      calendar = S7::new_property(
+        S7::new_S3_class("mt_calendar"),
+        default = quote(cal_isoweek)
+      )
     )
   )
   calendar <- new_calendar(day = tu_default_day)
