@@ -9,6 +9,10 @@
   and used the start of each time point. Continuous time points are instants
   and convert as before.
 
+## Bug fixes
+
+* `chronon_cardinality()` now uses inherited S7 methods for fixed and inverse cardinalities.
+
 # mixtime 0.4.0
 
 ## New features

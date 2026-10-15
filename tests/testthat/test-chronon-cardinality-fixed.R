@@ -52,6 +52,45 @@ test_that("chronon_cardinality() falls back to chronon_cardinality_fixed(), scal
   expect_equal(chronon_cardinality(cal_gregorian$year(1L), cal_gregorian$month(1L)), 1 / 12)
 })
 
+test_that("chronon_cardinality() uses inherited fixed methods in either direction", {
+  tu_fixed_parent <- new_time_unit(name = "tu_fixed_parent")
+  tu_fixed_child <- new_time_unit(
+    name = "tu_fixed_child",
+    parent = tu_fixed_parent
+  )
+  tu_fixed_coarse <- new_time_unit(name = "tu_fixed_coarse")
+  method(
+    chronon_cardinality_fixed,
+    list(tu_fixed_parent, tu_fixed_coarse)
+  ) <- function(x, y) 5L
+
+  fine <- tu_fixed_child(n = 2L)
+  coarse <- tu_fixed_coarse(n = 4L)
+  expect_equal(chronon_cardinality_fixed(fine, coarse), 10)
+  expect_equal(chronon_cardinality(fine, coarse), 10)
+  expect_equal(chronon_cardinality(coarse, fine), 1 / 10)
+})
+
+test_that("chronon_cardinality() uses inherited inverse methods", {
+  tu_variable_parent <- new_time_unit(name = "tu_variable_parent")
+  tu_variable_child <- new_time_unit(
+    name = "tu_variable_child",
+    parent = tu_variable_parent
+  )
+  tu_variable_coarse <- new_time_unit(name = "tu_variable_coarse")
+  method(
+    chronon_cardinality,
+    list(tu_variable_parent, tu_variable_coarse)
+  ) <- function(x, y, at = NULL) {
+    5 + at
+  }
+
+  fine <- tu_variable_child(n = 1L)
+  coarse <- tu_variable_coarse(n = 1L)
+  expect_equal(chronon_cardinality(fine, coarse, at = 2), 7)
+  expect_equal(chronon_cardinality(coarse, fine, at = 2), 1 / 7)
+})
+
 test_that("only fixed cardinality (and direct divmod) relationships form divmod graph edges", {
   tu_fixed_test_a <- S7::new_class("tu_fixed_test_a", parent = mt_unit)
   tu_fixed_test_b <- S7::new_class("tu_fixed_test_b", parent = mt_unit)

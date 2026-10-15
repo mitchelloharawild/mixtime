@@ -76,7 +76,7 @@ S7::method(chronon_divmod, list(mt_unit, mt_unit)) <- function(from, to, x) {
 }
 
 chronon_divmod_dispatch <- function(from, to, x) {
-  if (is.null(chronon_divmod@methods[[S7_class_id(from)]][[S7_class_id(to)]])) {
+  if (!chronon_has_method(chronon_divmod, from, to)) {
     return(chronon_divmod_regular(from, to, x))
   } else {
     return(chronon_divmod(from, to, x))

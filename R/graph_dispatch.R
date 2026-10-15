@@ -38,7 +38,15 @@
 # }
 
 method_signatures <- function(generic) {
-  traverse_methods(generic@methods)
+  lapply(S7::S7_methods(generic)$signature, unclass)
+}
+
+chronon_has_method <- function(generic, x, y) {
+  # Distinguish a specific method from the graph-traversal fallback.
+  !identical(
+    method(generic, object = list(x, y)),
+    method(generic, list(mt_unit, mt_unit))
+  )
 }
 
 S7_signature_id <- function(sig) {
@@ -345,16 +353,6 @@ S7_class_id <- function(x) {
   package <- x@package
   if (is.null(package)) x@name else paste0(package, "::", x@name)
 }
-
-traverse_methods <- function(x) {
-  if (!is.environment(x)) {
-    return(list(x@signature))
-  }
-
-  methods <- lapply(names(x), function(class) traverse_methods(x[[class]]))
-  unlist(methods, recursive = FALSE)
-}
-
 
 bfs_shortest_path <- function(
   from = integer(),
