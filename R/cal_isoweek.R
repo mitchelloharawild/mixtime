@@ -32,8 +32,8 @@
 #' @name calendar_isoweek
 #' @export
 cal_isoweek <- new_calendar(
-  year = new_time_unit(name = "tu_isoyear", parent = mt_tz_unit),
-  week = new_time_unit(name = "tu_week", parent = mt_tz_unit),
+  year = new_time_unit("tu_isoyear", parent = mt_tz_unit),
+  week = new_time_unit("tu_week", parent = mt_tz_unit),
   inherit = cal_time_civil,
   class = "cal_isoweek"
 )

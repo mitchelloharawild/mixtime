@@ -71,15 +71,15 @@
 #' @name calendar_time_solar
 #' @export
 cal_time_solar_transit <- new_calendar(
-  day = new_time_unit(name = "tu_solar_day", parent = mt_loc_unit),
-  ampm = new_time_unit(name = "tu_solar_ampm", parent = mt_loc_unit),
-  hour = new_time_unit(name = "tu_solar_hour", parent = mt_loc_unit),
-  minute = new_time_unit(name = "tu_solar_minute", parent = mt_loc_unit),
-  second = new_time_unit(name = "tu_solar_second", parent = mt_loc_unit),
-  degree = new_time_unit(name = "tu_solar_degree", parent = mt_loc_unit),
-  arcminute = new_time_unit(name = "tu_solar_arcminute", parent = mt_loc_unit),
-  arcsecond = new_time_unit(name = "tu_solar_arcsecond", parent = mt_loc_unit),
-  illumination = new_time_unit(name = "tu_solar_lum", parent = mt_loc_unit)
+  day = new_time_unit("tu_solar_day", parent = mt_loc_unit),
+  ampm = new_time_unit("tu_solar_ampm", parent = mt_loc_unit),
+  hour = new_time_unit("tu_solar_hour", parent = mt_loc_unit),
+  minute = new_time_unit("tu_solar_minute", parent = mt_loc_unit),
+  second = new_time_unit("tu_solar_second", parent = mt_loc_unit),
+  degree = new_time_unit("tu_solar_degree", parent = mt_loc_unit),
+  arcminute = new_time_unit("tu_solar_arcminute", parent = mt_loc_unit),
+  arcsecond = new_time_unit("tu_solar_arcsecond", parent = mt_loc_unit),
+  illumination = new_time_unit("tu_solar_lum", parent = mt_loc_unit)
 )
 
 #' @export

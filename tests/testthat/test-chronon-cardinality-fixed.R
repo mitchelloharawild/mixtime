@@ -53,12 +53,12 @@ test_that("chronon_cardinality() falls back to chronon_cardinality_fixed(), scal
 })
 
 test_that("chronon_cardinality() uses inherited fixed methods in either direction", {
-  tu_fixed_parent <- new_time_unit(name = "tu_fixed_parent")
+  tu_fixed_parent <- new_time_unit("tu_fixed_parent")
   tu_fixed_child <- new_time_unit(
-    name = "tu_fixed_child",
+    "tu_fixed_child",
     parent = tu_fixed_parent
   )
-  tu_fixed_coarse <- new_time_unit(name = "tu_fixed_coarse")
+  tu_fixed_coarse <- new_time_unit("tu_fixed_coarse")
   method(
     chronon_cardinality_fixed,
     list(tu_fixed_parent, tu_fixed_coarse)
@@ -72,12 +72,12 @@ test_that("chronon_cardinality() uses inherited fixed methods in either directio
 })
 
 test_that("chronon_cardinality() uses inherited inverse methods", {
-  tu_variable_parent <- new_time_unit(name = "tu_variable_parent")
+  tu_variable_parent <- new_time_unit("tu_variable_parent")
   tu_variable_child <- new_time_unit(
-    name = "tu_variable_child",
+    "tu_variable_child",
     parent = tu_variable_parent
   )
-  tu_variable_coarse <- new_time_unit(name = "tu_variable_coarse")
+  tu_variable_coarse <- new_time_unit("tu_variable_coarse")
   method(
     chronon_cardinality,
     list(tu_variable_parent, tu_variable_coarse)

@@ -32,8 +32,8 @@
 #' @name calendar_time_lunar
 #' @export
 cal_time_lunar_synodic <- new_calendar(
-  month = new_time_unit(name = "tu_lunar_month", parent = mt_loc_unit),
-  phase = new_time_unit(name = "tu_lunar_phase", parent = mt_loc_unit)
+  month = new_time_unit("tu_lunar_month", parent = mt_loc_unit),
+  phase = new_time_unit("tu_lunar_phase", parent = mt_loc_unit)
 )
 
 #' @export

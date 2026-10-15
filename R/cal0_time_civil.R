@@ -65,14 +65,14 @@ method(chronon_format_attr, mt_tz_unit) <- function(x) {
 #' @name calendar_time_civil
 #' @export
 cal_time_civil <- new_calendar(
-  day = new_time_unit(name = "tu_day", parent = mt_tz_unit),
-  ampm = new_time_unit(name = "tu_ampm", parent = mt_tz_unit),
-  hour = new_time_unit(name = "tu_hour", parent = mt_tz_unit),
-  minute = new_time_unit(name = "tu_minute", parent = mt_tz_unit),
-  second = new_time_unit(name = "tu_second", parent = mt_tz_unit),
-  millisecond = new_time_unit(name = "tu_millisecond", parent = mt_tz_unit),
-  microsecond = new_time_unit(name = "tu_microsecond", parent = mt_tz_unit),
-  nanosecond = new_time_unit(name = "tu_nanosecond", parent = mt_tz_unit),
+  day = new_time_unit("tu_day", parent = mt_tz_unit),
+  ampm = new_time_unit("tu_ampm", parent = mt_tz_unit),
+  hour = new_time_unit("tu_hour", parent = mt_tz_unit),
+  minute = new_time_unit("tu_minute", parent = mt_tz_unit),
+  second = new_time_unit("tu_second", parent = mt_tz_unit),
+  millisecond = new_time_unit("tu_millisecond", parent = mt_tz_unit),
+  microsecond = new_time_unit("tu_microsecond", parent = mt_tz_unit),
+  nanosecond = new_time_unit("tu_nanosecond", parent = mt_tz_unit),
   class = "cal_time_civil"
 )
 

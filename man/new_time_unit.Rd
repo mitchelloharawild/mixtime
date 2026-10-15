@@ -34,10 +34,8 @@ a slot on instances of the new class. Defaults to an empty list.}
 directly; it serves only as a base for further subclassing.}
 
 \item{constructor}{A function to use as the class constructor, or \code{NULL}
-(default) to generate one automatically. The auto-generated constructor
-accepts \code{...} (forwarded to the parent constructor) plus one argument per
-entry in \code{properties}, with defaults taken from each property's
-\code{default} field, and a \code{calendar} argument. Custom constructors must accept
+(default) to let S7 generate one from the parent constructor and properties.
+Custom constructors must accept
 \code{calendar = attr(sys.function(), "cal")$calendar} and forward it to the
 parent constructor as \code{calendar = calendar} to retain calendar membership.}
 

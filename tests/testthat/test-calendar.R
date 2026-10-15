@@ -1,5 +1,5 @@
 test_that("calendars sharing a unit retain one S7 class and separate calendars", {
-  tu_shared_day <- new_time_unit(name = "tu_shared_day", parent = mt_tz_unit)
+  tu_shared_day <- new_time_unit("tu_shared_day", parent = mt_tz_unit)
   first <- new_calendar(day = tu_shared_day, class = "cal_first")
   second <- new_calendar(inherit = first, class = "cal_second")
   method(time_unit_abbr, first$day) <- function(x) "d"
@@ -28,20 +28,38 @@ test_that("ordinary calendar constructors retain their calendar", {
 
 test_that("custom unit constructors forward their calendar", {
   tu_custom_day <- new_time_unit(
-    name = "tu_custom_day",
+    "tu_custom_day",
     parent = mt_tz_unit,
     constructor = function(
       n = 1L,
       tz = "UTC",
       calendar = attr(sys.function(), "cal")$calendar
     ) {
-      S7::new_object(mt_tz_unit(n = n, tz = tz, calendar = calendar))
+      S7::new_object(mt_tz_unit(n = 2L * n, tz = tz, calendar = calendar))
     }
   )
   calendar <- new_calendar(day = tu_custom_day)
   x <- calendar$day(n = 2L, tz = "Europe/London")
   expect_identical(time_calendar(x), calendar)
+  expect_identical(x@n, 4L)
   expect_identical(x@tz, "Europe/London")
+})
+
+test_that("unit constructors retain property defaults and overrides", {
+  tu_default_day <- new_time_unit(
+    "tu_default_day",
+    parent = mt_tz_unit,
+    properties = list(
+      fiscal = S7::new_property(S7::class_logical, default = FALSE),
+      n = S7::new_property(S7::class_numeric, default = 2L),
+      calendar = S7::new_property(S7::class_any, default = quote(cal_isoweek))
+    )
+  )
+  calendar <- new_calendar(day = tu_default_day)
+  x <- calendar$day(tz = "UTC")
+  expect_identical(x@fiscal, FALSE)
+  expect_identical(x@n, 2L)
+  expect_identical(time_calendar(x), cal_isoweek)
 })
 
 test_that("calendar metadata survives reconstruction by time operations", {
@@ -59,9 +77,9 @@ test_that("calendar metadata survives reconstruction by time operations", {
 
 test_that("cardinality methods receive the calendar through intermediate units", {
   calendar <- new_calendar(
-    fine = new_time_unit(name = "tu_calendar_fine"),
-    middle = new_time_unit(name = "tu_calendar_middle"),
-    coarse = new_time_unit(name = "tu_calendar_coarse")
+    fine = new_time_unit("tu_calendar_fine"),
+    middle = new_time_unit("tu_calendar_middle"),
+    coarse = new_time_unit("tu_calendar_coarse")
   )
   seen <- list()
   cardinality <- function(x, y) {
