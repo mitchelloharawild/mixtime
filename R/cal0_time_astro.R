@@ -18,9 +18,9 @@ mt_loc_unit <- S7::new_class(
   "mt_loc_unit", 
   parent = mt_unit,
   properties = list(
-    lat = S7::new_property(S7::class_numeric, default = naive_loc),
-    lon = S7::new_property(S7::class_numeric, default = naive_loc),
-    alt = S7::new_property(S7::class_numeric, default = naive(0))
+    lat = S7::new_property(S7::class_numeric, default = quote(naive_loc)),
+    lon = S7::new_property(S7::class_numeric, default = quote(naive_loc)),
+    alt = S7::new_property(S7::class_numeric, default = quote(naive(0)))
   ),
   constructor = function(
     n = 1L,

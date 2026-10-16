@@ -7,7 +7,9 @@ naive_tz <- naive(NA_character_)
 mt_tz_unit <- new_class(
   "mt_tz_unit",
   parent = mt_unit,
-  properties = list(tz = new_property(S7::class_character, default = naive_tz)),
+  properties = list(
+    tz = new_property(S7::class_character, default = quote(naive_tz))
+  ),
   constructor = function(
     n = 1L,
     tz = naive_tz,
