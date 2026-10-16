@@ -1,6 +1,10 @@
 .onLoad <- function(...) {
   # Register S7 methods
-  S7::S7_on_load()
+  if ("S7_on_load" %in% getNamespaceExports("S7")) {
+    S7::S7_on_load()
+  } else {
+    S7::methods_register()
+  }
 
   # Register vecvec methods
   vecvec::vecvec_register(
@@ -21,7 +25,11 @@
 }
 
 .onUnload <- function(...) {
-  S7::S7_on_unload()
+  if ("S7_on_unload" %in% getNamespaceExports("S7")) {
+    S7::S7_on_unload()
+  }
 }
 
-S7::S7_on_build()
+if ("S7_on_build" %in% getNamespaceExports("S7")) {
+  S7::S7_on_build()
+}
