@@ -137,7 +137,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
     ## QUESTION: Why does this not work with `generic` instead of `chronon_cardinality`? S7 bug?
 
     result <- chronon_cardinality(path[[i]], result, at)
-    if (!is.null(at)) at <- at * result
+    if (!is.null(at) && !is_mixtime(at)) at <- at * result
     # Class the result with the next class in the path
     result <- S7::S7_class(path[[i]])(result)
   }

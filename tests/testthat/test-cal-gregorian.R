@@ -176,6 +176,18 @@ test_that("chronon_cardinality handles months with variable days", {
   )
 })
 
+test_that("chronon_cardinality() accepts a time point `at` across a multi-step path", {
+  half_hour <- cal_gregorian$minute(30L)
+  expect_equal(
+    chronon_cardinality(half_hour, cal_gregorian$month(1L), at = yearmonth(as.Date("2024-02-01"))),
+    29 * 48
+  )
+  expect_equal(
+    chronon_cardinality(half_hour, cal_gregorian$year(1L), at = year(as.Date("2024-01-01"))),
+    366 * 48
+  )
+})
+
 test_that("chronon_cardinality(day, month) handles a negative-magnitude month chronon", {
   # Regression test: `y@n < 0` (e.g. from a descending `by = months(-1L)`
   # sequence step) used to pass a negative window size straight into

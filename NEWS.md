@@ -9,6 +9,12 @@
   and used the start of each time point. Continuous time points are instants
   and convert as before.
 
+## Bug fixes
+
+* `chronon_cardinality()` no longer errors when `at` is a time point and the
+  cardinality is found by traversing several time units (e.g. 30 minutes in a
+  month).
+
 # mixtime 0.4.0
 
 ## New features
