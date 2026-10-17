@@ -86,34 +86,6 @@ test_that("calendar metadata survives reconstruction by time operations", {
   expect_identical(time_calendar(chronon_lub(z)), cal_gregorian)
 })
 
-test_that("cardinality methods receive the calendar through intermediate units", {
-  calendar <- new_calendar(
-    fine = new_time_unit("tu_calendar_fine"),
-    middle = new_time_unit("tu_calendar_middle"),
-    coarse = new_time_unit("tu_calendar_coarse")
-  )
-  seen <- list()
-  cardinality <- function(x, y) {
-    seen[[length(seen) + 1L]] <<- list(time_calendar(x), time_calendar(y))
-    2L
-  }
-  method(
-    chronon_cardinality_fixed,
-    list(calendar$fine, calendar$middle)
-  ) <- cardinality
-  method(
-    chronon_cardinality_fixed,
-    list(calendar$middle, calendar$coarse)
-  ) <- cardinality
-  inherited <- new_calendar(inherit = calendar, class = "cal_inherited")
-
-  expect_equal(
-    chronon_cardinality_fixed(inherited$fine(n = 1L), inherited$coarse(n = 1L)),
-    4
-  )
-  expect_identical(seen, rep(list(list(inherited, inherited)), 2L))
-})
-
 test_that("shared calendar units keep the same arithmetic and context", {
   x <- linear_time(as.Date("2024-02-29"), chronon = cal_gregorian$day(n = 1L))
   y <- linear_time(as.Date("2024-02-29"), chronon = cal_isoweek$day(n = 1L))

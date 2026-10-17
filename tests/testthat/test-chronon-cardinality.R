@@ -122,3 +122,43 @@ test_that("only fixed cardinality (and direct divmod) relationships form divmod 
   expect_true(edge_exists(chronon_divmod_graph(), tu_fixed_test_a(1L), tu_fixed_test_b(1L)))
   expect_false(edge_exists(chronon_divmod_graph(), tu_variable_test_a(1L), tu_variable_test_b(1L)))
 })
+
+test_that("cardinality methods receive the calendar through intermediate units", {
+  calendar <- new_calendar(
+    fine = new_time_unit("tu_calendar_fine"),
+    middle = new_time_unit("tu_calendar_middle"),
+    coarse = new_time_unit("tu_calendar_coarse")
+  )
+  seen <- list()
+  cardinality <- function(x, y) {
+    seen[[length(seen) + 1L]] <<- list(time_calendar(x), time_calendar(y))
+    2L
+  }
+  method(
+    chronon_cardinality_fixed,
+    list(calendar$fine, calendar$middle)
+  ) <- cardinality
+  method(
+    chronon_cardinality_fixed,
+    list(calendar$middle, calendar$coarse)
+  ) <- cardinality
+  inherited <- new_calendar(inherit = calendar, class = "cal_inherited")
+
+  expect_equal(
+    chronon_cardinality_fixed(inherited$fine(n = 1L), inherited$coarse(n = 1L)),
+    4
+  )
+  expect_identical(seen, rep(list(list(inherited, inherited)), 2L))
+})
+
+test_that("chronon_cardinality() accepts a time point `at` across a multi-step path", {
+  half_hour <- cal_gregorian$minute(30L)
+  expect_equal(
+    chronon_cardinality(half_hour, cal_gregorian$month(1L), at = yearmonth(as.Date("2024-02-01"))),
+    29 * 48
+  )
+  expect_equal(
+    chronon_cardinality(half_hour, cal_gregorian$year(1L), at = year(as.Date("2024-01-01"))),
+    366 * 48
+  )
+})

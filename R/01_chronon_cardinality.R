@@ -45,24 +45,31 @@
 #' 
 #' # There are 365 days in 2025 (a common year)
 #' chronon_cardinality(
-#'   cal_gregorian$day(1L), cal_gregorian$year(1L),
-#'   at = year(as.Date("2025-01-01"))
+#'   cal_gregorian$day(1L), at = year(as.Date("2025-01-01"))
 #' )
 #' 
 #' # There are 366 days in 2024 (a leap year)
 #' chronon_cardinality(
-#'   cal_gregorian$day(1L), cal_gregorian$year(1L), 
-#'   at = mixtime::year(as.Date("2024-01-01"))
+#'   cal_gregorian$day(1L), at = year(as.Date("2024-01-01"))
 #' )
 #' 
 #' # There are 29 days in February 2024 (a leap year)
 #' chronon_cardinality(
-#'   cal_gregorian$day(1L), cal_gregorian$month(1L), 
-#'   at = yearmonth(as.Date("2024-02-01"))
+#'   cal_gregorian$day(1L), at = yearmonth(as.Date("2024-02-01"))
 #' )
 #'
 #' @export
-chronon_cardinality <- S7::new_generic("chronon_cardinality", c("x", "y"))
+chronon_cardinality <- S7::new_generic(
+  "chronon_cardinality", c("x", "y"), 
+  function(x, y = chronon_glb(at), at = NULL) {
+    # Convert time points to the `y` chronon containing them
+    if (is.object(at) && (inherits(at, c("Date", "POSIXt")) ||
+        S7_inherits(at, mt_linear) || S7_inherits(at, class_mixtime))) {
+      at <- chronon_convert(at, y, discrete = TRUE, allow_indeterminate = FALSE)
+    }
+    S7::S7_dispatch()
+  }
+)
 
 #' Fixed cardinality between time granules
 #'

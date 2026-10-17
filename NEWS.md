@@ -1,6 +1,11 @@
 # mixtime (development version)
 
+## Improvements
+
 * Updates for compatibility with development S7.
+* Better support for time-classed `at` in `chronon_cardinality()`, allowing for
+  the target `y` granule obtained from `at`, and conversion of `at` to `y`
+  granule if both are specified.
 
 ## Breaking changes
 
