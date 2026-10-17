@@ -8,14 +8,15 @@
 \alias{mt_cyclical}
 \title{Time vector classes}
 \usage{
-mt_linear(.data = integer(), chronon = mt_unit(1L))
+mt_linear(..., chronon = mt_unit(1L))
 
-mt_duration(.data = integer(), chronon = mt_unit(1L))
+mt_duration(..., chronon = mt_unit(1L))
 
-mt_cyclical(.data = integer(), chronon = mt_unit(1L), cycle = mt_unit(1L))
+mt_cyclical(..., chronon = mt_unit(1L), cycle = mt_unit(1L))
 }
 \arguments{
-\item{.data}{A numeric vector of chronon counts (integer or double).}
+\item{...}{Passed to the parent constructor, typically \code{.data}: a numeric
+vector of chronon counts (integer or double).}
 
 \item{chronon, cycle}{Time granules (\link{mt_unit} objects) giving the unit of the
 chronon counts and, for \code{mt_cyclical}, the length of the cycle.}

@@ -4,16 +4,16 @@
 \alias{class_mixtime}
 \title{Base S7 class for mixtime vector objects}
 \usage{
-class_mixtime(x = list(), i = seq_len(sum(lengths(x))))
+class_mixtime(...)
 }
 \arguments{
-\item{x}{A list of \code{"mt_time"} vectors, see \code{\link[=mt_linear]{mt_linear()}} for details.}
-
-\item{i}{A vector of integers specifying the location of each element in \code{x}
-as if they were combined in order. The values in \code{i} must be between 1 and
-the total number of elements across all vectors in \code{x}, and can contain
-duplicates. If not provided, it defaults to a sequence from 1 to the total
-number of elements across all vectors in \code{x}.}
+\item{...}{Passed to the \code{\link[vecvec:class_vecvec]{vecvec::class_vecvec()}} constructor:
+\itemize{
+\item \code{x}: A list of \code{"mt_time"} vectors, see \code{\link[=mt_linear]{mt_linear()}} for details.
+\item \code{i}: A vector of integers specifying the location of each element in
+\code{x} as if they were combined in order. Defaults to a sequence from 1 to
+the total number of elements across all vectors in \code{x}.
+}}
 }
 \value{
 When used as a class definition (e.g., in \code{S7::method(generic, class_mixtime)}), an S7 class object representing the \code{mixtime} class,

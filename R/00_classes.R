@@ -108,7 +108,8 @@ mt_unit <- S7::new_class(
 #' (continuous time). The `chronon` (and, for `mt_cyclical`, the `cycle`) are 
 #' time granules, the result from a [mt_unit] object.
 #'
-#' @param .data A numeric vector of chronon counts (integer or double).
+#' @param ... Passed to the parent constructor, typically `.data`: a numeric
+#'   vector of chronon counts (integer or double).
 #' @param chronon,cycle Time granules ([mt_unit] objects) giving the unit of the
 #'   chronon counts and, for `mt_cyclical`, the length of the cycle.
 #'
@@ -187,8 +188,11 @@ mt_cyclical <- S7::new_class(
 #' mixtime vectors. S3 methods can be defined using the `mixtime::mixtime` 
 #' class.
 #' 
-#' @param x A list of `"mt_time"` vectors, see [mt_linear()] for details.
-#' @inheritParams vecvec::class_vecvec
+#' @param ... Passed to the [vecvec::class_vecvec()] constructor:
+#'   * `x`: A list of `"mt_time"` vectors, see [mt_linear()] for details.
+#'   * `i`: A vector of integers specifying the location of each element in
+#'     `x` as if they were combined in order. Defaults to a sequence from 1 to
+#'     the total number of elements across all vectors in `x`.
 #'
 #' @return When used as a class definition (e.g., in `S7::method(generic,
 #'   class_mixtime)`), an S7 class object representing the `mixtime` class,
