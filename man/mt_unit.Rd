@@ -7,15 +7,28 @@
 \alias{mt_tz_unit}
 \title{Base S7 class for creating new time units}
 \usage{
-mt_unit(n = 1L)
+mt_unit(n = 1L, calendar = attr(sys.function(), "cal")$calendar)
 
-mt_loc_unit(n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0))
+mt_loc_unit(
+  n = 1L,
+  lat = naive_loc,
+  lon = naive_loc,
+  alt = naive(0),
+  calendar = attr(sys.function(), "cal")$calendar
+)
 
-mt_tz_unit(n = 1L, tz = naive_tz)
+mt_tz_unit(
+  n = 1L,
+  tz = naive_tz,
+  calendar = attr(sys.function(), "cal")$calendar
+)
 }
 \arguments{
 \item{n}{The step size of time granule. For example, \code{n = 2L} is 2 time
 units, and \code{cal_isoweek$week(2L)} would represent 2 weeks (a fortnight).}
+
+\item{calendar}{The calendar containing the unit. Calendar constructors
+supply this automatically.}
 
 \item{lat}{Numeric. Latitude in decimal degrees. Range: -90 to 90.
 Default: naive location (astronomical calculations require \code{lat}).}
@@ -34,8 +47,8 @@ A time granule object of class \code{mt_unit}
 \description{
 This class is the primitive class for time units, and should
 be extended from when creating new time units. A new class
-is typically created with S7 using:
-\code{S7::new_class("tu_***", parent = mt_tz_unit)}
+is typically created with \code{\link[=new_time_unit]{new_time_unit()}} using:
+\code{new_time_unit("tu_***", parent = mt_tz_unit)}
 }
 \details{
 Time units are the building blocks of calendars in mixtime. Each unit
@@ -85,8 +98,8 @@ timezone-aware conversions.
 
 # Use these units to create a calendar
 my_calendar <- new_calendar(
-  day = S7::new_class("tu_my_day", parent = mt_unit),
-  month = S7::new_class("tu_my_month", parent = mt_tz_unit),
+  day = new_time_unit("tu_my_day", parent = mt_unit),
+  month = new_time_unit("tu_my_month", parent = mt_tz_unit),
   class = "my_calendar"
 )
 

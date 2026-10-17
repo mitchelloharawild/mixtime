@@ -45,7 +45,10 @@ chronon_longest_path <- function(from, to) {
   path[c(-1L, -length(path))] <- lapply(
     path[c(-1L, -length(path))],
     function(tu) {
-      granule_inherit_props(granule_inherit_props(tu(1L), to), from)
+      granule_inherit_props(
+        granule_inherit_props(tu(1L, calendar = NULL), to),
+        from
+      )
     }
   )
   path
@@ -56,13 +59,9 @@ chronon_longest_path <- function(from, to) {
 # TRUE if from<->to has a fixed (context-independent) cardinality ratio - never
 # needs clamping.
 chronon_hop_is_regular <- function(from, to) {
-  from_id <- S7_class_id(from)
-  to_id <- S7_class_id(to)
-  fixed_methods <- chronon_cardinality_fixed@methods
-
-  identical(from_id, to_id) ||
-    !is.null(fixed_methods[[from_id]][[to_id]]) ||
-    !is.null(fixed_methods[[to_id]][[from_id]])
+  identical(S7_class_id(from), S7_class_id(to)) ||
+    chronon_has_method(chronon_cardinality_fixed, from, to) ||
+    chronon_has_method(chronon_cardinality_fixed, to, from)
 }
 
 # TRUE when the component machinery below is worth using: `to` must be a coarser

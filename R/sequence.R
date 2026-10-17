@@ -146,7 +146,7 @@
   # Check that from and to have the same time classes
   if (!missing_from && !missing_to) {
     to_chronon <- chronon_glb(to)
-    if (!identical(chronon, to_chronon)) {
+    if (!granule_identical(chronon, to_chronon)) {
       cli::cli_abort(c(
         "Incompatible time chronons in {.fn seq}.",
         "i" = "{.arg from} has {.cls {time_granule_label(chronon)}} chronons.",
@@ -182,7 +182,7 @@
   }
   # Numeric `by` uses chronon
   if (is.numeric(by) && !S7_inherits(by, mt_unit)) {
-    by <- S7::S7_class(chronon)(by)
+    by <- S7::set_props(chronon, n = by)
   }
 
   # Inherit granule properties from `by` if not given in `chronon` granule

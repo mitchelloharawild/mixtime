@@ -102,22 +102,18 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   }
 
   # Use a registered fixed-cardinality method if available.
-  if (!is.null(chronon_cardinality_fixed@methods[[S7_class_id(x)]][[S7_class_id(y)]])) {
+  if (chronon_has_method(chronon_cardinality_fixed, x, y)) {
     return(chronon_cardinality_fixed(x, y))
   }
-  if (!is.null(chronon_cardinality_fixed@methods[[S7_class_id(y)]][[S7_class_id(x)]])) {
+  if (chronon_has_method(chronon_cardinality_fixed, y, x)) {
     return(1 / chronon_cardinality_fixed(y, x))
   }
 
   # Try to find a method with arguments swapped
-  # (This feels unsafe for finding exact matching of S7 dispatch.)
-
-  if (!is.null(y_env <- chronon_cardinality@methods[[S7_class_id(y)]])) {
-    if (S7_class_id(x) %in% names(y_env)) {
-      # Matching inverse method found, use it with inversion.
-      # TODO: Convert at to x units?
-      return(1/chronon_cardinality(y, x, at = at))
-    }
+  if (chronon_has_method(chronon_cardinality, y, x)) {
+    # Matching inverse method found, use it with inversion.
+    # TODO: Convert at to x units?
+    return(1 / chronon_cardinality(y, x, at = at))
   }
 
   # No specific method defined between these classes
@@ -129,7 +125,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   # Initialise intermediate classes with 1L and adjacent properties
   path[c(-1, -length(path))] <- lapply(path[c(-1, -length(path))], function(tu){
     # Ideally inherit from `x`, but if incomplete inherit from `y`
-    granule_inherit_props(granule_inherit_props(tu(1L), x), y)
+    granule_inherit_props(granule_inherit_props(tu(1L, calendar = NULL), x), y)
   })
   
   result <- path[[1]]
@@ -139,7 +135,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
     result <- chronon_cardinality(path[[i]], result, at)
     if (!is.null(at)) at <- at * result
     # Class the result with the next class in the path
-    result <- S7::S7_class(path[[i]])(result)
+    result <- S7::set_props(path[[i]], n = result)
   }
 
   result@n
@@ -160,10 +156,10 @@ method(chronon_cardinality_fixed, list(mt_unit, mt_unit)) <- function(x, y) {
 
   result <- 1
   for (i in seq(2, length.out = length(path) - 1)) {
-    fine <- path[[i]](1L)
-    coarse <- path[[i - 1]](1L)
+    fine <- path[[i]](1L, calendar = x@calendar)
+    coarse <- path[[i - 1]](1L, calendar = y@calendar)
     # Allow the fixed cardinality method to be defined in either direction.
-    result <- result * if (is.null(chronon_cardinality_fixed@methods[[S7_class_id(fine)]][[S7_class_id(coarse)]])) {
+    result <- result * if (!chronon_has_method(chronon_cardinality_fixed, fine, coarse)) {
       1 / chronon_cardinality_fixed(coarse, fine)
     } else {
       chronon_cardinality_fixed(fine, coarse)

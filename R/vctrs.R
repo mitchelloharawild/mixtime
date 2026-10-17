@@ -126,7 +126,7 @@ mt_cast_from_character <- function(x, to, ...) {
 cycle_common <- function(x, y) {
   x <- granule_inherit_props(x, y)
   y <- granule_inherit_props(y, x)
-  if (!identical(x, y)) return(NULL)
+  if (!granule_identical(x, y)) return(NULL)
   x
 }
 

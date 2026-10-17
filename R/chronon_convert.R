@@ -80,7 +80,10 @@ chronon_convert_graph <- function(x, from, to, discrete = FALSE) {
       path[c(-1, -length(path))],
       function(tu) {
         # Ideally inherit from `to`, but if incomplete inherit from `from`
-        granule_inherit_props(granule_inherit_props(tu(1L), to), from)
+        granule_inherit_props(
+          granule_inherit_props(tu(1L, calendar = NULL), to),
+          from
+        )
       }
     )
 

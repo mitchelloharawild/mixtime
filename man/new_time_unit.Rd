@@ -34,10 +34,10 @@ a slot on instances of the new class. Defaults to an empty list.}
 directly; it serves only as a base for further subclassing.}
 
 \item{constructor}{A function to use as the class constructor, or \code{NULL}
-(default) to generate one automatically. The auto-generated constructor
-accepts \code{...} (forwarded to the parent constructor) plus one argument per
-entry in \code{properties}, with defaults taken from each property's
-\code{default} field.}
+(default) to let S7 generate one from the parent constructor and properties.
+Custom constructors must accept
+\code{calendar = attr(sys.function(), "cal")$calendar} and forward it to the
+parent constructor as \code{calendar = calendar} to retain calendar membership.}
 
 \item{validator}{A function of one argument (\code{self}) that returns \code{NULL}
 when the object is valid, or a character string describing the problem.
@@ -63,6 +63,11 @@ needs \code{tz} to resolve wall-clock ambiguity).
 \item \code{\link{mt_loc_unit}} — astronomical time with a geographic location (e.g., a
 solar day tied to observer longitude/latitude).
 }
+
+Use \code{new_time_unit()} for units included in \code{\link[=new_calendar]{new_calendar()}}. Its generated
+constructor records the calendar on each instance, including when the parent
+has a custom constructor. A bare \code{S7::new_class()} constructor may only
+forward \code{...} to its parent and cannot infer the calling calendar.
 }
 \examples{
 # An abstract unit with no properties

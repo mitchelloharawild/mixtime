@@ -38,7 +38,15 @@
 # }
 
 method_signatures <- function(generic) {
-  traverse_methods(generic@methods)
+  lapply(S7::S7_methods(generic)$signature, unclass)
+}
+
+chronon_has_method <- function(generic, x, y) {
+  # Distinguish a specific method from the graph-traversal fallback.
+  !identical(
+    method(generic, object = list(x, y)),
+    method(generic, list(mt_unit, mt_unit))
+  )
 }
 
 S7_signature_id <- function(sig) {
@@ -298,8 +306,8 @@ chronon_fixed_reachable <- function(chronon, granule) {
 # repeating the reachability check.
 chronon_nests_in_fixed_ratio <- function(chronon, granule) {
   ratio <- chronon_cardinality_fixed(
-    S7::S7_class(chronon)(1L),
-    S7::S7_class(granule)(1L)
+    S7::set_props(chronon, n = 1L),
+    S7::set_props(granule, n = 1L)
   )
   (ratio * granule@n) %% chronon@n == 0L
 }
@@ -345,16 +353,6 @@ S7_class_id <- function(x) {
   package <- x@package
   if (is.null(package)) x@name else paste0(package, "::", x@name)
 }
-
-traverse_methods <- function(x) {
-  if (!is.environment(x)) {
-    return(list(x@signature))
-  }
-
-  methods <- lapply(names(x), function(class) traverse_methods(x[[class]]))
-  unlist(methods, recursive = FALSE)
-}
-
 
 bfs_shortest_path <- function(
   from = integer(),
@@ -610,7 +608,7 @@ S7_graph_dispatch_multi <- function(
   # Properties only need copying onto a constructed node when `start` holds one
   # that is not naive (e.g. a time zone) for it to inherit.
   start_informs <- any(
-    !is.naive(props(start)[setdiff(names(props(start)), "n")])
+    !is.naive(props(start)[setdiff(names(props(start)), c("n", "calendar"))])
   )
 
   resolve_tree <- function(node) {
@@ -626,6 +624,7 @@ S7_graph_dispatch_multi <- function(
       supplied[[finest]]
     } else {
       granule <- graph$classes[[node$node]](1L)
+      granule@calendar <- start@calendar
       if (start_informs) granule_inherit_props(granule, start) else granule
     }
 

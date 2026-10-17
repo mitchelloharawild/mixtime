@@ -7,13 +7,19 @@ naive_tz <- naive(NA_character_)
 mt_tz_unit <- new_class(
   "mt_tz_unit",
   parent = mt_unit,
-  properties = list(tz = new_property(S7::class_character, default = naive_tz)),
-  constructor = function(n = 1L, tz = naive_tz) {
+  properties = list(
+    tz = new_property(S7::class_character, default = quote(naive_tz))
+  ),
+  constructor = function(
+    n = 1L,
+    tz = naive_tz,
+    calendar = attr(sys.function(), "cal")$calendar
+  ) {
     # Allow for logical NA for convenience
     if (is.na(tz) && !identical(tz, naive_tz)) {
       tz <- NA_character_
     }
-    S7::new_object(mt_unit(n = n), tz = tz)
+    S7::new_object(mt_unit(n = n, calendar = calendar), tz = tz)
   },
   validator = function(self) {
     if (!is.na(self@tz)) {
@@ -61,14 +67,14 @@ method(chronon_format_attr, mt_tz_unit) <- function(x) {
 #' @name calendar_time_civil
 #' @export
 cal_time_civil <- new_calendar(
-  day = new_class("tu_day", parent = mt_tz_unit),
-  ampm = new_class("tu_ampm", parent = mt_tz_unit),
-  hour = new_class("tu_hour", parent = mt_tz_unit),
-  minute = new_class("tu_minute", parent = mt_tz_unit),
-  second = new_class("tu_second", parent = mt_tz_unit),
-  millisecond = new_class("tu_millisecond", parent = mt_tz_unit),
-  microsecond = new_class("tu_microsecond", parent = mt_tz_unit),
-  nanosecond = new_class("tu_nanosecond", parent = mt_tz_unit),
+  day = new_time_unit("tu_day", parent = mt_tz_unit),
+  ampm = new_time_unit("tu_ampm", parent = mt_tz_unit),
+  hour = new_time_unit("tu_hour", parent = mt_tz_unit),
+  minute = new_time_unit("tu_minute", parent = mt_tz_unit),
+  second = new_time_unit("tu_second", parent = mt_tz_unit),
+  millisecond = new_time_unit("tu_millisecond", parent = mt_tz_unit),
+  microsecond = new_time_unit("tu_microsecond", parent = mt_tz_unit),
+  nanosecond = new_time_unit("tu_nanosecond", parent = mt_tz_unit),
   class = "cal_time_civil"
 )
 

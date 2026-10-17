@@ -1,5 +1,7 @@
 # mixtime (development version)
 
+* Updates for compatibility with development S7.
+
 ## Breaking changes
 
 * Converting a discrete time to a chronon it doesn't nest within, deprecated

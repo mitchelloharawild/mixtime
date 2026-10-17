@@ -42,7 +42,7 @@ Imports:
     vctrs,
     rlang,
     cli,
-    S7,
+    S7 (>= 0.2.2.9000),
     vecvec (>= 1.2.0),
     tzdb,
     methods

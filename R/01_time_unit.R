@@ -29,15 +29,21 @@
 #' @param abstract Logical. If `TRUE` the class cannot be instantiated
 #'   directly; it serves only as a base for further subclassing.
 #' @param constructor A function to use as the class constructor, or `NULL`
-#'   (default) to generate one automatically. The auto-generated constructor
-#'   accepts `...` (forwarded to the parent constructor) plus one argument per
-#'   entry in `properties`, with defaults taken from each property's
-#'   `default` field.
+#'   (default) to let S7 generate one from the parent constructor and properties.
+#'   Custom constructors must accept
+#'   `calendar = attr(sys.function(), "cal")$calendar` and forward it to the
+#'   parent constructor as `calendar = calendar` to retain calendar membership.
 #' @param validator A function of one argument (`self`) that returns `NULL`
 #'   when the object is valid, or a character string describing the problem.
 #'   See [S7::new_class()] for details.
 #'
 #' @return An S7 class object, as returned by [S7::new_class()].
+#'
+#' @details
+#' Use `new_time_unit()` for units included in [new_calendar()]. Its generated
+#' constructor records the calendar on each instance, including when the parent
+#' has a custom constructor. A bare `S7::new_class()` constructor may only
+#' forward `...` to its parent and cannot infer the calling calendar.
 #'
 #' @seealso
 #' * [`mt_unit`], [`mt_tz_unit`], [`mt_loc_unit`] for the base classes to
@@ -68,14 +74,8 @@ new_time_unit <- function(
   constructor = NULL,
   validator = NULL
 ) {
-  if (is.null(constructor)) {
-    props <- syms(names(properties))
-    names(props) <- names(properties)
-    
-    constructor <- rlang::new_function(
-      args = rlang::pairlist2(... =, !!!lapply(properties, `[[`, "default")),
-      body = expr(S7::new_object(parent(!!sym("...")), !!!props))
-    )
+  if (!"calendar" %in% names(properties)) {
+    properties$calendar <- parent@properties$calendar
   }
 
   S7::new_class(

@@ -51,8 +51,8 @@
 #' @name calendar_sym454
 #' @export
 cal_sym454 <- new_calendar(
-  year = new_class("tu_sym454_year", parent = mt_tz_unit),
-  month = new_class("tu_sym454_month", parent = mt_tz_unit),
+  year = new_time_unit("tu_sym454_year", parent = mt_tz_unit),
+  month = new_time_unit("tu_sym454_month", parent = mt_tz_unit),
   week = cal_isoweek$week,
   inherit = cal_time_civil,
   class = "cal_sym454"

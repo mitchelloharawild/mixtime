@@ -13,7 +13,7 @@
 #' defines the relationships between them for calendar arithmetic.
 #'
 #' @param ... Named time unit class definitions. Each argument should be a
-#'   time unit class (typically created with `S7::new_class()`) that inherits
+#'   time unit class (typically created with [new_time_unit()]) that inherits
 #'   from `mt_unit` or `mt_tz_unit`. The names define the calendar's fields
 #'   and are used to access unit constructors (e.g., `calendar$year()`).
 #' @param inherit Optional calendar to inherit time units from. Units
@@ -125,7 +125,7 @@ time_calendar <- S7::new_generic("calendar", c("x"))
 method(time_calendar, S7::class_Date) <- function(x) cal_gregorian
 method(time_calendar, S7::class_POSIXt) <- function(x) cal_gregorian
 method(time_calendar, mt_unit) <- function(x) {
-  attr(S7::S7_class(x), "cal")$calendar
+  x@calendar
 }
 method(time_calendar, class_mixtime) <- function(x) {
   time_calendar(chronon_glb(x))
