@@ -9,10 +9,11 @@
 #' 
 #' @param x The finer time granule (e.g. `cal_gregorian$month(1L)`)
 #' @param y The coarser time granule (e.g. `cal_gregorian$year(1L)`)
+#' @param at Optional time point for context-dependent cardinality. Either a
+#' time point (e.g. a `yearmonth()` or `Date`), which is converted to the `y`
+#' chronon containing it, or the number of `y` chronons since the epoch. If `y`
+#' is omitted, the chronon of `at` is used.
 #' @param ... Additional arguments for methods.
-# #' @param at Optional time point for context-dependent cardinality, defined in
-# #' terms of `y` (e.g., if `y` is `month()`, then `at` could be a 
-# #' `yearmonth()`)
 #'
 #' @return Numeric describing how many `x` time granules fit into `y` at time `at`.
 #' 
@@ -61,7 +62,7 @@
 #' @export
 chronon_cardinality <- S7::new_generic(
   "chronon_cardinality", c("x", "y"), 
-  function(x, y = chronon_glb(at), at = NULL) {
+  function(x, y = chronon_glb(at), at = NULL, ...) {
     # Convert time points to the `y` chronon containing them
     if (is.object(at) && (inherits(at, c("Date", "POSIXt")) ||
         S7_inherits(at, mt_linear) || S7_inherits(at, class_mixtime))) {
@@ -102,7 +103,7 @@ chronon_cardinality_fixed <- S7::new_generic(
 )
 
 # #' @rdname chronon_cardinality
-method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL) {
+method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL, ...) {
   # Check if x and y are the same class
   if (S7_class_id(x) == S7_class_id(y)) {
     return(y@n/x@n)
@@ -120,7 +121,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   if (chronon_has_method(chronon_cardinality, y, x)) {
     # Matching inverse method found, use it with inversion.
     # TODO: Convert at to x units?
-    return(1 / chronon_cardinality(y, x, at = at))
+    return(1 / chronon_cardinality(y, x, at = at, ...))
   }
 
   # No specific method defined between these classes
@@ -139,7 +140,7 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL)
   for (i in seq(2, length.out = length(path)-1)) {
     ## QUESTION: Why does this not work with `generic` instead of `chronon_cardinality`? S7 bug?
 
-    result <- chronon_cardinality(path[[i]], result, at)
+    result <- chronon_cardinality(path[[i]], result, at, ...)
     if (!is.null(at)) at <- at * result
     # Class the result with the next class in the path
     result <- S7::set_props(path[[i]], n = result)

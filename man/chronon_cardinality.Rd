@@ -4,12 +4,17 @@
 \alias{chronon_cardinality}
 \title{Cardinality between time granules}
 \usage{
-chronon_cardinality(x, y = chronon_glb(at), at = NULL)
+chronon_cardinality(x, y = chronon_glb(at), at = NULL, ...)
 }
 \arguments{
 \item{x}{The finer time granule (e.g. \code{cal_gregorian$month(1L)})}
 
 \item{y}{The coarser time granule (e.g. \code{cal_gregorian$year(1L)})}
+
+\item{at}{Optional time point for context-dependent cardinality. Either a
+time point (e.g. a \code{yearmonth()} or \code{Date}), which is converted to the \code{y}
+chronon containing it, or the number of \code{y} chronons since the epoch. If \code{y}
+is omitted, the chronon of \code{at} is used.}
 
 \item{...}{Additional arguments for methods.}
 }
