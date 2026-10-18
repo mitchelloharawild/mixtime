@@ -1,5 +1,12 @@
 # mixtime (development version)
 
+## New features
+
+* New `chronon_traverse()` walks out from a chronon to coarser or finer time
+  units along the registered cardinality relationships, accumulating a value
+  (such as the cumulative fixed cardinality) and stopping where a predicate
+  is satisfied.
+
 ## Improvements
 
 * Updates for compatibility with development S7.
