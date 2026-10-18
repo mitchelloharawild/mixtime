@@ -48,3 +48,19 @@ test_that("chronon_common() is a deprecated alias for chronon_glb()", {
   )
   expect_equal(result, chronon_glb(c(yearmonth(Sys.Date()), date(Sys.Date()))))
 })
+
+test_that("chronon_glb() and chronon_lub() only keep a calendar shared by all inputs", {
+  # Both inputs are Gregorian, so the common day is Gregorian
+  expect_identical(
+    calendar_id(chronon_glb(c(yearmonth(Sys.Date()), date(Sys.Date())))@calendar),
+    "mixtime::cal_gregorian"
+  )
+
+  # The day shared by the Gregorian and ISO week calendars belongs to neither
+  expect_null(
+    chronon_glb(c(yearweek(Sys.Date()), yearmonth(Sys.Date())))@calendar
+  )
+  expect_null(
+    chronon_lub_impl(list(cal_gregorian$day(1L), cal_isoweek$hour(1L)))@calendar
+  )
+})

@@ -274,3 +274,16 @@ test_that("chronon_parts() reports a group as missing, not a wrong value, when i
     "could not be computed"
   )
 })
+
+test_that("chronon graphs have one node per time unit class", {
+  # Units inherited by several calendars (e.g. tu_day) are distinct class
+  # objects per calendar, but are a single node of the graph.
+  for (graph in list(
+    chronon_divmod_graph(),
+    chronon_cardinality_graph(),
+    chronon_cardinality_fixed_graph()
+  )) {
+    expect_false(anyDuplicated(graph$chr_classes) > 0L)
+    expect_length(graph$classes, length(graph$chr_classes))
+  }
+})

@@ -77,9 +77,19 @@ S7_signature_id <- function(sig) {
 # Compile a signature list into the flattened graph structures shared by
 # S7_graph_dispatch(), S7_graph_dispatch_multi() and S7_graph_glb(): the
 # de-duplicated node classes, their character ids, and integer edge endpoints.
+#
+# Nodes are de-duplicated by class id. A unit inherited by several calendars is
+# a separate class object per calendar (differing only in the "cal" attribute
+# used for the default `@calendar`), but S7 dispatches on the class id so its
+# relationships are the same in every calendar. The class kept for a node is
+# whichever was registered first, so its default calendar is arbitrary:
+# granules built from a node must always set `calendar` explicitly.
 compile_signature_graph <- function(signatures) {
-  classes <- vec_unique(list_unchop(signatures))
+  classes <- list_unchop(signatures)
   chr_classes <- vapply(classes, S7_class_id, character(1L))
+  is_new <- !duplicated(chr_classes)
+  classes <- classes[is_new]
+  chr_classes <- chr_classes[is_new]
 
   int_edges <- vec_match(unlist(S7_signature_id(signatures)), chr_classes)
 
@@ -646,8 +656,7 @@ S7_graph_dispatch_multi <- function(
     } else if (length(finest) && supplied_n[[finest]] <= 1) {
       supplied[[finest]]
     } else {
-      granule <- graph$classes[[node$node]](1L)
-      granule@calendar <- start@calendar
+      granule <- graph$classes[[node$node]](1L, calendar = start@calendar)
       if (start_informs) granule_inherit_props(granule, start) else granule
     }
 
