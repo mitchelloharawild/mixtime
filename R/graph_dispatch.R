@@ -145,10 +145,12 @@ chronon_cardinality_graph <- function() {
   cache <- .chronon_signature_cache
   if (!identical(cache$cardinality_n, n)) {
     cache$cardinality_n <- n
-    cache$cardinality_graph <- compile_signature_graph(unique(c(
-      sig_card,
-      sig_fixed
-    )))
+    graph <- compile_signature_graph(unique(c(sig_card, sig_fixed)))
+    # Signatures are ordered fine -> coarse, so the edges themselves give the
+    # ordering S7_graph_dispatch() needs to prefer a monotone path.
+    graph$edge_fine <- graph$edge_from
+    graph$edge_coarse <- graph$edge_to
+    cache$cardinality_graph <- graph
   }
   cache$cardinality_graph
 }
