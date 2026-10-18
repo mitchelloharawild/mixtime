@@ -7,21 +7,17 @@
 \alias{mt_tz_unit}
 \title{Base S7 class for creating new time units}
 \usage{
-mt_unit(n = 1L, calendar = attr(sys.function(), "cal")$calendar)
+mt_unit(n = 1L, calendar = attr(sys.function(), "cal"))
 
 mt_loc_unit(
   n = 1L,
   lat = naive_loc,
   lon = naive_loc,
   alt = naive(0),
-  calendar = attr(sys.function(), "cal")$calendar
+  calendar = attr(sys.function(), "cal")
 )
 
-mt_tz_unit(
-  n = 1L,
-  tz = naive_tz,
-  calendar = attr(sys.function(), "cal")$calendar
-)
+mt_tz_unit(n = 1L, tz = naive_tz, calendar = attr(sys.function(), "cal"))
 }
 \arguments{
 \item{n}{The step size of time granule. For example, \code{n = 2L} is 2 time
@@ -100,7 +96,7 @@ timezone-aware conversions.
 my_calendar <- new_calendar(
   day = new_time_unit("tu_my_day", parent = mt_unit),
   month = new_time_unit("tu_my_month", parent = mt_tz_unit),
-  class = "my_calendar"
+  name = "my_calendar"
 )
 
 # Access unit constructors from the calendar

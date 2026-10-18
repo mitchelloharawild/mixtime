@@ -18,6 +18,9 @@
   # inheritance). Arithmetic is handled by native S7 operator methods (see arithmetic.R).
   register_mt_vctrs()
 
+  # Calendars created while mixtime was built are found in its namespace
+  calendar_registry <<- new.env(parent = emptyenv())
+
   # Initialise tzdb package
   tzdb::tzdb_initialize()
 

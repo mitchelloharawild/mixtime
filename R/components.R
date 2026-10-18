@@ -205,9 +205,9 @@ component_parts <- function(x_time, specs, calendar) {
 # in the calendar of `chronon` (useful for cyclical granularities between
 # calendars, e.g. day-of-week).
 component_mask <- function(calendar, chronon = NULL) {
-  cal <- calendar
+  cal <- calendar_units(calendar)
   if (!is.null(chronon)) {
-    cal <- time_calendar(chronon)
+    cal <- calendar_units(time_calendar(chronon))
     extra <- setdiff(names(calendar), names(cal))
     cal[extra] <- calendar[extra]
   }

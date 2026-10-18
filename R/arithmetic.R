@@ -124,7 +124,7 @@ check_shift_determinate <- function(chronon, unit, n) {
     c(
       "Cannot shift {label} time points by {by}, the result is temporally indeterminate.",
       "x" = "A discrete {.field {label}} spans a period of time that doesn't shift as a whole by {by}.",
-      "!" = if (other_cal) "{by} is from {.code {class(unit_cal)[[1L]]}}, while {label} is from {.code {class(cal)[[1L]]}}.",
+      "!" = if (other_cal) "{by} is from {.code {S7::S7_class(unit_cal)@name}}, while {label} is from {.code {S7::S7_class(cal)@name}}.",
       "i" = "Shift by a duration that {label} {cli::qty(chronon@n)}nest{?s/} within or that is a multiple of {label}, or use continuous time."
     ),
     class = "mixtime_error_indeterminate",

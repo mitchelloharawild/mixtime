@@ -21,7 +21,7 @@
 #' the Gregorian calendar rules. For units that don't have a fixed relationship
 #' (e.g., months to days), the conversion requires a time context.
 #'
-#' @return An S3 list of class `c("cal_gregorian", "mt_calendar")` containing
+#' @return A calendar (an S7 [`mt_calendar`] object of class `cal_gregorian`) containing
 #'   the named time unit classes of the Gregorian calendar. Each unit is
 #'   accessible via `$` notation and calling it with a step size produces a
 #'   time granule (e.g., 1 month granule as `cal_gregorian$month(1L)`).
@@ -42,7 +42,7 @@ cal_gregorian <- new_calendar(
   quarter = new_time_unit("tu_quarter", parent = mt_tz_unit),
   month = new_time_unit("tu_month", parent = mt_tz_unit),
   inherit = cal_time_civil,
-  class = "cal_gregorian"
+  name = "cal_gregorian"
 )
 
 # Time unit labels
@@ -64,7 +64,7 @@ method(chronon_format_linear, list(cal_gregorian$quarter, class_any)) <-
 method(chronon_format_linear, list(cal_gregorian$month, class_any)) <- 
   function(x, cal) "{lin(year)} {cyc(month,year,label=TRUE,abbreviate=TRUE)}"
 method(chronon_format_linear,
-  list(cal_gregorian$day, S7::new_S3_class("cal_gregorian"))) <- 
+  list(cal_gregorian$day, S7::S7_class(cal_gregorian))) <- 
   function(x, cal) "{lin(year)}-{cyc(month,year)}-{cyc(day,month)}"
 
 method(chronon_format_cyclical, 
@@ -94,7 +94,7 @@ method(chronon_parse_linear, list(cal_gregorian$quarter, class_any)) <-
   }
 method(
   chronon_parse_linear,
-  list(cal_gregorian$day, S7::new_S3_class("cal_gregorian"))
+  list(cal_gregorian$day, S7::S7_class(cal_gregorian))
 ) <- function(x, cal) {
   parse_format(
     # e.g. "2024-03-15", "2024 Mar 15", "2024, March, 15th"

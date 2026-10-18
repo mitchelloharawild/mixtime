@@ -11,7 +11,7 @@ A civil-based calendar containing Symmetry454 time units.
 cal_sym454
 }
 \value{
-An S3 list of class \code{c("cal_sym454", "mt_calendar")} containing
+A calendar (an S7 \code{\link{mt_calendar}} object of class \code{cal_sym454}) containing
 the named time unit classes of the Symmetry454 calendar. Each unit is
 accessible via \code{$} notation and calling it with a step size produces a
 time granule (e.g., 1 week granule as \code{cal_sym454$week(1L)}).

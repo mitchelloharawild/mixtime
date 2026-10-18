@@ -11,7 +11,7 @@ A civil-based calendar containing Gregorian time units.
 cal_gregorian
 }
 \value{
-An S3 list of class \code{c("cal_gregorian", "mt_calendar")} containing
+A calendar (an S7 \code{\link{mt_calendar}} object of class \code{cal_gregorian}) containing
 the named time unit classes of the Gregorian calendar. Each unit is
 accessible via \code{$} notation and calling it with a step size produces a
 time granule (e.g., 1 month granule as \code{cal_gregorian$month(1L)}).

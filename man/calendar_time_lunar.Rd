@@ -14,7 +14,7 @@ cal_time_lunar_synodic
 cal_time_lunar
 }
 \value{
-An S3 list of class \code{c("cal_time_lunar", "mt_calendar")} containing
+A calendar (an S7 \code{\link{mt_calendar}} object of class \code{cal_time_lunar_synodic}) containing
 the named time unit classes of the synodic lunar calendar. Each unit is
 accessible via \code{$} notation and calling it with a step size produces a
 time granule (e.g., 1 synodic month granule as

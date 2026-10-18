@@ -36,7 +36,7 @@ directly; it serves only as a base for further subclassing.}
 \item{constructor}{A function to use as the class constructor, or \code{NULL}
 (default) to let S7 generate one from the parent constructor and properties.
 Custom constructors must accept
-\code{calendar = attr(sys.function(), "cal")$calendar} and forward it to the
+\code{calendar = attr(sys.function(), "cal")} and forward it to the
 parent constructor as \code{calendar = calendar} to retain calendar membership.}
 
 \item{validator}{A function of one argument (\code{self}) that returns \code{NULL}

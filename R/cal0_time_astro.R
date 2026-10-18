@@ -27,7 +27,7 @@ mt_loc_unit <- S7::new_class(
     lat = naive_loc,
     lon = naive_loc,
     alt = naive(0),
-    calendar = attr(sys.function(), "cal")$calendar
+    calendar = attr(sys.function(), "cal")
   ) {
     # Allow for logical NA for convenience
     if (is.na(lat) && !identical(lat, naive_loc)) lat <- NA_real_

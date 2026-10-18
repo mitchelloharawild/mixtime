@@ -11,7 +11,7 @@ A civil-based calendar containing ISO 8601 time units.
 cal_isoweek
 }
 \value{
-An S3 list of class \code{c("cal_isoweek", "mt_calendar")} containing
+A calendar (an S7 \code{\link{mt_calendar}} object of class \code{cal_isoweek}) containing
 the named time unit classes of the ISO 8601 week calendar. Each unit is
 accessible via \code{$} notation and calling it with a step size produces a
 time granule (e.g., 1 week granule as \code{cal_isoweek$week(1L)}).

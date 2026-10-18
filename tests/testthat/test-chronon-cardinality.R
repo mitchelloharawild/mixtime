@@ -127,7 +127,8 @@ test_that("cardinality methods receive the calendar through intermediate units",
   calendar <- new_calendar(
     fine = new_time_unit("tu_calendar_fine"),
     middle = new_time_unit("tu_calendar_middle"),
-    coarse = new_time_unit("tu_calendar_coarse")
+    coarse = new_time_unit("tu_calendar_coarse"),
+    name = "cal_cardinality"
   )
   seen <- list()
   cardinality <- function(x, y) {
@@ -142,7 +143,7 @@ test_that("cardinality methods receive the calendar through intermediate units",
     chronon_cardinality_fixed,
     list(calendar$middle, calendar$coarse)
   ) <- cardinality
-  inherited <- new_calendar(inherit = calendar, class = "cal_inherited")
+  inherited <- new_calendar(inherit = calendar, name = "cal_inherited")
 
   expect_equal(
     chronon_cardinality_fixed(inherited$fine(n = 1L), inherited$coarse(n = 1L)),

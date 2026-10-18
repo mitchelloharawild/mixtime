@@ -54,7 +54,7 @@
 #' polar night (civil days where sunrise does not occur) are not currently 
 #' supported, it is recommended to use an alternative reference location.
 #' 
-#' @return An S3 list of class `c("cal_time_solar", "mt_calendar")` containing
+#' @return A calendar (an S7 [`mt_calendar`] object of class `cal_time_solar_transit`) containing
 #'   the named time unit classes of the solar transit calendar. Each unit is
 #'   accessible via `$` notation and calling it with a step size and location
 #'   produces a time granule (e.g., 1 solar day granule as
@@ -79,7 +79,8 @@ cal_time_solar_transit <- new_calendar(
   degree = new_time_unit("tu_solar_degree", parent = mt_loc_unit),
   arcminute = new_time_unit("tu_solar_arcminute", parent = mt_loc_unit),
   arcsecond = new_time_unit("tu_solar_arcsecond", parent = mt_loc_unit),
-  illumination = new_time_unit("tu_solar_lum", parent = mt_loc_unit)
+  illumination = new_time_unit("tu_solar_lum", parent = mt_loc_unit),
+  name = "cal_time_solar_transit"
 )
 
 #' @export

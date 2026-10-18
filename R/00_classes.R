@@ -1,4 +1,50 @@
-class_mt_calendar <- S7::new_S3_class("mt_calendar")
+#' Base S7 class for calendars
+#'
+#' `mt_calendar` is the parent class of every calendar. A calendar is a named
+#' list of time unit classes, and each calendar created with [new_calendar()]
+#' is the single instance of its own subclass of `mt_calendar` (e.g.
+#' `cal_isoweek` is an instance of class `cal_isoweek`). This allows methods to
+#' dispatch on the calendar, such as formatting a shared unit differently in
+#' each calendar that contains it.
+#'
+#' Time units record their calendar by its identifier (`"<package>::<name>"`),
+#' which is resolved back to the calendar object when the unit's `@calendar`
+#' is accessed. This keeps time objects small when serialised, and their
+#' calendar is restored from the current definition when read back in.
+#'
+#' @param .data A named list of time unit classes.
+#'
+#' @return An S7 class object, or a calendar when called as a constructor.
+#'   End users should use [new_calendar()] to create calendars.
+#'
+#' @seealso [new_calendar()] for creating calendars, [time_calendar()] for
+#'   obtaining the calendar of a time object.
+#'
+#' @export
+mt_calendar <- S7::new_class(
+  "mt_calendar",
+  parent = S7::class_list,
+  validator = function(self) {
+    units <- S7::S7_data(self)
+    if (length(units) > 0L && (is.null(names(units)) || any(names(units) == ""))) {
+      return("must contain named time units")
+    }
+    if (!all(vapply(units, is_unit_class, logical(1L)))) {
+      return("must contain only time unit classes")
+    }
+  }
+)
+
+# Is `x` a time unit class (an S7 class inheriting from mt_unit)?
+is_unit_class <- function(x) {
+  while (inherits(x, "S7_class")) {
+    if (identical(x@name, "mt_unit") && identical(x@package, "mixtime")) {
+      return(TRUE)
+    }
+    x <- x@parent
+  }
+  FALSE
+}
 
 #' Base S7 class for creating new time units
 #' 
@@ -64,7 +110,7 @@ class_mt_calendar <- S7::new_S3_class("mt_calendar")
 #' my_calendar <- new_calendar(
 #'   day = new_time_unit("tu_my_day", parent = mt_unit),
 #'   month = new_time_unit("tu_my_month", parent = mt_tz_unit),
-#'   class = "my_calendar"
+#'   name = "my_calendar"
 #' )
 #' 
 #' # Access unit constructors from the calendar
@@ -81,8 +127,18 @@ mt_unit <- S7::new_class(
       default = 1L
     ),
     calendar = S7::new_property(
-      class = NULL | class_mt_calendar,
-      default = quote(attr(sys.function(), "cal")$calendar)
+      # The S3 form of mt_calendar avoids embedding its class definition in
+      # every time unit class (the setter validates the calendar).
+      class = NULL | S7::new_S3_class("mixtime::mt_calendar"),
+      # The calendar is stored by its identifier, and resolved on access.
+      getter = function(self) {
+        calendar_resolve(attr(self, "calendar", exact = TRUE))
+      },
+      setter = function(self, value) {
+        attr(self, "calendar") <- calendar_id(value)
+        self
+      },
+      default = quote(attr(sys.function(), "cal"))
     )
   ),
   # validator = function(self) {

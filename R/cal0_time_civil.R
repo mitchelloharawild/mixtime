@@ -13,7 +13,7 @@ mt_tz_unit <- new_class(
   constructor = function(
     n = 1L,
     tz = naive_tz,
-    calendar = attr(sys.function(), "cal")$calendar
+    calendar = attr(sys.function(), "cal")
   ) {
     # Allow for logical NA for convenience
     if (is.na(tz) && !identical(tz, naive_tz)) {
@@ -75,7 +75,7 @@ cal_time_civil <- new_calendar(
   millisecond = new_time_unit("tu_millisecond", parent = mt_tz_unit),
   microsecond = new_time_unit("tu_microsecond", parent = mt_tz_unit),
   nanosecond = new_time_unit("tu_nanosecond", parent = mt_tz_unit),
-  class = "cal_time_civil"
+  name = "cal_time_civil"
 )
 
 # Time unit labels

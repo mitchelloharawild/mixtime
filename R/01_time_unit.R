@@ -31,7 +31,7 @@
 #' @param constructor A function to use as the class constructor, or `NULL`
 #'   (default) to let S7 generate one from the parent constructor and properties.
 #'   Custom constructors must accept
-#'   `calendar = attr(sys.function(), "cal")$calendar` and forward it to the
+#'   `calendar = attr(sys.function(), "cal")` and forward it to the
 #'   parent constructor as `calendar = calendar` to retain calendar membership.
 #' @param validator A function of one argument (`self`) that returns `NULL`
 #'   when the object is valid, or a character string describing the problem.
@@ -74,9 +74,13 @@ new_time_unit <- function(
   constructor = NULL,
   validator = NULL
 ) {
-  if (!"calendar" %in% names(properties)) {
-    properties$calendar <- parent@properties$calendar
+  # The calendar is stored by identifier, so only a new default is retained
+  # from a supplied `calendar` property.
+  calendar <- parent@properties$calendar
+  if (!is.null(properties$calendar)) {
+    calendar$default <- properties$calendar$default
   }
+  properties$calendar <- calendar
 
   S7::new_class(
     name = name,

@@ -14,7 +14,7 @@ cal_time_solar_transit
 cal_time_solar
 }
 \value{
-An S3 list of class \code{c("cal_time_solar", "mt_calendar")} containing
+A calendar (an S7 \code{\link{mt_calendar}} object of class \code{cal_time_solar_transit}) containing
 the named time unit classes of the solar transit calendar. Each unit is
 accessible via \code{$} notation and calling it with a step size and location
 produces a time granule (e.g., 1 solar day granule as

@@ -4,7 +4,7 @@
 \alias{new_calendar}
 \title{Create a new calendar}
 \usage{
-new_calendar(..., inherit = NULL, class = character())
+new_calendar(..., name, inherit = NULL, class = lifecycle::deprecated())
 }
 \arguments{
 \item{...}{Named time unit class definitions. Each argument should be a
@@ -12,14 +12,21 @@ time unit class (typically created with \code{\link[=new_time_unit]{new_time_uni
 from \code{mt_unit} or \code{mt_tz_unit}. The names define the calendar's fields
 and are used to access unit constructors (e.g., \code{calendar$year()}).}
 
+\item{name}{A string naming the calendar (e.g. \code{"cal_gregorian"}). Together
+with the package that defines it, this identifies the calendar of time
+units. Calendars defined in a package should be bound in that package's
+namespace under this name, so that they can be found when time objects
+are read back in from a file.}
+
 \item{inherit}{Optional calendar to inherit time units from. Units
 defined in \code{...} will override inherited units with the same name.}
 
-\item{class}{Character vector of additional classes for the calendar object.}
+\item{class}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Use \code{name} instead.}
 }
 \value{
-A calendar object of class \code{c(class, "mt_calendar")}, consisting of a
-named list containing the specified time unit classes.
+A calendar object, the single instance of a new S7 class \code{name}
+which inherits from \code{\link{mt_calendar}}. A calendar is a named list containing
+the specified time unit classes.
 }
 \description{
 Define a new calendar as a collection of time units. Calendars are the
@@ -39,10 +46,10 @@ defines the relationships between them for calendar arithmetic.
 # Create a simple calendar with year and month units
 # (inheriting from civil time units for day, hour, minute, second, ...)
 cal_simple <- new_calendar(
-  year = new_time_unit("tu_year", parent = mt_tz_unit),
-  month = new_time_unit("tu_month", parent = mt_tz_unit),
+  year = new_time_unit("tu_simple_year", parent = mt_tz_unit),
+  month = new_time_unit("tu_simple_month", parent = mt_tz_unit),
   inherit = cal_time_civil,
-  class = "cal_simple"
+  name = "cal_simple"
 )
 
 # Create time granules from the calendar

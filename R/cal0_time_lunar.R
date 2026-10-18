@@ -15,7 +15,7 @@
 #' - `month()`: Synodic month unit
 #' - `phase()`: Synodic phase unit
 #' 
-#' @return An S3 list of class `c("cal_time_lunar", "mt_calendar")` containing
+#' @return A calendar (an S7 [`mt_calendar`] object of class `cal_time_lunar_synodic`) containing
 #'   the named time unit classes of the synodic lunar calendar. Each unit is
 #'   accessible via `$` notation and calling it with a step size produces a
 #'   time granule (e.g., 1 synodic month granule as
@@ -33,7 +33,8 @@
 #' @export
 cal_time_lunar_synodic <- new_calendar(
   month = new_time_unit("tu_lunar_month", parent = mt_loc_unit),
-  phase = new_time_unit("tu_lunar_phase", parent = mt_loc_unit)
+  phase = new_time_unit("tu_lunar_phase", parent = mt_loc_unit),
+  name = "cal_time_lunar_synodic"
 )
 
 #' @export
