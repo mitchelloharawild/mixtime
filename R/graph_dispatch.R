@@ -170,7 +170,9 @@ chronon_cardinality_fixed_graph <- function() {
   cache$cardinality_fixed_graph
 }
 
-S7_graph_dispatch <- function(graph, start, end) {
+# With `monotone = TRUE`, returns NULL instead of falling back to the
+# unrestricted search when no monotone path exists.
+S7_graph_dispatch <- function(graph, start, end, monotone = FALSE) {
   int_node_start <- vec_match(S7_class_id(start), graph$chr_classes)
   int_node_end <- vec_match(S7_class_id(end), graph$chr_classes)
   if (is.na(int_node_start) || is.na(int_node_end)) {
@@ -213,6 +215,10 @@ S7_graph_dispatch <- function(graph, start, end) {
         directed = TRUE
       )
     }
+  }
+
+  if (monotone && length(int_path) == 0L) {
+    return(NULL)
   }
 
   # Conversions between units that no monotone path connects (a week is neither

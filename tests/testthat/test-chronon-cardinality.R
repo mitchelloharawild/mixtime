@@ -163,3 +163,41 @@ test_that("chronon_cardinality() accepts a time point `at` across a multi-step p
     366 * 48
   )
 })
+
+test_that("chronon_cardinality() traverses an irregular path with whole units", {
+  # quarter -> month -> day, not quarter -> year -> day (a quarter of a year)
+  expect_equal(
+    chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$quarter(1L), at = date("2024-02-10")),
+    91
+  )
+  expect_equal(
+    chronon_cardinality(cal_gregorian$day(1L), cal_gregorian$quarter(1L), at = yearquarter("2024 Q2")),
+    91
+  )
+  expect_equal(
+    chronon_cardinality(
+      cal_gregorian$hour(1L), cal_gregorian$quarter(1L),
+      at = datetime("2024-02-10 00:00:00", tz = "UTC")
+    ),
+    91 * 24
+  )
+})
+
+test_that("chronon_cardinality() keeps `at` aligned along a multi-step path", {
+  # Symmetry454 year -> month -> week, with leap weeks in 2021 and 2026
+  expect_equal(
+    chronon_cardinality(cal_sym454$week(1L), cal_sym454$year(1L), at = 50:56),
+    c(52, 53, 52, 52, 52, 52, 53)
+  )
+})
+
+test_that("chronon_cardinality() errors for units that don't nest", {
+  expect_error(
+    chronon_cardinality(cal_isoweek$week(1L), cal_gregorian$quarter(1L), at = date("2024-02-10")),
+    "Neither unit is finer than the other"
+  )
+  expect_error(
+    chronon_cardinality(cal_isoweek$week(1L), cal_gregorian$month(1L), at = date("2024-02-10")),
+    "Neither unit is finer than the other"
+  )
+})

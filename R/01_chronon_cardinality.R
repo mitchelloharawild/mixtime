@@ -126,7 +126,14 @@ method(chronon_cardinality, list(mt_unit, mt_unit)) <- function(x, y, at = NULL,
 
   # No specific method defined between these classes
   # Attempt graph traversal to find a sequence of methods
-  path <- S7_graph_dispatch(chronon_cardinality_graph(), y, x)
+  # Cardinality is only meaningful when one unit nests within the other, so
+  # only monotone paths are used. Units that are neither finer nor coarser
+  # than each other (e.g. weeks and months) are only connected via a common
+  # finer unit, so their ratio isn't a count.
+  path <- S7_graph_dispatch(chronon_cardinality_graph(), y, x, monotone = TRUE)
+  if (is.null(path)) {
+    check_cardinality_comparable(x, y)
+  }
 
   path[[1]] <- y
   path[[length(path)]] <- x
@@ -174,6 +181,22 @@ method(chronon_cardinality_fixed, list(mt_unit, mt_unit)) <- function(x, y) {
   }
   result
 }
+
+# Errors for units that neither nest within each other, distinguishing these
+# from units that aren't connected by any registered methods.
+check_cardinality_comparable <- function(x, y) {
+  # Unconnected units get S7_graph_dispatch()'s more specific error.
+  S7_graph_dispatch(chronon_cardinality_graph(), y, x)
+  cli::cli_abort(
+    c(
+      "Cannot compute the number of {time_unit_plural(x)} in {time_unit_plural(y)}.",
+      "x" = "Neither unit is finer than the other, so they don't nest within each other.",
+      "i" = "Use a common finer unit instead, such as {time_unit_plural(chronon_glb_impl(list(x, y)))}."
+    ),
+    call = NULL
+  )
+}
+
 # Irregular cardinalities depend on where in time they're measured. Without a
 # time point `at` (e.g. when converting a duration, which has no position)
 # there is nothing to measure against, so error rather than guess.
