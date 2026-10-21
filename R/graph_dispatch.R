@@ -38,7 +38,22 @@
 # }
 
 method_signatures <- function(generic) {
-  lapply(S7::S7_methods(generic)$signature, unclass)
+  # S7_methods() is only available in S7 > 0.2.2; fall back to traversing the
+  # generic's method table for older versions.
+  if ("S7_methods" %in% getNamespaceExports("S7")) {
+    S7_methods <- getExportedValue("S7", "S7_methods")
+    return(lapply(S7_methods(generic)$signature, unclass))
+  }
+  traverse_methods(generic@methods)
+}
+
+traverse_methods <- function(x) {
+  if (!is.environment(x)) {
+    return(list(x@signature))
+  }
+
+  methods <- lapply(names(x), function(class) traverse_methods(x[[class]]))
+  unlist(methods, recursive = FALSE)
 }
 
 chronon_has_method <- function(generic, x, y) {

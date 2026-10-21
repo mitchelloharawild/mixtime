@@ -6,13 +6,15 @@ test_that("calendars sharing a unit retain one S7 class and separate calendars",
 
   x <- first$day(n = 2L, tz = "UTC")
   y <- second$day(n = 3L, tz = "UTC")
-  expect_identical(S7::S7_class(x), tu_shared_day)
-  expect_identical(S7::S7_class(y), tu_shared_day)
   expect_identical(time_unit_abbr(y), "d")
   expect_identical(time_calendar(x), first)
   expect_identical(time_calendar(y), second)
   expect_identical(x@n, 2L)
   expect_identical(y@tz, "UTC")
+
+  skip_if_old_S7()
+  expect_identical(S7::S7_class(x), tu_shared_day)
+  expect_identical(S7::S7_class(y), tu_shared_day)
 })
 
 test_that("ordinary calendar constructors retain their calendar", {
@@ -20,6 +22,8 @@ test_that("ordinary calendar constructors retain their calendar", {
   for (calendar in calendars) {
     expect_identical(time_calendar(calendar$day(n = 1L)), calendar)
   }
+
+  skip_if_old_S7()
   expect_identical(
     S7::S7_class(cal_gregorian$day(n = 1L)),
     S7::S7_class(cal_isoweek$day(n = 1L))
@@ -69,6 +73,8 @@ test_that("unit constructors retain property defaults and overrides", {
   calendar <- new_calendar(day = tu_default_day)
   x <- calendar$day(tz = "UTC")
   expect_identical(x@fiscal, FALSE)
+
+  skip_if_old_S7()
   expect_identical(x@n, 2L)
   expect_identical(time_calendar(x), cal_isoweek)
 })
