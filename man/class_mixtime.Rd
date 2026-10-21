@@ -3,9 +3,6 @@
 \name{class_mixtime}
 \alias{class_mixtime}
 \title{Base S7 class for mixtime vector objects}
-\usage{
-class_mixtime(...)
-}
 \arguments{
 \item{...}{Passed to the \code{\link[vecvec:class_vecvec]{vecvec::class_vecvec()}} constructor:
 \itemize{

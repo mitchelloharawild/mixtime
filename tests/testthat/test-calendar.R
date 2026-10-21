@@ -173,7 +173,9 @@ test_that("calendars are restored from their identifier when unserialised", {
   expect_identical(time_calendar(restored), cal_isoweek)
   expect_identical(format(restored), format(x))
 
-  # Every granule refers to the calendar rather than containing it
+  # Every granule refers to the calendar rather than containing it (older S7
+  # also embeds the unit's class in every granule)
+  skip_if_old_S7()
   granules <- lapply(1:20, function(i) cal_gregorian$day(i))
   size <- function(x) length(serialize(x, NULL))
   expect_lt(size(granules) - size(granules[1L]), 19L * 1000L)

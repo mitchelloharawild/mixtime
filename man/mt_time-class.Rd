@@ -7,13 +7,6 @@
 \alias{mt_duration}
 \alias{mt_cyclical}
 \title{Time vector classes}
-\usage{
-mt_linear(..., chronon = mt_unit(1L))
-
-mt_duration(..., chronon = mt_unit(1L))
-
-mt_cyclical(..., chronon = mt_unit(1L), cycle = mt_unit(1L))
-}
 \arguments{
 \item{...}{Passed to the parent constructor, typically \code{.data}: a numeric
 vector of chronon counts (integer or double).}

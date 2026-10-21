@@ -215,14 +215,17 @@ mt_time <- S7::new_class(
 )
 
 #' @rdname mt_time-class
+#' @usage NULL
 #' @export
 mt_linear <- S7::new_class("mt_linear", parent = mt_time)
 
 #' @rdname mt_time-class
+#' @usage NULL
 #' @export
 mt_duration <- S7::new_class("mt_duration", parent = mt_time)
 
 #' @rdname mt_time-class
+#' @usage NULL
 #' @export
 mt_cyclical <- S7::new_class(
   "mt_cyclical",
@@ -262,6 +265,7 @@ mt_cyclical <- S7::new_class(
 #' the low-level constructor function of this S7 class.
 #'
 #' @importFrom vecvec class_vecvec
+#' @usage NULL
 #' @export
 class_mixtime <- S7::new_class(
   "mixtime",
