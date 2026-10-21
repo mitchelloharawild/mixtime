@@ -40,8 +40,16 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
 <div class="section level3">
+<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
+<ul><li>Updates for compatibility with development S7.</li>
+<li>Better support for time-classed <code>at</code> in <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code>, allowing for the target <code>y</code> granule obtained from <code>at</code>, and conversion of <code>at</code> to <code>y</code> granule if both are specified.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>Converting a discrete time to a chronon it doesn’t nest within, deprecated in 0.4.0, is now an error, since the result is temporally indeterminate. For example, <code>day_of_week(yearmonth(x))</code> (which day of the month?) and <code>yearmonth(yearweek(x))</code> (a week can straddle two months) previously warned and used the start of each time point. Continuous time points are instants and convert as before.</li>
+<ul><li><p>Calendars are now S7 objects. Each calendar is the single instance of its own subclass of the new <code>mt_calendar</code> class, so methods dispatch on the calendar with <code>S7::S7_class(cal_gregorian)</code> rather than <code>S7::new_S3_class("cal_gregorian")</code>.</p></li>
+<li><p><code><a href="../reference/new_calendar.html">new_calendar()</a></code> requires a <code>name</code>, which identifies the calendar. The <code>class</code> argument is deprecated in favour of <code>name</code>.</p></li>
+<li><p>Time units now record their calendar by its identifier (<code>"&lt;package&gt;::&lt;name&gt;"</code>) rather than a copy of the calendar, which is resolved when <code>@calendar</code> is accessed. This greatly reduces the size of serialised time objects, and restores their calendar from its current definition when read back in. Custom unit constructors should now default to <code>calendar = attr(sys.function(), "cal")</code>.</p></li>
+<li><p>Converting a discrete time to a chronon it doesn’t nest within, deprecated in 0.4.0, is now an error, since the result is temporally indeterminate. For example, <code>day_of_week(yearmonth(x))</code> (which day of the month?) and <code>yearmonth(yearweek(x))</code> (a week can straddle two months) previously warned and used the start of each time point. Continuous time points are instants and convert as before.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

@@ -64,7 +64,7 @@ units. <code>cal_time_solar</code> is an alias for <code>cal_time_solar_transit<
     </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An S3 list of class <code>c("cal_time_solar", "mt_calendar")</code> containing
+    <p>A calendar (an S7 <code><a href="mt_calendar.html">mt_calendar</a></code> object of class <code>cal_time_solar_transit</code>) containing
 the named time unit classes of the solar transit calendar. Each unit is
 accessible via <code>$</code> notation and calling it with a step size and location
 produces a time granule (e.g., 1 solar day granule as
@@ -115,7 +115,7 @@ supported, it is recommended to use an alternative reference location.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Find the current solar time in Melbourne</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="linear_time_helpers.html">datetime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_time_solar</span>, lat <span class="op">=</span> <span class="op">-</span><span class="fl">37.8136</span>, lon <span class="op">=</span> <span class="fl">144.9631</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;mixtime[1]&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-10-13 20:51:13 [37.81S 144.96E]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2026-10-21 16:02:17 [37.81S 144.96E]</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

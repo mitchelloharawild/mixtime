@@ -101,19 +101,21 @@ for developers.
 new_time_unit("tu_symmetry454_year",  parent = mt_tz_unit)
 #> <tu_symmetry454_year> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(...) {...}
+#> @ constructor: function(n, tz, calendar) {...}
 #> @ validator  : <NULL>
 #> @ properties :
-#>  $ n : <integer> or <double>
-#>  $ tz: <character>
+#>  $ n       : <integer> or <double>             
+#>  $ calendar: <NULL> or S3<mixtime::mt_calendar>
+#>  $ tz      : <character>
 new_time_unit("tu_symmetry454_month", parent = mt_tz_unit)
 #> <tu_symmetry454_month> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(...) {...}
+#> @ constructor: function(n, tz, calendar) {...}
 #> @ validator  : <NULL>
 #> @ properties :
-#>  $ n : <integer> or <double>
-#>  $ tz: <character>
+#>  $ n       : <integer> or <double>             
+#>  $ calendar: <NULL> or S3<mixtime::mt_calendar>
+#>  $ tz      : <character>
 ```
 
 These time units are typically exported within a calendar object (shown
@@ -142,7 +144,7 @@ cal_symmetry454 <- new_calendar(
   week  = cal_isoweek$week,
   # Inherit civil-time units (day, hour, minute, second, ...)
   inherit = cal_time_civil,
-  class = "cal_symmetry454"
+  name = "cal_symmetry454"
 )
 
 cal_symmetry454
@@ -161,6 +163,14 @@ cal_symmetry454
 #>   - nanosecond
 ```
 
+The `name` identifies the calendar. Time units created from a calendar
+record its name (along with the package that defines it), rather than a
+copy of the calendar itself, which keeps time objects small and allows
+their calendar to be found again after being saved and restored.
+Calendars defined in a package should be assigned to a variable of the
+same name in the package namespace. Each calendar is an S7 object of its
+own class, so methods can also be dispatched on the calendar.
+
 In this case, the time unit for weeks exactly matches the ISO week unit,
 so we can reuse the existing `cal_isoweek$week` unit rather than
 defining a new one. This is because our implementation below of the
@@ -176,12 +186,36 @@ Unit constructors are now accessible via `$`:
 
 cal_symmetry454$year(1L)
 #> <tu_symmetry454_year>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#>  @ n       : int 1
+#>  @ calendar: <cal_symmetry454> List of 11
+#>  .. $ year       : <tu_symmetry454_year/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ month      : <tu_symmetry454_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ week       : <mixtime::tu_week/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ day        : <mixtime::tu_day/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ ampm       : <mixtime::tu_ampm/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ hour       : <mixtime::tu_hour/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ minute     : <mixtime::tu_minute/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ second     : <mixtime::tu_second/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ millisecond: <mixtime::tu_millisecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ microsecond: <mixtime::tu_microsecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ nanosecond : <mixtime::tu_nanosecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  @ tz      : 'mt_naive' chr NA
 cal_symmetry454$month(1L, tz = "UTC")
 #> <tu_symmetry454_month>
-#>  @ n : int 1
-#>  @ tz: chr "UTC"
+#>  @ n       : int 1
+#>  @ calendar: <cal_symmetry454> List of 11
+#>  .. $ year       : <tu_symmetry454_year/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ month      : <tu_symmetry454_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ week       : <mixtime::tu_week/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ day        : <mixtime::tu_day/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ ampm       : <mixtime::tu_ampm/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ hour       : <mixtime::tu_hour/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ minute     : <mixtime::tu_minute/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ second     : <mixtime::tu_second/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ millisecond: <mixtime::tu_millisecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ microsecond: <mixtime::tu_microsecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  .. $ nanosecond : <mixtime::tu_nanosecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  @ tz      : chr "UTC"
 ```
 
 These time units can be used as chronons/cycles within
@@ -913,13 +947,13 @@ method(
 # Display weeks as week in month in year (e.g. "1970-01-W1", "1970-01-W2", ...)
 method(
   chronon_format_linear,
-  list(cal_symmetry454$week, S7::new_S3_class("cal_symmetry454"))
+  list(cal_symmetry454$week, S7::S7_class(cal_symmetry454))
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}"
 
 # Format days as day in week in month in year (e.g. "1970-Jan-W1-Mon", "1970-Jan-W1-Tue", ...)
 method(
   chronon_format_linear,
-  list(cal_symmetry454$day, S7::new_S3_class("cal_symmetry454"))
+  list(cal_symmetry454$day, S7::S7_class(cal_symmetry454))
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}-{cyc(day(1L), week(1L), label=TRUE, abbreviate=TRUE)}"
 ```
 

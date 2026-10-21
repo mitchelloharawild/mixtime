@@ -20,10 +20,12 @@ A location-based calendar containing transit-based solar time units.
 
 ## Value
 
-An S3 list of class `c("cal_time_solar", "mt_calendar")` containing the
-named time unit classes of the solar transit calendar. Each unit is
-accessible via `$` notation and calling it with a step size and location
-produces a time granule (e.g., 1 solar day granule as
+A calendar (an S7
+[`mt_calendar`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_calendar.md)
+object of class `cal_time_solar_transit`) containing the named time unit
+classes of the solar transit calendar. Each unit is accessible via `$`
+notation and calling it with a step size and location produces a time
+granule (e.g., 1 solar day granule as
 `cal_time_solar$day(1L, lat = 0, lon = 0)`). Because solar day
 boundaries depend on the observer's position, each unit constructor
 requires `lat` and `lon` arguments.
@@ -101,5 +103,5 @@ alternative reference location.
 # Find the current solar time in Melbourne
 datetime(Sys.time(), calendar = cal_time_solar, lat = -37.8136, lon = 144.9631)
 #> <mixtime[1]>
-#> [1] 2026-10-13 20:51:13 [37.81S 144.96E]
+#> [1] 2026-10-21 16:02:17 [37.81S 144.96E]
 ```

@@ -2,16 +2,23 @@
 
 This class is the primitive class for time units, and should be extended
 from when creating new time units. A new class is typically created with
-S7 using: `S7::new_class("tu_***", parent = mt_tz_unit)`
+[`new_time_unit()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time_unit.md)
+using: `new_time_unit("tu_***", parent = mt_tz_unit)`
 
 ## Usage
 
 ``` r
-mt_unit(n = 1L)
+mt_unit(n = 1L, calendar = attr(sys.function(), "cal"))
 
-mt_loc_unit(n = 1L, lat = naive_loc, lon = naive_loc, alt = naive(0))
+mt_loc_unit(
+  n = 1L,
+  lat = naive_loc,
+  lon = naive_loc,
+  alt = naive(0),
+  calendar = attr(sys.function(), "cal")
+)
 
-mt_tz_unit(n = 1L, tz = naive_tz)
+mt_tz_unit(n = 1L, tz = naive_tz, calendar = attr(sys.function(), "cal"))
 ```
 
 ## Arguments
@@ -20,6 +27,11 @@ mt_tz_unit(n = 1L, tz = naive_tz)
 
   The step size of time granule. For example, `n = 2L` is 2 time units,
   and `cal_isoweek$week(2L)` would represent 2 weeks (a fortnight).
+
+- calendar:
+
+  The calendar containing the unit. Calendar constructors supply this
+  automatically.
 
 - lat:
 
@@ -107,17 +119,23 @@ for creating calendars from time units
 
 # Use these units to create a calendar
 my_calendar <- new_calendar(
-  day = S7::new_class("tu_my_day", parent = mt_unit),
-  month = S7::new_class("tu_my_month", parent = mt_tz_unit),
-  class = "my_calendar"
+  day = new_time_unit("tu_my_day", parent = mt_unit),
+  month = new_time_unit("tu_my_month", parent = mt_tz_unit),
+  name = "my_calendar"
 )
 
 # Access unit constructors from the calendar
 my_calendar$day(1L)
 #> <tu_my_day>
-#>  @ n: int 1
+#>  @ n       : int 1
+#>  @ calendar: <my_calendar> List of 2
+#>  .. $ day  : <tu_my_day/mixtime::mt_unit/S7_object> constructor
+#>  .. $ month: <tu_my_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
 my_calendar$month(3L, tz = "America/New_York")
 #> <tu_my_month>
-#>  @ n : int 3
-#>  @ tz: chr "America/New_York"
+#>  @ n       : int 3
+#>  @ calendar: <my_calendar> List of 2
+#>  .. $ day  : <tu_my_day/mixtime::mt_unit/S7_object> constructor
+#>  .. $ month: <tu_my_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  @ tz      : chr "America/New_York"
 ```

@@ -17,10 +17,12 @@ A civil-based calendar containing Gregorian time units.
 
 ## Value
 
-An S3 list of class `c("cal_gregorian", "mt_calendar")` containing the
-named time unit classes of the Gregorian calendar. Each unit is
-accessible via `$` notation and calling it with a step size produces a
-time granule (e.g., 1 month granule as `cal_gregorian$month(1L)`).
+A calendar (an S7
+[`mt_calendar`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_calendar.md)
+object of class `cal_gregorian`) containing the named time unit classes
+of the Gregorian calendar. Each unit is accessible via `$` notation and
+calling it with a step size produces a time granule (e.g., 1 month
+granule as `cal_gregorian$month(1L)`).
 
 ## Details
 
@@ -63,5 +65,5 @@ linear_time(
   chronon = hour(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-10-13 10h
+#> [1] 2026-10-21 06h
 ```

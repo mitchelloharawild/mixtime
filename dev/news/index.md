@@ -2,7 +2,31 @@
 
 ## mixtime (development version)
 
+### Improvements
+
+- Updates for compatibility with development S7.
+- Better support for time-classed `at` in
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md),
+  allowing for the target `y` granule obtained from `at`, and conversion
+  of `at` to `y` granule if both are specified.
+
 ### Breaking changes
+
+- Calendars are now S7 objects. Each calendar is the single instance of
+  its own subclass of the new `mt_calendar` class, so methods dispatch
+  on the calendar with `S7::S7_class(cal_gregorian)` rather than
+  `S7::new_S3_class("cal_gregorian")`.
+
+- [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.md)
+  requires a `name`, which identifies the calendar. The `class` argument
+  is deprecated in favour of `name`.
+
+- Time units now record their calendar by its identifier
+  (`"<package>::<name>"`) rather than a copy of the calendar, which is
+  resolved when `@calendar` is accessed. This greatly reduces the size
+  of serialised time objects, and restores their calendar from its
+  current definition when read back in. Custom unit constructors should
+  now default to `calendar = attr(sys.function(), "cal")`.
 
 - Converting a discrete time to a chronon it doesn’t nest within,
   deprecated in 0.4.0, is now an error, since the result is temporally

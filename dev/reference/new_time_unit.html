@@ -101,10 +101,10 @@ directly; it serves only as a base for further subclassing.</p></dd>
 
 <dt id="arg-constructor">constructor<a class="anchor" aria-label="anchor" href="#arg-constructor"></a></dt>
 <dd><p>A function to use as the class constructor, or <code>NULL</code>
-(default) to generate one automatically. The auto-generated constructor
-accepts <code>...</code> (forwarded to the parent constructor) plus one argument per
-entry in <code>properties</code>, with defaults taken from each property's
-<code>default</code> field.</p></dd>
+(default) to let S7 generate one from the parent constructor and properties.
+Custom constructors must accept
+<code>calendar = attr(sys.function(), "cal")</code> and forward it to the
+parent constructor as <code>calendar = calendar</code> to retain calendar membership.</p></dd>
 
 
 <dt id="arg-validator">validator<a class="anchor" aria-label="anchor" href="#arg-validator"></a></dt>
@@ -125,7 +125,11 @@ context; e.g., Gregorian year or ISO week).</p></li>
 needs <code>tz</code> to resolve wall-clock ambiguity).</p></li>
 <li><p><code><a href="mt_unit.html">mt_loc_unit</a></code> — astronomical time with a geographic location (e.g., a
 solar day tied to observer longitude/latitude).</p></li>
-</ul></div>
+</ul><p>Use <code>new_time_unit()</code> for units included in <code><a href="new_calendar.html">new_calendar()</a></code>. Its generated
+constructor records the calendar on each instance, including when the parent
+has a custom constructor. A bare <code><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">S7::new_class()</a></code> constructor may only
+forward <code>...</code> to its parent and cannot infer the calling calendar.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index">

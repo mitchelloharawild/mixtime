@@ -92,7 +92,7 @@ named phase:
 fmt_date  <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
 fmt_lunar <- "{with(cal_time_lunar, cyc(phase, month, label = TRUE, type = \"emoji\"))}"
 format(date(Sys.Date()), format = paste(fmt_date, fmt_lunar))
-#> [1] "2026-10-13 🌑"
+#> [1] "2026-10-21 🌓"
 ```
 
 This makes the relationship between the format string and the calendar
@@ -138,9 +138,9 @@ combinations of granules.
 
 # YYYY-MM-DD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
-#> [1] "2026-10-13"
+#> [1] "2026-10-21"
 format(Sys.Date(), format = "%Y-%m-%d")
-#> [1] "2026-10-13"
+#> [1] "2026-10-21"
 ```
 
 This simplifies the construction of less common time formats, for
@@ -152,9 +152,9 @@ example the year-day format (`YYYY-DDD`), which is
 
 # YYY-DDD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-D{cyc(day, year)}")
-#> [1] "2026-D286"
+#> [1] "2026-D294"
 format(Sys.Date(), format = "%Y-D%j")
-#> [1] "2026-D286"
+#> [1] "2026-D294"
 ```
 
 Format strings for non-Gregorian calendars are also more intuitive,
@@ -173,9 +173,9 @@ format(
   date(Sys.Date(), calendar = cal_isoweek),
   format = "{lin(year)}-W{cyc(week, year)}-{cyc(day, week, label = TRUE)}"
 )
-#> [1] "2026-W42-Tue"
+#> [1] "2026-W43-Wed"
 format(Sys.Date(), format = "%G-W%V-%a")
-#> [1] "2026-W42-Tue"
+#> [1] "2026-W43-Wed"
 ```
 
 The table below maps every `strftime`/`strptime` conversion

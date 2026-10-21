@@ -21,12 +21,13 @@ A calendar containing synodic lunar time units.
 
 ## Value
 
-An S3 list of class `c("cal_time_lunar", "mt_calendar")` containing the
-named time unit classes of the synodic lunar calendar. Each unit is
-accessible via `$` notation and calling it with a step size produces a
-time granule (e.g., 1 synodic month granule as
-`cal_time_lunar$month(1L)`). Lunar month and phase boundaries are
-location-independent.
+A calendar (an S7
+[`mt_calendar`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_calendar.md)
+object of class `cal_time_lunar_synodic`) containing the named time unit
+classes of the synodic lunar calendar. Each unit is accessible via `$`
+notation and calling it with a step size produces a time granule (e.g.,
+1 synodic month granule as `cal_time_lunar$month(1L)`). Lunar month and
+phase boundaries are location-independent.
 
 ## Details
 

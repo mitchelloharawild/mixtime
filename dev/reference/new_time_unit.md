@@ -58,11 +58,11 @@ new_time_unit(
 
 - constructor:
 
-  A function to use as the class constructor, or `NULL` (default) to
-  generate one automatically. The auto-generated constructor accepts
-  `...` (forwarded to the parent constructor) plus one argument per
-  entry in `properties`, with defaults taken from each property's
-  `default` field.
+  A function to use as the class constructor, or `NULL` (default) to let
+  S7 generate one from the parent constructor and properties. Custom
+  constructors must accept `calendar = attr(sys.function(), "cal")` and
+  forward it to the parent constructor as `calendar = calendar` to
+  retain calendar membership.
 
 - validator:
 
@@ -91,6 +91,14 @@ Choose the parent class based on the type of time the unit represents:
 - [`mt_loc_unit`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
   — astronomical time with a geographic location (e.g., a solar day tied
   to observer longitude/latitude).
+
+Use `new_time_unit()` for units included in
+[`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.md).
+Its generated constructor records the calendar on each instance,
+including when the parent has a custom constructor. A bare
+[`S7::new_class()`](https://rconsortium.github.io/S7/reference/new_class.html)
+constructor may only forward `...` to its parent and cannot infer the
+calling calendar.
 
 ## See also
 

@@ -54,25 +54,17 @@ mixtime vectors. S3 methods can be defined using the <code><a href="mixtime.html
 class.</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">class_mixtime</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-    </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A list of <code>"mt_time"</code> vectors, see <code><a href="mt_time-class.html">mt_linear()</a></code> for details.</p></dd>
-
-
-<dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
-<dd><p>A vector of integers specifying the location of each element in <code>x</code>
-as if they were combined in order. The values in <code>i</code> must be between 1 and
-the total number of elements across all vectors in <code>x</code>, and can contain
-duplicates. If not provided, it defaults to a sequence from 1 to the total
-number of elements across all vectors in <code>x</code>.</p></dd>
+<dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Passed to the <code><a href="https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html" class="external-link">vecvec::class_vecvec()</a></code> constructor:</p><ul><li><p><code>x</code>: A list of <code>"mt_time"</code> vectors, see <code><a href="mt_time-class.html">mt_linear()</a></code> for details.</p></li>
+<li><p><code>i</code>: A vector of integers specifying the location of each element in
+<code>x</code> as if they were combined in order. Defaults to a sequence from 1 to
+the total number of elements across all vectors in <code>x</code>.</p></li>
+</ul></dd>
 
 </dl></div>
     <div class="section level2">

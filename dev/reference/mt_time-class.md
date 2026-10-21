@@ -20,21 +20,12 @@ The underlying data can be either **integer** (discrete time) or
 [mt_unit](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
 object.
 
-## Usage
-
-``` r
-mt_linear(.data = integer(), chronon = mt_unit(1L))
-
-mt_duration(.data = integer(), chronon = mt_unit(1L))
-
-mt_cyclical(.data = integer(), chronon = mt_unit(1L), cycle = mt_unit(1L))
-```
-
 ## Arguments
 
-- .data:
+- ...:
 
-  A numeric vector of chronon counts (integer or double).
+  Passed to the parent constructor, typically `.data`: a numeric vector
+  of chronon counts (integer or double).
 
 - chronon, cycle:
 

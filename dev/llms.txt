@@ -569,7 +569,7 @@ multiple time granularities.
   : Create a mixtime vector
 - [`new_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_mixtime.md)
   : Constructor for mixtime vectors
-- [`class_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/class_mixtime.md)
+- [`class_mixtime`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/class_mixtime.md)
   : Base S7 class for mixtime vector objects
 - [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md)
   **\[defunct\]** : Constructor for mixtime time vectors
@@ -619,13 +619,17 @@ units and calendars.
   : Create a new time unit class
 - [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.md)
   : Create a new calendar
+- [`mt_calendar()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_calendar.md)
+  : Base S7 class for calendars
 - [`mt_unit()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
   [`mt_loc_unit()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
   [`mt_tz_unit()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
   : Base S7 class for creating new time units
-- [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
-  [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
-  [`mt_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
+- [`mt_time-class`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
+  [`mt_time`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
+  [`mt_linear`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
+  [`mt_duration`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
+  [`mt_cyclical`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
   : Time vector classes
 
 ### Calendar arithmetic
