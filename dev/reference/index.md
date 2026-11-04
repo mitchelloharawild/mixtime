@@ -326,6 +326,10 @@ units and calendars.
 
 - [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
   : Cardinality between time granules
+- [`chronon_cardinality_is_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_is_fixed.md)
+  : Test whether the cardinality between time granules is fixed
+- [`chronon_traverse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_traverse.md)
+  : Traverse the graph of time unit relationships
 - [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_divmod.md)
   : Convert between chronons of different time granules
 - [`chronon_epoch()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_epoch.md)

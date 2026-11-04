@@ -2,13 +2,81 @@
 
 ## mixtime (development version)
 
+### New features
+
+- New
+  [`chronon_traverse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_traverse.md)
+  walks out from a chronon to coarser or finer time units along the
+  registered cardinality relationships, accumulating a value (such as
+  the cumulative fixed cardinality) and stopping where a predicate is
+  satisfied.
+
+- Added
+  [`chronon_cardinality_is_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_is_fixed.md)
+  to test whether the number of one time granule in another is constant
+  (e.g. 12 months in a year), or depends on where in time it is measured
+  (e.g. days in a month).
+
 ### Improvements
 
 - Updates for compatibility with development S7.
+- mixtime now requires vecvec (\>= 1.4.0), which fixes
+  [`c()`](https://rdrr.io/r/base/c.html) of a single empty mixtime
+  vector (e.g. `c(x[0])`).
 - Better support for time-classed `at` in
   [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md),
   allowing for the target `y` granule obtained from `at`, and conversion
   of `at` to `y` granule if both are specified.
+
+### Bug fixes
+
+- Converting
+  [`zoo::yearmon()`](https://rdrr.io/pkg/zoo/man/yearmon.html) and
+  [`zoo::yearqtr()`](https://rdrr.io/pkg/zoo/man/yearqtr.html) values
+  (e.g. with
+  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
+  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
+  or
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md))
+  now gives the correct months/quarters. These are stored as fractional
+  years, which were previously misread as chronons since the epoch
+  (tidyverts/tsibble#272).
+- [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/as_mixtime.md)
+  now works for
+  [`zoo::yearmon()`](https://rdrr.io/pkg/zoo/man/yearmon.html),
+  [`zoo::yearqtr()`](https://rdrr.io/pkg/zoo/man/yearqtr.html) and
+  tsibble’s
+  [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
+  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
+  and
+  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
+  classes.
+- [`min()`](https://rdrr.io/r/base/Extremes.html),
+  [`max()`](https://rdrr.io/r/base/Extremes.html) and
+  [`range()`](https://rdrr.io/r/base/range.html) of mixtime vectors now
+  correctly order mixed chronons and other time classes
+  (e.g. `range(yearmonth(1:3), Sys.Date())`), and return a missing time
+  with a warning for empty input. Other `Summary` group generics
+  (e.g. [`sum()`](https://rdrr.io/r/base/sum.html),
+  [`any()`](https://rdrr.io/r/base/any.html)) now give an informative
+  error for time points, while still summarising durations
+  (tidyverts/tsibble#272).
+- Whole-number time granule sizes (`n`) are now always stored as
+  integers, so a chronon built with a double size (e.g. from
+  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
+  on a single `Date`) is identical to the same chronon built with an
+  integer size, and their values combine into a single group of a
+  `mixtime` vector.
+- Fixed
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+  traversal of the chronon graph along paths with irregular steps.
+- Fixed
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  and
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  of chronons from different calendars returning a bound tagged with an
+  arbitrary calendar, rather than no calendar. Time units shared by
+  several calendars are now a single node of the chronon graph.
 
 ### Breaking changes
 
@@ -34,6 +102,11 @@
   the month?) and `yearmonth(yearweek(x))` (a week can straddle two
   months) previously warned and used the start of each time point.
   Continuous time points are instants and convert as before.
+
+- [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+  between time units that are neither finer nor coarser than each other
+  (e.g. weeks and quarters) is now an error that suggests a common finer
+  unit, rather than an indeterminate result.
 
 ## mixtime 0.4.0
 
