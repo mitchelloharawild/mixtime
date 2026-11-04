@@ -14,6 +14,8 @@
 ## Improvements
 
 * Updates for compatibility with development S7.
+* mixtime now requires vecvec (>= 1.4.0), which fixes `c()` of a single
+  empty mixtime vector (e.g. `c(x[0])`).
 * Better support for time-classed `at` in `chronon_cardinality()`, allowing for
   the target `y` granule obtained from `at`, and conversion of `at` to `y`
   granule if both are specified.

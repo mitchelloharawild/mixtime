@@ -35,6 +35,15 @@ test_that("min(), max() and range() of empty input warn and return NA", {
   expect_true(is.na(res))
 })
 
+test_that("min(), max() and range() ignore empty inputs", {
+  x <- yearmonth(as.Date(c("2020-01-01", "2020-03-01")))
+  expect_equal(min(x[0], x), x[1])
+  expect_equal(max(x, x[0]), x[2])
+  expect_equal(range(x[0], x, x[0]), x)
+  expect_warning(res <- min(x[0], x[0]), "No non-missing arguments")
+  expect_true(is.na(res))
+})
+
 test_that("min(), max() and range() work with mixed chronons", {
   x <- c(yearmonth(as.Date("2020-01-01") + c(0, 40, 80)), year(c(2019L, 2021L)))
   expect_equal(range(x), year(c(2019L, 2021L)))

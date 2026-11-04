@@ -189,16 +189,10 @@ is_mixtime <- function(x) {
     )
   }
 
-  # Combine all inputs into a single (possibly mixed chronon) mixtime. Empty
-  # inputs are dropped first, since `c()` can't combine empty mixtime vectors.
+  # Combine all inputs into a single (possibly mixed chronon) mixtime.
   dots <- list(...)
-  dots <- dots[lengths(dots) > 0L]
-  if (length(dots)) {
-    if (!is_mixtime(dots[[1L]])) dots[[1L]] <- vec_cast_to_mixtime(dots[[1L]])
-    x <- do.call(c, dots)
-  } else {
-    x <- ..1
-  }
+  if (!is_mixtime(dots[[1L]])) dots[[1L]] <- vec_cast_to_mixtime(dots[[1L]])
+  x <- do.call(c, dots)
   n_out <- if (.Generic == "range") 2L else 1L
 
   missing <- is.na(x)

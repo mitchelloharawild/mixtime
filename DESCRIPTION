@@ -43,7 +43,7 @@ Imports:
     rlang,
     cli,
     S7 (>= 0.2.2),
-    vecvec (>= 1.2.0),
+    vecvec (>= 1.4.0),
     tzdb,
     methods
 Suggests: 
