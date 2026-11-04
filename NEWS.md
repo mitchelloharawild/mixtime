@@ -26,6 +26,11 @@
   misread as chronons since the epoch (tidyverts/tsibble#272).
 * `as_mixtime()` now works for `zoo::yearmon()`, `zoo::yearqtr()` and tsibble's
   `yearweek()`, `yearmonth()` and `yearquarter()` classes.
+* `min()`, `max()` and `range()` of mixtime vectors now correctly order mixed
+  chronons and other time classes (e.g. `range(yearmonth(1:3), Sys.Date())`),
+  and return a missing time with a warning for empty input. Other `Summary`
+  group generics (e.g. `sum()`, `any()`) now give an informative error for
+  time points, while still summarising durations (tidyverts/tsibble#272).
 * Fixed `chronon_cardinality()` traversal of the chronon graph along paths
   with irregular steps.
 * Fixed `chronon_glb()` and `chronon_lub()` of chronons from different

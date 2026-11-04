@@ -171,8 +171,60 @@ is_mixtime <- function(x) {
 #' @method Summary mixtime::mixtime
 #' @export
 `Summary.mixtime::mixtime` <- function(..., na.rm = FALSE) {
-  res <- NextMethod()
-  if (S7_inherits(res, mt_time)) new_mixtime(res) else res
+  if (!.Generic %in% c("min", "max", "range")) {
+    # Durations are magnitudes, so they keep the summaries of their data
+    # (e.g. `sum()`). These aren't meaningful for points in time.
+    is_duration <- function(x) {
+      is_mixtime(x) && all(vapply(x@x, S7_inherits, logical(1L), mt_duration))
+    }
+    if (all(vapply(list(...), is_duration, logical(1L)))) {
+      return(NextMethod())
+    }
+    cli::cli_abort(
+      c(
+        "{.fn {(.Generic)}} is not supported for {.cls mixtime} vectors.",
+        i = "Only {.fn min}, {.fn max} and {.fn range} are defined for time."
+      ),
+      call = NULL
+    )
+  }
+
+  # Combine all inputs into a single (possibly mixed chronon) mixtime. Empty
+  # inputs are dropped first, since `c()` can't combine empty mixtime vectors.
+  dots <- list(...)
+  dots <- dots[lengths(dots) > 0L]
+  if (length(dots)) {
+    if (!is_mixtime(dots[[1L]])) dots[[1L]] <- vec_cast_to_mixtime(dots[[1L]])
+    x <- do.call(c, dots)
+  } else {
+    x <- ..1
+  }
+  n_out <- if (.Generic == "range") 2L else 1L
+
+  missing <- is.na(x)
+  if (na.rm) {
+    x <- x[!missing]
+  } else if (any(missing)) {
+    return(vctrs::vec_init(x, n_out))
+  }
+
+  if (!length(x)) {
+    cli::cli_warn(
+      "No non-missing arguments to {.fn {(.Generic)}}; returning {.code NA}.",
+      call = NULL
+    )
+    return(vctrs::vec_init(x, n_out))
+  }
+
+  # Order by time, which handles mixed chronons via a common chronon. Each
+  # result keeps its own chronon (and so time class).
+  ord <- order(x)
+  x[switch(
+    .Generic,
+    min = ord[1L],
+    max = ord[length(ord)],
+    range = ord[c(1L, length(ord))]
+  )]
 }
 
 method(c, class_mixtime) <- function(...) {
