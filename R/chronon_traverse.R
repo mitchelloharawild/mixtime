@@ -160,9 +160,9 @@ chronon_traverse <- function(
   # Graph nodes are reached as unit granules carrying `x`'s calendar and
   # properties (e.g. time zone), so `.f` sees the context `x` was given in.
   node_granule <- function(i) {
-    granule <- graph$classes[[i]](1L)
-    granule@calendar <- NULL
-    granule_inherit_props(granule, x)
+    # The node's class has an arbitrary default calendar (see
+    # compile_signature_graph()), so start without one and inherit `x`'s.
+    granule_inherit_props(graph$classes[[i]](1L, calendar = NULL), x)
   }
 
   # `.f` gets only the adjacent pair, not `x`: the caller already has `x` (and

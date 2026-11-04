@@ -7,12 +7,25 @@
   (such as the cumulative fixed cardinality) and stopping where a predicate
   is satisfied.
 
+* Added `chronon_cardinality_is_fixed()` to test whether the number of one
+  time granule in another is constant (e.g. 12 months in a year), or depends
+  on where in time it is measured (e.g. days in a month).
+
 ## Improvements
 
 * Updates for compatibility with development S7.
 * Better support for time-classed `at` in `chronon_cardinality()`, allowing for
   the target `y` granule obtained from `at`, and conversion of `at` to `y`
   granule if both are specified.
+
+## Bug fixes
+
+* Fixed `chronon_cardinality()` traversal of the chronon graph along paths
+  with irregular steps.
+* Fixed `chronon_glb()` and `chronon_lub()` of chronons from different
+  calendars returning a bound tagged with an arbitrary calendar, rather than
+  no calendar. Time units shared by several calendars are now a single node
+  of the chronon graph.
 
 ## Breaking changes
 
@@ -35,6 +48,9 @@
   `yearmonth(yearweek(x))` (a week can straddle two months) previously warned
   and used the start of each time point. Continuous time points are instants
   and convert as before.
+* `chronon_cardinality()` between time units that are neither finer nor
+  coarser than each other (e.g. weeks and quarters) is now an error that
+  suggests a common finer unit, rather than an indeterminate result.
 
 # mixtime 0.4.0
 
@@ -99,10 +115,6 @@
   Shifting by a whole number of chronons is still allowed (a week by 14 days,
   but not 11), as is shifting continuous times. This applies to `+`, `-`,
   `time_shift()`, and `seq()`.
-
-* Added `chronon_cardinality_is_fixed()` to test whether the number of one
-  time granule in another is constant (e.g. 12 months in a year), or depends
-  on where in time it is measured (e.g. days in a month).
 
 ## Improvements
 
