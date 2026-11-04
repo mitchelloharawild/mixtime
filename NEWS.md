@@ -20,6 +20,12 @@
 
 ## Bug fixes
 
+* Converting `zoo::yearmon()` and `zoo::yearqtr()` values (e.g. with
+  `yearmonth()`, `yearquarter()` or `mixtime()`) now gives the correct
+  months/quarters. These are stored as fractional years, which were previously
+  misread as chronons since the epoch (tidyverts/tsibble#272).
+* `as_mixtime()` now works for `zoo::yearmon()`, `zoo::yearqtr()` and tsibble's
+  `yearweek()`, `yearmonth()` and `yearquarter()` classes.
 * Fixed `chronon_cardinality()` traversal of the chronon graph along paths
   with irregular steps.
 * Fixed `chronon_glb()` and `chronon_lub()` of chronons from different

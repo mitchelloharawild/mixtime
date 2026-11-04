@@ -170,3 +170,23 @@ check_convert_determinate <- function(x, from, to) {
     call = NULL
   )
 }
+
+# {zoo} time classes are stored as fractional years (e.g. `2020 + (month-1)/12`)
+# rather than as chronons since the Unix epoch, so they are first converted to
+# the number of months/quarters since 1970. The small offset matches zoo's own
+# rounding (see `zoo::as.yearmon()`) to avoid floating point error at unit
+# boundaries.
+zoo_to_chronons <- function(x, frequency) {
+  floor(frequency * unclass(x) + 1e-3) - 1970 * frequency
+}
+
+chronon_convert_zoo <- function(frequency) {
+  function(x, to, discrete = FALSE, allow_indeterminate = TRUE, ...) {
+    from <- chronon_glb(x)
+    if (!allow_indeterminate) check_convert_determinate(x, from, to)
+    chronon_convert_impl(zoo_to_chronons(x, frequency), from, to, discrete)
+  }
+}
+
+method(chronon_convert, S7::new_S3_class("yearmon")) <- chronon_convert_zoo(12)
+method(chronon_convert, S7::new_S3_class("yearqtr")) <- chronon_convert_zoo(4)

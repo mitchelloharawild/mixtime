@@ -218,6 +218,14 @@ register_mt_vctrs <- function() {
   register_s3_method("vctrs", "vec_cast", "mixtime::mt_linear.character", mt_cast_from_character)
   register_s3_method("vctrs", "vec_cast", "mixtime::mt_cyclical.character", mt_cast_from_character)
 
+  # Time classes from other packages ({zoo} and {tsibble}) cast to mixtime via
+  # their `time_chronon()` and `chronon_convert()` methods (for `as_mixtime()`).
+  for (cls in c("yearmon", "yearqtr", "yearmonth", "yearquarter", "yearweek")) {
+    register_s3_method(
+      "vctrs", "vec_cast", paste0("mixtime::mixtime.", cls), vec_cast_to_mixtime
+    )
+  }
+
   # Durations combine with bare numbers.
   dur <- "mixtime::mt_duration"
   register_s3_method("vctrs", "vec_ptype2", paste0(dur, ".double"), mt_ptype2_duration_x)

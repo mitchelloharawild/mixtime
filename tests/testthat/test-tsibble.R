@@ -3,6 +3,12 @@ test_that("index_valid returns TRUE for mixtime objects", {
   expect_true(tsibble::index_valid(c(yearmonth(1:3), year(2000:2002))))
 })
 
+test_that("as_mixtime() casts tsibble time classes", {
+  expect_equal(format(as_mixtime(tsibble::yearmonth("2020 Mar"))), "2020 Mar")
+  expect_equal(format(as_mixtime(tsibble::yearquarter("2020 Q3"))), "2020 Q3")
+  expect_equal(format(as_mixtime(tsibble::yearweek("2020 W03"))), "2020 W03")
+})
+
 test_that("interval_pull works for a single-chronon mixtime", {
   # Legacy interval shape, only for tsibble without its own mixtime methods
   skip_if_not(is.null(tsibble_mixtime_method("interval_pull")))
