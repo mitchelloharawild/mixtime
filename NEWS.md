@@ -33,6 +33,10 @@
   and return a missing time with a warning for empty input. Other `Summary`
   group generics (e.g. `sum()`, `any()`) now give an informative error for
   time points, while still summarising durations (tidyverts/tsibble#272).
+* Whole-number time granule sizes (`n`) are now always stored as integers, so
+  a chronon built with a double size (e.g. from `mixtime()` on a single
+  `Date`) is identical to the same chronon built with an integer size, and
+  their values combine into a single group of a `mixtime` vector.
 * Fixed `chronon_cardinality()` traversal of the chronon graph along paths
   with irregular steps.
 * Fixed `chronon_glb()` and `chronon_lub()` of chronons from different

@@ -106,3 +106,19 @@ granule_harden_naive <- function(x) {
   props(x) <- props
   x
 }
+
+# Normalise a granule's size `n` to a canonical storage type: whole numbers
+# (within integer range) are stored as integers, matching the `1L` used by
+# unit constructors (e.g. `cal_gregorian$day(1L)`). Without this, a size
+# computed with doubles (e.g. `unit@n * as.numeric(duration)`) would give an
+# otherwise equal granule that is not `identical()` (e.g. `num 1` vs `int 1`),
+# which keeps such values apart when combined in a `mixtime` vector.
+granule_n_normalise <- function(n) {
+  if (
+    is.double(n) && length(n) == 1L && !is.na(n) &&
+      n == trunc(n) && abs(n) <= .Machine$integer.max
+  ) {
+    n <- as.integer(n)
+  }
+  n
+}

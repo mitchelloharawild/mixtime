@@ -666,3 +666,45 @@ test_that("seq.mixtime steps by months that don't divide a year", {
     c("2020-01-31", "2020-07-01", "2020-12-01")
   )
 })
+
+test_that("granule sizes are stored consistently as integers", {
+  # A scalar Date gives a chronon scaled by a length-1 duration, which must
+  # match the chronon of an (every day) vector so they combine and sequence
+  s <- mixtime(as.Date("2019-12-28"))
+  x <- mixtime(as.Date("2020-01-01") + 0:3)
+  expect_identical(chronon_glb(s), chronon_glb(x))
+  expect_length(c(s, x[4])@x, 1L)
+  unit <- cal_gregorian$day(1L)
+  unit@n <- unit@n * 2
+  expect_identical(unit@n, 2L)
+  expect_identical(unit, cal_gregorian$day(2L))
+  expect_identical(cal_gregorian$day(3)@n, 3L)
+  # Fractional sizes are left as doubles
+  expect_identical(cal_gregorian$day(1.5)@n, 1.5)
+})
+
+test_that("seq.mixtime rejects `from` and `to` with different chronons", {
+  # Which values of a sequence are within a `to` of another chronon is
+  # temporally indeterminate (e.g. is March within 2020-03-15?)
+  expect_error(
+    seq(yearmonth("2020 Jan"), date("2020-03-15")),
+    "Incompatible time chronons"
+  )
+  expect_error(
+    seq(date("2020-01-15"), yearmonth("2020 Mar"), by = 1L),
+    "Incompatible time chronons"
+  )
+  expect_error(
+    seq(
+      mixtime(as.Date("2019-12-28")),
+      mixtime(as.Date("2020-01-11"), chronon = cal_gregorian$day(2L)),
+      by = cal_gregorian$day(2L)
+    ),
+    "Incompatible time chronons"
+  )
+  # Converting both to the same chronon makes the intent explicit
+  expect_equal(
+    format(seq(yearmonth("2020 Jan"), yearmonth(date("2020-03-15")))),
+    c("2020 Jan", "2020 Feb", "2020 Mar")
+  )
+})

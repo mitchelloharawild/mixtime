@@ -124,7 +124,14 @@ mt_unit <- S7::new_class(
   properties = list(
     n = S7::new_property(
       class = S7::class_numeric,
-      default = 1L
+      default = 1L,
+      # Store whole-number sizes as integers, so equal granules are
+      # `identical()` regardless of whether `n` was computed as a double
+      # (e.g. `unit@n * as.numeric(duration)`).
+      setter = function(self, value) {
+        self@n <- granule_n_normalise(value)
+        self
+      }
     ),
     calendar = S7::new_property(
       # The S3 form of mt_calendar avoids embedding its class definition in

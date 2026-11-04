@@ -150,8 +150,10 @@
       cli::cli_abort(c(
         "Incompatible time chronons in {.fn seq}.",
         "i" = "{.arg from} has {.cls {time_granule_label(chronon)}} chronons.",
-        "i" = "{.arg to} has {.cls {time_granule_label(to_chronon)}} chronons."
-      ))
+        "i" = "{.arg to} has {.cls {time_granule_label(to_chronon)}} chronons.",
+        "x" = "Which time points of the sequence are within {.arg to} is temporally indeterminate.",
+        "i" = "Convert {.arg from} and {.arg to} to the same chronon (e.g. {.code seq(yearmonth(from), yearmonth(to))})."
+      ), call = NULL)
     }
   }
 
