@@ -87,12 +87,13 @@ new_calendar_class <- function(name, package) {
 method(print, mt_calendar) <- function(x, ...) {
   cat("<", S7::S7_class(x)@name, ">\n", sep = "")
 
-  # List time units
+  # List time units compactly, wrapped to the console width
   if (length(x) > 0) {
-    cat("Time units:\n")
-    for (name in names(x)) {
-      cat("  - ", name, "\n", sep = "")
-    }
+    cat(strwrap(
+      paste0("Time units: ", paste(names(x), collapse = ", ")),
+      width = getOption("width", 80), exdent = 2
+    ), sep = "\n")
+    cat("\n")
   } else {
     cat("No time units defined\n")
   }
@@ -235,3 +236,19 @@ method(time_calendar, class_mixtime) <- function(x) {
 }
 method(time_calendar, mt_time) <- function(x) time_calendar(time_chronon(x))
 method(time_calendar, S7::class_any) <- function(x) cal_gregorian
+
+# Time units print like the default S7 method, except that the calendar is
+# shown by name rather than by its list of time unit constructors.
+method(print, mt_unit) <- function(x, ...) {
+  cat("<", S7::S7_class(x)@package, "::", S7::S7_class(x)@name, ">\n", sep = "")
+  for (nm in S7::prop_names(x)) {
+    cat(" @ ", format(nm, width = 8), ":", sep = "")
+    if (nm == "calendar") {
+      cal <- calendar_id(attr(x, "calendar", exact = TRUE))
+      cat(" ", if (is.null(cal)) "NULL" else paste0("<", sub("^.*::", "", cal), ">"), "\n", sep = "")
+    } else {
+      utils::str(S7::prop(x, nm), give.head = TRUE)
+    }
+  }
+  invisible(x)
+}
