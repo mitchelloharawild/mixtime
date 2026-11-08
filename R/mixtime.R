@@ -224,6 +224,22 @@ is_mixtime <- function(x) {
 method(c, class_mixtime) <- function(...) {
   dots <- unname(rlang::list2(...))
   is_mt <- vapply(dots, is_mixtime, logical(1L))
-  dots[!is_mt] <- lapply(dots[!is_mt], vec_cast_to_mixtime, to = new_mixtime())
+  # Cast to the mixtime inputs' type, so numbers join free cyclical time.
+  to <- vctrs::vec_ptype_common(!!!dots[is_mt])
+  dots[!is_mt] <- lapply(dots[!is_mt], vec_cast_to_mixtime, to = to)
   do.call(utils::getS3method("c", "vecvec::vecvec"), dots)
+}
+
+# vecvec stores an assigned value as a new part without casting it, so cast
+# bare numbers to `x`'s type first (e.g. positions of free cyclical time).
+#' @export
+`[<-.mixtime::mixtime` <- function(x, i, ..., value) {
+  if (!is_mixtime(value)) value <- vec_cast_to_mixtime(value, to = vec_ptype(x))
+  NextMethod()
+}
+
+#' @export
+`[[<-.mixtime::mixtime` <- function(x, i, ..., value) {
+  if (!is_mixtime(value)) value <- vec_cast_to_mixtime(value, to = vec_ptype(x))
+  NextMethod()
 }

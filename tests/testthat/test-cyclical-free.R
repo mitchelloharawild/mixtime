@@ -207,3 +207,47 @@ test_that("an all-NA logical builds a free NA", {
   expect_true(is.na(x))
   expect_equal(length(month_of_year(c(NA, NA))), 2L)
 })
+
+test_that("numbers combined with free values are positions counted from 1", {
+  expect_equal(month_of_year(c(1, 3)) == 3, c(FALSE, TRUE))
+
+  x <- vctrs::vec_c(month_of_year(1), 3)
+  expect_true(all(time_is_cyclical_free(x)))
+  expect_equal(format(x), c("Jan", "Mar"))
+  expect_equal(format(vctrs::vec_c(3L, month_of_year(1))), c("Mar", "Jan"))
+
+  expect_equal(format(vctrs::vec_cast(3, month_of_year(1))), "Mar")
+  expect_equal(vctrs::vec_cast(3, month_of_year(1)@x[[1L]]), month_of_year(3)@x[[1L]])
+  # Out of range positions are NA, as in the constructor.
+  expect_true(is.na(vctrs::vec_cast(13, month_of_year(1))))
+  expect_equal(format(vctrs::vec_cast(0, time_of_day(0))), "00:00:00")
+})
+
+test_that("numbers keep combining with anchored and linear time as before", {
+  x <- vctrs::vec_c(month_of_year(yearmonth("2024-03")), 3)
+  expect_false(any(time_is_cyclical_free(x)))
+})
+
+test_that("free and anchored cyclical time don't convert to each other", {
+  anchored <- month_of_year(yearmonth("2024-03"))
+  free <- month_of_year(1)
+  expect_error(vctrs::vec_cast(anchored, free), class = "vctrs_error_incompatible_type")
+  expect_error(vctrs::vec_cast(free, anchored), class = "vctrs_error_incompatible_type")
+  expect_error(vctrs::vec_cast(anchored@x[[1L]], free@x[[1L]]), "no anchor")
+  expect_error(vctrs::vec_ptype2(anchored@x[[1L]], free@x[[1L]]), "no anchor")
+
+  # A mixtime holds them side by side, like linear time and durations.
+  both <- vctrs::vec_c(anchored, free)
+  expect_equal(time_is_cyclical_free(both), c(FALSE, TRUE))
+})
+
+test_that("c() and assignment read numbers as free cyclical positions", {
+  expect_equal(c(month_of_year(1), 3), month_of_year(c(1, 3)))
+
+  x <- month_of_year(1:2)
+  x[2] <- 5
+  expect_equal(x, month_of_year(c(1, 5)))
+
+  x[[1]] <- 12
+  expect_equal(x, month_of_year(c(12, 5)))
+})
