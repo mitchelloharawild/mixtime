@@ -165,15 +165,19 @@ test_that("a format with no lin() anchor parses to cyclical time", {
   )
 })
 
-test_that("a chained cyc()-only format parses to cyclical time", {
-  # Collapses to (day, year): day-of-year 74, same as day_of_year() for 15 March.
-  r <- time_parse("15 Mar", format = "{cyc(day, month)} {cyc(month, year, label = TRUE)}")
+test_that("a chained cyc()-only format parses to cyclical time when fixed-length", {
+  # Collapses to (minute, day): minute-of-day 149 is 02:29.
+  r <- time_parse("29 02", format = "{cyc(minute, hour)} {cyc(hour, day)}")
 
   expect_true(time_is_cyclical_free(r))
-  expect_equal(format(r), "D74")
-  expect_equal(
-    as.numeric(vecvec::unvecvec(r)),
-    as.numeric(vecvec::unvecvec(day_of_year(as.Date("1970-03-15"))))
+  expect_equal(r, time_compose(cyc(minute, hour) ~ 30, cyc(hour, day) ~ 3))
+})
+
+test_that("a chained cyc()-only format with a variable-length link errors", {
+  # 15 March is day-of-year 74, or 75 in a leap year.
+  expect_error(
+    time_parse("15 Mar", format = "{cyc(day, month)} {cyc(month, year, label = TRUE)}"),
+    "Include the coarser"
   )
 })
 

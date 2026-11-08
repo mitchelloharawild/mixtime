@@ -97,24 +97,45 @@ test_that("a single cyc() with no lin() anchor composes a cyclical time point", 
   )
 })
 
-test_that("a chained cyc() sequence with no lin() anchor composes a cyclical time point", {
-  # Rooted at cyc(month, year); day 15 of month 3 collapses to (day, year).
-  r <- time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
+test_that("a fixed-length cyc() chain with no lin() anchor collapses to a cyclical time point", {
+  # minute 30 of hour 3 -> minute 149 (0-indexed) of the day
+  r <- time_compose(cyc(minute, hour) ~ 30, cyc(hour, day) ~ 3)
 
   expect_true(time_is_cyclical_free(r))
-  expect_equal(format(r), "D74")
+  expect_equal(as.numeric(vecvec::unvecvec(r)), 2 * 60 + 29)
+})
+
+test_that("a variable-length cyc() chain with no lin() anchor errors", {
+  expect_error(
+    time_compose(cyc(day, month) ~ 29, cyc(month, year) ~ 3),
+    "varies"
+  )
+  expect_error(time_compose(day_of_month(29), month_of_year(2)), "anchor")
+})
+
+test_that("free components compose against an anchor in any order", {
+  r1 <- time_compose(lin(year) ~ 2024, day_of_month(29), month_of_year(2))
+  r2 <- time_compose(day_of_month(29), month_of_year(2), lin(year) ~ 2024)
+  r3 <- time_compose(yearmonth("2024-02"), day_of_month(29))
+  expect_equal(format(r1), "2024-02-29")
+  expect_equal(format(r2), "2024-02-29")
+  expect_equal(format(r3), "2024-02-29")
+})
+
+test_that("free components are validated against the anchored instance", {
+  expect_error(time_compose(lin(year) ~ 2023, day_of_month(29), month_of_year(2)), "28")
+  expect_error(time_compose(yearmonth("2023-02"), day_of_month(29)), "28")
   expect_equal(
-    as.numeric(vecvec::unvecvec(r)),
-    as.numeric(vecvec::unvecvec(day_of_year(as.Date("1970-03-15"))))
+    format(time_compose(lin(year) ~ 2024, cyc(month, year) ~ 3, cyc(day, month) ~ 29)),
+    "2024-03-29"
   )
 })
 
 test_that("cyclical time_compose() output round-trips through time_compose() again", {
-  # 1981, a non-leap year, keeps day-of-year 74 on 15 March.
-  anchored <- time_compose(lin(year) ~ 1981, cyc(month, year) ~ 3, cyc(day, month) ~ 15)
-  cyclical <- time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
+  anchored <- time_compose(lin(day) ~ 0, cyc(hour, day) ~ 3, cyc(minute, hour) ~ 30)
+  cyclical <- time_compose(cyc(minute, hour) ~ 30, cyc(hour, day) ~ 3)
 
-  r <- time_compose(lin(year) ~ 1981, cyclical)
+  r <- time_compose(lin(day) ~ 0, cyclical)
   expect_equal(format(r), format(anchored))
 })
 

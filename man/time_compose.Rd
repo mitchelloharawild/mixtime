@@ -45,8 +45,14 @@ With no \code{lin()} anchor, every component must be \code{cyc()}, chained the s
 way but rooted at whichever component's cycle isn't itself another
 component's chronon. The result is cyclical time tagged with that root's
 cycle: \code{cyc(month, year) ~ 3} alone matches \code{month_of_year()} for any
-March; chaining \code{cyc(day, month) ~ 15} onto it collapses to one (day,
-year) pair, day-of-year 74, matching \code{day_of_year()} for 15 March.
+March. Chained components collapse to one (chronon, cycle) offset, e.g.
+\code{cyc(minute, hour) ~ 30} and \code{cyc(hour, day) ~ 3} give minute-of-day 149.
+This is only possible when every link has a fixed length: the number of
+days in a month varies, so day 29 of month 3 isn't a fixed day of the year
+and is an error without an anchor. Supply a \code{lin()} anchor (or an existing
+linear vector) to resolve it, e.g. \code{time_compose(lin(year) ~ 2024, cyc(month, year) ~ 3, cyc(day, month) ~ 29)}. With an anchor, free
+components (e.g. \code{\link[=day_of_month]{day_of_month()}}) are validated against the anchored
+instance and may be given in any order.
 
 Values of linear and cyclical components are specified on the right-hand-side
 of the formula. A \code{lin()} value is the real-world count (e.g. the literal
@@ -65,9 +71,12 @@ time_compose(lin(year) ~ 1980)
 # No lin() anchor: composes cyclical time
 time_compose(cyc(month, year) ~ 3)
 
-# Chaining collapses to one (chronon, cycle) pair: day 15 of month 3
-# becomes day-of-year 74
-time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
+# Fixed-length chains collapse to one (chronon, cycle) pair: minute 30 of
+# hour 3 becomes minute-of-day
+time_compose(cyc(minute, hour) ~ 30, cyc(hour, day) ~ 3)
+
+# Variable-length links (days in a month) need an anchor
+time_compose(lin(year) ~ 2024, day_of_month(29), month_of_year(2))
 
 # Round-tripping through time_components()
 parts <- time_components(as.Date("2024-03-15"), yr = lin(year), mth = cyc(month, year))

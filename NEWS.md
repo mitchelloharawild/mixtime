@@ -31,6 +31,10 @@
   month or year it is in. These errors, and `mean()` of a free value,
   suggest anchoring it with `time_compose()` first (e.g.
   `time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)`).
+  Likewise `time_compose()` and `time_parse()` without a `lin()` anchor now
+  only collapse components with fixed lengths: `cyc(minute, hour)` with
+  `cyc(hour, day)` gives a minute of the day, while day 15 of March is an
+  error, as its day of the year depends on the year.
 
 * New `chronon_traverse()` walks out from a chronon to coarser or finer time
   units along the registered cardinality relationships, accumulating a value

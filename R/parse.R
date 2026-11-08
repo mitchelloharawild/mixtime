@@ -349,7 +349,12 @@ time_parse_compile <- function(format, calendar, locale, env, regex = FALSE) {
   # Validate the format's shape and resolve its chain order once, up front.
   # `chain$cycle` is non-NULL for a cyc()-only (no lin()) format, giving a
   # cyclical result; see compose_chain()/compose_recompose().
-  chain <- compose_chain(lapply(specs, function(s) list(chronon = s$chronon, cycle = s$cycle)))
+  chain <- compose_chain(
+    lapply(specs, function(s) list(chronon = s$chronon, cycle = s$cycle)),
+    fixed_hint = c(
+      i = "Include the coarser {.fn lin} component in the text and format, e.g. {.code time_parse(\"2024-03-15\", format = \"{{lin(year)}}-{{cyc(month, year)}}-{{cyc(day, month)}}\")}."
+    )
+  )
   chain_order <- vapply(
     chain$chain,
     function(link) {

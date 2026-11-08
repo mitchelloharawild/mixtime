@@ -15,8 +15,15 @@
 #' way but rooted at whichever component's cycle isn't itself another
 #' component's chronon. The result is cyclical time tagged with that root's
 #' cycle: `cyc(month, year) ~ 3` alone matches `month_of_year()` for any
-#' March; chaining `cyc(day, month) ~ 15` onto it collapses to one (day,
-#' year) pair, day-of-year 74, matching `day_of_year()` for 15 March.
+#' March. Chained components collapse to one (chronon, cycle) offset, e.g.
+#' `cyc(minute, hour) ~ 30` and `cyc(hour, day) ~ 3` give minute-of-day 149.
+#' This is only possible when every link has a fixed length: the number of
+#' days in a month varies, so day 29 of month 3 isn't a fixed day of the year
+#' and is an error without an anchor. Supply a `lin()` anchor (or an existing
+#' linear vector) to resolve it, e.g. `time_compose(lin(year) ~ 2024,
+#' cyc(month, year) ~ 3, cyc(day, month) ~ 29)`. With an anchor, free
+#' components (e.g. [day_of_month()]) are validated against the anchored
+#' instance and may be given in any order.
 #'
 #' Values of linear and cyclical components are specified on the right-hand-side
 #' of the formula. A `lin()` value is the real-world count (e.g. the literal
@@ -52,9 +59,12 @@
 #' # No lin() anchor: composes cyclical time
 #' time_compose(cyc(month, year) ~ 3)
 #'
-#' # Chaining collapses to one (chronon, cycle) pair: day 15 of month 3
-#' # becomes day-of-year 74
-#' time_compose(cyc(day, month) ~ 15, cyc(month, year) ~ 3)
+#' # Fixed-length chains collapse to one (chronon, cycle) pair: minute 30 of
+#' # hour 3 becomes minute-of-day
+#' time_compose(cyc(minute, hour) ~ 30, cyc(hour, day) ~ 3)
+#'
+#' # Variable-length links (days in a month) need an anchor
+#' time_compose(lin(year) ~ 2024, day_of_month(29), month_of_year(2))
 #'
 #' # Round-tripping through time_components()
 #' parts <- time_components(as.Date("2024-03-15"), yr = lin(year), mth = cyc(month, year))
@@ -179,7 +189,9 @@ compose_tag <- function(x, calendar) {
 # isn't supplied as another component's chronon; its own within-cycle
 # offset seeds the chain as an absolute count (mt_cyclical's convention,
 # see compose_tag()).
-compose_chain <- function(comps) {
+# `fixed_hint` replaces the fix suggested when an anchor-less chain has a
+# variable-length link (see compose_check_fixed()).
+compose_chain <- function(comps, fixed_hint = NULL) {
   is_lin <- vapply(comps, function(x) is.null(x$cycle), logical(1L))
   n_lin <- sum(is_lin)
 
@@ -292,7 +304,39 @@ compose_chain <- function(comps) {
     )
   }
 
+  # Without an anchor there is no instance to resolve a variable-length link
+  # against, so collapsing the chain into one offset is only valid when every
+  # link below the root has a fixed length.
+  if (!is.null(root_cycle)) {
+    compose_check_fixed(chain, fixed_hint)
+  }
+
   list(chain = chain, cycle = root_cycle)
+}
+
+# Abort if any link (below the root) of an anchor-less chain has a
+# context-dependent length, e.g. days in a month.
+compose_check_fixed <- function(chain, hint = NULL) {
+  hint <- hint %||% c(
+    i = "Supply an anchor to resolve it against, e.g. {.code time_compose(lin(year) ~ 2024, cyc(month, year) ~ 3, cyc(day, month) ~ 29)}.",
+    i = "Or use an existing linear vector, e.g. {.code time_compose(yearmonth(\"2024-03\"), day_of_month(29))}."
+  )
+  prev <- chain[[1L]]$chronon
+  for (link in chain[-1L]) {
+    if (!chronon_cardinality_is_fixed(link$chronon, prev)) {
+      cur <- sub("^1 ", "", time_granule_label(link$chronon))
+      par <- sub("^1 ", "", time_granule_label(prev))
+      cli::cli_abort(
+        c(
+          "Can't collapse {cur}-of-{par} without a {.fn lin} anchor: the number of {cur} granules in a {par} varies, so the position isn't a fixed offset in the larger cycle.",
+          hint
+        ),
+        call = NULL
+      )
+    }
+    prev <- link$chronon
+  }
+  invisible(chain)
 }
 
 # Walk the validated chain coarse -> fine, reconstructing the absolute count
@@ -388,7 +432,8 @@ compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
   if (is.null(cycle)) {
     mt_linear(running_count, chronon = running_chronon)
   } else {
-    # No lin() anchor - an origin-less magnitude (mt_cyclical_free), not mt_cyclical.
+    # No lin() anchor - an origin-less magnitude (mt_cyclical_free), not
+    # mt_cyclical. Its constructor drops any time zone.
     mt_cyclical_free(running_count, chronon = running_chronon, cycle = cycle)
   }
 }
