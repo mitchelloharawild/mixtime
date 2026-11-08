@@ -24,7 +24,7 @@ allowing representation of fractional time granules (continuous time model).}
 \value{
 A \code{mixtime} time vector, at the finest chronon reached by the
 chain (or the root's own chronon, if only one component is given).
-Linear with a \code{lin()} anchor; origin-less cyclical (\code{mt_cyclical_free})
+Linear with a \code{lin()} anchor; unanchored cyclical (\code{mt_cyclical_free})
 otherwise, since there is then no point in time for the result to be a
 position within.
 }
@@ -52,7 +52,7 @@ days in a month varies, so day 29 of month 3 isn't a fixed day of the year
 and is an error without an anchor. Supply a \code{lin()} anchor (or an existing
 linear vector) to resolve it, e.g. \code{time_compose(lin(year) ~ 2024, cyc(month, year) ~ 3, cyc(day, month) ~ 29)}. With an anchor, free
 components (e.g. \code{\link[=day_of_month]{day_of_month()}}) are validated against the anchored
-instance and may be given in any order.
+time and may be given in any order.
 
 Values of linear and cyclical components are specified on the right-hand-side
 of the formula. A \code{lin()} value is the real-world count (e.g. the literal

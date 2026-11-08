@@ -1,10 +1,10 @@
-#' Arithmetic for origin-less cyclical time (`mt_cyclical_free`)
+#' Arithmetic for unanchored cyclical time (`mt_cyclical_free`)
 #'
 #' @description
 #' A `mt_cyclical_free` value (see [cyclical_time()]) is a position within a
 #' cycle with no anchor to a real point in time, e.g. `month_of_year(3)` is
-#' "March of some year". Since which instance of the cycle it belongs to is
-#' unknown, only operations that don't depend on that instance are defined:
+#' "March of some year". Since which cycle it falls in (which year) is
+#' unknown, only operations that don't depend on the anchor are defined:
 #'
 #' - **Differences**: `a - b` between free values of the same cycle is a
 #'   [duration()] in their common chronon, the difference between their
@@ -37,8 +37,9 @@
 #' [cumsum()]. Comparisons and ordering ([sort()], [min()], [max()],
 #' [range()]) are defined, see [mt_cyclical_free-compare].
 #'
-#' To do any of these, anchor the free value to a particular instance of its
-#' cycle with [time_compose()], giving linear time, e.g.
+#' To do any of these, anchor the free value to a specific cycle (e.g. a
+#' particular month for a day of month) with [time_compose()], giving linear
+#' time, e.g.
 #' `time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)`.
 #'
 #' Missing values stay missing.

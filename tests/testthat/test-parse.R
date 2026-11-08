@@ -773,7 +773,7 @@ test_that("time_parse_impl() returns a simple time vector, and time_parse() is a
   expect_equal(format(wrapped), format(r))
 })
 
-test_that("time_parse_impl() returns a simple origin-less cyclical vector for a cyc()-only format", {
+test_that("time_parse_impl() returns a simple unanchored cyclical vector for a cyc()-only format", {
   r <- time_parse_impl("Feb", format = "{cyc(month, year, label = TRUE)}")
   expect_true(S7::S7_inherits(r, mt_cyclical_free))
   expect_false(is_mixtime(r))

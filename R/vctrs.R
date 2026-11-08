@@ -237,7 +237,7 @@ mt_cast_time_time_free <- function(x, to, ..., x_arg = "", to_arg = "") {
   x
 }
 
-# Free (origin-less) and anchored cyclical time never convert to each other.
+# Free (unanchored) and anchored cyclical time never convert to each other.
 free_incompatible_details <- paste0(
   "Free cyclical time (from a bare position, e.g. `month_of_year(3)`) has no ",
   "anchor, so it can't be combined with anchored time."

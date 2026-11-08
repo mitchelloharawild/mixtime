@@ -3,7 +3,7 @@
 \name{format.mt_cyclical_free}
 \alias{format.mt_cyclical_free}
 \alias{format,mt_cyclical_free-method}
-\title{Format origin-less cyclical time (\code{mt_cyclical_free})}
+\title{Format unanchored cyclical time (\code{mt_cyclical_free})}
 \usage{
 \S4method{format}{mt_cyclical_free}(x, ..., attr = TRUE)
 }
@@ -32,6 +32,6 @@ rendered directly from its own stored offset via the same
 \code{\link[=chronon_format_cyclical]{chronon_format_cyclical()}} template and \code{\link[=cyclical_labels_format]{cyclical_labels_format()}}
 renderer an anchored value's reduced position would use, called with
 \code{at = NULL}. The offset is split across the template's tokens using
-\code{\link[=chronon_cardinality]{chronon_cardinality()}} only, never \code{\link[=chronon_divmod]{chronon_divmod()}}, which would need a
-specific cycle instance.
+\code{\link[=chronon_cardinality]{chronon_cardinality()}} only, never \code{\link[=chronon_divmod]{chronon_divmod()}}, which would need an
+anchor (a specific cycle, e.g. which year).
 }

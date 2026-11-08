@@ -53,8 +53,8 @@ new_cyclical_time_fn <- function(chronon, cycle, default_calendar = cal_gregoria
 #' like [day_of_week()] or [month_of_year()].
 #' 
 #' @param data Input data to convert to cyclical time. Can be:
-#'   - Numeric values: positions within the cycle with no known cycle
-#'     instance (an `mt_cyclical_free` vector), counted the way the chronon is
+#'   - Numeric values: positions within the cycle with no anchor (an
+#'     unanchored `mt_cyclical_free` vector), counted the way the chronon is
 #'     displayed (e.g. `3` is March for months of the year, `0` is midnight
 #'     for seconds of the day). Positions beyond the longest possible cycle
 #'     (e.g. day 32 of a month) are `NA`.
@@ -177,7 +177,7 @@ free_from_position <- function(x, ptype) {
 }
 
 # The most `chronon`s a `cycle` can hold: its fixed cardinality, or for a
-# variable-length cycle the largest over many cycle instances (e.g. 31 days in
+# variable-length cycle the largest over many cycles (e.g. 31 days in
 # a month, 366 days in a year, 53 ISO weeks in a year). NULL if unknown.
 cyclical_cardinality_max <- function(chronon, cycle) {
   if (chronon_cardinality_is_fixed(chronon, cycle)) {

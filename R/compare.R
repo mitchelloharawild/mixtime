@@ -311,7 +311,7 @@ method(`>`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare("
 method(`>=`, list(mt_duration, class_any)) <- function(e1, e2) duration_compare(">=", e1, e2)
 method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(">=", e1, e2)
 
-#' Comparison operators for origin-less cyclical time (`mt_cyclical_free`)
+#' Comparison operators for unanchored cyclical time (`mt_cyclical_free`)
 #'
 #' @description
 #' A `mt_cyclical_free` value (see [cyclical_time()]) is a magnitude within a
@@ -330,8 +330,8 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #' reconciled by scaling both magnitudes to their finest common chronon via
 #' [chronon_cardinality()] - never [chronon_divmod()], which would assert
 #' that the stored number's position is measured relative to some specific
-#' instance of the cycle, a claim that is false by construction for data
-#' defined to carry no knowledge of which instance it belongs to.
+#' cycle (an anchor), a claim that is false by construction for data
+#' defined to carry no knowledge of which cycle it falls in.
 #'
 #' A free value can also be compared against an anchored [mt_cyclical]: the
 #' anchored side reduces to its position within the cycle via its own

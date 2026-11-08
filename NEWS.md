@@ -2,13 +2,13 @@
 
 ## New features
 
-* Added `mt_cyclical_free`, an origin-less cyclical time type for "cyclical
+* Added `mt_cyclical_free`, an unanchored cyclical time type for "cyclical
   time without knowledge of which cycle it is in" (#47) - a position within
-  a cycle whose particular instance is unknown (e.g. "day 60 of the year",
-  with no year known). It is built automatically by `cyclical_time()`
-  (and helpers like `day_of_year()`/`month_of_year()`) when given bare
-  numeric input (or an all-`NA` logical), and by `time_compose()`/
-  `time_parse()` when no `lin()` anchor is supplied. Bare numeric input is
+  a cycle with no anchor (e.g. "day 60 of the year", with no year known).
+  It is built automatically by `cyclical_time()` (and helpers like
+  `day_of_year()`/`month_of_year()`) when given bare numeric input (or an
+  all-`NA` logical), and by `time_compose()`/`time_parse()` when no `lin()`
+  anchor is supplied. Bare numeric input is
   indexed the way that chronon is normally displayed (read from its
   registered `cyclical_labels()` scheme - e.g. `day_of_year(60)` is the 60th
   day, but `time_of_day(0)` is midnight, not "the 1st second"), and input

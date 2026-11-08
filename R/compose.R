@@ -23,7 +23,7 @@
 #' linear vector) to resolve it, e.g. `time_compose(lin(year) ~ 2024,
 #' cyc(month, year) ~ 3, cyc(day, month) ~ 29)`. With an anchor, free
 #' components (e.g. [day_of_month()]) are validated against the anchored
-#' instance and may be given in any order.
+#' time and may be given in any order.
 #'
 #' Values of linear and cyclical components are specified on the right-hand-side
 #' of the formula. A `lin()` value is the real-world count (e.g. the literal
@@ -42,7 +42,7 @@
 #'
 #' @return A `mixtime` time vector, at the finest chronon reached by the
 #'   chain (or the root's own chronon, if only one component is given).
-#'   Linear with a `lin()` anchor; origin-less cyclical (`mt_cyclical_free`)
+#'   Linear with a `lin()` anchor; unanchored cyclical (`mt_cyclical_free`)
 #'   otherwise, since there is then no point in time for the result to be a
 #'   position within.
 #'
@@ -304,7 +304,7 @@ compose_chain <- function(comps, fixed_hint = NULL) {
     )
   }
 
-  # Without an anchor there is no instance to resolve a variable-length link
+  # Without an anchor there is no cycle to resolve a variable-length link
   # against, so collapsing the chain into one offset is only valid when every
   # link below the root has a fixed length.
   if (!is.null(root_cycle)) {
@@ -432,7 +432,7 @@ compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
   if (is.null(cycle)) {
     mt_linear(running_count, chronon = running_chronon)
   } else {
-    # No lin() anchor - an origin-less magnitude (mt_cyclical_free), not
+    # No lin() anchor - an unanchored position (mt_cyclical_free), not
     # mt_cyclical. Its constructor drops any time zone.
     mt_cyclical_free(running_count, chronon = running_chronon, cycle = cycle)
   }

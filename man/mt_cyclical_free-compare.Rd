@@ -8,7 +8,7 @@
 \alias{<=,mt_cyclical_free-method}
 \alias{>,mt_cyclical_free-method}
 \alias{>=,mt_cyclical_free-method}
-\title{Comparison operators for origin-less cyclical time (\code{mt_cyclical_free})}
+\title{Comparison operators for unanchored cyclical time (\code{mt_cyclical_free})}
 \usage{
 \S4method{==}{mt_cyclical_free}(e1, e2)
 \S4method{!=}{mt_cyclical_free}(e1, e2)
@@ -44,8 +44,8 @@ day-of-year-free is an error. Differing chronons within a shared cycle are
 reconciled by scaling both magnitudes to their finest common chronon via
 \code{\link[=chronon_cardinality]{chronon_cardinality()}} - never \code{\link[=chronon_divmod]{chronon_divmod()}}, which would assert
 that the stored number's position is measured relative to some specific
-instance of the cycle, a claim that is false by construction for data
-defined to carry no knowledge of which instance it belongs to.
+cycle (an anchor), a claim that is false by construction for data
+defined to carry no knowledge of which cycle it falls in.
 
 A free value can also be compared against an anchored \link{mt_cyclical}: the
 anchored side reduces to its position within the cycle via its own

@@ -4,7 +4,7 @@
 \alias{mt_cyclical_free-arithmetic}
 \alias{+,mt_cyclical_free-method}
 \alias{-,mt_cyclical_free-method}
-\title{Arithmetic for origin-less cyclical time (\code{mt_cyclical_free})}
+\title{Arithmetic for unanchored cyclical time (\code{mt_cyclical_free})}
 \usage{
 \S4method{+}{mt_cyclical_free}(e1, e2)
 \S4method{-}{mt_cyclical_free}(e1, e2)
@@ -19,8 +19,8 @@ For \code{free - free}, a duration (\link{mt_duration}). For shifts, a
 \description{
 A \code{mt_cyclical_free} value (see \code{\link[=cyclical_time]{cyclical_time()}}) is a position within a
 cycle with no anchor to a real point in time, e.g. \code{month_of_year(3)} is
-"March of some year". Since which instance of the cycle it belongs to is
-unknown, only operations that don't depend on that instance are defined:
+"March of some year". Since which cycle it falls in (which year) is
+unknown, only operations that don't depend on the anchor are defined:
 \itemize{
 \item \strong{Differences}: \code{a - b} between free values of the same cycle is a
 \code{\link[=duration]{duration()}} in their common chronon, the difference between their
@@ -53,8 +53,9 @@ dividing; and summaries that create new values, such as \code{\link[=mean]{mean(
 \code{\link[=cumsum]{cumsum()}}. Comparisons and ordering (\code{\link[=sort]{sort()}}, \code{\link[=min]{min()}}, \code{\link[=max]{max()}},
 \code{\link[=range]{range()}}) are defined, see \link{mt_cyclical_free-compare}.
 
-To do any of these, anchor the free value to a particular instance of its
-cycle with \code{\link[=time_compose]{time_compose()}}, giving linear time, e.g.
+To do any of these, anchor the free value to a specific cycle (e.g. a
+particular month for a day of month) with \code{\link[=time_compose]{time_compose()}}, giving linear
+time, e.g.
 \code{time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)}.
 
 Missing values stay missing.

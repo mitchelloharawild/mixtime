@@ -15,8 +15,8 @@ cyclical_time(
 \arguments{
 \item{data}{Input data to convert to cyclical time. Can be:
 \itemize{
-\item Numeric values: positions within the cycle with no known cycle
-instance (an \code{mt_cyclical_free} vector), counted the way the chronon is
+\item Numeric values: positions within the cycle with no anchor (an
+unanchored \code{mt_cyclical_free} vector), counted the way the chronon is
 displayed (e.g. \code{3} is March for months of the year, \code{0} is midnight
 for seconds of the day). Positions beyond the longest possible cycle
 (e.g. day 32 of a month) are \code{NA}.
