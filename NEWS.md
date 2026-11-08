@@ -45,6 +45,14 @@
   time granule in another is constant (e.g. 12 months in a year), or depends
   on where in time it is measured (e.g. days in a month).
 
+* `time_compose()` gains `on_ambiguous` and `offset` arguments to resolve
+  time zone aware local times that occur twice when daylight saving ends.
+  `offset` takes the UTC offset of each time as a duration (e.g.
+  `tz_offset(x)`) or time zone abbreviation (e.g. `"AEDT"`). Without either,
+  ambiguous times resolve to their earliest occurrence with a warning that
+  suggests how to avoid the ambiguity. The `mixtime.on_ambiguous` option sets
+  the default strategy.
+
 ## Improvements
 
 * Updates for compatibility with development S7.
@@ -55,6 +63,11 @@
   granule if both are specified.
 
 ## Bug fixes
+
+* `time_compose()` now composes time zone aware components (e.g. from
+  `time_components()`) in local time and resolves the result to the instant
+  it describes, instead of mixing local and UTC based counts. It also keeps
+  the order of components whose elements are stored out of order.
 
 * Converting `zoo::yearmon()` and `zoo::yearqtr()` values (e.g. with
   `yearmonth()`, `yearquarter()` or `mixtime()`) now gives the correct

@@ -287,6 +287,20 @@ method(chronon_from_local, mt_tz_unit) <- function(
       invalid = rep_len(FALSE, length(x))
     ))
   }
+  ch <- tz_local_candidates(chronon, x)
+  # A reading that occurs twice resolves to its earliest occurrence
+  i <- pmin(ch$first, ch$second, na.rm = TRUE)
+  tz_local_value(chronon, x, i, ch, discrete, on_invalid)
+}
+
+# The buckets of `chronon` whose local label is that of each local reading `x`.
+# `first` is the bucket read with the UTC offset in effect `before` any nearby
+# transition, and `second` the one read with the offset `after` it. Away from a
+# transition both offsets, and so both buckets, are the same. When daylight
+# saving ends a reading can occur twice, and the two buckets differ (the
+# `ambiguous` readings). When it starts a reading can fall in the skipped time,
+# and neither bucket has its label (the `gap` readings, whose buckets are NA).
+tz_local_candidates <- function(chronon, x) {
   label <- floor_ulp(x)
   starts <- tz_label_starts(chronon)
   local <- starts(label)
@@ -294,12 +308,11 @@ method(chronon_from_local, mt_tz_unit) <- function(
   around <- tz_offsets_around(local, tz = chronon@tz)
 
   # Away from a transition the bucket follows from the label and its offset.
-  i <- label - trunc(around$before / unit)
+  first <- second <- label - trunc(around$before / unit)
 
-  # Near a transition, try the offset either side of it and keep the earliest
-  # bucket whose label matches. A label that matches neither falls in a gap.
+  # Near a transition, try the offset either side of it and keep the buckets
+  # whose label matches.
   near <- (around$before != around$after) %in% TRUE
-  gap <- rep_len(FALSE, length(x))
   if (any(near)) {
     # Both candidates in one batch: those with the offset before, then after.
     offset <- c(around$before[near], around$after[near])
@@ -307,18 +320,33 @@ method(chronon_from_local, mt_tz_unit) <- function(
     matched <- tz_bucket_label(chronon, candidate, starts) == rep(label[near], 2L)
     candidate[!(matched %in% TRUE)] <- NA
     before <- seq_len(sum(near))
-    found <- pmin(candidate[before], candidate[-before], na.rm = TRUE)
-    i[near] <- found
-    gap[near] <- is.na(found) & !is.na(label[near])
+    first[near] <- candidate[before]
+    second[near] <- candidate[-before]
   }
 
-  value <- if (discrete) i else i + (x - label)
+  list(
+    label = label,
+    local = local,
+    before = around$before,
+    after = around$after,
+    first = first,
+    second = second,
+    ambiguous = (first != second) %in% TRUE,
+    gap = is.na(first) & is.na(second) & !is.na(label)
+  )
+}
+
+# Stored values for local readings `x` resolved to buckets `i`, with readings in
+# a gap resolved by `on_invalid` (see chronon_from_local()).
+tz_local_value <- function(chronon, x, i, ch, discrete, on_invalid) {
+  value <- if (discrete) i else i + (x - ch$label)
+  gap <- ch$gap
   if (any(gap)) {
     value[gap] <- tz_resolve_gap(
       chronon,
       x[gap],
-      around$before[gap],
-      around$after[gap],
+      ch$before[gap],
+      ch$after[gap],
       discrete,
       on_invalid
     )

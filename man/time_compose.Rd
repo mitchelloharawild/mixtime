@@ -4,7 +4,13 @@
 \alias{time_compose}
 \title{Compose a linear time vector from linear and cyclical components}
 \usage{
-time_compose(..., discrete = TRUE, calendar = cal_gregorian)
+time_compose(
+  ...,
+  discrete = TRUE,
+  calendar = cal_gregorian,
+  on_ambiguous = getOption("mixtime.on_ambiguous", "earliest"),
+  offset = NULL
+)
 }
 \arguments{
 \item{...}{Components used to build the time point. Each element is either:
@@ -20,6 +26,21 @@ allowing representation of fractional time granules (continuous time model).}
 
 \item{calendar}{Calendar used to resolve bare granule names in \code{lin()}/
 \code{cyc()} formulas. Defaults to \link{cal_gregorian}.}
+
+\item{on_ambiguous}{How to resolve a time zone aware time point whose local
+time occurs twice (when daylight saving ends) and that \code{offset} doesn't
+resolve. One of \code{"earliest"} (the default), \code{"latest"}, \code{"reject"}
+(\code{NA} with a warning) or \code{"error"}. The default is set by the
+\code{mixtime.on_ambiguous} option. Without a strategy chosen by either, an
+ambiguous time point warns and resolves to its earliest occurrence.}
+
+\item{offset}{The UTC offset of each time point, which tells apart the two
+occurrences of a repeated local time. Either a duration of fixed length
+(e.g. \code{hours(11L)}, or \code{\link[=tz_offset]{tz_offset()}} of the times the components came
+from), or time zone abbreviations of the components' time zone (e.g.
+\code{"AEDT"}). \code{NA} where not known. Each offset must be one in use at that
+local time. For a local time skipped when daylight saving starts, the
+offset gives the instant it describes (e.g. 02:30 AEST is 03:30 AEDT).}
 }
 \value{
 A \code{mixtime} time vector, at the finest chronon reached by the
@@ -61,6 +82,26 @@ year 1980); a \code{cyc()} value is the 1-indexed position within the cycle
 counting rather than the raw 0-indexed position \code{\link[=time_components]{time_components()}} uses
 internally.
 }
+\section{Time zones}{
+
+Time zone aware components are composed in local (wall clock) time, and the
+result is then resolved to the instant it describes. When daylight saving
+ends, part of the day repeats, and a local time in it is ambiguous. It is
+resolved, in order, by:
+\enumerate{
+\item a time zone aware \code{lin()} anchor (e.g. \code{lin(hour)} from
+\code{\link[=time_components]{time_components()}}), which already identifies one of the two
+occurrences;
+\item its \code{offset};
+\item the \code{on_ambiguous} strategy, which warns if it wasn't chosen.
+}
+
+When daylight saving starts, part of the day is skipped. A local time in it
+is resolved by its \code{offset} if given, and otherwise by the
+\code{mixtime.on_invalid} option, as in \code{\link[=time_shift]{time_shift()}} (see
+\code{vignette("invalid-time-points")}).
+}
+
 \examples{
 # cyc() values are 1-indexed positions: month 3 is March, day 15 is the 15th
 time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3, cyc(day, month) ~ 15)
@@ -81,6 +122,15 @@ time_compose(lin(year) ~ 2024, day_of_month(29), month_of_year(2))
 # Round-tripping through time_components()
 parts <- time_components(as.Date("2024-03-15"), yr = lin(year), mth = cyc(month, year))
 with(parts, time_compose(yr, mth))
+
+# Repeated local times when daylight saving ends: 02:30 occurs twice in
+# Melbourne on 5 April 2026, first in AEDT (+11) then in AEST (+10)
+x <- datetime(c("2026-04-05 01:30:00", "2026-04-05 03:30:00"), tz = "Australia/Melbourne")
+x <- c(x[1] + hours(1L), x[2] - hours(1L))
+parts <- time_components(x, d = lin(day), h = cyc(hour, day), m = cyc(minute, hour))
+with(parts, time_compose(d, h, m, offset = tz_offset(x)))
+with(parts, time_compose(d, h, m, offset = c("AEDT", "AEST")))
+with(parts, time_compose(d, h, m, on_ambiguous = "latest"))
 
 # Multi-unit (self-referencing) cycles: the 3rd month (1-indexed) of the
 # 4th 3-month block since epoch (block 3 = months 9-11 -> December 1970)

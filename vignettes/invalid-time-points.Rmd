@@ -203,6 +203,42 @@ date("2021-01-31") + months(1L)
 options(mixtime.on_invalid = NULL)
 ```
 
+## Composing time from components
+
+`time_compose()` builds time points from their components, such as the day, hour and minute from `time_components()`. Time zone aware components are composed in local time, so they meet the same daylight saving problems as calendar arithmetic.
+
+A local time in the hour repeated when daylight saving ends is ambiguous. `time_compose()` resolves it to its earliest occurrence, the same as `time_shift()`, but warns when the components don't say which occurrence was meant, since the components alone describe both.
+
+```{r}
+x <- datetime("2026-04-05 01:30:00", tz = "Australia/Melbourne") + hours(c(1L, 2L))
+x
+parts <- time_components(x, d = lin(day), h = cyc(hour, day), m = cyc(minute, hour))
+time_compose(parts$d, parts$h, parts$m)
+```
+
+The warning lists ways to avoid the ambiguity. The most direct is to give the UTC offset of each time with `offset`, either as a duration or as a time zone abbreviation.
+
+```{r}
+time_compose(parts$d, parts$h, parts$m, offset = tz_offset(x))
+time_compose(parts$d, parts$h, parts$m, offset = c("AEDT", "AEST"))
+```
+
+A time zone aware `lin()` component finer than the repeated time, such as `lin(hour)`, already identifies the occurrence, so it needs no offset.
+
+```{r}
+parts <- time_components(x, h = lin(hour), m = cyc(minute, hour))
+time_compose(parts$h, parts$m)
+```
+
+Otherwise, `on_ambiguous` chooses the occurrence: `"earliest"` or `"latest"`, or `"reject"` and `"error"` to refuse. Choosing it, or setting the `mixtime.on_ambiguous` option, silences the warning.
+
+```{r}
+parts <- time_components(x, d = lin(day), h = cyc(hour, day), m = cyc(minute, hour))
+time_compose(parts$d, parts$h, parts$m, on_ambiguous = "latest")
+```
+
+A local time skipped when daylight saving starts is resolved by the `mixtime.on_invalid` option, as described above. With an `offset`, it is the instant that offset describes: 02:30 AEST, on the day Melbourne's clocks skip from 02:00 AEST to 03:00 AEDT, is 03:30 AEDT.
+
 ## Costs of resolving invalid time points
 
 Every strategy that produces a result changes the behaviour of the arithmetic, in ways worth knowing when choosing one.
