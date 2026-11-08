@@ -163,13 +163,14 @@ mt_unit <- S7::new_class(
 #' the `chronon` property; the common modes of time are:
 #'
 #' * `mt_linear` - linear time points, typically produced with [linear_time()].
-#' * `mt_cyclical` - cyclical time points with additional `cycle` granule,
-#'   typically produced with [cyclical_time()].
+#' * `mt_cyclical` - located cyclical time: positions within a `cycle` granule
+#'   that know their enclosing cycle, typically produced with
+#'   [cyclical_time()] from time points.
 #' * `mt_duration` - time durations, typically produced with [duration()].
-#' * `mt_cyclical_free` - cyclical time with no anchor to a real point in
-#'   time (a bare magnitude within a cycle, e.g. "day 60 of the year" with no
+#' * `mt_cyclical_free` - underspecified cyclical time: positions within a
+#'   cycle whose enclosing cycle is unknown (e.g. "day 60 of the year" with no
 #'   year known), produced by [cyclical_time()] with bare numeric input, or
-#'   by [time_compose()]/[time_parse()] with no [lin()] anchor.
+#'   by [time_compose()]/[time_parse()] with no [lin()] component.
 #'
 #' The underlying data can be either **integer** (discrete time) or **double**
 #' (continuous time). The `chronon` (and, for `mt_cyclical`, the `cycle`) are 

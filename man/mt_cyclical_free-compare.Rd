@@ -8,7 +8,7 @@
 \alias{<=,mt_cyclical_free-method}
 \alias{>,mt_cyclical_free-method}
 \alias{>=,mt_cyclical_free-method}
-\title{Comparison operators for unanchored cyclical time (\code{mt_cyclical_free})}
+\title{Comparison operators for underspecified cyclical time (\code{mt_cyclical_free})}
 \usage{
 \S4method{==}{mt_cyclical_free}(e1, e2)
 \S4method{!=}{mt_cyclical_free}(e1, e2)
@@ -20,15 +20,15 @@
 \arguments{
 \item{e1, e2}{\code{mt_cyclical_free} vectors sharing a cycle (or values castable
 to one, such as plain numeric vectors sharing the other operand's
-chronon), or one \code{mt_cyclical_free} and one anchored \code{mt_cyclical}
+chronon), or one \code{mt_cyclical_free} and one located \code{mt_cyclical}
 sharing a cycle.}
 }
 \value{
 A logical vector.
 }
 \description{
-A \code{mt_cyclical_free} value (see \code{\link[=cyclical_time]{cyclical_time()}}) is a magnitude within a
-cycle with no anchor to a real point in time (e.g. \code{day_of_year(60)}, "day
+Underspecified cyclical time (see \code{\link[=cyclical_time]{cyclical_time()}}) is a magnitude within
+a cycle whose enclosing cycle is unknown (e.g. \code{day_of_year(60)}, "day
 60 of the year", with no year known) - modelled on \link{mt_duration}, not
 \link{mt_cyclical}. Comparing two free values is therefore
 \link{mt_duration-compare}'s plain magnitude comparison, not
@@ -44,11 +44,11 @@ day-of-year-free is an error. Differing chronons within a shared cycle are
 reconciled by scaling both magnitudes to their finest common chronon via
 \code{\link[=chronon_cardinality]{chronon_cardinality()}} - never \code{\link[=chronon_divmod]{chronon_divmod()}}, which would assert
 that the stored number's position is measured relative to some specific
-cycle (an anchor), a claim that is false by construction for data
+enclosing cycle, a claim that is false by construction for data
 defined to carry no knowledge of which cycle it falls in.
 
-A free value can also be compared against an anchored \link{mt_cyclical}: the
-anchored side reduces to its position within the cycle via its own
+Underspecified cyclical time can also be compared against located
+\link{mt_cyclical}: the located side reduces to its position within the cycle via its own
 existing, unchanged machinery (the same reduction \code{\link[=format]{format()}} and
 \link{mt_cyclical-compare} use), and both sides are then compared as
 magnitudes.

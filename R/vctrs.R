@@ -68,7 +68,7 @@ mixtime_free_ptype <- function(x) {
 }
 
 # Mixtime vectors hold their parts side by side, so casting between them is
-# usually a no-op. Free and anchored time can't stand in for each other, so a
+# usually a no-op. Underspecified and located time can't stand in for each other, so a
 # cast that would leave them in place of the other is an error.
 vec_cast_mixtime_mixtime <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (!length(to@x) || !length(x@x)) return(x)
@@ -237,10 +237,11 @@ mt_cast_time_time_free <- function(x, to, ..., x_arg = "", to_arg = "") {
   x
 }
 
-# Free (unanchored) and anchored cyclical time never convert to each other.
+# Underspecified (free) and located cyclical time never convert to each other.
 free_incompatible_details <- paste0(
-  "Free cyclical time (from a bare position, e.g. `month_of_year(3)`) has no ",
-  "anchor, so it can't be combined with anchored time."
+  "Underspecified cyclical time (from a bare position, e.g. ",
+  "`month_of_year(3)`) has no enclosing cycle, so it can't be combined with ",
+  "located cyclical time."
 )
 mt_cast_free_anchored <- function(x, to, ..., x_arg = "", to_arg = "") {
   vctrs::stop_incompatible_cast(

@@ -401,7 +401,7 @@ method(`*`, list(S7::class_numeric, mt_duration)) <- function(e1, e2) {
 # cycles (e.g. day_of_month()) advance correctly, since there is no fixed period to wrap
 # against.
 #
-# `mt_cyclical_free` (cyclical time with no anchor) has no underlying time to advance, so
+# `mt_cyclical_free` (underspecified cyclical time) has no underlying time to advance, so
 # it has its own, more specific, methods in cyclical_free_ops.R.
 
 # --- friendly errors for unsupported operator/operand combinations ----------------

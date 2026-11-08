@@ -2,36 +2,36 @@
 
 ## New features
 
-* Added `mt_cyclical_free`, an unanchored cyclical time type for "cyclical
-  time without knowledge of which cycle it is in" (#47) - a position within
-  a cycle with no anchor (e.g. "day 60 of the year", with no year known).
-  It is built automatically by `cyclical_time()` (and helpers like
-  `day_of_year()`/`month_of_year()`) when given bare numeric input (or an
-  all-`NA` logical), and by `time_compose()`/`time_parse()` when no `lin()`
-  anchor is supplied. Bare numeric input is
-  indexed the way that chronon is normally displayed (read from its
-  registered `cyclical_labels()` scheme - e.g. `day_of_year(60)` is the 60th
-  day, but `time_of_day(0)` is midnight, not "the 1st second"), and input
-  outside the longest possible cycle is `NA` (e.g. `month_of_year(13)`,
-  `day_of_month(32)`, `day_of_year(367)`). Free values have no time zone.
-  Numbers combined with free values (`vec_c()`, `vec_cast()`, comparison)
-  are read as positions the same way, so `month_of_year(c(1, 3)) == 3` is
-  `c(FALSE, TRUE)`. Free and anchored cyclical time can't be cast to each
-  other. Comparison mirrors `mt_duration`'s plain magnitude comparison (no
-  Allen's interval algebra); a free value can also be compared directly
-  against an anchored `mt_cyclical`. Added `time_is_cyclical_free()`
-  alongside the existing `time_is_*()` predicates.
+* Added underspecified cyclical time (`mt_cyclical_free`), a position within
+  a cycle whose enclosing cycle is unknown (#47), e.g. "day 60 of the year"
+  with no year known. The existing `mt_cyclical` is now described as located
+  cyclical time, which knows its enclosing cycle. `?cyclical_time` explains
+  the differences. Underspecified cyclical time is built by `cyclical_time()`
+  (and helpers like `day_of_year()`/`month_of_year()`) from bare numeric
+  input (or an all-`NA` logical), and by `time_compose()`/`time_parse()`
+  without a `lin()` component. Bare numeric input is indexed the way that
+  chronon is normally displayed (read from its registered `cyclical_labels()`
+  scheme - e.g. `day_of_year(60)` is the 60th day, but `time_of_day(0)` is
+  midnight, not "the 1st second"), and input outside the longest possible
+  cycle is `NA` (e.g. `month_of_year(13)`, `day_of_month(32)`,
+  `day_of_year(367)`). Underspecified values have no time zone. Numbers
+  combined with them (`vec_c()`, `vec_cast()`, comparison) are read as
+  positions the same way, so `month_of_year(c(1, 3)) == 3` is
+  `c(FALSE, TRUE)`. Located and underspecified cyclical time can't be cast
+  to each other, but can be compared. Comparison mirrors `mt_duration`'s
+  plain magnitude comparison (no Allen's interval algebra). Added
+  `time_is_cyclical_free()` alongside the existing `time_is_*()` predicates.
 
-  Free values are ordered by their position within one cycle (`sort()`,
+  Underspecified values are ordered by their position within one cycle (`sort()`,
   `min()`, `max()`), and subtracting two gives the within-cycle difference
   (`month_of_year(3) - month_of_year(1)` is 2 months). Adding a number or
   duration wraps around for fixed-length cycles (`month_of_year(12) + 1` is
   January, also in `seq()`), but errors for variable-length cycles such as
   `day_of_month()` and `day_of_year()`, since the result depends on which
-  month or year it is in. These errors, and `mean()` of a free value,
-  suggest anchoring it with `time_compose()` first (e.g.
+  month or year it is in. These errors, and `mean()` of an underspecified
+  value, suggest locating it with `time_compose()` first (e.g.
   `time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)`).
-  Likewise `time_compose()` and `time_parse()` without a `lin()` anchor now
+  Likewise `time_compose()` and `time_parse()` without a `lin()` component now
   only collapse components with fixed lengths: `cyc(minute, hour)` with
   `cyc(hour, day)` gives a minute of the day, while day 15 of March is an
   error, as its day of the year depends on the year.

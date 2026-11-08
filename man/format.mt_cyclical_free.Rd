@@ -3,7 +3,7 @@
 \name{format.mt_cyclical_free}
 \alias{format.mt_cyclical_free}
 \alias{format,mt_cyclical_free-method}
-\title{Format unanchored cyclical time (\code{mt_cyclical_free})}
+\title{Format underspecified cyclical time (\code{mt_cyclical_free})}
 \usage{
 \S4method{format}{mt_cyclical_free}(x, ..., attr = TRUE)
 }
@@ -26,12 +26,12 @@ timezone) to the default format.}
 A character vector the same length as \code{x}.
 }
 \description{
-A \code{mt_cyclical_free} value has no \code{at} (no real point in time) to resolve
-a within-cycle position from, so unlike an anchored \link{mt_cyclical} it is
+Underspecified cyclical time has no \code{at} (no enclosing cycle) to resolve
+a within-cycle position from, so unlike located \link{mt_cyclical} it is
 rendered directly from its own stored offset via the same
 \code{\link[=chronon_format_cyclical]{chronon_format_cyclical()}} template and \code{\link[=cyclical_labels_format]{cyclical_labels_format()}}
-renderer an anchored value's reduced position would use, called with
+renderer a located value's reduced position would use, called with
 \code{at = NULL}. The offset is split across the template's tokens using
-\code{\link[=chronon_cardinality]{chronon_cardinality()}} only, never \code{\link[=chronon_divmod]{chronon_divmod()}}, which would need an
-anchor (a specific cycle, e.g. which year).
+\code{\link[=chronon_cardinality]{chronon_cardinality()}} only, never \code{\link[=chronon_divmod]{chronon_divmod()}}, which would need a
+specific enclosing cycle (e.g. which year).
 }

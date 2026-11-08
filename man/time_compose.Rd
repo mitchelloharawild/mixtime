@@ -24,7 +24,7 @@ allowing representation of fractional time granules (continuous time model).}
 \value{
 A \code{mixtime} time vector, at the finest chronon reached by the
 chain (or the root's own chronon, if only one component is given).
-Linear with a \code{lin()} anchor; unanchored cyclical (\code{mt_cyclical_free})
+Linear with a \code{lin()} component; underspecified cyclical (\code{mt_cyclical_free})
 otherwise, since there is then no point in time for the result to be a
 position within.
 }
@@ -36,22 +36,22 @@ or an already-tagged linear/cyclical time vector (e.g. produced by
 \code{\link[=linear_time]{linear_time()}}, \code{\link[=cyclical_time]{cyclical_time()}}, or a \code{\link[=time_components]{time_components()}} column).
 }
 \details{
-A \code{lin()} component (the \strong{anchor}), when supplied, fixes the absolute
-position at some granule (e.g. the year). Every other component must be
-\code{cyc()}, chaining without gaps or branches from the anchor down to the
+A \code{lin()} component, when supplied, locates the time point at some granule
+(e.g. the year). Every other component must be
+\code{cyc()}, chaining without gaps or branches from the \code{lin()} down to the
 target chronon: each cycle must equal another component's chronon exactly.
 
-With no \code{lin()} anchor, every component must be \code{cyc()}, chained the same
-way but rooted at whichever component's cycle isn't itself another
-component's chronon. The result is cyclical time tagged with that root's
-cycle: \code{cyc(month, year) ~ 3} alone matches \code{month_of_year()} for any
+With no \code{lin()} component, every component must be \code{cyc()}, chained the
+same way but rooted at whichever component's cycle isn't itself another
+component's chronon. The result is underspecified cyclical time (see
+\code{\link[=cyclical_time]{cyclical_time()}}) tagged with that root's cycle: \code{cyc(month, year) ~ 3} alone matches \code{month_of_year()} for any
 March. Chained components collapse to one (chronon, cycle) offset, e.g.
 \code{cyc(minute, hour) ~ 30} and \code{cyc(hour, day) ~ 3} give minute-of-day 149.
 This is only possible when every link has a fixed length: the number of
 days in a month varies, so day 29 of month 3 isn't a fixed day of the year
-and is an error without an anchor. Supply a \code{lin()} anchor (or an existing
-linear vector) to resolve it, e.g. \code{time_compose(lin(year) ~ 2024, cyc(month, year) ~ 3, cyc(day, month) ~ 29)}. With an anchor, free
-components (e.g. \code{\link[=day_of_month]{day_of_month()}}) are validated against the anchored
+and is an error without a \code{lin()} component. Supply a \code{lin()} component (or
+an existing linear vector) to locate it, e.g. \code{time_compose(lin(year) ~ 2024, cyc(month, year) ~ 3, cyc(day, month) ~ 29)}. Underspecified
+components (e.g. \code{\link[=day_of_month]{day_of_month()}}) are then validated against the located
 time and may be given in any order.
 
 Values of linear and cyclical components are specified on the right-hand-side
@@ -65,17 +65,17 @@ internally.
 # cyc() values are 1-indexed positions: month 3 is March, day 15 is the 15th
 time_compose(lin(year) ~ 1980, cyc(month, year) ~ 3, cyc(day, month) ~ 15)
 
-# A lin() anchor alone is a valid (coarser) time point
+# A lin() component alone is a valid (coarser) time point
 time_compose(lin(year) ~ 1980)
 
-# No lin() anchor: composes cyclical time
+# No lin() component: composes underspecified cyclical time
 time_compose(cyc(month, year) ~ 3)
 
 # Fixed-length chains collapse to one (chronon, cycle) pair: minute 30 of
 # hour 3 becomes minute-of-day
 time_compose(cyc(minute, hour) ~ 30, cyc(hour, day) ~ 3)
 
-# Variable-length links (days in a month) need an anchor
+# Variable-length links (days in a month) need a lin() component
 time_compose(lin(year) ~ 2024, day_of_month(29), month_of_year(2))
 
 # Round-tripping through time_components()

@@ -1,12 +1,12 @@
-#' Arithmetic for unanchored cyclical time (`mt_cyclical_free`)
+#' Arithmetic for underspecified cyclical time (`mt_cyclical_free`)
 #'
 #' @description
-#' A `mt_cyclical_free` value (see [cyclical_time()]) is a position within a
-#' cycle with no anchor to a real point in time, e.g. `month_of_year(3)` is
-#' "March of some year". Since which cycle it falls in (which year) is
-#' unknown, only operations that don't depend on the anchor are defined:
+#' Underspecified cyclical time (see [cyclical_time()]) is a position within a
+#' cycle whose enclosing cycle is unknown, e.g. `month_of_year(3)` is
+#' "March of some year". Only operations that don't depend on the enclosing
+#' cycle are defined:
 #'
-#' - **Differences**: `a - b` between free values of the same cycle is a
+#' - **Differences**: `a - b` between values of the same cycle is a
 #'   [duration()] in their common chronon, the difference between their
 #'   positions within the cycle (`month_of_year(3) - month_of_year(1)` is 2
 #'   months, and `month_of_year(1) - month_of_year(3)` is -2 months). This
@@ -30,24 +30,24 @@
 #' Everything else is an error: shifting by a duration that isn't a whole
 #' number of chronons with a fixed ratio (`month_of_year(1) + days(1)`), or
 #' that spans a whole cycle or more (`month_of_year(1) + years(1)` would move
-#' to another, unknown, year); differences between free values of differing
-#' cycles, or between a free value and a linear or anchored time point;
-#' subtracting a free value from a number or duration; multiplying or
+#' to another, unknown, year); differences between values of differing
+#' cycles, or between an underspecified value and a linear or located time
+#' point; subtracting an underspecified value from a number or duration; multiplying or
 #' dividing; and summaries that create new values, such as [mean()] or
 #' [cumsum()]. Comparisons and ordering ([sort()], [min()], [max()],
 #' [range()]) are defined, see [mt_cyclical_free-compare].
 #'
-#' To do any of these, anchor the free value to a specific cycle (e.g. a
+#' To do any of these, locate the value in a specific enclosing cycle (e.g. a
 #' particular month for a day of month) with [time_compose()], giving linear
 #' time, e.g.
 #' `time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)`.
 #'
 #' Missing values stay missing.
 #'
-#' @param e1,e2 Operands, at least one a `mt_cyclical_free` vector.
+#' @param e1,e2 Operands, at least one an underspecified (`mt_cyclical_free`) vector.
 #'
-#' @return For `free - free`, a duration ([mt_duration]). For shifts, a
-#'   `mt_cyclical_free` vector of the same type as the free operand.
+#' @return For differences, a duration ([mt_duration]). For shifts, a
+#'   `mt_cyclical_free` vector of the same type as the underspecified operand.
 #'
 #' @examples
 #' month_of_year(12) + 1L
@@ -57,7 +57,7 @@
 #' day_of_month(31) - day_of_month(1)
 #' seq(day_of_week(6), by = 1, length.out = 4)
 #'
-#' # Cycles of variable length can't be shifted until anchored
+#' # Cycles of variable length can't be shifted until located
 #' try(day_of_month(28) + 1L)
 #' time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)
 #'
@@ -93,11 +93,11 @@ free_anchor_hint <- function(x, example = "%s") {
   anchor <- free_anchor_example(x@cycle)
   if (is.null(anchor)) {
     return(cli::format_inline(
-      "Anchor it to a specific {cycle} first with {.fn time_compose}, using a time point measured in {cycle}s."
+      "Locate it in a specific {cycle} first with {.fn time_compose}, using a time point measured in {cycle}s."
     ))
   }
   code <- sprintf(example, sprintf("time_compose(%s, x)", anchor))
-  cli::format_inline("Anchor it to a specific {cycle} first, e.g. {.code {code}}.")
+  cli::format_inline("Locate it in a specific {cycle} first, e.g. {.code {code}}.")
 }
 
 # An example time point measured in `cycle`, as code. Each anchor's chronon is
@@ -147,7 +147,7 @@ operand_noun <- function(x) {
   }
   if (S7_inherits(x, mt_cyclical)) {
     kind <- paste(free_unit(x@chronon), "of", free_unit(x@cycle))
-    return(paste("an anchored", kind))
+    return(paste("a located", kind))
   }
   if (S7_inherits(x, mt_duration)) {
     return("a duration")
@@ -256,7 +256,7 @@ free_shift_count <- function(x, n, by = NULL, sign = 1L, what = NULL, example = 
         what = paste0(what, ", the result is temporally indeterminate."),
         why = why,
         hint = cli::format_inline(
-          "Shift by a whole number of {chronons} instead, or anchor it to a specific {cycle} with {.fn time_compose} first."
+          "Shift by a whole number of {chronons} instead, or locate it in a specific {cycle} with {.fn time_compose} first."
         )
       )
     }
@@ -355,7 +355,7 @@ method(`-`, list(mt_cyclical_free, mt_cyclical_free)) <- function(e1, e2) {
         "), so the time between them is unknown."
       ),
       hint = cli::format_inline(
-        "Subtract values of the same cycle, or anchor both with {.fn time_compose} first."
+        "Subtract values of the same cycle, or locate both with {.fn time_compose} first."
       )
     )
   }

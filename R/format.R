@@ -233,16 +233,16 @@ S7::method(format, mt_time) <- function(x, ..., attr = TRUE) {
   time_format_impl(x, ..., attr = attr)
 }
 
-#' Format unanchored cyclical time (`mt_cyclical_free`)
+#' Format underspecified cyclical time (`mt_cyclical_free`)
 #'
-#' A `mt_cyclical_free` value has no `at` (no real point in time) to resolve
-#' a within-cycle position from, so unlike an anchored [mt_cyclical] it is
+#' Underspecified cyclical time has no `at` (no enclosing cycle) to resolve
+#' a within-cycle position from, so unlike located [mt_cyclical] it is
 #' rendered directly from its own stored offset via the same
 #' [chronon_format_cyclical()] template and [cyclical_labels_format()]
-#' renderer an anchored value's reduced position would use, called with
+#' renderer a located value's reduced position would use, called with
 #' `at = NULL`. The offset is split across the template's tokens using
-#' [chronon_cardinality()] only, never [chronon_divmod()], which would need an
-#' anchor (a specific cycle, e.g. which year).
+#' [chronon_cardinality()] only, never [chronon_divmod()], which would need a
+#' specific enclosing cycle (e.g. which year).
 #'
 #' @param format A glue-style format string of `{cyc(...)}` tokens (see
 #'   [format.mt_time]), defaulting to one derived automatically for `x`. A

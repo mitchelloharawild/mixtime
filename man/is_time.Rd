@@ -35,16 +35,15 @@ A logical vector the same length as \code{x}.
 }
 \description{
 Test whether elements of a \code{mixtime} vector are linear, cyclical,
-unanchored cyclical, or durations.
+underspecified cyclical, or durations.
 }
 \details{
 These helpers return a logical vector the same length as \code{x} identifying the
 type of time represented by each element. \code{time_is_cyclical()} and
-\code{time_is_cyclical_free()} are distinct: an anchored cyclical time point
-(e.g. \code{\link[=month_of_year]{month_of_year()}} of a real date) is a position within a cycle,
-while an unanchored one (e.g. bare \code{month_of_year(3)}, with no date
-behind it) is a position within a cycle with no anchor: which cycle it
-falls in (which year) is unknown.
+\code{time_is_cyclical_free()} are distinct: located cyclical time (e.g.
+\code{\link[=month_of_year]{month_of_year()}} of a real date) knows its enclosing cycle (which year),
+while underspecified cyclical time (e.g. bare \code{month_of_year(3)}) doesn't.
+See \code{\link[=cyclical_time]{cyclical_time()}} for the differences.
 }
 \examples{
 t <- c(yearmonth(0), month_of_year(as.Date("2020-01-01")), months(0L))

@@ -311,11 +311,11 @@ method(`>`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare("
 method(`>=`, list(mt_duration, class_any)) <- function(e1, e2) duration_compare(">=", e1, e2)
 method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(">=", e1, e2)
 
-#' Comparison operators for unanchored cyclical time (`mt_cyclical_free`)
+#' Comparison operators for underspecified cyclical time (`mt_cyclical_free`)
 #'
 #' @description
-#' A `mt_cyclical_free` value (see [cyclical_time()]) is a magnitude within a
-#' cycle with no anchor to a real point in time (e.g. `day_of_year(60)`, "day
+#' Underspecified cyclical time (see [cyclical_time()]) is a magnitude within
+#' a cycle whose enclosing cycle is unknown (e.g. `day_of_year(60)`, "day
 #' 60 of the year", with no year known) - modelled on [mt_duration], not
 #' [mt_cyclical]. Comparing two free values is therefore
 #' [mt_duration-compare]'s plain magnitude comparison, not
@@ -330,11 +330,11 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #' reconciled by scaling both magnitudes to their finest common chronon via
 #' [chronon_cardinality()] - never [chronon_divmod()], which would assert
 #' that the stored number's position is measured relative to some specific
-#' cycle (an anchor), a claim that is false by construction for data
+#' enclosing cycle, a claim that is false by construction for data
 #' defined to carry no knowledge of which cycle it falls in.
 #'
-#' A free value can also be compared against an anchored [mt_cyclical]: the
-#' anchored side reduces to its position within the cycle via its own
+#' Underspecified cyclical time can also be compared against located
+#' [mt_cyclical]: the located side reduces to its position within the cycle via its own
 #' existing, unchanged machinery (the same reduction [format()] and
 #' [mt_cyclical-compare] use), and both sides are then compared as
 #' magnitudes.
@@ -354,7 +354,7 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #'
 #' @param e1,e2 `mt_cyclical_free` vectors sharing a cycle (or values castable
 #'   to one, such as plain numeric vectors sharing the other operand's
-#'   chronon), or one `mt_cyclical_free` and one anchored `mt_cyclical`
+#'   chronon), or one `mt_cyclical_free` and one located `mt_cyclical`
 #'   sharing a cycle.
 #'
 #' @return A logical vector.

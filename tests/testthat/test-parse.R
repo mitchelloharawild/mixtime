@@ -154,7 +154,7 @@ test_that("a calendar-author decode() that throws still falls back to per-row re
   expect_equal(format(r[c(1L, 3L)]), c("2024-01-15", "2024-03-20"))
 })
 
-test_that("a format with no lin() anchor parses to cyclical time", {
+test_that("a format with no lin() component parses to cyclical time", {
   r <- time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")
 
   expect_true(time_is_cyclical_free(r))
@@ -773,7 +773,7 @@ test_that("time_parse_impl() returns a simple time vector, and time_parse() is a
   expect_equal(format(wrapped), format(r))
 })
 
-test_that("time_parse_impl() returns a simple unanchored cyclical vector for a cyc()-only format", {
+test_that("time_parse_impl() returns a simple underspecified cyclical vector for a cyc()-only format", {
   r <- time_parse_impl("Feb", format = "{cyc(month, year, label = TRUE)}")
   expect_true(S7::S7_inherits(r, mt_cyclical_free))
   expect_false(is_mixtime(r))

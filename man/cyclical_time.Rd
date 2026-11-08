@@ -15,8 +15,8 @@ cyclical_time(
 \arguments{
 \item{data}{Input data to convert to cyclical time. Can be:
 \itemize{
-\item Numeric values: positions within the cycle with no anchor (an
-unanchored \code{mt_cyclical_free} vector), counted the way the chronon is
+\item Numeric values: underspecified cyclical time (positions with no
+enclosing cycle), counted the way the chronon is
 displayed (e.g. \code{3} is March for months of the year, \code{0} is midnight
 for seconds of the day). Positions beyond the longest possible cycle
 (e.g. day 32 of a month) are \code{NA}.
@@ -43,8 +43,8 @@ Defaults to \code{time_calendar(data)} for existing time objects. Common options
 include \link{cal_gregorian} and \link{cal_isoweek}.}
 }
 \value{
-A \code{mixtime} time vector containing an \code{mt_cyclical} vector, or an
-\code{mt_cyclical_free} vector for numeric \code{data}.
+A \code{mixtime} time vector of located cyclical time (\code{mt_cyclical}),
+or underspecified cyclical time (\code{mt_cyclical_free}) for numeric \code{data}.
 }
 \description{
 \code{cyclical_time()} creates a vector of cyclical time points representing
@@ -52,6 +52,45 @@ positions within repeating cycles. This function is useful for creating custom
 cyclical time representations that aren't covered by the convenience functions
 like \code{\link[=day_of_week]{day_of_week()}} or \code{\link[=month_of_year]{month_of_year()}}.
 }
+\section{Located and underspecified cyclical time}{
+
+A cyclical time point is a position within a cycle, such as March within a
+year. The cycle it falls in (which year) is its \emph{enclosing cycle}, and
+whether that is known gives two types of cyclical time:
+\itemize{
+\item \strong{Located} cyclical time knows its enclosing cycle. It is created from
+time points: \code{month_of_year(as.Date("2024-03-15"))} is March 2024,
+displayed as \code{Mar}.
+\item \strong{Underspecified} cyclical time doesn't. It is created from positions:
+\code{month_of_year(3)} is March of any year.
+}
+
+Both compare and sort by their position within the cycle, so
+\code{month_of_year(3) == month_of_year(as.Date("2024-03-15"))} is \code{TRUE}.
+
+They differ in operations that move a position. Located cyclical time moves
+its underlying time point, so the result accounts for the enclosing cycle:
+adding a day to \code{day_of_month(as.Date(c("2023-02-28", "2024-02-28")))} gives
+\verb{D01 D29}.
+
+Underspecified cyclical time only supports operations that don't need its
+enclosing cycle, and which those are depends on the cycle's length:
+\itemize{
+\item \strong{Fixed-length cycles} (e.g. months of the year, days of the week) wrap
+around: \code{month_of_year(12) + 1} is \code{Jan}.
+\item \strong{Variable-length cycles} (e.g. days of the month or year) can't be
+moved: \code{day_of_month(28) + 1} is day 29, or day 1 of a non-leap February,
+so it is an error. Positions are only checked against the longest cycle,
+so \code{day_of_month(31)} is valid but \code{day_of_month(32)} is \code{NA}.
+}
+
+Locate underspecified cyclical time in a specific enclosing cycle with
+\code{\link[=time_compose]{time_compose()}}: adding a day to
+\code{time_compose(yearmonth("2024-02"), day_of_month(28))} gives 2024-02-29.
+The two types can't be cast into each other.
+See \link{mt_cyclical_free-arithmetic} and \link{mt_cyclical_free-compare} for details.
+}
+
 \examples{
 # Day of week (1-7, Monday = 1)
 cyclical_time(
@@ -90,6 +129,13 @@ cyclical_time(
   chronon = second(1L),
   cycle = day(1L)
 )
+#' # Underspecified cyclical time from positions
+month_of_year(c(3, 12)) + 1
+try(day_of_month(28) + 1)
+time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)
+
+# Located cyclical time moves with its enclosing cycle
+day_of_month(as.Date(c("2023-02-28", "2024-02-28"))) + days(1)
 
 }
 \seealso{

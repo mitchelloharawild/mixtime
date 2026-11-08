@@ -11,7 +11,7 @@ test_that("bare numeric input to a cyclical helper builds mt_cyclical_free, not 
   expect_true(S7::S7_inherits(x@x[[1L]], mt_cyclical_free))
 })
 
-test_that("Date/POSIXct input still builds an anchored mt_cyclical", {
+test_that("Date/POSIXct input still builds a located mt_cyclical", {
   expect_true(time_is_cyclical(day_of_year(as.Date("2020-01-01"))))
 })
 
@@ -56,7 +56,7 @@ test_that("a free value's indexing follows the chronon's own registered label sc
   expect_equal(format(time_of_day(0)), "00:00:00")
 })
 
-test_that("time_compose()/time_parse() with no lin() anchor build mt_cyclical_free", {
+test_that("time_compose()/time_parse() with no lin() component build mt_cyclical_free", {
   expect_true(time_is_cyclical_free(time_compose(cyc(month, year) ~ 3)))
   expect_true(time_is_cyclical_free(time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")))
 })
@@ -100,7 +100,7 @@ test_that("Allen's interval algebra is not supported for mt_cyclical_free (match
 # Comparison against an anchored mt_cyclical
 # ---------------------------------------------------------------------------
 
-test_that("a free value compares against an anchored mt_cyclical by magnitude", {
+test_that("a free value compares against a located mt_cyclical by magnitude", {
   expect_true(day_of_year(60) == day_of_year(as.Date("2020-02-29")))
   expect_true(month_of_year(3) == month_of_year(as.Date("2020-03-15")))
   expect_false(day_of_year(61) == day_of_year(as.Date("2020-02-29")))
@@ -223,18 +223,18 @@ test_that("numbers combined with free values are positions counted from 1", {
   expect_equal(format(vctrs::vec_cast(0, time_of_day(0))), "00:00:00")
 })
 
-test_that("numbers keep combining with anchored and linear time as before", {
+test_that("numbers keep combining with located and linear time as before", {
   x <- vctrs::vec_c(month_of_year(yearmonth("2024-03")), 3)
   expect_false(any(time_is_cyclical_free(x)))
 })
 
-test_that("free and anchored cyclical time don't convert to each other", {
+test_that("underspecified and located cyclical time don't convert to each other", {
   anchored <- month_of_year(yearmonth("2024-03"))
   free <- month_of_year(1)
   expect_error(vctrs::vec_cast(anchored, free), class = "vctrs_error_incompatible_type")
   expect_error(vctrs::vec_cast(free, anchored), class = "vctrs_error_incompatible_type")
-  expect_error(vctrs::vec_cast(anchored@x[[1L]], free@x[[1L]]), "no anchor")
-  expect_error(vctrs::vec_ptype2(anchored@x[[1L]], free@x[[1L]]), "no anchor")
+  expect_error(vctrs::vec_cast(anchored@x[[1L]], free@x[[1L]]), "no enclosing cycle")
+  expect_error(vctrs::vec_ptype2(anchored@x[[1L]], free@x[[1L]]), "no enclosing cycle")
 
   # A mixtime holds them side by side, like linear time and durations.
   both <- vctrs::vec_c(anchored, free)

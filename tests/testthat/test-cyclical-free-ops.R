@@ -57,7 +57,7 @@ test_that("shifting variable length cycles errors whatever the values", {
   expect_error(day_of_month(15) + 0L, class = "mixtime_error_free_cyclical")
 })
 
-test_that("the variable length error explains and suggests anchoring", {
+test_that("the variable length error explains and suggests locating", {
   rlang::local_options(cli.width = Inf)
   err <- tryCatch(day_of_month(28) + days(1), error = identity)
   msg <- cli::ansi_strip(conditionMessage(err))
@@ -78,7 +78,7 @@ test_that("the variable length error explains and suggests anchoring", {
   )
 })
 
-test_that("suggested anchors compose with free values of their cycle", {
+test_that("suggested locations compose with underspecified values of their cycle", {
   expect_no_error(time_compose(year(2024), month_of_year(3)))
   expect_no_error(time_compose(yearweek("2024 W03"), day_of_week(2)))
   expect_no_error(time_compose(date("2024-02-01"), minute_of_day(3)))
@@ -109,7 +109,7 @@ test_that("free - free gives the duration between positions", {
   expect_equal(diff(month_of_year(c(1, 3, 12))), months(c(2L, 9L)))
 })
 
-test_that("differences with other cycles or anchored time error", {
+test_that("differences with other cycles or located time error", {
   expect_error(month_of_year(1) - day_of_week(1), class = "mixtime_error_free_cyclical")
   expect_error(month_of_year(1) - yearmonth("2024-01"), class = "mixtime_error_free_cyclical")
   expect_error(yearmonth("2024-01") - month_of_year(1), class = "mixtime_error_free_cyclical")

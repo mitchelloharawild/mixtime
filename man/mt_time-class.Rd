@@ -25,13 +25,14 @@ numeric count of chronons. \code{mt_time} is the (internal) base class carrying
 the \code{chronon} property; the common modes of time are:
 \itemize{
 \item \code{mt_linear} - linear time points, typically produced with \code{\link[=linear_time]{linear_time()}}.
-\item \code{mt_cyclical} - cyclical time points with additional \code{cycle} granule,
-typically produced with \code{\link[=cyclical_time]{cyclical_time()}}.
+\item \code{mt_cyclical} - located cyclical time: positions within a \code{cycle} granule
+that know their enclosing cycle, typically produced with
+\code{\link[=cyclical_time]{cyclical_time()}} from time points.
 \item \code{mt_duration} - time durations, typically produced with \code{\link[=duration]{duration()}}.
-\item \code{mt_cyclical_free} - cyclical time with no anchor to a real point in
-time (a bare magnitude within a cycle, e.g. "day 60 of the year" with no
+\item \code{mt_cyclical_free} - underspecified cyclical time: positions within a
+cycle whose enclosing cycle is unknown (e.g. "day 60 of the year" with no
 year known), produced by \code{\link[=cyclical_time]{cyclical_time()}} with bare numeric input, or
-by \code{\link[=time_compose]{time_compose()}}/\code{\link[=time_parse]{time_parse()}} with no \code{\link[=lin]{lin()}} anchor.
+by \code{\link[=time_compose]{time_compose()}}/\code{\link[=time_parse]{time_parse()}} with no \code{\link[=lin]{lin()}} component.
 }
 
 The underlying data can be either \strong{integer} (discrete time) or \strong{double}

@@ -52,7 +52,7 @@ test_that("vec_cast() parses character onto a cyclical time vector's own chronon
   expect_equal(cast, month_of_year(date("2020-02-15"))@x[[1L]])
 })
 
-test_that("vec_cast() parses character onto an unanchored cyclical time vector's own chronon/cycle", {
+test_that("vec_cast() parses character onto an underspecified cyclical time vector's own chronon/cycle", {
   to <- month_of_year(0L)@x[[1L]]
   cast <- vctrs::vec_cast("Feb", to)
   expect_true(S7::S7_inherits(cast, mt_cyclical_free))

@@ -54,15 +54,15 @@
 #'
 #' @details
 #' For linear time types (Date, POSIXct, yearmonth, etc.), sequences progress
-#' forward or backward in time. Cyclical time anchored to a point in time
-#' (e.g. `month_of_year(yearmonth("2024-11"))`) progresses through time too,
-#' so its positions wrap around the cycle.
+#' forward or backward in time. Located cyclical time (e.g.
+#' `month_of_year(yearmonth("2024-11"))`) progresses through time too, so its
+#' positions wrap around the cycle.
 #'
-#' Cyclical time with no anchor (e.g. `month_of_year(11)`, see
+#' Underspecified cyclical time (e.g. `month_of_year(11)`, see
 #' [mt_cyclical_free-arithmetic]) follows the rules of `x + by`: positions in
 #' cycles of a fixed length wrap around (a `length.out` sequence of months
 #' continues from December to January), while cycles of variable length (e.g.
-#' [day_of_month()]) can't be sequenced until anchored with [time_compose()].
+#' [day_of_month()]) can't be sequenced until located with [time_compose()].
 #' Between `from` and `to`, the sequence runs linearly within one cycle, so
 #' `seq(month_of_year(11), month_of_year(2))` counts down from November to
 #' February.

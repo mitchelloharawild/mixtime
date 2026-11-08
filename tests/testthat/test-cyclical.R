@@ -116,7 +116,7 @@ test_that("cyclical_time() discrete vs continuous modes work with timezones", {
   expect_equal(format(continuous_dow), "Mon 52.1%")
 })
 
-test_that("cyclical_time() with bare numeric input builds an unanchored value", {
+test_that("cyclical_time() with bare numeric input builds an underspecified value", {
   # Bare number -> mt_cyclical_free, not mt_cyclical.
   # month(1L)/month(15L) has no registered label scheme, so it's unshifted.
   x <- cyclical_time(1:10, month(1L), month(15L))
