@@ -97,6 +97,10 @@
   serialised time objects, and restores their calendar from its current
   definition when read back in. Custom unit constructors should now default to
   `calendar = attr(sys.function(), "cal")`.
+* Time objects saved (e.g. with `saveRDS()`) by mixtime 0.4.0 or earlier
+  can't be used with this version, since their time units have no calendar.
+  Recreate them instead (linear time can still be converted with `as.Date()`
+  or `as.POSIXct()` first).
 
 * Converting a discrete time to a chronon it doesn't nest within, deprecated
   in 0.4.0, is now an error, since the result is temporally indeterminate. For
