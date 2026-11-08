@@ -262,8 +262,23 @@ mt_cyclical_free <- S7::new_class(
       default = quote(mt_unit(1L)),
       validator = granule_len1
     )
-  )
+  ),
+  # A free value has no instant to localise, so its granules never carry a tz.
+  constructor = function(..., chronon = mt_unit(1L), cycle = mt_unit(1L)) {
+    S7::new_object(
+      mt_time(..., chronon = granule_drop_tz(chronon)),
+      cycle = granule_drop_tz(cycle)
+    )
+  }
 )
+
+# Make a granule time-zone-naive (a no-op for granules without a tz).
+granule_drop_tz <- function(x) {
+  if (S7_inherits(x, mt_tz_unit)) {
+    x@tz <- naive_tz
+  }
+  x
+}
 
 #' Base S7 class for mixtime vector objects
 #'

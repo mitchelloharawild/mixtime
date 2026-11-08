@@ -1,5 +1,4 @@
-# mt_cyclical_free ("cyclical time without knowledge of which cycle it is
-# in") - see `_dev/cycle.md` for the design this exercises.
+# mt_cyclical_free: cyclical time without knowledge of which cycle it is in.
 
 # ---------------------------------------------------------------------------
 # Construction
@@ -138,4 +137,59 @@ test_that("format() accepts a custom format string, like format.mt_time", {
 
 test_that("NA and infinite values format like other time types", {
   expect_equal(format(day_of_year(NA_integer_)), "NA")
+})
+
+test_that("format() works without mixtime attached", {
+  # Formatting from a caller that can't see mixtime on the search path.
+  env <- list2env(
+    list(
+      format = base::format,
+      doy = day_of_year(60)@x[[1L]],
+      dom = day_of_month(28)@x[[1L]],
+      qoy = cyclical_time(2, chronon = cal_gregorian$quarter(1L), cycle = cal_gregorian$year(1L))@x[[1L]]
+    ),
+    parent = emptyenv()
+  )
+  expect_equal(evalq(format(doy), env), "D60")
+  expect_equal(evalq(format(dom), env), "D28")
+  expect_equal(
+    evalq(format(qoy), env),
+    format(cyclical_time(as.Date("2024-05-01"), chronon = cal_gregorian$quarter(1L), cycle = cal_gregorian$year(1L)))
+  )
+})
+
+test_that("format() scales chronons longer than one unit", {
+  x <- mt_cyclical_free(c(0L, 1L, 47L), chronon = cal_gregorian$minute(30L), cycle = cal_gregorian$day(1L))
+  expect_equal(format(x), c("00:00", "00:30", "23:30"))
+
+  # Positions count 3-month chronons, formatted like anchored values.
+  q <- cyclical_time(c(1, 2, 4), chronon = cal_gregorian$month(3L), cycle = cal_gregorian$year(1L))
+  anchored <- cyclical_time(
+    as.Date(c("2024-01-01", "2024-04-01", "2024-10-01")),
+    chronon = cal_gregorian$month(3L), cycle = cal_gregorian$year(1L)
+  )
+  expect_equal(format(q), format(anchored))
+  expect_true(is.na(cyclical_time(5, chronon = cal_gregorian$month(3L), cycle = cal_gregorian$year(1L))))
+  expect_true(is.na(cyclical_time(48, chronon = cal_gregorian$minute(30L), cycle = cal_gregorian$day(1L))))
+})
+
+test_that("free values never carry a time zone", {
+  x <- mt_cyclical_free(
+    c(0L, 3600L),
+    chronon = cal_gregorian$second(1L, tz = "Australia/Melbourne"),
+    cycle = cal_gregorian$day(1L, tz = "Australia/Melbourne")
+  )
+  expect_equal(format(x), c("00:00:00", "01:00:00"))
+  expect_true(is.na(attr(x, "chronon")@tz))
+  expect_true(is.na(attr(x, "cycle")@tz))
+
+  y <- time_of_day(c(0, 3600), tz = "Australia/Melbourne")
+  expect_equal(format(y), c("00:00:00", "01:00:00"))
+  expect_true(is.na(attr(y@x[[1L]], "chronon")@tz))
+})
+
+test_that("format() never leaks unresolved tokens", {
+  x <- month_of_year(3)
+  expect_false(grepl("{", format(x, "{cyc(month, year)} {tz(.time)}"), fixed = TRUE))
+  expect_error(format(x, "{lin(year)}-{cyc(month, year)}"), "lin()", fixed = TRUE)
 })

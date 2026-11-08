@@ -12,8 +12,9 @@
 
 \item{format}{A glue-style format string of \code{{cyc(...)}} tokens (see
 \link{format.mt_time}), defaulting to one derived automatically for \code{x}. A
-free value has no \code{{lin(...)}} anchor to resolve, so only \code{{cyc(...)}}
-tokens are meaningful here.}
+free value has no position on the time line, so \code{{lin(...)}} tokens are
+an error, and attribute tokens such as \code{{tz(.time)}} render as empty
+text since a free value has no time zone.}
 
 \item{...}{Additional arguments for methods, including \code{format}: a
 glue-style format string, defaulting to one derived automatically for \code{x}.}
@@ -27,10 +28,10 @@ A character vector the same length as \code{x}.
 \description{
 A \code{mt_cyclical_free} value has no \code{at} (no real point in time) to resolve
 a within-cycle position from, so unlike an anchored \link{mt_cyclical} it is
-rendered directly from its own raw stored offset via the same
+rendered directly from its own stored offset via the same
 \code{\link[=chronon_format_cyclical]{chronon_format_cyclical()}} template and \code{\link[=cyclical_labels_format]{cyclical_labels_format()}}
 renderer an anchored value's reduced position would use, called with
-\code{at = NULL} - never via \code{\link[=chronon_divmod]{chronon_divmod()}}/\code{chronon_parts()}, which would
-assert a position relative to some specific cycle instance (banned for
-this type, see \verb{_dev/cycle.md}).
+\code{at = NULL}. The offset is split across the template's tokens using
+\code{\link[=chronon_cardinality]{chronon_cardinality()}} only, never \code{\link[=chronon_divmod]{chronon_divmod()}}, which would need a
+specific cycle instance.
 }

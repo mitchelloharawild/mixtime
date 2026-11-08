@@ -117,7 +117,7 @@ test_that("cyclical_time() discrete vs continuous modes work with timezones", {
 })
 
 test_that("cyclical_time() with bare numeric input builds an origin-less value", {
-  # Bare number -> mt_cyclical_free, not mt_cyclical (see `_dev/cycle.md`).
+  # Bare number -> mt_cyclical_free, not mt_cyclical.
   # month(1L)/month(15L) has no registered label scheme, so it's unshifted.
   x <- cyclical_time(1:10, month(1L), month(15L))
   expect_true(all(time_is_cyclical_free(x)))

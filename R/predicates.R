@@ -8,7 +8,8 @@
 #' `time_is_cyclical_free()` are distinct: an anchored cyclical time point
 #' (e.g. [month_of_year()] of a real date) is a position within a cycle,
 #' while an origin-less one (e.g. bare `month_of_year(3)`, with no date
-#' behind it) is a magnitude within a cycle - see `_dev/cycle.md`.
+#' behind it) is a position within a cycle whose particular instance (which
+#' year) is unknown.
 #'
 #' @param x A time object (typically a `mixtime` vector).
 #' @param ... Additional arguments for methods.

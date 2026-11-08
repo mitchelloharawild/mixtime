@@ -237,17 +237,18 @@ S7::method(format, mt_time) <- function(x, ..., attr = TRUE) {
 #'
 #' A `mt_cyclical_free` value has no `at` (no real point in time) to resolve
 #' a within-cycle position from, so unlike an anchored [mt_cyclical] it is
-#' rendered directly from its own raw stored offset via the same
+#' rendered directly from its own stored offset via the same
 #' [chronon_format_cyclical()] template and [cyclical_labels_format()]
 #' renderer an anchored value's reduced position would use, called with
-#' `at = NULL` - never via [chronon_divmod()]/`chronon_parts()`, which would
-#' assert a position relative to some specific cycle instance (banned for
-#' this type, see `_dev/cycle.md`).
+#' `at = NULL`. The offset is split across the template's tokens using
+#' [chronon_cardinality()] only, never [chronon_divmod()], which would need a
+#' specific cycle instance.
 #'
 #' @param format A glue-style format string of `{cyc(...)}` tokens (see
 #'   [format.mt_time]), defaulting to one derived automatically for `x`. A
-#'   free value has no `{lin(...)}` anchor to resolve, so only `{cyc(...)}`
-#'   tokens are meaningful here.
+#'   free value has no position on the time line, so `{lin(...)}` tokens are
+#'   an error, and attribute tokens such as `{tz(.time)}` render as empty
+#'   text since a free value has no time zone.
 #' @inheritParams format.mt_time
 #'
 #' @return A character vector the same length as `x`.
@@ -262,27 +263,65 @@ S7::method(format, mt_cyclical_free) <- function(x, format = NULL, ..., attr = T
   cycle <- base::attr(x, "cycle")
   v <- vec_data(x)
   special <- is.na(x) | is.infinite(v)
+  n <- sum(!special)
 
   out <- character(length(x))
   out[special] <- base::format(v[special])
 
-  if (any(!special)) {
-    custom <- !is.null(format)
-    fmt_str <- format %||% chronon_format_cyclical(chronon, cycle)
+  if (n > 0L) {
+    fmt_str <- format %||% paste0(
+      chronon_format_cyclical(chronon, cycle),
+      if (attr) chronon_format_attr(chronon)
+    )
     calendar <- time_calendar(cycle)
+    # Templates call package internals (e.g. chronon_glb()), so evaluate them
+    # in the package namespace rather than the (possibly unattached) caller's.
     env <- rlang::new_environment(
-      data = c(component_mask(calendar, chronon), list(.time = x)),
-      parent = rlang::caller_env()
+      data = c(
+        component_mask(calendar, chronon),
+        list(
+          lin = function(...) {
+            cli::cli_abort(
+              c(
+                "Can't format a free cyclical time with {.code {{lin()}}}.",
+                i = "A free cyclical time has no position on the time line, use {.code {{cyc()}}} tokens."
+              ),
+              call = NULL
+            )
+          },
+          # A free value has no time zone or location to show.
+          tz = function(x) "",
+          loc = function(x) "",
+          frac = function(x) {
+            x <- round_ulp(vec_data(x))
+            sprintf("%.1f%%", (x - floor(x)) * 100)
+          },
+          .time = x
+        )
+      ),
+      parent = topenv()
     )
     fmt <- mt_glue_fmt(fmt_str, env = env)
     fmt_parts <- vapply(fmt, is.list, logical(1L))
+    if (!all(fmt_parts | vapply(fmt, is.character, logical(1L)))) {
+      cli::cli_abort(
+        c(
+          "Bare time granule tokens are not supported in format strings.",
+          i = "Use {.fn cyc} for cyclical units, e.g. {.code {{cyc(month, year)}}}."
+        ),
+        call = NULL
+      )
+    }
     specs <- lapply(fmt[fmt_parts], format_token_spec)
     token_values <- free_cyclical_token_values(v[!special], chronon, cycle, specs)
 
     # A literal fragment repeats; a {cyc(...)} token renders its decomposed value.
     ti <- 0L
     pieces <- lapply(seq_along(fmt), function(i) {
-      if (!fmt_parts[[i]]) return(rep(fmt[[i]], sum(!special)))
+      if (!fmt_parts[[i]]) {
+        piece <- fmt[[i]]
+        return(if (length(piece) == length(x)) piece[!special] else rep_len(piece, n))
+      }
       ti <<- ti + 1L
       spec <- specs[[ti]]
       rlang::exec(
@@ -291,18 +330,21 @@ S7::method(format, mt_cyclical_free) <- function(x, format = NULL, ..., attr = T
         at = NULL, !!!spec$attrs
       )
     })
-    out[!special] <- rlang::exec(paste0, !!!pieces)
-    if (!custom && attr) out[!special] <- paste0(out[!special], chronon_format_attr(chronon))
+    out[!special] <- trimws(rlang::exec(paste0, !!!pieces))
   }
   out
 }
 
-# Split `v` across a template's {cyc(...)} tokens, coarsest-to-finest, via
-# chronon_cardinality() only - never chronon_divmod(). Coarsest keeps the leftover.
+# Split `v` (a count of `own_chronon`s) across a template's {cyc(...)} tokens,
+# coarsest-to-finest, via chronon_cardinality() only - never chronon_divmod().
+# The count is first rescaled to the finest token's chronon (e.g. 47 chronons
+# of 30 minutes are 1410 minutes). The coarsest token keeps the leftover.
 free_cyclical_token_values <- function(v, own_chronon, own_cycle, specs) {
   n <- length(specs)
   out <- vector("list", n)
-  remaining <- v
+  if (n == 0L) return(out)
+  scale <- chronon_cardinality(specs[[n]]$chronon, own_chronon)
+  remaining <- if (scale == 1) v else floor(round_ulp(v * scale))
   for (i in rev(seq_len(n))) {
     if (i == 1L) {
       out[[i]] <- remaining
