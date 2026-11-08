@@ -53,7 +53,11 @@ new_cyclical_time_fn <- function(chronon, cycle, default_calendar = cal_gregoria
 #' like [day_of_week()] or [month_of_year()].
 #' 
 #' @param data Input data to convert to cyclical time. Can be:
-#'   - Numeric values (interpreted as chronons, 1-indexed)
+#'   - Numeric values: positions within the cycle with no known cycle
+#'     instance (an `mt_cyclical_free` vector), counted the way the chronon is
+#'     displayed (e.g. `3` is March for months of the year, `0` is midnight
+#'     for seconds of the day). Positions beyond the longest possible cycle
+#'     (e.g. day 32 of a month) are `NA`.
 #'   - Character strings (parsed as dates/times)
 #'   - Date or POSIXct objects
 #'   - Other time objects
@@ -71,7 +75,8 @@ new_cyclical_time_fn <- function(chronon, cycle, default_calendar = cal_gregoria
 #'   Defaults to `time_calendar(data)` for existing time objects. Common options
 #'   include [cal_gregorian] and [cal_isoweek].
 #' 
-#' @return A `mixtime` time vector containing an `mt_cyclical` vector.
+#' @return A `mixtime` time vector containing an `mt_cyclical` vector, or an
+#'   `mt_cyclical_free` vector for numeric `data`.
 #' 
 #' @seealso 
 #' - [new_cyclical_time_fn()] for creating reusable cyclical time functions
@@ -142,21 +147,48 @@ cyclical_time <- function(
   })
 
   # A bare number has no anchor, so it builds mt_cyclical_free, not mt_cyclical.
+  # An all-NA logical (e.g. `month_of_year(NA)`) is a missing bare number.
+  if (is.logical(data) && all(is.na(data)) && is.null(attributes(data))) {
+    data <- rep(NA_integer_, length(data))
+  }
   if (!is_mixtime(data) && !S7_inherits(data, mt_time) && is.numeric(data)) {
-    # Shift by the chronon's own display convention (e.g. day_of_year(60) is the 60th day).
-    start <- cyclical_labels(chronon, cycle)$start
-    data <- (if (discrete) as.integer(round(data)) else as.double(data)) - start
-
-    # A regular (at-independent) cardinality bounds it: out-of-range is NA.
-    cardinality <- tryCatch(chronon_cardinality_fixed(chronon, cycle), error = function(e) NULL)
-    if (!is.null(cardinality)) {
-      data[data %% cardinality != data] <- NA
-    }
-
-    return(new_mixtime(mt_cyclical_free(data, chronon = chronon, cycle = cycle)))
+    if (discrete) data <- as.integer(round(data)) else data <- as.double(data)
+    ptype <- mt_cyclical_free(data[0L], chronon = chronon, cycle = cycle)
+    return(new_mixtime(free_from_position(data, ptype)))
   }
 
   mixtime(data, chronon = chronon, cycle = cycle, discrete = discrete)
+}
+
+# Read 1-indexed bare positions (e.g. 3 is March) into a free value like
+# `ptype`, as `cyclical_time()` does. Positions follow the chronon's own label
+# scheme (e.g. day_of_year(60) is the 60th day, time_of_day(0) is midnight),
+# and those outside the cycle become NA.
+free_from_position <- function(x, ptype) {
+  chronon <- attr(ptype, "chronon")
+  cycle <- attr(ptype, "cycle")
+  x <- x - cyclical_labels(chronon, cycle)$start
+  card <- cyclical_cardinality_max(chronon, cycle)
+  if (!is.null(card)) {
+    x[!is.na(x) & (x < 0 | x >= card)] <- NA
+  }
+  attributes(x) <- attributes(ptype)
+  x
+}
+
+# The most `chronon`s a `cycle` can hold: its fixed cardinality, or for a
+# variable-length cycle the largest over many cycle instances (e.g. 31 days in
+# a month, 366 days in a year, 53 ISO weeks in a year). NULL if unknown.
+cyclical_cardinality_max <- function(chronon, cycle) {
+  if (chronon_cardinality_is_fixed(chronon, cycle)) {
+    return(tryCatch(chronon_cardinality(chronon, cycle), error = function(e) NULL))
+  }
+  # 4800 consecutive cycles span every Gregorian leap pattern (400 years) even
+  # for monthly cycles.
+  tryCatch(
+    max(chronon_cardinality(chronon, cycle, at = seq.int(-2400L, 2399L))),
+    error = function(e) NULL
+  )
 }
 
 # #' @importFrom vctrs vec_arith

@@ -15,11 +15,18 @@ test_that("Date/POSIXct input still builds an anchored mt_cyclical", {
   expect_true(time_is_cyclical(day_of_year(as.Date("2020-01-01"))))
 })
 
-test_that("an irregular chronon/cycle pair (no fixed cardinality) is never bounded", {
-  # day/year's cardinality varies by year (365/366), so there's no fixed bound.
-  expect_equal(format(day_of_year(1000)), "D1000")
+test_that("an irregular chronon/cycle pair is bounded by its largest cycle", {
+  # day/year varies (365/366), so the bound is the longest year.
   expect_equal(format(day_of_year(366)), "D366")
-  expect_false(is.na(day_of_year(1000)))
+  expect_true(is.na(day_of_year(367)))
+  expect_true(is.na(day_of_year(1000)))
+  expect_true(is.na(day_of_year(0)))
+
+  # 28-31 days in a month, 52-53 ISO weeks in a year.
+  expect_equal(format(day_of_month(31)), "D31")
+  expect_true(is.na(day_of_month(32)))
+  expect_equal(format(week_of_year(53)), "W53")
+  expect_true(is.na(week_of_year(54)))
 })
 
 test_that("a fixed chronon/cycle pair rejects out-of-range bare input as NA", {
@@ -192,4 +199,11 @@ test_that("format() never leaks unresolved tokens", {
   x <- month_of_year(3)
   expect_false(grepl("{", format(x, "{cyc(month, year)} {tz(.time)}"), fixed = TRUE))
   expect_error(format(x, "{lin(year)}-{cyc(month, year)}"), "lin()", fixed = TRUE)
+})
+
+test_that("an all-NA logical builds a free NA", {
+  x <- month_of_year(NA)
+  expect_true(time_is_cyclical_free(x))
+  expect_true(is.na(x))
+  expect_equal(length(month_of_year(c(NA, NA))), 2L)
 })

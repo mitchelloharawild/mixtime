@@ -15,7 +15,11 @@ cyclical_time(
 \arguments{
 \item{data}{Input data to convert to cyclical time. Can be:
 \itemize{
-\item Numeric values (interpreted as chronons, 1-indexed)
+\item Numeric values: positions within the cycle with no known cycle
+instance (an \code{mt_cyclical_free} vector), counted the way the chronon is
+displayed (e.g. \code{3} is March for months of the year, \code{0} is midnight
+for seconds of the day). Positions beyond the longest possible cycle
+(e.g. day 32 of a month) are \code{NA}.
 \item Character strings (parsed as dates/times)
 \item Date or POSIXct objects
 \item Other time objects
@@ -39,7 +43,8 @@ Defaults to \code{time_calendar(data)} for existing time objects. Common options
 include \link{cal_gregorian} and \link{cal_isoweek}.}
 }
 \value{
-A \code{mixtime} time vector containing an \code{mt_cyclical} vector.
+A \code{mixtime} time vector containing an \code{mt_cyclical} vector, or an
+\code{mt_cyclical_free} vector for numeric \code{data}.
 }
 \description{
 \code{cyclical_time()} creates a vector of cyclical time points representing
