@@ -22,6 +22,16 @@
   against an anchored `mt_cyclical`. Added `time_is_cyclical_free()`
   alongside the existing `time_is_*()` predicates.
 
+  Free values are ordered by their position within one cycle (`sort()`,
+  `min()`, `max()`), and subtracting two gives the within-cycle difference
+  (`month_of_year(3) - month_of_year(1)` is 2 months). Adding a number or
+  duration wraps around for fixed-length cycles (`month_of_year(12) + 1` is
+  January, also in `seq()`), but errors for variable-length cycles such as
+  `day_of_month()` and `day_of_year()`, since the result depends on which
+  month or year it is in. These errors, and `mean()` of a free value,
+  suggest anchoring it with `time_compose()` first (e.g.
+  `time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)`).
+
 * New `chronon_traverse()` walks out from a chronon to coarser or finer time
   units along the registered cardinality relationships, accumulating a value
   (such as the cumulative fixed cardinality) and stopping where a predicate

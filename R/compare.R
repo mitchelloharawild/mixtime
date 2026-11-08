@@ -339,6 +339,14 @@ method(`>=`, list(class_any, mt_duration)) <- function(e1, e2) duration_compare(
 #' [mt_cyclical-compare] use), and both sides are then compared as
 #' magnitudes.
 #'
+#' Positions are ordered linearly within one cycle (January < ... <
+#' December, with no wrapping), which [sort()], [order()], [min()], [max()]
+#' and [range()] follow. Subtraction follows the same order: `a - b` between
+#' free values of the same cycle is the duration between their positions,
+#' so `month_of_year(3) - month_of_year(1)` is 2 months and
+#' `month_of_year(1) - month_of_year(3)` is -2 months (see
+#' [mt_cyclical_free-arithmetic] for the arithmetic rules).
+#'
 #' Unlike `mt_cyclical`, this is a total order (there is no interval to
 #' compare - see [mt_duration-compare]), so Allen's interval algebra
 #' (`%p%`, `%m%`, ...) is not supported, matching `mt_duration`'s own

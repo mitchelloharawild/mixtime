@@ -54,8 +54,18 @@
 #'
 #' @details
 #' For linear time types (Date, POSIXct, yearmonth, etc.), sequences progress
-#' forward or backward in time. For cyclical time types (month_of_year,
-#' day_of_week, etc.), sequences wrap around cyclically.
+#' forward or backward in time. Cyclical time anchored to a point in time
+#' (e.g. `month_of_year(yearmonth("2024-11"))`) progresses through time too,
+#' so its positions wrap around the cycle.
+#'
+#' Cyclical time with no anchor (e.g. `month_of_year(11)`, see
+#' [mt_cyclical_free-arithmetic]) follows the rules of `x + by`: positions in
+#' cycles of a fixed length wrap around (a `length.out` sequence of months
+#' continues from December to January), while cycles of variable length (e.g.
+#' [day_of_month()]) can't be sequenced until anchored with [time_compose()].
+#' Between `from` and `to`, the sequence runs linearly within one cycle, so
+#' `seq(month_of_year(11), month_of_year(2))` counts down from November to
+#' February.
 #'
 #' Each time point is `from` (or `to`, if `from` is missing) shifted by a whole
 #' number of `by` steps, matching `from + duration(k, by)`. For time-zone-aware times, steps of a day or
@@ -84,8 +94,9 @@
 #' seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 #'
 #' # Cyclical time sequences
-#' seq(month_of_year(0L), month_of_year(11L))
-#' seq(day_of_week(0L), day_of_week(6L), by = 1)
+#' seq(month_of_year(1L), month_of_year(12L))
+#' seq(day_of_week(1L), day_of_week(7L), by = 1)
+#' seq(month_of_year(11L), by = "1 month", length.out = 4)
 #'
 #' @rdname seq.mixtime
 #' @aliases seq.mixtime

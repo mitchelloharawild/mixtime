@@ -53,6 +53,14 @@ existing, unchanged machinery (the same reduction \code{\link[=format]{format()}
 \link{mt_cyclical-compare} use), and both sides are then compared as
 magnitudes.
 
+Positions are ordered linearly within one cycle (January < ... <
+December, with no wrapping), which \code{\link[=sort]{sort()}}, \code{\link[=order]{order()}}, \code{\link[=min]{min()}}, \code{\link[=max]{max()}}
+and \code{\link[=range]{range()}} follow. Subtraction follows the same order: \code{a - b} between
+free values of the same cycle is the duration between their positions,
+so \code{month_of_year(3) - month_of_year(1)} is 2 months and
+\code{month_of_year(1) - month_of_year(3)} is -2 months (see
+\link{mt_cyclical_free-arithmetic} for the arithmetic rules).
+
 Unlike \code{mt_cyclical}, this is a total order (there is no interval to
 compare - see \link{mt_duration-compare}), so Allen's interval algebra
 (\verb{\%p\%}, \verb{\%m\%}, ...) is not supported, matching \code{mt_duration}'s own
