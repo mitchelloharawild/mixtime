@@ -119,10 +119,20 @@ test_that("mixtime read from an RDS written by another R session can be combined
   skip_if_not_installed("callr")
   path <- tempfile(fileext = ".rds")
   on.exit(unlink(path))
-  callr::r(function(path) {
-    library(mixtime)
+  # Write with the mixtime under test, so a stale installed version isn't used
+  # when testing a package loaded with pkgload::load_all().
+  ns <- asNamespace("mixtime")
+  src <- if (exists(".__DEVTOOLS__", envir = ns, inherits = FALSE)) {
+    getNamespaceInfo(ns, "path")
+  }
+  callr::r(function(path, src) {
+    if (is.null(src)) {
+      library(mixtime)
+    } else {
+      pkgload::load_all(src, quiet = TRUE)
+    }
     saveRDS(list(a = yearmonth(0:2), b = yearmonth(3:5)), path)
-  }, list(path = path))
+  }, list(path = path, src = src))
   v <- readRDS(path)
   expect_no_error(out <- vctrs::vec_c(v$a, v$b))
   expect_equal(out, yearmonth(0:5))
