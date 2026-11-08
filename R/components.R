@@ -169,9 +169,20 @@ component_parts <- function(x_time, specs, calendar) {
   .mapply(
     function(spec, val, ok) {
       if (ok) {
-        # chronon_parts() adds chronon_epoch() to linear parts for display; undo
-        # it so the stored value is a count of chronons since the Unix epoch.
-        val <- coerce(val - chronon_epoch(spec[[1L]]))
+        if (chronon_is_local(spec[[1L]])) {
+          # chronon_parts() adds chronon_epoch() to linear parts for display;
+          # undo it so the stored value is a count of chronons since the Unix
+          # epoch.
+          val <- coerce(val - chronon_epoch(spec[[1L]]))
+        } else {
+          # chronon_parts() gives local wall-clock labels, but a chronon with a
+          # UTC offset (e.g. hour(tz = "Australia/Melbourne")) stores absolute
+          # counts, so convert those directly. Reading the labels back would
+          # apply the offset twice, and they're ambiguous when clocks go back.
+          val <- coerce(chronon_convert_impl(
+            xd[keep], chronon, spec[[1L]], discrete = TRUE
+          ))
+        }
       }
       if (length(spec) == 2L) {
         # Cyclical: NA for an indeterminate component, and for a special

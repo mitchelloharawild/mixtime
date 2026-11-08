@@ -77,6 +77,11 @@
   calendars returning a bound tagged with an arbitrary calendar, rather than
   no calendar. Time units shared by several calendars are now a single node
   of the chronon graph.
+* `time_components()` of a time zone aware time no longer applies the UTC
+  offset twice to components finer than a day (e.g. 10:00 AEST gave `h20`
+  for `cyc(hour, day)`). Components now store the same values as
+  `linear_time()` and `cyclical_time()`, and the repeated hour when clocks go
+  back gives two distinct hours.
 
 ## Breaking changes
 

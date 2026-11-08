@@ -46,6 +46,56 @@ test_that("time-of-day components extract from a datetime (second chronon)", {
   expect_equal(format(res$h), c("h06", "h18"))
 })
 
+test_that("components of a time zone aware time apply its UTC offset once", {
+  tz <- "Australia/Melbourne"
+  # 20:00 UTC is 07:00 AEDT (+11, January) or 06:00 AEST (+10, July) on the
+  # next local day; 06:00 UTC is 17:00 AEDT on the same day.
+  utc <- as.POSIXct(
+    c("2026-01-15 20:00:00", "2026-07-15 20:00:00", "2026-01-15 06:00:00"),
+    tz = "UTC"
+  )
+  dt <- datetime(datetime(utc), tz = tz)
+
+  res <- time_components(
+    dt,
+    hr = lin(hour), h = cyc(hour, day), dy = lin(day), d = cyc(day, month),
+    wd = cyc(day, week),
+    calendar = cal_isoweek
+  )
+
+  # Sub-daily cycle
+  expect_equal(format(res$h), c("h07 AEDT", "h06 AEST", "h17 AEDT"))
+  expect_identical(
+    res$h,
+    cyclical_time(dt, chronon = hour(1L, tz = tz), cycle = day(1L, tz = tz))
+  )
+  expect_identical(res$hr, linear_time(dt, chronon = hour(1L, tz = tz)))
+
+  # Day-level cycles across the local/UTC day boundary
+  expect_equal(format(res$d), c("D16 AEDT", "D16 AEST", "D15 AEDT"))
+  expect_equal(format(res$wd), c("Fri AEDT", "Thu AEST", "Thu AEDT"))
+  expect_identical(res$dy, linear_time(dt, chronon = day(1L, tz = tz)))
+
+  # The UTC times when clocks go back (02:30 AEDT, then 02:30 AEST) are
+  # distinct hours
+  dt <- datetime(
+    datetime(as.POSIXct(c("2026-04-04 15:30:00", "2026-04-04 16:30:00"), tz = "UTC")),
+    tz = tz
+  )
+  res <- time_components(dt, hr = lin(hour), h = cyc(hour, day))
+  expect_equal(format(res$h), c("h02 AEDT", "h02 AEST"))
+  expect_identical(res$hr, linear_time(dt, chronon = hour(1L, tz = tz)))
+
+  # A half-hour offset shifts the hour and minute
+  dt <- datetime(
+    datetime(as.POSIXct("2026-07-15 20:45:00", tz = "UTC")),
+    tz = "Australia/Adelaide"
+  )
+  res <- time_components(dt, h = cyc(hour, day), m = cyc(minute, hour))
+  expect_equal(format(res$h), "h06 ACST")
+  expect_equal(format(res$m), "m15 ACST")
+})
+
 test_that("columns follow the ... order and support automatic naming", {
   t <- yearmonth(as.Date("2026-02-14"))
 
