@@ -1,6 +1,12 @@
 url: https://pkg.mitchelloharawild.com/mixtime/
 template:
   bootstrap: 5
+  opengraph:
+    image:
+      src: pkgdown/social-card.png
+      alt: "The mixtime hex sticker"
+    twitter:
+      card: summary
 
 development:
   mode: auto
