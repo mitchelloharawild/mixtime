@@ -283,8 +283,8 @@ S7::method(format, mt_cyclical_free) <- function(x, format = NULL, ..., attr = T
           lin = function(...) {
             cli::cli_abort(
               c(
-                "Can't format a free cyclical time with {.code {{lin()}}}.",
-                i = "A free cyclical time has no position on the time line, use {.code {{cyc()}}} tokens."
+                "Can't format underspecified cyclical time with {.code {{lin()}}}.",
+                i = "It has no enclosing cycle to locate it on the time line, so use {.code {{cyc()}}} tokens."
               ),
               call = NULL
             )

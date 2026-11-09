@@ -72,12 +72,12 @@ NULL
 # --- errors -------------------------------------------------------------------
 
 # The single error for operations a free value doesn't support. `what` and
-# `why` are plain strings (already formatted). The hint anchors `x` with
-# time_compose(); `example` is a sprintf() template wrapping the anchored
+# `why` are plain strings (already formatted). The hint locates `x` with
+# time_compose(); `example` is a sprintf() template wrapping the located
 # expression (e.g. "%s + days(1)"), or `hint` replaces the hint entirely.
 abort_free_cyclical_op <- function(x, what, why, example = "%s", hint = NULL) {
   if (is.null(hint)) {
-    hint <- free_anchor_hint(x, example)
+    hint <- free_locate_hint(x, example)
   }
   cli::cli_abort(
     c("{what}", "x" = "{why}", "i" = "{hint}"),
@@ -86,23 +86,23 @@ abort_free_cyclical_op <- function(x, what, why, example = "%s", hint = NULL) {
   )
 }
 
-# Suggest anchoring `x` with time_compose(), using an example anchor whose
+# Suggest locating `x` with time_compose(), using an example time point whose
 # chronon is the free value's cycle.
-free_anchor_hint <- function(x, example = "%s") {
+free_locate_hint <- function(x, example = "%s") {
   cycle <- free_unit(x@cycle)
-  anchor <- free_anchor_example(x@cycle)
-  if (is.null(anchor)) {
+  example_time <- free_locate_example(x@cycle)
+  if (is.null(example_time)) {
     return(cli::format_inline(
       "Locate it in a specific {cycle} first with {.fn time_compose}, using a time point measured in {cycle}s."
     ))
   }
-  code <- sprintf(example, sprintf("time_compose(%s, x)", anchor))
+  code <- sprintf(example, sprintf("time_compose(%s, x)", example_time))
   cli::format_inline("Locate it in a specific {cycle} first, e.g. {.code {code}}.")
 }
 
-# An example time point measured in `cycle`, as code. Each anchor's chronon is
+# An example time point measured in `cycle`, as code. Each example's chronon is
 # the cycle, as time_compose() requires.
-free_anchor_example <- function(cycle) {
+free_locate_example <- function(cycle) {
   if (cycle@n != 1L) {
     return(NULL)
   }
@@ -162,7 +162,7 @@ operand_noun <- function(x) {
 }
 
 # The time between a free value and a time point at a known place in time.
-abort_free_anchored_difference <- function(e1, e2) {
+abort_free_located_difference <- function(e1, e2) {
   free <- if (S7_inherits(e1, mt_cyclical_free)) e1 else e2
   other <- if (S7_inherits(e1, mt_cyclical_free)) e2 else e1
   abort_free_cyclical_op(
@@ -210,8 +210,8 @@ free_shift_what <- function(x, label, sign) {
   }
 }
 
-# Example code that shifts anchored `x` as the user tried, e.g. "%s + days(1)".
-# Anchored time has the free value's chronon, so `by` defaults to it.
+# Example code that shifts located `x` as the user tried, e.g. "%s + days(1)".
+# Located time has the free value's chronon, so `by` defaults to it.
 free_shift_example <- function(by, n, sign) {
   op <- if (sign > 0) "+" else "-"
   fn <- time_unit_plural(by, 2L)
@@ -370,12 +370,12 @@ method(`-`, list(mt_cyclical_free, mt_cyclical_free)) <- function(e1, e2) {
   mt_duration(res, chronon = tu)
 }
 
-# A free value and a linear or anchored time point (either order)
+# A free value and a linear or located time point (either order)
 method(`-`, list(mt_cyclical_free, mt_time)) <- function(e1, e2) {
-  abort_free_anchored_difference(e1, e2)
+  abort_free_located_difference(e1, e2)
 }
 method(`-`, list(mt_time, mt_cyclical_free)) <- function(e1, e2) {
-  abort_free_anchored_difference(e1, e2)
+  abort_free_located_difference(e1, e2)
 }
 method(`-`, list(mt_duration, mt_cyclical_free)) <- function(e1, e2) {
   abort_free_cyclical_op(

@@ -243,13 +243,13 @@ free_incompatible_details <- paste0(
   "`month_of_year(3)`) has no enclosing cycle, so it can't be combined with ",
   "located cyclical time."
 )
-mt_cast_free_anchored <- function(x, to, ..., x_arg = "", to_arg = "") {
+mt_cast_free_located <- function(x, to, ..., x_arg = "", to_arg = "") {
   vctrs::stop_incompatible_cast(
     x, to, x_arg = x_arg, to_arg = to_arg,
     details = free_incompatible_details
   )
 }
-mt_ptype2_free_anchored <- function(x, y, ..., x_arg = "", y_arg = "") {
+mt_ptype2_free_located <- function(x, y, ..., x_arg = "", y_arg = "") {
   vctrs::stop_incompatible_type(
     x, y, x_arg = x_arg, y_arg = y_arg,
     details = free_incompatible_details
@@ -339,12 +339,12 @@ register_mt_vctrs <- function() {
     register_s3_method("vctrs", "vec_ptype2", paste0(free, ".", num), mt_ptype2_duration_x)
     register_s3_method("vctrs", "vec_ptype2", paste0(num, ".", free), mt_ptype2_y_duration)
   }
-  # Free and anchored cyclical time are incompatible, with a clear message.
+  # Underspecified and located cyclical time are incompatible, with a clear message.
   cyc <- "mixtime::mt_cyclical"
-  register_s3_method("vctrs", "vec_cast", paste0(free, ".", cyc), mt_cast_free_anchored)
-  register_s3_method("vctrs", "vec_cast", paste0(cyc, ".", free), mt_cast_free_anchored)
-  register_s3_method("vctrs", "vec_ptype2", paste0(free, ".", cyc), mt_ptype2_free_anchored)
-  register_s3_method("vctrs", "vec_ptype2", paste0(cyc, ".", free), mt_ptype2_free_anchored)
+  register_s3_method("vctrs", "vec_cast", paste0(free, ".", cyc), mt_cast_free_located)
+  register_s3_method("vctrs", "vec_cast", paste0(cyc, ".", free), mt_cast_free_located)
+  register_s3_method("vctrs", "vec_ptype2", paste0(free, ".", cyc), mt_ptype2_free_located)
+  register_s3_method("vctrs", "vec_ptype2", paste0(cyc, ".", free), mt_ptype2_free_located)
 
   # Overrides vecvec's no-op mixtime -> mixtime cast (registered just before).
   register_s3_method("vctrs", "vec_ptype", "mixtime::mixtime", vec_ptype_mixtime)

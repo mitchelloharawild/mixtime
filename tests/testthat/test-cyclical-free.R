@@ -97,7 +97,7 @@ test_that("Allen's interval algebra is not supported for mt_cyclical_free (match
 })
 
 # ---------------------------------------------------------------------------
-# Comparison against an anchored mt_cyclical
+# Comparison against a located mt_cyclical
 # ---------------------------------------------------------------------------
 
 test_that("a free value compares against a located mt_cyclical by magnitude", {
@@ -169,13 +169,13 @@ test_that("format() scales chronons longer than one unit", {
   x <- mt_cyclical_free(c(0L, 1L, 47L), chronon = cal_gregorian$minute(30L), cycle = cal_gregorian$day(1L))
   expect_equal(format(x), c("00:00", "00:30", "23:30"))
 
-  # Positions count 3-month chronons, formatted like anchored values.
+  # Positions count 3-month chronons, formatted like located values.
   q <- cyclical_time(c(1, 2, 4), chronon = cal_gregorian$month(3L), cycle = cal_gregorian$year(1L))
-  anchored <- cyclical_time(
+  located <- cyclical_time(
     as.Date(c("2024-01-01", "2024-04-01", "2024-10-01")),
     chronon = cal_gregorian$month(3L), cycle = cal_gregorian$year(1L)
   )
-  expect_equal(format(q), format(anchored))
+  expect_equal(format(q), format(located))
   expect_true(is.na(cyclical_time(5, chronon = cal_gregorian$month(3L), cycle = cal_gregorian$year(1L))))
   expect_true(is.na(cyclical_time(48, chronon = cal_gregorian$minute(30L), cycle = cal_gregorian$day(1L))))
 })
@@ -229,15 +229,15 @@ test_that("numbers keep combining with located and linear time as before", {
 })
 
 test_that("underspecified and located cyclical time don't convert to each other", {
-  anchored <- month_of_year(yearmonth("2024-03"))
+  located <- month_of_year(yearmonth("2024-03"))
   free <- month_of_year(1)
-  expect_error(vctrs::vec_cast(anchored, free), class = "vctrs_error_incompatible_type")
-  expect_error(vctrs::vec_cast(free, anchored), class = "vctrs_error_incompatible_type")
-  expect_error(vctrs::vec_cast(anchored@x[[1L]], free@x[[1L]]), "no enclosing cycle")
-  expect_error(vctrs::vec_ptype2(anchored@x[[1L]], free@x[[1L]]), "no enclosing cycle")
+  expect_error(vctrs::vec_cast(located, free), class = "vctrs_error_incompatible_type")
+  expect_error(vctrs::vec_cast(free, located), class = "vctrs_error_incompatible_type")
+  expect_error(vctrs::vec_cast(located@x[[1L]], free@x[[1L]]), "no enclosing cycle")
+  expect_error(vctrs::vec_ptype2(located@x[[1L]], free@x[[1L]]), "no enclosing cycle")
 
   # A mixtime holds them side by side, like linear time and durations.
-  both <- vctrs::vec_c(anchored, free)
+  both <- vctrs::vec_c(located, free)
   expect_equal(time_is_cyclical_free(both), c(FALSE, TRUE))
 })
 

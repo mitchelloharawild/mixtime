@@ -59,7 +59,7 @@
 #' ends, part of the day repeats, and a local time in it is ambiguous. It is
 #' resolved, in order, by:
 #'
-#' 1. a time zone aware `lin()` anchor (e.g. `lin(hour)` from
+#' 1. a time zone aware `lin()` component (e.g. `lin(hour)` from
 #'    [time_components()]), which already identifies one of the two
 #'    occurrences;
 #' 2. its `offset`;
@@ -149,7 +149,7 @@ time_compose <- function(
   out <- compose_recompose(chain$chain, discrete = discrete, cycle = chain$cycle)
   out <- compose_from_local(
     out,
-    anchor = chain$chain[[1L]],
+    root = chain$chain[[1L]],
     discrete = discrete,
     on_ambiguous = on_ambiguous,
     ambiguous_chosen = ambiguous_chosen,
@@ -159,7 +159,7 @@ time_compose <- function(
 }
 
 # Turn one `...` element into a normalized component: a plain
-# list(chronon, cycle, value), where `cycle` is NULL for a linear (anchor)
+# list(chronon, cycle, value), where `cycle` is NULL for a lin()
 # component, and `value` is always the *raw, 0-indexed within-cycle offset*
 # for a cyclical component (never the absolute epoch-relative count
 # mt_cyclical itself stores, and never the formula's 1-indexed input) -- this
@@ -251,16 +251,16 @@ compose_tag <- function(x, calendar) {
 }
 
 # Returns list(chain, cycle): chain is the ordered root-to-finest component
-# list; cycle is NULL for a lin() anchor, or the root's cycle for cyclical
+# list; cycle is NULL for a lin() root, or the root's cycle for cyclical
 # time (no lin() given).
 #
-# A lin() anchor, if supplied, must be the only one; every cyc() then chains
+# A lin() component, if supplied, must be the only one; every cyc() then chains
 # from it via exact chronon equality, without gaps or branches. With no
 # lin(), every component must be cyc(), rooted at whichever one's cycle
 # isn't supplied as another component's chronon; its own within-cycle
 # offset seeds the chain as an absolute count (mt_cyclical's convention,
 # see compose_tag()).
-# `fixed_hint` replaces the fix suggested when an anchor-less chain has a
+# `fixed_hint` replaces the fix suggested when a chain without lin() has a
 # variable-length link (see compose_check_fixed()).
 compose_chain <- function(comps, fixed_hint = NULL) {
   is_lin <- vapply(comps, function(x) is.null(x$cycle), logical(1L))
@@ -320,12 +320,12 @@ compose_chain <- function(comps, fixed_hint = NULL) {
     root_cycle <- comps[[which(is_root)]]$cycle
   }
 
-  anchor <- comps[[which(is_root)]]
+  root <- comps[[which(is_root)]]
   links <- comps[!is_root]
   used <- logical(length(links))
 
-  chain <- list(anchor)
-  frontier <- anchor$chronon
+  chain <- list(root)
+  frontier <- root$chronon
 
   repeat {
     matches <- which(
@@ -344,7 +344,7 @@ compose_chain <- function(comps, fixed_hint = NULL) {
       cli::cli_abort(
         c(
           "Multiple {.fn cyc} components build from the same {time_granule_label(frontier)} chronon: {paste(labels, collapse = ', ')}.",
-          i = "Supply only one path from the anchor to the target granularity."
+          i = "Supply only one path from the coarsest component to the target granularity."
         ),
         call = NULL
       )
@@ -385,7 +385,7 @@ compose_chain <- function(comps, fixed_hint = NULL) {
   list(chain = chain, cycle = root_cycle)
 }
 
-# Abort if any link (below the root) of an anchor-less chain has a
+# Abort if any link (below the root) of a chain without lin() has a
 # context-dependent length, e.g. days in a month.
 compose_check_fixed <- function(chain, hint = NULL) {
   hint <- hint %||% c(
@@ -416,15 +416,15 @@ compose_check_fixed <- function(chain, hint = NULL) {
 # the link's own within-cycle offset.
 #
 # `chain[[1L]]` seeds `running_count`/`running_chronon` directly, whether it
-# is a lin() anchor (`cycle` NULL) or, for cyclical time, the chain's root
+# is a lin() component (`cycle` NULL) or, for cyclical time, the chain's root
 # cyc() component (see compose_chain()). `cycle` then tags the result
 # mt_cyclical instead of mt_linear.
 #
 # `strict = FALSE` produces NA for invalid rows rather than aborting
 compose_recompose <- function(chain, discrete, cycle = NULL, strict = TRUE) {
-  anchor <- chain[[1L]]
-  running_chronon <- anchor$chronon
-  running_count <- anchor$value
+  root <- chain[[1L]]
+  running_chronon <- root$chronon
+  running_count <- root$value
   keep <- !(is.na(running_count) | is.infinite(running_count))
 
   for (link in chain[-1L]) {
@@ -530,7 +530,7 @@ check_on_ambiguous <- function(on_ambiguous, call = rlang::caller_env()) {
 # the absolute counts its time zone aware chronon stores. A local time that
 # occurs twice (when daylight saving ends) is resolved, in order, by:
 #
-# 1. the absolute count of a time zone aware lin() `anchor` (e.g. a
+# 1. the absolute count of a time zone aware lin() `root` (e.g. a
 #    time_components() column), when it falls in only one of the two;
 # 2. the UTC `offset` (or time zone abbreviation) given for it;
 # 3. the `on_ambiguous` strategy, warning when no strategy was chosen.
@@ -540,7 +540,7 @@ check_on_ambiguous <- function(on_ambiguous, call = rlang::caller_env()) {
 # invalid time points by the `mixtime.on_invalid` option.
 compose_from_local <- function(
   x,
-  anchor,
+  root,
   discrete,
   on_ambiguous,
   ambiguous_chosen,
@@ -566,15 +566,15 @@ compose_from_local <- function(
   i <- pmin(ch$first, ch$second, na.rm = TRUE)
   unresolved <- ch$ambiguous
 
-  # 1. The occurrence that the anchor's absolute count falls in
-  if (!is.null(anchor$absolute) && any(unresolved)) {
+  # 1. The occurrence that the lin() root's absolute count falls in
+  if (!is.null(root$absolute) && any(unresolved)) {
     k <- which(unresolved)
-    in_anchor <- function(b) {
-      chronon_convert_impl(b, chronon, anchor$chronon, discrete = TRUE)
+    in_root <- function(b) {
+      chronon_convert_impl(b, chronon, root$chronon, discrete = TRUE)
     }
-    a <- floor_ulp(anchor$absolute[k])
-    first_ok <- (in_anchor(ch$first[k]) == a) %in% TRUE
-    second_ok <- (in_anchor(ch$second[k]) == a) %in% TRUE
+    a <- floor_ulp(root$absolute[k])
+    first_ok <- (in_root(ch$first[k]) == a) %in% TRUE
+    second_ok <- (in_root(ch$second[k]) == a) %in% TRUE
     pick <- xor(first_ok, second_ok)
     i[k[pick & second_ok]] <- ch$second[k[pick & second_ok]]
     unresolved[k[pick]] <- FALSE
@@ -722,7 +722,7 @@ compose_signal_ambiguous <- function(ambiguous, on_ambiguous, chosen, tz) {
   avoid <- c(
     "i" = "To avoid the ambiguity:",
     "*" = "Supply the UTC offset or time zone abbreviation of each time with {.arg offset}, e.g. {.code offset = tz_offset(x)} or {.code offset = c(\"AEDT\", \"AEST\")}.",
-    "*" = "Anchor with a time zone aware {.fn lin} component finer than the repeated time, such as {.code lin(hour)} from {.fn time_components}.",
+    "*" = "Include a time zone aware {.fn lin} component finer than the repeated time, such as {.code lin(hour)} from {.fn time_components}.",
     "*" = "Compose in UTC, or a time zone without daylight saving."
   )
   if (on_ambiguous == "error") {

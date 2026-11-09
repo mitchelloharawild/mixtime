@@ -404,7 +404,7 @@ free_compare <- function(op, e1, e2) {
   )
 }
 
-# Reduce the anchored side via cyclical_position(); compare both as magnitudes.
+# Reduce the located side via cyclical_position(); compare both as magnitudes.
 free_cyclical_compare <- function(op, e1, e2) {
   e1_free <- S7_inherits(e1, mt_cyclical_free)
   e2_free <- S7_inherits(e2, mt_cyclical_free)
@@ -419,15 +419,15 @@ free_cyclical_compare <- function(op, e1, e2) {
   common <- chronon_glb_impl(list(attr(e1, "chronon"), attr(e2, "chronon")))
 
   free_magnitude <- function(x) as.numeric(S7_data(x)) * chronon_cardinality(common, attr(x, "chronon"))
-  anchored_position <- function(x) {
+  located_position <- function(x) {
     xv <- chronon_convert_impl(
       S7_data(x), attr(x, "chronon"), common, discrete = is.integer(S7_data(x))
     )
     cyclical_position(xv, common, cycle)
   }
 
-  xd <- if (e1_free) free_magnitude(e1) else anchored_position(e1)
-  yd <- if (e2_free) free_magnitude(e2) else anchored_position(e2)
+  xd <- if (e1_free) free_magnitude(e1) else located_position(e1)
+  yd <- if (e2_free) free_magnitude(e2) else located_position(e2)
 
   switch(
     op,

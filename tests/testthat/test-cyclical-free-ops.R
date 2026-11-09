@@ -66,7 +66,7 @@ test_that("the variable length error explains and suggests locating", {
   expect_match(msg, 'time_compose(yearmonth("2024-02"), x) + days(1)', fixed = TRUE)
   expect_null(err$call)
 
-  # The suggested anchoring works
+  # The suggested locating works
   x <- day_of_month(28)
   expect_equal(
     time_compose(yearmonth("2024-02"), x) + days(1),
@@ -113,9 +113,9 @@ test_that("differences with other cycles or located time error", {
   expect_error(month_of_year(1) - day_of_week(1), class = "mixtime_error_free_cyclical")
   expect_error(month_of_year(1) - yearmonth("2024-01"), class = "mixtime_error_free_cyclical")
   expect_error(yearmonth("2024-01") - month_of_year(1), class = "mixtime_error_free_cyclical")
-  anchored <- month_of_year(yearmonth("2024-03"))
-  expect_error(anchored - month_of_year(1), class = "mixtime_error_free_cyclical")
-  expect_error(month_of_year(1) - anchored, class = "mixtime_error_free_cyclical")
+  located <- month_of_year(yearmonth("2024-03"))
+  expect_error(located - month_of_year(1), class = "mixtime_error_free_cyclical")
+  expect_error(month_of_year(1) - located, class = "mixtime_error_free_cyclical")
 })
 
 test_that("unsupported arithmetic errors", {

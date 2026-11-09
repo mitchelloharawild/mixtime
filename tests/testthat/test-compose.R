@@ -132,11 +132,11 @@ test_that("free components are validated against the located time", {
 })
 
 test_that("cyclical time_compose() output round-trips through time_compose() again", {
-  anchored <- time_compose(lin(day) ~ 0, cyc(hour, day) ~ 3, cyc(minute, hour) ~ 30)
+  located <- time_compose(lin(day) ~ 0, cyc(hour, day) ~ 3, cyc(minute, hour) ~ 30)
   cyclical <- time_compose(cyc(minute, hour) ~ 30, cyc(hour, day) ~ 3)
 
   r <- time_compose(lin(day) ~ 0, cyclical)
-  expect_equal(format(r), format(anchored))
+  expect_equal(format(r), format(located))
 })
 
 test_that("errors when every cyc() component's cycle is itself supplied (no coarsest link)", {
@@ -305,7 +305,7 @@ test_that("`offset` resolves repeated local times", {
   expect_error(time_compose(tc$d, tc$h, tc$m, tc$s, offset = months(1L)), "fixed length")
 })
 
-test_that("a time zone aware lin() anchor resolves repeated local times", {
+test_that("a time zone aware lin() component resolves repeated local times", {
   dt <- compose_tz_times(paste("2026-04-04", c("15:30:00", "16:30:00")))
 
   tc <- time_components(dt, h = lin(hour), m = cyc(minute, hour), s = cyc(second, minute))

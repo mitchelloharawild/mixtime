@@ -89,7 +89,7 @@ result is then resolved to the instant it describes. When daylight saving
 ends, part of the day repeats, and a local time in it is ambiguous. It is
 resolved, in order, by:
 \enumerate{
-\item a time zone aware \code{lin()} anchor (e.g. \code{lin(hour)} from
+\item a time zone aware \code{lin()} component (e.g. \code{lin(hour)} from
 \code{\link[=time_components]{time_components()}}), which already identifies one of the two
 occurrences;
 \item its \code{offset};
