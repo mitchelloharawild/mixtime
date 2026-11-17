@@ -249,8 +249,7 @@ method(`+`, list(mt_duration, mt_time)) <- function(e1, e2) {
 }
 
 method(`-`, list(mt_duration, mt_time)) <- function(e1, e2) {
-  S7_data(e2) <- duration_shift(e2, e1) - S7_data(e2)
-  e2
+  abort_subtract_time_point()
 }
 
 #' Shift time points by a duration
@@ -374,8 +373,33 @@ method(`+`, list(S7::class_numeric, mt_time)) <- function(e1, e2) {
   e2
 }
 method(`-`, list(S7::class_numeric, mt_time)) <- function(e1, e2) {
+  abort_subtract_time_point()
+}
+method(`-`, list(S7::class_numeric, mt_duration)) <- function(e1, e2) {
   S7_data(e2) <- e1 - S7_data(e2)
   e2
+}
+
+# --- unary operators ----------------------------------------------------------
+
+method(`+`, list(mt_time, S7::class_missing)) <- function(e1, e2) e1
+
+method(`-`, list(mt_time, S7::class_missing)) <- function(e1, e2) {
+  abort_subtract_time_point()
+}
+method(`-`, list(mt_duration, S7::class_missing)) <- function(e1, e2) {
+  S7_data(e1) <- -S7_data(e1)
+  e1
+}
+
+abort_subtract_time_point <- function() {
+  cli::cli_abort(
+    c(
+      "Can't subtract a time point from a number or duration, or negate it.",
+      "i" = "Subtract a duration from the time point instead, or take the difference of two time points."
+    ),
+    call = NULL
+  )
 }
 
 # --- numeric scaling of durations (e.g. days(3) * 2) --------------------------

@@ -71,6 +71,8 @@
 * Fixed `chronon_cardinality()` along paths with irregular steps.
 * `chronon_glb()` and `chronon_lub()` of chronons from different calendars
   no longer return a bound with an arbitrary calendar.
+* Subtracting a time point from a number or duration, or negating it, is now
+  an error rather than giving a meaningless time point.
 
 # mixtime 0.4.0
 
