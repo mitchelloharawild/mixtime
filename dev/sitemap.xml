@@ -34,7 +34,6 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration_helpers.html</loc></url>
-<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/format.mt_cyclical_free.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/format.mt_time.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/index.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_mixtime.html</loc></url>
@@ -50,8 +49,10 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical-compare.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical_free-arithmetic.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical_free-compare.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-arithmetic.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-compare.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_linear-compare.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-arithmetic.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.html</loc></url>

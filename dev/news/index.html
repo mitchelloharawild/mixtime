@@ -87,6 +87,8 @@
 <li>Fixed <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> along paths with irregular steps.</li>
 <li>
 <code><a href="../reference/chronon_glb.html">chronon_glb()</a></code> and <code><a href="../reference/chronon_glb.html">chronon_lub()</a></code> of chronons from different calendars no longer return a bound with an arbitrary calendar.</li>
+<li>Subtracting a time point from a number or duration, or negating it, is now an error rather than giving a meaningless time point.</li>
+<li>The ratio of two durations (e.g. <code>weeks(1) / days(1)</code>) is now a plain number rather than a mixtime vector.</li>
 </ul></div>
 </div>
     <div class="section level2">

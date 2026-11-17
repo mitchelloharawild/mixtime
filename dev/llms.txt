@@ -381,16 +381,8 @@ Functions for manipulating and transforming time vectors.
 - [`seq(`*`<mixtime::mixtime>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.md)
   [`seq(`*`<mixtime::mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/seq.mixtime.md)
   : Generate sequences of mixtime values
-
 - [`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.md)
   : Shift time points by a duration
-
-- [`` `+`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical_free-arithmetic.md)
-  [`` `-`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical_free-arithmetic.md)
-  :
-
-  Arithmetic for underspecified cyclical time (`mt_cyclical_free`)
-
 - [`time_round()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)
   [`time_ceiling()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)
   [`time_floor()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.md)
@@ -455,6 +447,30 @@ Methods for comparing time vectors.
   [`` `%fi%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
   : Allen's interval algebra for time vectors
 
+### Arithmetic operators
+
+Methods for shifting time points and combining durations.
+
+- [`` `+`( ``*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-arithmetic.md)
+  [`` `-`( ``*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-arithmetic.md)
+  :
+
+  Arithmetic for time points (`mt_time`)
+
+- [`` `+`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-arithmetic.md)
+  [`` `-`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-arithmetic.md)
+  [`` `*`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-arithmetic.md)
+  [`` `/`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_duration-arithmetic.md)
+  :
+
+  Arithmetic for durations (`mt_duration`)
+
+- [`` `+`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical_free-arithmetic.md)
+  [`` `-`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical_free-arithmetic.md)
+  :
+
+  Arithmetic for underspecified cyclical time (`mt_cyclical_free`)
+
 ### Time Components
 
 Functions for extracting and referring to linear and cyclical components
@@ -474,14 +490,8 @@ Functions for converting between character strings and time vectors.
 
 - [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md)
   : Parse text into a time point
-
-- [`format(`*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/format.mt_time.md)
+- [`format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/format.mt_time.md)
   : Format mixtime vectors
-
-- [`format(`*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/format.mt_cyclical_free.md)
-  :
-
-  Format underspecified cyclical time (`mt_cyclical_free`)
 
 ## Calendar Systems
 

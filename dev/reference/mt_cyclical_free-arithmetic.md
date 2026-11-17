@@ -82,6 +82,11 @@ For differences, a duration
 For shifts, a `mt_cyclical_free` vector of the same type as the
 underspecified operand.
 
+## See also
+
+[mt_time-arithmetic](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-arithmetic.md)
+for arithmetic on linear and located cyclical time points.
+
 ## Examples
 
 ``` r
