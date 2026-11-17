@@ -53,6 +53,43 @@
   suggests how to avoid the ambiguity. The `mixtime.on_ambiguous` option sets
   the default strategy.
 
+## Deprecated
+
+* `new_calendar(class)` is deprecated in favour of `new_calendar(name)`.
+* `chronon_common()`, deprecated in 0.4.0, now warns on every use. Use
+  `chronon_glb()` instead.
+* `new_time()` (defunct in 0.4.0) and `is_time_linear()`,
+  `is_time_cyclical()` and `is_time_duration()` (defunct in 0.3.0) have been
+  removed. Use `mt_linear()`, `mt_duration()` or `mt_cyclical()`, and
+  `time_is_linear()`, `time_is_cyclical()` or `time_is_duration()` instead.
+
+## Breaking changes
+
+* Calendars are now S7 objects. Each calendar is the single instance of its
+  own subclass of the new `mt_calendar` class, so methods dispatch on the
+  calendar with `S7::S7_class(cal_gregorian)` rather than
+  `S7::new_S3_class("cal_gregorian")`.
+* `new_calendar()` requires a `name`, which identifies the calendar.
+* Time units now record their calendar by its identifier
+  (`"<package>::<name>"`) rather than a copy of the calendar, which is
+  resolved when `@calendar` is accessed. This greatly reduces the size of
+  serialised time objects, and restores their calendar from its current
+  definition when read back in. Custom unit constructors should now default to
+  `calendar = attr(sys.function(), "cal")`.
+* Time objects saved (e.g. with `saveRDS()`) by mixtime 0.4.0 or earlier
+  can't be used with this version, since their time units have no calendar.
+  Recreate them instead (linear time can still be converted with `as.Date()`
+  or `as.POSIXct()` first).
+* Converting a discrete time to a chronon it doesn't nest within, deprecated
+  in 0.4.0, is now an error, since the result is temporally indeterminate. For
+  example, `day_of_week(yearmonth(x))` (which day of the month?) and
+  `yearmonth(yearweek(x))` (a week can straddle two months) previously warned
+  and used the start of each time point. Continuous time points are instants
+  and convert as before.
+* `chronon_cardinality()` between time units that are neither finer nor
+  coarser than each other (e.g. weeks and quarters) is now an error that
+  suggests a common finer unit, rather than an indeterminate result.
+
 ## Improvements
 
 * Updates for compatibility with development S7.
@@ -95,44 +132,6 @@
   for `cyc(hour, day)`). Components now store the same values as
   `linear_time()` and `cyclical_time()`, and the repeated hour when clocks go
   back gives two distinct hours.
-
-## Deprecated
-
-* `chronon_common()`, deprecated in 0.4.0, now warns on every use. Use
-  `chronon_glb()` instead.
-* `new_time()` (defunct in 0.4.0) and `is_time_linear()`,
-  `is_time_cyclical()` and `is_time_duration()` (defunct in 0.3.0) have been
-  removed. Use `mt_linear()`, `mt_duration()` or `mt_cyclical()`, and
-  `time_is_linear()`, `time_is_cyclical()` or `time_is_duration()` instead.
-
-## Breaking changes
-
-* Calendars are now S7 objects. Each calendar is the single instance of its
-  own subclass of the new `mt_calendar` class, so methods dispatch on the
-  calendar with `S7::S7_class(cal_gregorian)` rather than
-  `S7::new_S3_class("cal_gregorian")`.
-* `new_calendar()` requires a `name`, which identifies the calendar. The
-  `class` argument is deprecated in favour of `name`.
-* Time units now record their calendar by its identifier
-  (`"<package>::<name>"`) rather than a copy of the calendar, which is
-  resolved when `@calendar` is accessed. This greatly reduces the size of
-  serialised time objects, and restores their calendar from its current
-  definition when read back in. Custom unit constructors should now default to
-  `calendar = attr(sys.function(), "cal")`.
-* Time objects saved (e.g. with `saveRDS()`) by mixtime 0.4.0 or earlier
-  can't be used with this version, since their time units have no calendar.
-  Recreate them instead (linear time can still be converted with `as.Date()`
-  or `as.POSIXct()` first).
-
-* Converting a discrete time to a chronon it doesn't nest within, deprecated
-  in 0.4.0, is now an error, since the result is temporally indeterminate. For
-  example, `day_of_week(yearmonth(x))` (which day of the month?) and
-  `yearmonth(yearweek(x))` (a week can straddle two months) previously warned
-  and used the start of each time point. Continuous time points are instants
-  and convert as before.
-* `chronon_cardinality()` between time units that are neither finer nor
-  coarser than each other (e.g. weeks and quarters) is now an error that
-  suggests a common finer unit, rather than an indeterminate result.
 
 # mixtime 0.4.0
 
