@@ -74,6 +74,7 @@ reference:
   contents:
   - starts_with("seq")
   - time_shift
+  - mt_cyclical_free-arithmetic
   - time_round
   - time_floor
   - time_ceiling
@@ -83,6 +84,7 @@ reference:
   - mt_linear-compare
   - mt_duration-compare
   - mt_cyclical-compare
+  - mt_cyclical_free-compare
   - allen-interval-algebra
 - subtitle: "Time Components"
   desc: "Functions for extracting and referring to linear and cyclical components of time."
@@ -97,6 +99,7 @@ reference:
   contents:
   - time_parse
   - format.mt_time
+  - format.mt_cyclical_free
 
 - title: "Calendar Systems"
   desc: "Calendar systems are composed of their associated time units. These define how time is divided and measured in different calendar systems."
