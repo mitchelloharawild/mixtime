@@ -6,6 +6,7 @@ template:
       src: pkgdown/social-card.png
       alt: "The mixtime hex sticker"
     twitter:
+      creator: "@mitchoharawild"
       card: summary
 
 development:
