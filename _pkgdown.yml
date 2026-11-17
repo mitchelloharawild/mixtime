@@ -85,6 +85,7 @@ reference:
   - mt_cyclical-compare
   - mt_cyclical_free-compare
   - allen-interval-algebra
+  - mixtime-order
 - subtitle: "Arithmetic operators"
   desc: "Methods for shifting time points and combining durations."
   contents:
