@@ -1,5 +1,16 @@
 # mixtime (development version)
 
+## Breaking changes
+
+* `is.numeric()` is now `FALSE` for mixtime vectors, as for `Date`, `POSIXct`
+  and `difftime`. Numeric consumers such as `prcomp()`, `cor()` and
+  `where(is.numeric)` no longer silently use the underlying vecvec index
+  storage, and `data.matrix()` converts with `as.double()`. Models such as
+  `lm()` read the base data directly, so use `lm(y ~ as.numeric(x))`.
+* `as.numeric()` and `as.integer()` of cyclical time now give the position
+  within the cycle counted from its first label (`month_of_year(8)` is 8, and
+  `time_of_day(0)` is 0), so `cyclical_time(as.numeric(x))` round trips.
+
 ## New features
 
 * Added underspecified cyclical time (`mt_cyclical_free`), a position within a

@@ -251,3 +251,26 @@ test_that("c() and assignment read numbers as free cyclical positions", {
   x[[1]] <- 12
   expect_equal(x, month_of_year(c(12, 5)))
 })
+
+test_that("as.numeric() of cyclical time is the position by label start", {
+  p <- month_of_year(c(8, 3, 12))
+  expect_equal(as.numeric(p), c(8, 3, 12))
+  expect_equal(as.integer(p), c(8L, 3L, 12L))
+  expect_equal(month_of_year(as.numeric(p)), p)
+  expect_equal(as.numeric(time_of_day(c(0, 13))), c(0, 13))
+
+  x <- cyclical_time(
+    as_mixtime(as.POSIXct("2020-01-01 10:00", tz = "UTC") + 3600 * 0:2),
+    chronon = hour(1L), cycle = day(1L)
+  )
+  expect_equal(as.numeric(x), 10:12)
+})
+
+test_that("mixtime is not numeric and works with data.matrix()", {
+  expect_false(is.numeric(month_of_year(3)))
+  expect_false(is.numeric(yearmonth(0:2)))
+  d <- data.frame(a = c(.3, .1, .9), p = month_of_year(c(8, 3, 12)))
+  expect_equal(unname(data.matrix(d)[, "p"]), c(8, 3, 12))
+  expect_error(prcomp(d), "numeric")
+  expect_equal(unname(data.matrix(data.frame(t = yearmonth(c(5, 1))))[, 1]), c(5, 1))
+})
