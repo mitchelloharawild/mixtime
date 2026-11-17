@@ -38,8 +38,9 @@ time_as_number <- function(x) {
 }
 
 # Mixtime is not numeric, as base R's date-time classes (Date, POSIXct, difftime)
-# are not: consumers such as `data.matrix()` then convert via `as.double()`
-# instead of reading the vecvec index storage, and `prcomp()` errors loudly.
+# are not: `prcomp()` errors loudly rather than reading the vecvec index
+# storage. (`data.matrix()` still reads it on R >= 4.6, as the primitive
+# `is.integer()` is TRUE for the integer storage and can't be overridden.)
 #' @export
 S7::method(is.numeric, class_mixtime) <- function(x) FALSE
 #' @export
