@@ -274,6 +274,8 @@ test_that("duration / duration returns a dimensionless ratio", {
   expect_equal(as.double(days(6L) / days(2L)), 3)
   expect_equal(as.double(days(6L) / days(6L)), 1)
   expect_equal(as.double(months(4L) / months(2L)), 2)
+  expect_identical(weeks(1L) / days(1L), 7)
+  expect_identical(days(c(2L, NA, 6L)) / days(2L), c(1, NA, 3))
 })
 
 test_that("subtracting a time point from a number or duration errors", {

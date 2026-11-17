@@ -73,6 +73,8 @@
   no longer return a bound with an arbitrary calendar.
 * Subtracting a time point from a number or duration, or negating it, is now
   an error rather than giving a meaningless time point.
+* The ratio of two durations (e.g. `weeks(1) / days(1)`) is now a plain
+  number rather than a mixtime vector.
 
 # mixtime 0.4.0
 

@@ -173,7 +173,7 @@ duration_combine <- function(e1, e2, op) {
   res <- op(xd, yd)
   # duration / duration = numeric ratio; otherwise a duration with the common chronon
   if (identical(op, `/`)) {
-    return(res)
+    return(as.vector(res))
   }
   mt_duration(res, chronon = tu)
 }
@@ -427,6 +427,19 @@ method(`*`, list(S7::class_numeric, mt_duration)) <- function(e1, e2) {
 #
 # `mt_cyclical_free` (underspecified cyclical time) has no underlying time to advance, so
 # it has its own, more specific, methods in cyclical_free_ops.R.
+
+# --- unwrapping plain results -------------------------------------------------
+
+# vecvec keeps arithmetic results in a mixtime vector, so results that aren't
+# time (e.g. the ratio of two durations) are returned as plain vectors.
+#' @export
+`Ops.mixtime::mixtime` <- function(e1, e2) {
+  res <- NextMethod()
+  if (is_mixtime(res) && !any(vapply(res@x, S7_inherits, logical(1L), mt_time))) {
+    res <- vecvec::unvecvec(res)
+  }
+  res
+}
 
 # --- friendly errors for unsupported operator/operand combinations ----------------
 # Registered on `class_any` so any operand pair that isn't handled above lands here. The
