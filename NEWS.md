@@ -2,136 +2,75 @@
 
 ## New features
 
-* Added underspecified cyclical time (`mt_cyclical_free`), a position within
-  a cycle whose enclosing cycle is unknown (#47), e.g. "day 60 of the year"
-  with no year known. The existing `mt_cyclical` is now described as located
-  cyclical time, which knows its enclosing cycle. `?cyclical_time` explains
-  the differences. Underspecified cyclical time is built by `cyclical_time()`
-  (and helpers like `day_of_year()`/`month_of_year()`) from bare numeric
-  input (or an all-`NA` logical), and by `time_compose()`/`time_parse()`
-  without a `lin()` component. Bare numeric input is indexed the way that
-  chronon is normally displayed (read from its registered `cyclical_labels()`
-  scheme - e.g. `day_of_year(60)` is the 60th day, but `time_of_day(0)` is
-  midnight, not "the 1st second"), and input outside the longest possible
-  cycle is `NA` (e.g. `month_of_year(13)`, `day_of_month(32)`,
-  `day_of_year(367)`). Underspecified values have no time zone. Numbers
-  combined with them (`vec_c()`, `vec_cast()`, comparison) are read as
-  positions the same way, so `month_of_year(c(1, 3)) == 3` is
-  `c(FALSE, TRUE)`. Located and underspecified cyclical time can't be cast
-  to each other, but can be compared. Comparison mirrors `mt_duration`'s
-  plain magnitude comparison (no Allen's interval algebra). Added
-  `time_is_cyclical_free()` alongside the existing `time_is_*()` predicates.
-
-  Underspecified values are ordered by their position within one cycle (`sort()`,
-  `min()`, `max()`), and subtracting two gives the within-cycle difference
-  (`month_of_year(3) - month_of_year(1)` is 2 months). Adding a number or
-  duration wraps around for fixed-length cycles (`month_of_year(12) + 1` is
-  January, also in `seq()`), but errors for variable-length cycles such as
-  `day_of_month()` and `day_of_year()`, since the result depends on which
-  month or year it is in. These errors, and `mean()` of an underspecified
-  value, suggest locating it with `time_compose()` first (e.g.
-  `time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)`).
-  Likewise `time_compose()` and `time_parse()` without a `lin()` component now
-  only collapse components with fixed lengths: `cyc(minute, hour)` with
-  `cyc(hour, day)` gives a minute of the day, while day 15 of March is an
-  error, as its day of the year depends on the year.
-
-* New `chronon_traverse()` walks out from a chronon to coarser or finer time
-  units along the registered cardinality relationships, accumulating a value
-  (such as the cumulative fixed cardinality) and stopping where a predicate
-  is satisfied.
-
-* Added `chronon_cardinality_is_fixed()` to test whether the number of one
-  time granule in another is constant (e.g. 12 months in a year), or depends
-  on where in time it is measured (e.g. days in a month).
-
-* `time_compose()` gains `on_ambiguous` and `offset` arguments to resolve
-  time zone aware local times that occur twice when daylight saving ends.
-  `offset` takes the UTC offset of each time as a duration (e.g.
-  `tz_offset(x)`) or time zone abbreviation (e.g. `"AEDT"`). Without either,
-  ambiguous times resolve to their earliest occurrence with a warning that
-  suggests how to avoid the ambiguity. The `mixtime.on_ambiguous` option sets
-  the default strategy.
+* Added underspecified cyclical time (`mt_cyclical_free`), a position within a
+  cycle whose enclosing cycle is unknown, e.g. "day 60 of the year" (#47). It
+  is created from bare numbers (e.g. `month_of_year(3)`), or by
+  `time_compose()`/`time_parse()` without a `lin()` component. It sorts,
+  compares and subtracts by position within the cycle, and arithmetic wraps
+  around fixed-length cycles (`month_of_year(12) + 1` is January). Use
+  `time_compose()` to locate it in a cycle for variable-length cycles, such as
+  `day_of_month()`. See `?cyclical_time` for details.
+* Added `time_is_cyclical_free()`, alongside the other `time_is_*()`
+  predicates.
+* Added `chronon_traverse()`, which walks to coarser or finer time units,
+  accumulating a value until a predicate is satisfied.
+* Added `chronon_cardinality_is_fixed()`, which tests whether the number of
+  one time unit in another is constant (e.g. months in a year, but not days in
+  a month).
+* `time_compose()` gains `on_ambiguous` and `offset` arguments to resolve local
+  times that occur twice when daylight saving ends. Without them, the earliest
+  time is used with a warning. The `mixtime.on_ambiguous` option sets the
+  default.
 
 ## Deprecated
 
 * `new_calendar(class)` is deprecated in favour of `new_calendar(name)`.
-* `chronon_common()`, deprecated in 0.4.0, now warns on every use. Use
-  `chronon_glb()` instead.
-* `new_time()` (defunct in 0.4.0) and `is_time_linear()`,
-  `is_time_cyclical()` and `is_time_duration()` (defunct in 0.3.0) have been
-  removed. Use `mt_linear()`, `mt_duration()` or `mt_cyclical()`, and
-  `time_is_linear()`, `time_is_cyclical()` or `time_is_duration()` instead.
+* `chronon_common()` now warns on every use. Use `chronon_glb()` instead.
+* The defunct `new_time()`, `is_time_linear()`, `is_time_cyclical()` and
+  `is_time_duration()` have been removed.
 
 ## Breaking changes
 
-* Calendars are now S7 objects. Each calendar is the single instance of its
-  own subclass of the new `mt_calendar` class, so methods dispatch on the
-  calendar with `S7::S7_class(cal_gregorian)` rather than
-  `S7::new_S3_class("cal_gregorian")`.
-* `new_calendar()` requires a `name`, which identifies the calendar.
-* Time units now record their calendar by its identifier
-  (`"<package>::<name>"`) rather than a copy of the calendar, which is
-  resolved when `@calendar` is accessed. This greatly reduces the size of
-  serialised time objects, and restores their calendar from its current
-  definition when read back in. Custom unit constructors should now default to
-  `calendar = attr(sys.function(), "cal")`.
-* Time objects saved (e.g. with `saveRDS()`) by mixtime 0.4.0 or earlier
-  can't be used with this version, since their time units have no calendar.
-  Recreate them instead (linear time can still be converted with `as.Date()`
-  or `as.POSIXct()` first).
-* Converting a discrete time to a chronon it doesn't nest within, deprecated
-  in 0.4.0, is now an error, since the result is temporally indeterminate. For
-  example, `day_of_week(yearmonth(x))` (which day of the month?) and
-  `yearmonth(yearweek(x))` (a week can straddle two months) previously warned
-  and used the start of each time point. Continuous time points are instants
-  and convert as before.
-* `chronon_cardinality()` between time units that are neither finer nor
-  coarser than each other (e.g. weeks and quarters) is now an error that
-  suggests a common finer unit, rather than an indeterminate result.
+* Calendars are now S7 objects, so methods dispatch on
+  `S7::S7_class(cal_gregorian)` rather than `S7::new_S3_class("cal_gregorian")`.
+  `new_calendar()` now requires a `name`.
+* Time units now refer to their calendar by identifier rather than storing a
+  copy, which greatly reduces the size of serialised time objects. Custom unit
+  constructors should default to `calendar = attr(sys.function(), "cal")`.
+  Time objects saved by mixtime 0.4.0 or earlier can't be used with this
+  version.
+* Converting a discrete time to a chronon it doesn't nest within (e.g.
+  `yearmonth(yearweek(x))`) is now an error, as deprecated in 0.4.0.
+* `chronon_cardinality()` between time units that don't nest (e.g. weeks and
+  quarters) is now an error.
+* `time_compose()` and `time_parse()` without a `lin()` component only combine
+  components with fixed lengths, so day 15 of March is now an error (its day
+  of the year depends on the year).
 
 ## Improvements
 
-* Updates for compatibility with development S7.
-* mixtime now requires vecvec (>= 1.4.0), which fixes `c()` of a single
-  empty mixtime vector (e.g. `c(x[0])`).
-* Better support for time-classed `at` in `chronon_cardinality()`, allowing for
-  the target `y` granule obtained from `at`, and conversion of `at` to `y`
-  granule if both are specified.
+* Compatibility with development S7.
+* mixtime now requires vecvec (>= 1.4.0), fixing `c()` of a single empty
+  mixtime vector.
+* `chronon_cardinality()` has better support for a time-classed `at`.
 
 ## Bug fixes
 
-* `time_compose()` now composes time zone aware components (e.g. from
-  `time_components()`) in local time and resolves the result to the instant
-  it describes, instead of mixing local and UTC based counts. It also keeps
-  the order of components whose elements are stored out of order.
-
-* Converting `zoo::yearmon()` and `zoo::yearqtr()` values (e.g. with
-  `yearmonth()`, `yearquarter()` or `mixtime()`) now gives the correct
-  months/quarters. These are stored as fractional years, which were previously
-  misread as chronons since the epoch (tidyverts/tsibble#272).
-* `as_mixtime()` now works for `zoo::yearmon()`, `zoo::yearqtr()` and tsibble's
-  `yearweek()`, `yearmonth()` and `yearquarter()` classes.
-* `min()`, `max()` and `range()` of mixtime vectors now correctly order mixed
-  chronons and other time classes (e.g. `range(yearmonth(1:3), Sys.Date())`),
-  and return a missing time with a warning for empty input. Other `Summary`
-  group generics (e.g. `sum()`, `any()`) now give an informative error for
-  time points, while still summarising durations (tidyverts/tsibble#272).
-* Whole-number time granule sizes (`n`) are now always stored as integers, so
-  a chronon built with a double size (e.g. from `mixtime()` on a single
-  `Date`) is identical to the same chronon built with an integer size, and
-  their values combine into a single group of a `mixtime` vector.
-* Fixed `chronon_cardinality()` traversal of the chronon graph along paths
-  with irregular steps.
-* Fixed `chronon_glb()` and `chronon_lub()` of chronons from different
-  calendars returning a bound tagged with an arbitrary calendar, rather than
-  no calendar. Time units shared by several calendars are now a single node
-  of the chronon graph.
-* `time_components()` of a time zone aware time no longer applies the UTC
-  offset twice to components finer than a day (e.g. 10:00 AEST gave `h20`
-  for `cyc(hour, day)`). Components now store the same values as
-  `linear_time()` and `cyclical_time()`, and the repeated hour when clocks go
-  back gives two distinct hours.
+* `time_compose()` now composes time zone aware components in local time, and
+  keeps the order of components stored out of order.
+* `time_components()` no longer applies the UTC offset twice to components
+  finer than a day.
+* `zoo::yearmon()` and `zoo::yearqtr()` values now convert to the correct
+  months and quarters, and `as_mixtime()` now supports them and tsibble's
+  `yearweek()`, `yearmonth()` and `yearquarter()` (tidyverts/tsibble#272).
+* `min()`, `max()` and `range()` now correctly order mixed chronons and other
+  time classes. Other `Summary` generics (e.g. `sum()`) give an informative
+  error for time points (tidyverts/tsibble#272).
+* Whole-number granule sizes are now always stored as integers, so equivalent
+  chronons built from doubles and integers are identical.
+* Fixed `chronon_cardinality()` along paths with irregular steps.
+* `chronon_glb()` and `chronon_lub()` of chronons from different calendars
+  no longer return a bound with an arbitrary calendar.
 
 # mixtime 0.4.0
 
