@@ -6,9 +6,6 @@
 \alias{time_is_cyclical}
 \alias{time_is_cyclical_free}
 \alias{time_is_duration}
-\alias{is_time_linear}
-\alias{is_time_cyclical}
-\alias{is_time_duration}
 \title{Check the time type of values}
 \usage{
 time_is_linear(x, ...)
@@ -18,12 +15,6 @@ time_is_cyclical(x, ...)
 time_is_cyclical_free(x, ...)
 
 time_is_duration(x, ...)
-
-is_time_linear(x, ...)
-
-is_time_cyclical(x, ...)
-
-is_time_duration(x, ...)
 }
 \arguments{
 \item{x}{A time object (typically a \code{mixtime} vector).}

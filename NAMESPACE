@@ -67,9 +67,6 @@ export(days)
 export(duration)
 export(hours)
 export(is_mixtime)
-export(is_time_cyclical)
-export(is_time_duration)
-export(is_time_linear)
 export(label_scheme)
 export(lin)
 export(linear_labels)
@@ -98,7 +95,6 @@ export(new_cyclical_time_fn)
 export(new_duration_fn)
 export(new_linear_time_fn)
 export(new_mixtime)
-export(new_time)
 export(new_time_unit)
 export(parse_format)
 export(quarters)
@@ -137,38 +133,46 @@ export(years)
 export(yearweek)
 import(lifecycle)
 import(vctrs)
-importFrom(rlang,"%||%")
-importFrom(S7,"S7_data<-")
-importFrom(S7,"method<-")
-importFrom(S7,"props<-")
-importFrom(S7,S7_data)
-importFrom(S7,S7_inherits)
-importFrom(S7,class_any)
-importFrom(S7,method)
-importFrom(S7,new_class)
-importFrom(S7,new_generic)
-importFrom(S7,new_property)
-importFrom(S7,props)
-importFrom(S7,super)
-importFrom(rlang,enexpr)
-importFrom(rlang,enexprs)
-importFrom(rlang,enquo)
-importFrom(rlang,enquos)
-importFrom(rlang,ensym)
-importFrom(rlang,ensyms)
-importFrom(rlang,eval_tidy)
-importFrom(rlang,expr)
-importFrom(rlang,exprs)
-importFrom(rlang,list2)
-importFrom(rlang,quo)
-importFrom(rlang,quos)
-importFrom(rlang,sym)
-importFrom(rlang,syms)
-importFrom(vctrs,vec_math)
-importFrom(vctrs,vec_proxy_equal)
-importFrom(vctrs,vec_proxy_order)
-importFrom(vctrs,vec_restore)
-importFrom(vecvec,class_vecvec)
-importFrom(vecvec,unvecvec)
-importFrom(vecvec,vecvec_apply)
+importFrom(S7,
+  "S7_data<-",
+  "method<-",
+  "props<-",
+  S7_data,
+  S7_inherits,
+  class_any,
+  method,
+  new_class,
+  new_generic,
+  new_property,
+  props,
+  super
+)
+importFrom(rlang,
+  "%||%",
+  enexpr,
+  enexprs,
+  enquo,
+  enquos,
+  ensym,
+  ensyms,
+  eval_tidy,
+  expr,
+  exprs,
+  list2,
+  quo,
+  quos,
+  sym,
+  syms
+)
+importFrom(vctrs,
+  vec_math,
+  vec_proxy_equal,
+  vec_proxy_order,
+  vec_restore
+)
+importFrom(vecvec,
+  class_vecvec,
+  unvecvec,
+  vecvec_apply
+)
 useDynLib(mixtime, .registration = TRUE)

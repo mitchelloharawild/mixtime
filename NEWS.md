@@ -100,6 +100,10 @@
 
 * `chronon_common()`, deprecated in 0.4.0, now warns on every use. Use
   `chronon_glb()` instead.
+* `new_time()` (defunct in 0.4.0) and `is_time_linear()`,
+  `is_time_cyclical()` and `is_time_duration()` (defunct in 0.3.0) have been
+  removed. Use `mt_linear()`, `mt_duration()` or `mt_cyclical()`, and
+  `time_is_linear()`, `time_is_cyclical()` or `time_is_duration()` instead.
 
 ## Breaking changes
 

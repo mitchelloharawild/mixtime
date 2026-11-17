@@ -153,7 +153,6 @@ reference:
   - mixtime
   - new_mixtime
   - class_mixtime
-  - new_time
   - as_mixtime
   - is_mixtime
   - is_time

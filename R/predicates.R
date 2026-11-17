@@ -52,24 +52,6 @@ method(time_is_duration, class_any) <- function(x) rep.int(FALSE, length(x))
 method(time_is_duration, mt_duration) <- function(x) rep.int(TRUE, length(x))
 method(time_is_duration, new_S4_class("Period", package = "lubridate")) <- function(x) rep.int(TRUE, length(x))
 
-#' @rdname is_time
-#' @export
-is_time_linear <- function(x, ...) {
-  lifecycle::deprecate_stop("0.3.0", "is_time_linear()", "time_is_linear()")
-}
-
-#' @rdname is_time
-#' @export
-is_time_cyclical <- function(x, ...) {
-  lifecycle::deprecate_stop("0.3.0", "is_time_cyclical()", "time_is_cyclical()")
-}
-
-#' @rdname is_time
-#' @export
-is_time_duration <- function(x, ...) {
-  lifecycle::deprecate_stop("0.3.0", "is_time_duration()", "time_is_duration()")
-}
-
 #' Test whether time is determinate at a granule's precision
 #'
 #' `time_is_determinate_at()` tests, for each element of a `mixtime` vector, whether

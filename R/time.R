@@ -1,25 +1,3 @@
-#' Constructor for mixtime time vectors
-#'
-#' @description
-#'
-#' `r lifecycle::badge("defunct")`
-#'
-#' `new_time()` was the low-level constructor for `mt_time` vectors. It is now
-#' defunct; call the concrete time class constructors directly instead:
-#' [mt_linear()] for linear time, [mt_duration()] for durations, and
-#' [mt_cyclical()] for cyclical time.
-#'
-#' @param x,chronon,cycle,class Ignored.
-#'
-#' @export
-new_time <- function(x = integer(), chronon = mt_unit(1L), cycle = NULL, class = NULL) {
-  lifecycle::deprecate_stop(
-    "0.3.0",
-    "new_time()",
-    details = "Use `mt_linear()`, `mt_duration()`, or `mt_cyclical()` instead."
-  )
-}
-
 # mt_time vector compatibility methods -----------------------------------------
 
 #' @importFrom vctrs vec_restore
