@@ -216,47 +216,37 @@ time_format_impl <- function(x, format = time_format_default(x, attr = attr), ..
 #' automatically. See `vignette("time-format-strings")` for the format string
 #' syntax.
 #'
+#' @section Underspecified cyclical time:
+#' Underspecified cyclical time (e.g. `month_of_year(3)`) has no position on
+#' the time line, so only `{cyc(...)}` tokens can be used. Attribute tokens
+#' such as `{tz(.time)}` render as empty text.
+#'
 #' @param x A mixtime vector.
-#' @param ... Additional arguments for methods, including `format`: a
-#'   glue-style format string, defaulting to one derived automatically for `x`.
+#' @param format A glue-style format string, defaulting to one derived
+#'   automatically for `x`. For time points it is passed via `...`.
+#' @param ... Additional arguments for methods, including `format` for time
+#'   points.
 #' @param attr If `TRUE` (default), append attribute information (e.g.
 #'   timezone) to the default format.
 #'
 #' @return A character vector the same length as `x`.
 #'
+#' @examples
+#' format(yearmonth("2024-03"))
+#' format(date("2024-03-15"), format = "{cyc(day(1L), month(1L))} {lin(year(1L))}")
+#' format(month_of_year(3))
+#'
 #' @usage
 #' \S4method{format}{mt_time}(x, ..., attr = TRUE)
-#' @aliases format,mt_time-method
+#' \S4method{format}{mt_cyclical_free}(x, format = NULL, ..., attr = TRUE)
+#' @aliases format,mt_time-method format,mt_cyclical_free-method format.mt_cyclical_free
 #' @name format.mt_time
 #' @export
 S7::method(format, mt_time) <- function(x, ..., attr = TRUE) {
   time_format_impl(x, ..., attr = attr)
 }
 
-#' Format underspecified cyclical time (`mt_cyclical_free`)
-#'
-#' Underspecified cyclical time has no `at` (no enclosing cycle) to resolve
-#' a within-cycle position from, so unlike located [mt_cyclical] it is
-#' rendered directly from its own stored offset via the same
-#' [chronon_format_cyclical()] template and [cyclical_labels_format()]
-#' renderer a located value's reduced position would use, called with
-#' `at = NULL`. The offset is split across the template's tokens using
-#' [chronon_cardinality()] only, never [chronon_divmod()], which would need a
-#' specific enclosing cycle (e.g. which year).
-#'
-#' @param format A glue-style format string of `{cyc(...)}` tokens (see
-#'   [format.mt_time]), defaulting to one derived automatically for `x`. A
-#'   free value has no position on the time line, so `{lin(...)}` tokens are
-#'   an error, and attribute tokens such as `{tz(.time)}` render as empty
-#'   text since a free value has no time zone.
-#' @inheritParams format.mt_time
-#'
-#' @return A character vector the same length as `x`.
-#'
-#' @usage
-#' \S4method{format}{mt_cyclical_free}(x, ..., attr = TRUE)
-#' @aliases format,mt_cyclical_free-method
-#' @name format.mt_cyclical_free
+#' @rdname format.mt_time
 #' @export
 S7::method(format, mt_cyclical_free) <- function(x, format = NULL, ..., attr = TRUE) {
   chronon <- base::attr(x, "chronon")

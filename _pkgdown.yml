@@ -99,7 +99,6 @@ reference:
   contents:
   - time_parse
   - format.mt_time
-  - format.mt_cyclical_free
 
 - title: "Calendar Systems"
   desc: "Calendar systems are composed of their associated time units. These define how time is divided and measured in different calendar systems."
