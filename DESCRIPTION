@@ -63,4 +63,4 @@ LinkingTo:
     tzdb (>= 0.5.0)
 RdMacros: lifecycle
 VignetteBuilder: knitr
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1
