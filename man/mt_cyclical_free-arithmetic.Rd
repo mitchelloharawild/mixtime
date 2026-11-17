@@ -73,3 +73,7 @@ try(day_of_month(28) + 1L)
 time_compose(yearmonth("2024-02"), day_of_month(28)) + days(1)
 
 }
+\seealso{
+\link{mt_time-arithmetic} for arithmetic on linear and located cyclical
+time points.
+}

@@ -202,6 +202,86 @@ S7::method(vec_math, mt_time) <- function(.fn, .x, ...) {
   )
 }
 
+#' Arithmetic for time points (`mt_time`)
+#'
+#' @description
+#' Time points, linear (e.g. [yearmonth()]) or located cyclical (e.g.
+#' `month_of_year(Sys.Date())`), support:
+#'
+#' - **Shifts**: `x + d`, `x - d` and `d + x` shift by a [duration()]. Time
+#'   points that don't exist (e.g. 31 January plus one month) are resolved
+#'   with the `mixtime.on_invalid` option; see [time_shift()].
+#' - **Shifts by chronons**: `x + n` and `x - n` shift by `n` of the time
+#'   points' own chronon.
+#' - **Differences**: `a - b` is a [duration()] in their finest common
+#'   chronon.
+#'
+#' Located cyclical time shifts its underlying time, and its position within
+#' the cycle follows. For underspecified cyclical time, see
+#' [mt_cyclical_free-arithmetic].
+#'
+#' A discrete time point spans its whole chronon, so shifting by a duration
+#' finer than its chronon, or taking differences between discrete time points
+#' of different chronons, is an error. Any other combination, such as adding
+#' two time points or subtracting a time point from a duration, is also an
+#' error.
+#'
+#' @param e1,e2 Operands, at least one a time point (`mt_time`) vector.
+#'
+#' @return A time point vector for shifts, a duration ([mt_duration]) for
+#'   differences.
+#'
+#' @examples
+#' x <- yearmonth("2024-01")
+#' x + months(2)
+#' x + 0:3
+#' yearmonth("2024-05") - x
+#' date("2024-01-31") + months(1)
+#' month_of_year(yearmonth("2024-11")) + 3L
+#' try(date("2024-03-15") + hours(3))
+#'
+#' @usage
+#' \S4method{+}{mt_time}(e1, e2)
+#' \S4method{-}{mt_time}(e1, e2)
+#'
+#' @aliases +,mt_time-method -,mt_time-method
+#' @name mt_time-arithmetic
+NULL
+
+#' Arithmetic for durations (`mt_duration`)
+#'
+#' @description
+#' Durations (e.g. `days(3)`) support:
+#'
+#' - **Combining**: `a + b` and `a - b` give a duration in their finest common
+#'   chronon. The chronons must have a fixed ratio, so `months(1) + days(1)`
+#'   is an error.
+#' - **Ratios**: `a / b` is a number (e.g. `weeks(1) / days(1)` is 7).
+#' - **Scaling**: `d * n`, `n * d` and `d / n`.
+#' - **Adding numbers**: `d + n` and `d - n` count `n` in `d`'s chronon.
+#'
+#' Adding a duration to a time point shifts it, see [mt_time-arithmetic].
+#'
+#' @param e1,e2 Operands, at least one a duration (`mt_duration`) vector.
+#'
+#' @return A duration, or a number for the ratio of two durations.
+#'
+#' @examples
+#' weeks(1) + days(2)
+#' weeks(1) / days(1)
+#' days(3) * 2
+#' try(months(1) + days(1))
+#'
+#' @usage
+#' \S4method{+}{mt_duration}(e1, e2)
+#' \S4method{-}{mt_duration}(e1, e2)
+#' \S4method{*}{mt_duration}(e1, e2)
+#' \S4method{/}{mt_duration}(e1, e2)
+#'
+#' @aliases +,mt_duration-method -,mt_duration-method *,mt_duration-method /,mt_duration-method
+#' @name mt_duration-arithmetic
+NULL
+
 # --- differences in time produce durations in the common chronon --------------
 
 method(`-`, list(mt_time, mt_time)) <- function(e1, e2) {

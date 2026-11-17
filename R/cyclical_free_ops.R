@@ -49,6 +49,9 @@
 #' @return For differences, a duration ([mt_duration]). For shifts, a
 #'   `mt_cyclical_free` vector of the same type as the underspecified operand.
 #'
+#' @seealso [mt_time-arithmetic] for arithmetic on linear and located cyclical
+#'   time points.
+#'
 #' @examples
 #' month_of_year(12) + 1L
 #' month_of_year(1) - months(1)

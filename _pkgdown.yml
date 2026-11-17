@@ -74,7 +74,6 @@ reference:
   contents:
   - starts_with("seq")
   - time_shift
-  - mt_cyclical_free-arithmetic
   - time_round
   - time_floor
   - time_ceiling
@@ -86,6 +85,12 @@ reference:
   - mt_cyclical-compare
   - mt_cyclical_free-compare
   - allen-interval-algebra
+- subtitle: "Arithmetic operators"
+  desc: "Methods for shifting time points and combining durations."
+  contents:
+  - mt_time-arithmetic
+  - mt_duration-arithmetic
+  - mt_cyclical_free-arithmetic
 - subtitle: "Time Components"
   desc: "Functions for extracting and referring to linear and cyclical components of time."
   contents:
