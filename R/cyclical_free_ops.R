@@ -476,8 +476,12 @@ S7::method(mean, mt_cyclical_free) <- function(x, ...) {
 
 # --- sequences ----------------------------------------------------------------
 
+# Registered as a plain S3 method: `S7::method(seq, ...) <-` binds a copy of
+# `base::seq` into the namespace with CRAN S7 (<= 0.2.2), which prevents the
+# other `S3method(seq, ...)` registrations from reaching base's methods table.
+#' @method seq mixtime::mt_cyclical_free
 #' @export
-S7::method(seq, mt_cyclical_free) <- function(
+`seq.mixtime::mt_cyclical_free` <- function(
   from,
   to,
   by,
