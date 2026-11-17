@@ -79,6 +79,7 @@ abort_free_cyclical_op <- function(x, what, why, example = "%s", hint = NULL) {
   if (is.null(hint)) {
     hint <- free_locate_hint(x, example)
   }
+  what <- sub("([^.!?])$", "\\1.", what)
   cli::cli_abort(
     c("{what}", "x" = "{why}", "i" = "{hint}"),
     class = "mixtime_error_free_cyclical",
@@ -132,10 +133,10 @@ free_kind <- function(x) {
   paste(free_unit(x@chronon), "of", free_unit(x@cycle))
 }
 
-# "a day of month with no month"
+# "a day of month in an unknown month"
 free_noun <- function(x) {
   kind <- free_kind(x)
-  paste(article(kind), kind, "with no", free_unit(x@cycle))
+  paste(article(kind), kind, "in an unknown", free_unit(x@cycle))
 }
 
 article <- function(word) if (grepl("^([aeiou]|hour)", word)) "an" else "a"

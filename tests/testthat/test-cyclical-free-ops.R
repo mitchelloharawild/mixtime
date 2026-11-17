@@ -61,7 +61,7 @@ test_that("the variable length error explains and suggests locating", {
   rlang::local_options(cli.width = Inf)
   err <- tryCatch(day_of_month(28) + days(1), error = identity)
   msg <- cli::ansi_strip(conditionMessage(err))
-  expect_match(msg, "Can't add 1 day to a day of month with no month", fixed = TRUE)
+  expect_match(msg, "Can't add 1 day to a day of month in an unknown month", fixed = TRUE)
   expect_match(msg, "number of days in a month varies", fixed = TRUE)
   expect_match(msg, 'time_compose(yearmonth("2024-02"), x) + days(1)', fixed = TRUE)
   expect_null(err$call)
