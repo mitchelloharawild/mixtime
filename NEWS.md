@@ -96,6 +96,11 @@
   `linear_time()` and `cyclical_time()`, and the repeated hour when clocks go
   back gives two distinct hours.
 
+## Deprecated
+
+* `chronon_common()`, deprecated in 0.4.0, now warns on every use. Use
+  `chronon_glb()` instead.
+
 ## Breaking changes
 
 * Calendars are now S7 objects. Each calendar is the single instance of its
