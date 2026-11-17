@@ -4,109 +4,117 @@
 
 ### New features
 
-- New
-  [`chronon_traverse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_traverse.md)
-  walks out from a chronon to coarser or finer time units along the
-  registered cardinality relationships, accumulating a value (such as
-  the cumulative fixed cardinality) and stopping where a predicate is
-  satisfied.
-
+- Added underspecified cyclical time (`mt_cyclical_free`), a position
+  within a cycle whose enclosing cycle is unknown, e.g. “day 60 of the
+  year”
+  ([\#47](https://github.com/mitchelloharawild/mixtime/issues/47)). It
+  is created from bare numbers (e.g. `month_of_year(3)`), or by
+  [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md)/[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md)
+  without a
+  [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+  component. It sorts, compares and subtracts by position within the
+  cycle, and arithmetic wraps around fixed-length cycles
+  (`month_of_year(12) + 1` is January). Use
+  [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md)
+  to locate it in a cycle for variable-length cycles, such as
+  [`day_of_month()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.md).
+  See
+  [`?cyclical_time`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time.md)
+  for details.
 - Added
-  [`chronon_cardinality_is_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_is_fixed.md)
-  to test whether the number of one time granule in another is constant
-  (e.g. 12 months in a year), or depends on where in time it is measured
-  (e.g. days in a month).
+  [`time_is_cyclical_free()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
+  alongside the other `time_is_*()` predicates.
+- Added
+  [`chronon_traverse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_traverse.md),
+  which walks to coarser or finer time units, accumulating a value until
+  a predicate is satisfied.
+- Added
+  [`chronon_cardinality_is_fixed()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality_is_fixed.md),
+  which tests whether the number of one time unit in another is constant
+  (e.g. months in a year, but not days in a month).
+- [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md)
+  gains `on_ambiguous` and `offset` arguments to resolve local times
+  that occur twice when daylight saving ends. Without them, the earliest
+  time is used with a warning. The `mixtime.on_ambiguous` option sets
+  the default.
+
+### Deprecated
+
+- `new_calendar(class)` is deprecated in favour of `new_calendar(name)`.
+- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  now warns on every use. Use
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  instead.
+- The defunct `new_time()`, `is_time_linear()`, `is_time_cyclical()` and
+  `is_time_duration()` have been removed.
+
+### Breaking changes
+
+- Calendars are now S7 objects, so methods dispatch on
+  `S7::S7_class(cal_gregorian)` rather than
+  `S7::new_S3_class("cal_gregorian")`.
+  [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.md)
+  now requires a `name`.
+- Time units now refer to their calendar by identifier rather than
+  storing a copy, which greatly reduces the size of serialised time
+  objects. Custom unit constructors should default to
+  `calendar = attr(sys.function(), "cal")`. Time objects saved by
+  mixtime 0.4.0 or earlier can’t be used with this version.
+- Converting a discrete time to a chronon it doesn’t nest within (e.g.
+  `yearmonth(yearweek(x))`) is now an error, as deprecated in 0.4.0.
+- [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+  between time units that don’t nest (e.g. weeks and quarters) is now an
+  error.
+- [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md)
+  and
+  [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md)
+  without a
+  [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+  component only combine components with fixed lengths, so day 15 of
+  March is now an error (its day of the year depends on the year).
 
 ### Improvements
 
-- Updates for compatibility with development S7.
-- mixtime now requires vecvec (\>= 1.4.0), which fixes
+- Compatibility with development S7.
+- mixtime now requires vecvec (\>= 1.4.0), fixing
   [`c()`](https://rdrr.io/r/base/c.html) of a single empty mixtime
-  vector (e.g. `c(x[0])`).
-- Better support for time-classed `at` in
-  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md),
-  allowing for the target `y` granule obtained from `at`, and conversion
-  of `at` to `y` granule if both are specified.
+  vector.
+- [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
+  has better support for a time-classed `at`.
 
 ### Bug fixes
 
-- Converting
-  [`zoo::yearmon()`](https://rdrr.io/pkg/zoo/man/yearmon.html) and
+- [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md)
+  now composes time zone aware components in local time, and keeps the
+  order of components stored out of order.
+- [`time_components()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_components.md)
+  no longer applies the UTC offset twice to components finer than a day.
+- [`zoo::yearmon()`](https://rdrr.io/pkg/zoo/man/yearmon.html) and
   [`zoo::yearqtr()`](https://rdrr.io/pkg/zoo/man/yearqtr.html) values
-  (e.g. with
-  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
-  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
-  or
-  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md))
-  now gives the correct months/quarters. These are stored as fractional
-  years, which were previously misread as chronons since the epoch
-  (tidyverts/tsibble#272).
-- [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/as_mixtime.md)
-  now works for
-  [`zoo::yearmon()`](https://rdrr.io/pkg/zoo/man/yearmon.html),
-  [`zoo::yearqtr()`](https://rdrr.io/pkg/zoo/man/yearqtr.html) and
-  tsibble’s
+  now convert to the correct months and quarters, and
+  [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/as_mixtime.md)
+  now supports them and tsibble’s
   [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md),
   [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
   and
   [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.md)
-  classes.
+  (tidyverts/tsibble#272).
 - [`min()`](https://rdrr.io/r/base/Extremes.html),
   [`max()`](https://rdrr.io/r/base/Extremes.html) and
-  [`range()`](https://rdrr.io/r/base/range.html) of mixtime vectors now
-  correctly order mixed chronons and other time classes
-  (e.g. `range(yearmonth(1:3), Sys.Date())`), and return a missing time
-  with a warning for empty input. Other `Summary` group generics
-  (e.g. [`sum()`](https://rdrr.io/r/base/sum.html),
-  [`any()`](https://rdrr.io/r/base/any.html)) now give an informative
-  error for time points, while still summarising durations
-  (tidyverts/tsibble#272).
-- Whole-number time granule sizes (`n`) are now always stored as
-  integers, so a chronon built with a double size (e.g. from
-  [`mixtime()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.md)
-  on a single `Date`) is identical to the same chronon built with an
-  integer size, and their values combine into a single group of a
-  `mixtime` vector.
+  [`range()`](https://rdrr.io/r/base/range.html) now correctly order
+  mixed chronons and other time classes. Other `Summary` generics
+  (e.g. [`sum()`](https://rdrr.io/r/base/sum.html)) give an informative
+  error for time points (tidyverts/tsibble#272).
+- Whole-number granule sizes are now always stored as integers, so
+  equivalent chronons built from doubles and integers are identical.
 - Fixed
   [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
-  traversal of the chronon graph along paths with irregular steps.
-- Fixed
-  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
+  along paths with irregular steps.
+- [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
   and
   [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_glb.md)
-  of chronons from different calendars returning a bound tagged with an
-  arbitrary calendar, rather than no calendar. Time units shared by
-  several calendars are now a single node of the chronon graph.
-
-### Breaking changes
-
-- Calendars are now S7 objects. Each calendar is the single instance of
-  its own subclass of the new `mt_calendar` class, so methods dispatch
-  on the calendar with `S7::S7_class(cal_gregorian)` rather than
-  `S7::new_S3_class("cal_gregorian")`.
-
-- [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.md)
-  requires a `name`, which identifies the calendar. The `class` argument
-  is deprecated in favour of `name`.
-
-- Time units now record their calendar by its identifier
-  (`"<package>::<name>"`) rather than a copy of the calendar, which is
-  resolved when `@calendar` is accessed. This greatly reduces the size
-  of serialised time objects, and restores their calendar from its
-  current definition when read back in. Custom unit constructors should
-  now default to `calendar = attr(sys.function(), "cal")`.
-
-- Converting a discrete time to a chronon it doesn’t nest within,
-  deprecated in 0.4.0, is now an error, since the result is temporally
-  indeterminate. For example, `day_of_week(yearmonth(x))` (which day of
-  the month?) and `yearmonth(yearweek(x))` (a week can straddle two
-  months) previously warned and used the start of each time point.
-  Continuous time points are instants and convert as before.
-
-- [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
-  between time units that are neither finer nor coarser than each other
-  (e.g. weeks and quarters) is now an error that suggests a common finer
-  unit, rather than an indeterminate result.
+  of chronons from different calendars no longer return a bound with an
+  arbitrary calendar.
 
 ## mixtime 0.4.0
 
@@ -164,8 +172,7 @@ CRAN release: 2026-10-13
   `chronon_convert()` gains an `allow_indeterminate` argument, which
   still allows it by default.
 
-- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md),
-  deprecated in 0.3.0, is now defunct. Use
+- `new_time()`, deprecated in 0.3.0, is now defunct. Use
   [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
   [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
   or
@@ -425,9 +432,9 @@ CRAN release: 2026-08-24
 
 ### Deprecated
 
-- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_time.md),
-  the low-level constructor for `mt_time` vectors, is deprecated in
-  favour of calling the concrete time class constructors directly:
+- `new_time()`, the low-level constructor for `mt_time` vectors, is
+  deprecated in favour of calling the concrete time class constructors
+  directly:
   [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
   [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md),
   and
@@ -449,10 +456,7 @@ CRAN release: 2026-08-24
   requested chronon’s own format (e.g. `yearmonth("2026 Feb")` now
   works, but `yearmonth("2026-02-14")`, now errors).
 
-- [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
-  [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
-  and
-  [`is_time_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md)
+- `is_time_linear()`, `is_time_cyclical()`, and `is_time_duration()`
   have been renamed to
   [`time_is_linear()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),
   [`time_is_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/is_time.md),

@@ -126,16 +126,12 @@ my_calendar <- new_calendar(
 
 # Access unit constructors from the calendar
 my_calendar$day(1L)
-#> <tu_my_day>
+#> <::tu_my_day>
 #>  @ n       : int 1
-#>  @ calendar: <my_calendar> List of 2
-#>  .. $ day  : <tu_my_day/mixtime::mt_unit/S7_object> constructor
-#>  .. $ month: <tu_my_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  @ calendar: <my_calendar>
 my_calendar$month(3L, tz = "America/New_York")
-#> <tu_my_month>
+#> <::tu_my_month>
 #>  @ n       : int 3
-#>  @ calendar: <my_calendar> List of 2
-#>  .. $ day  : <tu_my_day/mixtime::mt_unit/S7_object> constructor
-#>  .. $ month: <tu_my_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  @ calendar: <my_calendar>
 #>  @ tz      : chr "America/New_York"
 ```

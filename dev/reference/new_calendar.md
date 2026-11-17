@@ -78,33 +78,13 @@ cal_simple <- new_calendar(
 
 # Create time granules from the calendar
 cal_simple$year(1L)
-#> <tu_year>
+#> <::tu_year>
 #>  @ n       : int 1
-#>  @ calendar: <cal_simple> List of 10
-#>  .. $ year       : <tu_year/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ month      : <tu_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ day        : <mixtime::tu_day/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ ampm       : <mixtime::tu_ampm/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ hour       : <mixtime::tu_hour/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ minute     : <mixtime::tu_minute/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ second     : <mixtime::tu_second/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ millisecond: <mixtime::tu_millisecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ microsecond: <mixtime::tu_microsecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ nanosecond : <mixtime::tu_nanosecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  @ calendar: <cal_simple>
 #>  @ tz      : 'mt_naive' chr NA
 cal_simple$month(1L)
-#> <tu_month>
+#> <::tu_month>
 #>  @ n       : int 1
-#>  @ calendar: <cal_simple> List of 10
-#>  .. $ year       : <tu_year/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ month      : <tu_month/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ day        : <mixtime::tu_day/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ ampm       : <mixtime::tu_ampm/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ hour       : <mixtime::tu_hour/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ minute     : <mixtime::tu_minute/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ second     : <mixtime::tu_second/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ millisecond: <mixtime::tu_millisecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ microsecond: <mixtime::tu_microsecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
-#>  .. $ nanosecond : <mixtime::tu_nanosecond/mixtime::mt_tz_unit/mixtime::mt_unit/S7_object> constructor
+#>  @ calendar: <cal_simple>
 #>  @ tz      : 'mt_naive' chr NA
 ```

@@ -48,6 +48,6 @@ The following time units are available in the lunar calendar systems.
 # Find the time of the most recent new moon in the Gregorian calendar
 time_floor(datetime(Sys.time(), tz = "Australia/Melbourne"), cal_time_lunar$month(1L))
 #> <mixtime[1]>
-#> [1] 2026-10-11 02:51:08 AEDT
+#> [1] 2026-11-09 18:03:16 AEDT
 
 ```

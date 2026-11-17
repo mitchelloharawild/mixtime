@@ -34,63 +34,28 @@ A calendar object (e.g., `cal_gregorian`, `cal_isoweek`)
 # The calendar of a Date object is the Gregorian calendar
 time_calendar(Sys.Date())
 #> <cal_gregorian>
-#> Time units:
-#>   - year
-#>   - quarter
-#>   - month
-#>   - day
-#>   - ampm
-#>   - hour
-#>   - minute
-#>   - second
-#>   - millisecond
-#>   - microsecond
-#>   - nanosecond
+#> Time units: year, quarter, month, day, ampm, hour, minute, second, millisecond,
+#>   microsecond, nanosecond
+#> 
 
 # The calendar of a POSIXct object is also Gregorian
 time_calendar(Sys.time())
 #> <cal_gregorian>
-#> Time units:
-#>   - year
-#>   - quarter
-#>   - month
-#>   - day
-#>   - ampm
-#>   - hour
-#>   - minute
-#>   - second
-#>   - millisecond
-#>   - microsecond
-#>   - nanosecond
+#> Time units: year, quarter, month, day, ampm, hour, minute, second, millisecond,
+#>   microsecond, nanosecond
+#> 
 
 # The calendar of a yearweek object is the ISO week calendar
 time_calendar(yearweek(Sys.Date()))
 #> <cal_isoweek>
-#> Time units:
-#>   - year
-#>   - week
-#>   - day
-#>   - ampm
-#>   - hour
-#>   - minute
-#>   - second
-#>   - millisecond
-#>   - microsecond
-#>   - nanosecond
+#> Time units: year, week, day, ampm, hour, minute, second, millisecond,
+#>   microsecond, nanosecond
+#> 
 
 # A mixed time object returns a list of calendars
 time_calendar(c(yearmonth(Sys.Date()), Sys.Date()))
 #> <cal_gregorian>
-#> Time units:
-#>   - year
-#>   - quarter
-#>   - month
-#>   - day
-#>   - ampm
-#>   - hour
-#>   - minute
-#>   - second
-#>   - millisecond
-#>   - microsecond
-#>   - nanosecond
+#> Time units: year, quarter, month, day, ampm, hour, minute, second, millisecond,
+#>   microsecond, nanosecond
+#> 
 ```

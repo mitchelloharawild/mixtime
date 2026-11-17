@@ -118,30 +118,22 @@ produces time granules.
 # The Gregorian calendar
 cal_gregorian
 #> <cal_gregorian>
-#> Time units:
-#>   - year
-#>   - quarter
-#>   - month
-#>   - day
-#>   - ampm
-#>   - hour
-#>   - minute
-#>   - second
-#>   - millisecond
-#>   - microsecond
-#>   - nanosecond
+#> Time units: year, quarter, month, day, ampm, hour, minute, second, millisecond,
+#>   microsecond, nanosecond
 
 # A 1-month time granule
 cal_gregorian$month(1L) # (1L is integer 1)
 #> <mixtime::tu_month>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#>  @ n       : int 1
+#>  @ calendar: <cal_gregorian>
+#>  @ tz      : 'mt_naive' chr NA
 
 # A 2-week time granule (fortnights)
 cal_isoweek$week(2L)
 #> <mixtime::tu_week>
-#>  @ n : int 2
-#>  @ tz: 'mt_naive' chr NA
+#>  @ n       : int 2
+#>  @ calendar: <cal_isoweek>
+#>  @ tz      : 'mt_naive' chr NA
 ```
 
 ### Linear Time

@@ -113,8 +113,21 @@ A mixtime vector containing the sequence.
 ## Details
 
 For linear time types (Date, POSIXct, yearmonth, etc.), sequences
-progress forward or backward in time. For cyclical time types
-(month_of_year, day_of_week, etc.), sequences wrap around cyclically.
+progress forward or backward in time. Located cyclical time (e.g.
+`month_of_year(yearmonth("2024-11"))`) progresses through time too, so
+its positions wrap around the cycle.
+
+Underspecified cyclical time (e.g. `month_of_year(11)`, see
+[mt_cyclical_free-arithmetic](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_cyclical_free-arithmetic.md))
+follows the rules of `x + by`: positions in cycles of a fixed length
+wrap around (a `length.out` sequence of months continues from December
+to January), while cycles of variable length (e.g.
+[`day_of_month()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.md))
+can't be sequenced until located with
+[`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md).
+Between `from` and `to`, the sequence runs linearly within one cycle, so
+`seq(month_of_year(11), month_of_year(2))` counts down from November to
+February.
 
 Each time point is `from` (or `to`, if `from` is missing) shifted by a
 whole number of `by` steps, matching `from + duration(k, by)`. For
@@ -178,10 +191,13 @@ seq(date("2020-01-31"), length.out = 3, by = "1 month", on_invalid = "overflow")
 #> [1] 2020-01-31 2020-03-02 2020-03-31
 
 # Cyclical time sequences
-seq(month_of_year(0L), month_of_year(11L))
+seq(month_of_year(1L), month_of_year(12L))
 #> <mixtime[12]>
 #>  [1] Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
-seq(day_of_week(0L), day_of_week(6L), by = 1)
+seq(day_of_week(1L), day_of_week(7L), by = 1)
 #> <mixtime[7]>
-#> [1] Thu Fri Sat Sun Mon Tue Wed
+#> [1] Mon Tue Wed Thu Fri Sat Sun
+seq(month_of_year(11L), by = "1 month", length.out = 4)
+#> <mixtime[4]>
+#> [1] Nov Dec Jan Feb
 ```
