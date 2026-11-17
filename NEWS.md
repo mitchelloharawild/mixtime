@@ -65,6 +65,8 @@
 * mixtime now requires vecvec (>= 1.4.0), fixing `c()` of a single empty
   mixtime vector.
 * `chronon_cardinality()` has better support for a time-classed `at`.
+* `sort()` gains `align_discrete`, which sets the instant within a discrete
+  time span used to order it against time of another chronon (#103).
 
 ## Bug fixes
 
