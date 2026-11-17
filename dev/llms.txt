@@ -447,6 +447,10 @@ Methods for comparing time vectors.
   [`` `%fi%` ``](https://pkg.mitchelloharawild.com/mixtime/dev/reference/allen-interval-algebra.md)
   : Allen's interval algebra for time vectors
 
+- [`xtfrm()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime-order.md)
+  [`sort()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime-order.md)
+  : Ordering of mixtime vectors
+
 ### Arithmetic operators
 
 Methods for shifting time points and combining durations.
@@ -482,14 +486,15 @@ of time.
   : Compose a linear time vector from linear and cyclical components
 - [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
   [`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
-  : Linear and cyclical component helpers
+  [`dur()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+  : Linear, cyclical and duration component helpers
 
 ## Parsing and Formatting Time
 
 Functions for converting between character strings and time vectors.
 
 - [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md)
-  : Parse text into a time point
+  : Parse text into time points or durations
 - [`format()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/format.mt_time.md)
   : Format mixtime vectors
 
@@ -673,10 +678,9 @@ units and calendars.
 
 ### Time labels and formatting
 
-- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-  [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-  [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-  : Time units as a string
+- [`unit_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.md)
+  [`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.md)
+  : Describe a time unit's naming scheme
 
 - [`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
   [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)

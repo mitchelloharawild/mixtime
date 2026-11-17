@@ -1,9 +1,9 @@
 # Format mixtime vectors
 
 Formats a mixtime vector as a character vector, using a glue-style
-format string of `{lin(...)}`/`{cyc(...)}` tokens tailored to the
-vector's chronon and cycle. If `format` is omitted, a sensible default
-is derived automatically. See
+format string of `{lin(...)}`/`{cyc(...)}` (or, for durations,
+`{dur(...)}`) tokens tailored to the vector's chronon and cycle. If
+`format` is omitted, a sensible default is derived automatically. See
 [`vignette("time-format-strings")`](https://pkg.mitchelloharawild.com/mixtime/dev/articles/time-format-strings.md)
 for the format string syntax.
 

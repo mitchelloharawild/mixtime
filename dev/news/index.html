@@ -40,6 +40,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
 <div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>
+<code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">is.numeric()</a></code> is now <code>FALSE</code> for mixtime vectors, as for <code>Date</code>, <code>POSIXct</code> and <code>difftime</code>. Numeric consumers such as <code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp()</a></code>, <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> and <code>where(is.numeric)</code> no longer silently use the underlying vecvec index storage, and <code><a href="https://rdrr.io/r/base/data.matrix.html" class="external-link">data.matrix()</a></code> converts with <code><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double()</a></code>. Models such as <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> read the base data directly, so use <code>lm(y ~ as.numeric(x))</code>.</li>
+<li>
+<code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> and <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code> of cyclical time now give the position within the cycle counted from its first label (<code>month_of_year(8)</code> is 8, and <code>time_of_day(0)</code> is 0), so <code>cyclical_time(as.numeric(x))</code> round trips.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>Added underspecified cyclical time (<code>mt_cyclical_free</code>), a position within a cycle whose enclosing cycle is unknown, e.g. “day 60 of the year” (<a href="https://github.com/mitchelloharawild/mixtime/issues/47" class="external-link">#47</a>). It is created from bare numbers (e.g. <code>month_of_year(3)</code>), or by <code><a href="../reference/time_compose.html">time_compose()</a></code>/<code><a href="../reference/time_parse.html">time_parse()</a></code> without a <code><a href="../reference/component_helpers.html">lin()</a></code> component. It sorts, compares and subtracts by position within the cycle, and arithmetic wraps around fixed-length cycles (<code>month_of_year(12) + 1</code> is January). Use <code><a href="../reference/time_compose.html">time_compose()</a></code> to locate it in a cycle for variable-length cycles, such as <code><a href="../reference/cyclical_time_helpers.html">day_of_month()</a></code>. See <code><a href="../reference/cyclical_time.html">?cyclical_time</a></code> for details.</li>
 <li>Added <code><a href="../reference/is_time.html">time_is_cyclical_free()</a></code>, alongside the other <code>time_is_*()</code> predicates.</li>
@@ -47,6 +54,7 @@
 <li>Added <code><a href="../reference/chronon_cardinality_is_fixed.html">chronon_cardinality_is_fixed()</a></code>, which tests whether the number of one time unit in another is constant (e.g. months in a year, but not days in a month).</li>
 <li>
 <code><a href="../reference/time_compose.html">time_compose()</a></code> gains <code>on_ambiguous</code> and <code>offset</code> arguments to resolve local times that occur twice when daylight saving ends. Without them, the earliest time is used with a warning. The <code>mixtime.on_ambiguous</code> option sets the default.</li>
+<li>Added a <code><a href="../reference/component_helpers.html">dur()</a></code> format token for formatting and parsing durations, e.g. <code>format(x, "{dur(day)}")</code> and <code>time_parse("3 days", format = "{dur(day)}")</code>. Parsing accepts an optional unit name (<code>"3 days"</code>, <code>"3D"</code>, <code>"3"</code>), and fractional magnitudes with <code>discrete = FALSE</code>. Unit names are English-only for now.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="deprecated-development-version">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated-development-version"></a></h3>
@@ -57,7 +65,7 @@
 <li>The defunct <code>new_time()</code>, <code>is_time_linear()</code>, <code>is_time_cyclical()</code> and <code>is_time_duration()</code> have been removed.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-development-version-1">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version-1"></a></h3>
 <ul><li>Calendars are now S7 objects, so methods dispatch on <code>S7::S7_class(cal_gregorian)</code> rather than <code>S7::new_S3_class("cal_gregorian")</code>. <code><a href="../reference/new_calendar.html">new_calendar()</a></code> now requires a <code>name</code>.</li>
 <li>Time units now refer to their calendar by identifier rather than storing a copy, which greatly reduces the size of serialised time objects. Custom unit constructors should default to <code>calendar = attr(sys.function(), "cal")</code>. Time objects saved by mixtime 0.4.0 or earlier can’t be used with this version.</li>
 <li>Converting a discrete time to a chronon it doesn’t nest within (e.g. <code>yearmonth(yearweek(x))</code>) is now an error, as deprecated in 0.4.0.</li>
@@ -65,6 +73,8 @@
 <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> between time units that don’t nest (e.g. weeks and quarters) is now an error.</li>
 <li>
 <code><a href="../reference/time_compose.html">time_compose()</a></code> and <code><a href="../reference/time_parse.html">time_parse()</a></code> without a <code><a href="../reference/component_helpers.html">lin()</a></code> component only combine components with fixed lengths, so day 15 of March is now an error (its day of the year depends on the year).</li>
+<li>
+<code>time_unit_full()</code>, <code>time_unit_abbr()</code> and <code>time_unit_plural()</code> are replaced by a single unit scheme per time unit, registered with <code>method(unit_labels, &lt;unit&gt;) &lt;- unit_scheme(vocab, symbol, locale)</code>. Like <code><a href="../reference/label_scheme.html">label_scheme()</a></code>, names come from a <code>vocab</code> function (e.g. <code>vocab_table(`en-GB` = list(wide = "day{?/s}"))</code>). Unit names are shared by duration formatting and parsing, granule labels, tsibble intervals and messages.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
@@ -72,6 +82,8 @@
 <li>mixtime now requires vecvec (&gt;= 1.4.0), fixing <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> of a single empty mixtime vector.</li>
 <li>
 <code><a href="../reference/chronon_cardinality.html">chronon_cardinality()</a></code> has better support for a time-classed <code>at</code>.</li>
+<li>
+<code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code> gains <code>align_discrete</code>, which sets the instant within a discrete time span used to order it against time of another chronon (<a href="https://github.com/mitchelloharawild/mixtime/issues/103" class="external-link">#103</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
@@ -203,7 +215,7 @@
 <div class="section level3">
 <h3 id="improvements-0-2-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-0"></a></h3>
 <ul><li>
-<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> now uses cli-style pluralisation templates (e.g., <code>"year{?/s}"</code>, <code>"centur{?y/ies}"</code>), enabling accurate plural forms beyond a simple <code>s</code> suffix. A new <code>time_unit_plural(x, n)</code> helper resolves the template for a given quantity.</li>
+<code>time_unit_full()</code> now uses cli-style pluralisation templates (e.g., <code>"year{?/s}"</code>, <code>"centur{?y/ies}"</code>), enabling accurate plural forms beyond a simple <code>s</code> suffix. A new <code>time_unit_plural(x, n)</code> helper resolves the template for a given quantity.</li>
 <li>Continuous time model durations now always show at least one decimal place.</li>
 <li>Added formatting support for <code>NaN</code>, <code>Inf</code>, and <code>-Inf</code> values in time types.</li>
 <li>Added time zone support for arithmetic.</li>
@@ -302,7 +314,7 @@
 <li>
 <p>Displaying time with:</p>
 <ul><li>
-<code><a href="../reference/time_unit_labels.html">time_unit_abbr()</a></code> and <code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> for time unit text.</li>
+<code>time_unit_abbr()</code> and <code>time_unit_full()</code> for time unit text.</li>
 <li>
 <code><a href="../reference/label_scheme.html">linear_labels()</a></code> and <code><a href="../reference/label_scheme.html">cyclical_labels()</a></code> for time labels (e.g. Jan, Feb, … for months of year).</li>
 <li>

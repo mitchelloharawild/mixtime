@@ -22,6 +22,7 @@ linear and cyclical granules.
 |----|----|
 | `lin(granule)` | A linear granularity is typically used for the coarsest granule (e.g. years). |
 | `cyc(granule, cycle)` | A cyclical granularity displays finer granules within a coarser cycle (e.g. months within years). |
+| `dur(granule)` | A duration displayed as a count of granules (e.g. “3 days”), see [Durations](#durations). |
 
 The `granule` and `cycle` arguments accept time granules from a
 calendar, for example the format codes for
@@ -98,6 +99,37 @@ format(date(Sys.Date()), format = paste(fmt_date, fmt_lunar))
 This makes the relationship between the format string and the calendar
 structure transparent, and means the same format-string idiom works
 unchanged across calendars.
+
+## Durations
+
+Durations (see
+[`duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration.md))
+have no position in a calendar, so they’re formatted with their own
+`dur(granule)` code rather than
+[`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)/[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md).
+It displays the duration as a count of `granule` units, and must be the
+only time component code in the format string.
+
+``` r
+
+format(hours(c(2L, 30L)), format = "{dur(minute)} elapsed")
+#> [1] "120 minutes elapsed"  "1800 minutes elapsed"
+```
+
+The same format string parses text back into durations with
+[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.md).
+The unit name after the number is optional, and may be singular, plural
+or abbreviated. Fractional magnitudes require `discrete = FALSE`.
+
+``` r
+
+time_parse(c("3 days", "1 day", "2D", "5"), format = "{dur(day)}")
+#> <mixtime[4]>
+#> [1] 3 days 1 day  2 days 5 days
+time_parse("1.5 days", format = "{dur(day)}", discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 1.5 days
+```
 
 ## Advanced time formatting
 

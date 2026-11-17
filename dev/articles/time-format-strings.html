@@ -104,6 +104,10 @@ and cyclical granules.</p>
 <td>A cyclical granularity displays finer granules within a coarser
 cycle (e.g. months within years).</td>
 </tr>
+<tr class="odd">
+<td><code>dur(granule)</code></td>
+<td>A duration displayed as a count of granules (e.g. “3 days”), see <a href="#durations">Durations</a>.</td>
+</tr>
 </tbody>
 </table>
 <p>The <code>granule</code> and <code>cycle</code> arguments accept time
@@ -157,7 +161,7 @@ format(
   datetime(Sys.time(), tz = "UTC"), 
   format = paste(fmt_time, "{tz(.time)}", fmt_time_mel)
 )
-#> [1] "2026-11-17 09:38:57 UTC (09:38:57 AEDT)"
+#> [1] "2026-11-17 20:37:59 UTC (20:37:59 AEDT)"
 ```
 -->
 <p>For example, the lunar phase can be added to a date format string by
@@ -173,6 +177,29 @@ named phase:</p>
 <p>This makes the relationship between the format string and the
 calendar structure transparent, and means the same format-string idiom
 works unchanged across calendars.</p>
+</div>
+<div class="section level2">
+<h2 id="durations">Durations<a class="anchor" aria-label="anchor" href="#durations"></a>
+</h2>
+<p>Durations (see <code><a href="../reference/duration.html">duration()</a></code>) have no position in a
+calendar, so they’re formatted with their own <code>dur(granule)</code>
+code rather than <code><a href="../reference/component_helpers.html">lin()</a></code>/<code><a href="../reference/component_helpers.html">cyc()</a></code>. It displays the
+duration as a count of <code>granule</code> units, and must be the only
+time component code in the format string.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="../reference/duration_helpers.html">hours</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2L</span>, <span class="fl">30L</span><span class="op">)</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"{dur(minute)} elapsed"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "120 minutes elapsed"  "1800 minutes elapsed"</span></span></code></pre></div>
+<p>The same format string parses text back into durations with
+<code><a href="../reference/time_parse.html">time_parse()</a></code>. The unit name after the number is optional,
+and may be singular, plural or abbreviated. Fractional magnitudes
+require <code>discrete = FALSE</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/time_parse.html">time_parse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"3 days"</span>, <span class="st">"1 day"</span>, <span class="st">"2D"</span>, <span class="st">"5"</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"{dur(day)}"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[4]&gt;</span></span>
+<span><span class="co">#&gt; [1] 3 days 1 day  2 days 5 days</span></span>
+<span><span class="fu"><a href="../reference/time_parse.html">time_parse</a></span><span class="op">(</span><span class="st">"1.5 days"</span>, format <span class="op">=</span> <span class="st">"{dur(day)}"</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
+<span><span class="co">#&gt; [1] 1.5 days</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="advanced-time-formatting">Advanced time formatting<a class="anchor" aria-label="anchor" href="#advanced-time-formatting"></a>
@@ -220,7 +247,7 @@ mixtime format string
 more verbose than the equivalent <code>strftime</code> format string
 (<code>"%Y-%m-%d"</code>), the mixtime string is more descriptive and
 generalisable to other combinations of granules.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># YYYY-MM-DD format for a Gregorian date</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2026-11-17"</span></span>
@@ -231,7 +258,7 @@ example the year-day format (<code>YYYY-DDD</code>), which is
 <code>"{lin(year)}-D{cyc(day, year)}"</code> in mixtime but
 <code>"%Y-D%j"</code> in <code>strftime</code> (where <code>%j</code> is
 a non-obvious code for “day of year”).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># YYY-DDD format for a Gregorian date</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"{lin(year)}-D{cyc(day, year)}"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2026-D321"</span></span>
@@ -247,7 +274,7 @@ in mixtime. The equivalent <code>strftime</code> format string
 <code>%G</code>/<code>%V</code> are the ISO week variants of
 <code>%Y</code>/<code>%W</code> - a nuanced distinction that is easy to
 get wrong.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># YYYY-WW-DD format for a ISO week date</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/linear_time_helpers.html">date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, calendar <span class="op">=</span> <span class="va">cal_isoweek</span><span class="op">)</span>,</span>

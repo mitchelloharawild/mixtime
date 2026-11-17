@@ -1,10 +1,11 @@
-# Parse text into a time point
+# Parse text into time points or durations
 
 `time_parse()` is the inverse of
 [`format()`](https://rdrr.io/r/base/format.html): given text and the
-same `{lin(...)}`/`{cyc(...)}` template `format` uses, it reconstructs
-the time points that would have produced that text, via
-[`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md).
+same `{lin(...)}`/`{cyc(...)}`/`{dur(...)}` template `format` uses, it
+reconstructs the time points (via
+[`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_compose.md))
+or durations that would have produced that text.
 
 ## Usage
 
@@ -44,7 +45,9 @@ time_parse(
 
   A glue-style format string of
   [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)/[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
-  tokens, e.g. `"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"` (see
+  tokens (or a
+  [`dur()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+  token), e.g. `"{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"` (see
   [`vignette("time-format-strings")`](https://pkg.mitchelloharawild.com/mixtime/dev/articles/time-format-strings.md)),
   or several to try: whichever parses the most values of `x` is used for
   the whole vector (ties keep the earliest-listed format), and its
@@ -83,19 +86,23 @@ time_parse(
 - locale:
 
   Default locale for named (`label = TRUE`) tokens that don't specify
-  their own. `NULL` defers to each token's own scheme.
+  their own. `NULL` defers to each token's own scheme. Duration
+  (`{dur(...)}`) unit names are currently English-only, so a non-English
+  locale is an error for them.
 
 - discrete:
 
   Whether the result is discrete (integer chronon counts) or continuous
   (fractional). See
   [`linear_time()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time.md).
+  A fractional duration magnitude (e.g. `"1.5 days"`) only parses when
+  `discrete = FALSE`.
 
 ## Value
 
-A `mixtime` time vector, the same length as `x`. Linear if `format`
-includes a `{lin(...)}` token (or `cycle` is `NULL`), cyclical
-otherwise.
+A `mixtime` time vector, the same length as `x`. A duration if `format`
+is a `{dur(...)}` token, linear if it includes a `{lin(...)}` token (or
+`cycle` is `NULL`), cyclical otherwise.
 
 ## Details
 
@@ -104,10 +111,17 @@ A `format` with a `{lin(...)}` token parses to linear time; one of only
 `time_parse("Feb", format = "{cyc(month, year, label = TRUE)}")`
 recovers the same kind of value as
 [`month_of_year()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/cyclical_time_helpers.md).
+A format with a `{dur(...)}` token (which must be its only token) parses
+to a
+[`duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/duration.md),
+e.g. `time_parse("3 days", format = "{dur(day)}")`.
 
-Granule-specific extraction and decoding labels for each token is done
-by
-[`linear_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)/[`cyclical_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md).
+Granule-specific extraction and decoding labels for each `{lin(...)}`/
+`{cyc(...)}` token is done by
+[`linear_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md)/
+[`cyclical_labels_parse()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_format.md).
+A `{dur(...)}` token matches a number, optionally followed by the
+granule's unit name (e.g. `"3 days"`, `"1 day"`, `"3D"` or `"3"`).
 
 ## See also
 
@@ -172,6 +186,14 @@ time_parse(
 )
 #> <mixtime[2]>
 #> [1] 2024-02-15 2024-02-15
+
+# Durations, with an optional unit name after the magnitude
+time_parse(c("3 days", "1 day", "2D", "5"), format = "{dur(day)}")
+#> <mixtime[4]>
+#> [1] 3 days 1 day  2 days 5 days
+time_parse("1.5 hours", format = "{dur(hour)}", discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 1.5 hours
 
 # Default format strings from the target chronon, and results with `tz`.
 time_parse("2024-02-15 09:00:00", chronon = cal_gregorian$second(1L, tz = "America/Los_Angeles"))

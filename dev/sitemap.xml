@@ -42,6 +42,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/linear_time_helpers.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime-order.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime-package.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/mixtime_location.html</loc></url>
@@ -73,11 +74,11 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_parse.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_round.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_shift.html</loc></url>
-<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_abbreviation.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_name.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_offset.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/tz_transitions.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/dev/reference/vocab_table.html</loc></url>
 </urlset>
 

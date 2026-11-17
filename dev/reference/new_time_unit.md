@@ -110,6 +110,9 @@ calling calendar.
 - [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/new_calendar.md)
   for assembling time units into a calendar.
 
+- [`unit_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.md)
+  for naming a time unit (e.g. "day", "days" and "D").
+
 - [`S7::new_class()`](https://rconsortium.github.io/S7/reference/new_class.html)
   for the underlying S7 class constructor.
 

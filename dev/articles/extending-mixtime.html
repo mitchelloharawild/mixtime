@@ -117,8 +117,7 @@ time unit with <code><a href="../reference/chronon_epoch.html">chronon_epoch()</
 <ul>
 <li>
 <a href="#display-time-units">Time units</a>: temporal properties
-(e.g. interval) and user messages with <code><a href="../reference/time_unit_labels.html">time_unit_abbr()</a></code>,
-<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code>
+(e.g. interval) and user messages with <code><a href="../reference/unit_scheme.html">unit_labels()</a></code>
 </li>
 <li>
 <a href="#time-labels">Time labels</a>: labelling granular
@@ -635,31 +634,44 @@ methods return format strings that are parsed by
 <div class="section level3">
 <h3 id="display-time-units">Time units<a class="anchor" aria-label="anchor" href="#display-time-units"></a>
 </h3>
-<p>Each time unit has two format methods:</p>
+<p>Each time unit is named by a unit scheme, registered as a
+<code><a href="../reference/unit_scheme.html">unit_labels()</a></code> method with <code><a href="../reference/unit_scheme.html">unit_scheme()</a></code>. A
+unit scheme shares the <code>vocab</code> and <code>locale</code> fields
+of a label scheme (see <code><a href="../reference/label_scheme.html">label_scheme()</a></code>), and adds a
+<code>symbol</code>:</p>
 <ul>
 <li>
-<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> returns the full name of the unit,
-optionally with cli plural marker
-(e.g. <code>"Symmetry454 year{?/s}"</code>)</li>
+<code>vocab</code> gives the full name of the unit for each locale,
+as a cli plural template (e.g. <code>"Symmetry454 year{?/s}"</code>).
+<code><a href="../reference/vocab_table.html">vocab_table()</a></code> builds this from a plain table, with the
+<code>"wide"</code> type giving the full name.</li>
 <li>
-<code><a href="../reference/time_unit_labels.html">time_unit_abbr()</a></code> returns the short abbreviation of the
-unit (e.g. “Y”)</li>
+<code>symbol</code> is a short identifier for the unit
+(e.g. <code>"Y"</code>)</li>
 </ul>
-<p>The full name is used in messages (e.g. “Can’t convert from
-Symmetry454 year to day”) and the abbreviation is used for displaying
-time intervals and durations.</p>
+<p>The name is used in messages (e.g. “Can’t convert from Symmetry454
+year to day”), granule labels and durations (e.g. “3 Symmetry454
+years”). The symbol is used as the prefix of default time formatting
+strings and for compact displays like tsibble intervals (e.g. “5Y”).
+Symbols are identifiers rather than localised abbreviations, so they
+should be distinct across units (e.g. <code>"M"</code> for month and
+<code>"m"</code> for minute).</p>
 <p>The plural marker uses <code>{?singular_suffix/plural_suffix}</code>
 syntax. Irregular plurals use the full form,
 e.g. <code>"centur{?y/ies}"</code>. The default is to suffix with “s”
 for plurals (i.e. <code>{?/s}</code>).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 year{?/s}"</span></span>
-<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Y"</span></span>
-<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_full</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"Symmetry454 month{?/s}"</span></span>
-<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">time_unit_abbr</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"M"</span></span></code></pre></div>
-<p>The time unit abbreviations are also used in the default time
-formatting string, so we can now create and view a Symmetry454 linear
-time vector:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">unit_labels</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">year</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/unit_scheme.html">unit_scheme</a></span><span class="op">(</span></span>
+<span>  vocab <span class="op">=</span> <span class="fu"><a href="../reference/vocab_table.html">vocab_table</a></span><span class="op">(</span>`en-GB` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>wide <span class="op">=</span> <span class="st">"Symmetry454 year{?/s}"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  symbol <span class="op">=</span> <span class="st">"Y"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">unit_labels</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="va">month</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/unit_scheme.html">unit_scheme</a></span><span class="op">(</span></span>
+<span>  vocab <span class="op">=</span> <span class="fu"><a href="../reference/vocab_table.html">vocab_table</a></span><span class="op">(</span>`en-GB` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>wide <span class="op">=</span> <span class="st">"Symmetry454 month{?/s}"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  symbol <span class="op">=</span> <span class="st">"M"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The time unit symbols are also used in the default time formatting
+string, so we can now create and view a Symmetry454 linear time
+vector:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/linear_time.html">linear_time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"1955-11-12"</span><span class="op">)</span>, chronon <span class="op">=</span> <span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>
@@ -966,8 +978,9 @@ month of year:</p>
 </h4>
 <p>Duration vectors (created with <code><a href="../reference/duration.html">duration()</a></code>) are formatted
 using <code><a href="../reference/chronon_format.html">chronon_format_duration()</a></code>, which dispatches on the
-chronon. The default method is usually sufficient, which uses
-<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> to produce a label for the duration.</p>
+chronon. The default method is usually sufficient, which uses the unit
+scheme’s full name (from <code><a href="../reference/unit_scheme.html">unit_labels()</a></code>) to produce a label
+for the duration.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/duration.html">duration</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="va">cal_symmetry454</span><span class="op">$</span><span class="fu">year</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;mixtime[1]&gt;</span></span>

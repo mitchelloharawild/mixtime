@@ -2,6 +2,23 @@
 
 ## mixtime (development version)
 
+### Breaking changes
+
+- [`is.numeric()`](https://rdrr.io/r/base/numeric.html) is now `FALSE`
+  for mixtime vectors, as for `Date`, `POSIXct` and `difftime`. Numeric
+  consumers such as [`prcomp()`](https://rdrr.io/r/stats/prcomp.html),
+  [`cor()`](https://rdrr.io/r/stats/cor.html) and `where(is.numeric)` no
+  longer silently use the underlying vecvec index storage, and
+  [`data.matrix()`](https://rdrr.io/r/base/data.matrix.html) converts
+  with [`as.double()`](https://rdrr.io/r/base/double.html). Models such
+  as [`lm()`](https://rdrr.io/r/stats/lm.html) read the base data
+  directly, so use `lm(y ~ as.numeric(x))`.
+- [`as.numeric()`](https://rdrr.io/r/base/numeric.html) and
+  [`as.integer()`](https://rdrr.io/r/base/integer.html) of cyclical time
+  now give the position within the cycle counted from its first label
+  (`month_of_year(8)` is 8, and `time_of_day(0)` is 0), so
+  `cyclical_time(as.numeric(x))` round trips.
+
 ### New features
 
 - Added underspecified cyclical time (`mt_cyclical_free`), a position
@@ -37,6 +54,14 @@
   that occur twice when daylight saving ends. Without them, the earliest
   time is used with a warning. The `mixtime.on_ambiguous` option sets
   the default.
+- Added a
+  [`dur()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
+  format token for formatting and parsing durations, e.g.
+  `format(x, "{dur(day)}")` and
+  `time_parse("3 days", format = "{dur(day)}")`. Parsing accepts an
+  optional unit name (`"3 days"`, `"3D"`, `"3"`), and fractional
+  magnitudes with `discrete = FALSE`. Unit names are English-only for
+  now.
 
 ### Deprecated
 
@@ -72,6 +97,15 @@
   [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
   component only combine components with fixed lengths, so day 15 of
   March is now an error (its day of the year depends on the year).
+- `time_unit_full()`, `time_unit_abbr()` and `time_unit_plural()` are
+  replaced by a single unit scheme per time unit, registered with
+  `method(unit_labels, <unit>) <- unit_scheme(vocab, symbol, locale)`.
+  Like
+  [`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md),
+  names come from a `vocab` function (e.g.
+  `` vocab_table(`en-GB` = list(wide = "day{?/s}")) ``). Unit names are
+  shared by duration formatting and parsing, granule labels, tsibble
+  intervals and messages.
 
 ### Improvements
 
@@ -81,6 +115,10 @@
   vector.
 - [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_cardinality.md)
   has better support for a time-classed `at`.
+- [`sort()`](https://rdrr.io/r/base/sort.html) gains `align_discrete`,
+  which sets the instant within a discrete time span used to order it
+  against time of another chronon
+  ([\#103](https://github.com/mitchelloharawild/mixtime/issues/103)).
 
 ### Bug fixes
 
@@ -713,11 +751,10 @@ CRAN release: 2026-06-28
 
 ### Improvements
 
-- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-  now uses cli-style pluralisation templates (e.g., `"year{?/s}"`,
-  `"centur{?y/ies}"`), enabling accurate plural forms beyond a simple
-  `s` suffix. A new `time_unit_plural(x, n)` helper resolves the
-  template for a given quantity.
+- `time_unit_full()` now uses cli-style pluralisation templates (e.g.,
+  `"year{?/s}"`, `"centur{?y/ies}"`), enabling accurate plural forms
+  beyond a simple `s` suffix. A new `time_unit_plural(x, n)` helper
+  resolves the template for a given quantity.
 - Continuous time model durations now always show at least one decimal
   place.
 - Added formatting support for `NaN`, `Inf`, and `-Inf` values in time
@@ -883,10 +920,7 @@ granularity data.
 
 - Displaying time with:
 
-  - [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-    and
-    [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-    for time unit text.
+  - `time_unit_abbr()` and `time_unit_full()` for time unit text.
   - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
     and
     [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)

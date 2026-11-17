@@ -38,8 +38,7 @@ The extension points covered are:
 - [Labels](#labels) for displaying time, defined by:
   - [Time units](#display-time-units): temporal properties
     (e.g. interval) and user messages with
-    [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md),
-    [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+    [`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.md)
   - [Time labels](#time-labels): labelling granular components of time
     with
     [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md),
@@ -615,17 +614,28 @@ the final labels.
 
 ### Time units
 
-Each time unit has two format methods:
+Each time unit is named by a unit scheme, registered as a
+[`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.md)
+method with
+[`unit_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.md).
+A unit scheme shares the `vocab` and `locale` fields of a label scheme
+(see
+[`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)),
+and adds a `symbol`:
 
-- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-  returns the full name of the unit, optionally with cli plural marker
-  (e.g. `"Symmetry454 year{?/s}"`)
-- [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
-  returns the short abbreviation of the unit (e.g. “Y”)
+- `vocab` gives the full name of the unit for each locale, as a cli
+  plural template (e.g. `"Symmetry454 year{?/s}"`).
+  [`vocab_table()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/vocab_table.md)
+  builds this from a plain table, with the `"wide"` type giving the full
+  name.
+- `symbol` is a short identifier for the unit (e.g. `"Y"`)
 
-The full name is used in messages (e.g. “Can’t convert from Symmetry454
-year to day”) and the abbreviation is used for displaying time intervals
-and durations.
+The name is used in messages (e.g. “Can’t convert from Symmetry454 year
+to day”), granule labels and durations (e.g. “3 Symmetry454 years”). The
+symbol is used as the prefix of default time formatting strings and for
+compact displays like tsibble intervals (e.g. “5Y”). Symbols are
+identifiers rather than localised abbreviations, so they should be
+distinct across units (e.g. `"M"` for month and `"m"` for minute).
 
 The plural marker uses `{?singular_suffix/plural_suffix}` syntax.
 Irregular plurals use the full form, e.g. `"centur{?y/ies}"`. The
@@ -633,13 +643,17 @@ default is to suffix with “s” for plurals (i.e. `{?/s}`).
 
 ``` r
 
-method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year{?/s}"
-method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "Y"
-method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month{?/s}"
-method(time_unit_abbr, cal_symmetry454$month) <- function(x) "M"
+method(unit_labels, cal_symmetry454$year) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "Symmetry454 year{?/s}")),
+  symbol = "Y"
+)
+method(unit_labels, cal_symmetry454$month) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "Symmetry454 month{?/s}")),
+  symbol = "M"
+)
 ```
 
-The time unit abbreviations are also used in the default time formatting
+The time unit symbols are also used in the default time formatting
 string, so we can now create and view a Symmetry454 linear time vector:
 
 ``` r
@@ -986,8 +1000,8 @@ Duration vectors (created with
 are formatted using
 [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/chronon_format.md),
 which dispatches on the chronon. The default method is usually
-sufficient, which uses
-[`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+sufficient, which uses the unit scheme’s full name (from
+[`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/unit_scheme.md))
 to produce a label for the duration.
 
 ``` r
