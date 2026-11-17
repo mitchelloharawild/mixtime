@@ -56,6 +56,7 @@ Suggests:
     ggplot2,
     ggtime,
     callr,
+    pkgload,
     zoo
 LinkingTo:
     cpp11 (>= 0.5.2),
