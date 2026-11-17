@@ -127,6 +127,11 @@ test_that("unsupported arithmetic errors", {
   expect_error(months(2) * month_of_year(1), class = "mixtime_error_free_cyclical")
   expect_error(month_of_year(1) + month_of_year(2), class = "mixtime_error_free_cyclical")
   expect_error(yearmonth("2024-01") + month_of_year(2), class = "mixtime_error_free_cyclical")
+})
+
+test_that("unary arithmetic on free cyclical time", {
+  # S7 <= 0.2.2 can't dispatch unary Ops on S7 objects (fixed in r-lib/S7 dev)
+  skip_if(packageVersion("S7") <= "0.2.2")
   expect_error(-month_of_year(1), class = "mixtime_error_free_cyclical")
   expect_equal(free_pos(+month_of_year(3)), 2L)
 })
