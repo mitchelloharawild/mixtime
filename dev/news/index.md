@@ -4,15 +4,17 @@
 
 ### Breaking changes
 
-- [`is.numeric()`](https://rdrr.io/r/base/numeric.html) is now `FALSE`
-  for mixtime vectors, as for `Date`, `POSIXct` and `difftime`. Numeric
-  consumers such as [`prcomp()`](https://rdrr.io/r/stats/prcomp.html),
-  [`cor()`](https://rdrr.io/r/stats/cor.html) and `where(is.numeric)` no
-  longer silently use the underlying vecvec index storage, and
-  [`data.matrix()`](https://rdrr.io/r/base/data.matrix.html) converts
-  with [`as.double()`](https://rdrr.io/r/base/double.html). Models such
-  as [`lm()`](https://rdrr.io/r/stats/lm.html) read the base data
-  directly, so use `lm(y ~ as.numeric(x))`.
+- Base R and C code that reads a mixtime vector directly, such as
+  [`lm()`](https://rdrr.io/r/stats/lm.html),
+  [`prcomp()`](https://rdrr.io/r/stats/prcomp.html) and
+  [`data.matrix()`](https://rdrr.io/r/base/data.matrix.html) on data
+  frames with mixtime columns, now uses the numbers that
+  [`as.numeric()`](https://rdrr.io/r/base/numeric.html) gives (the
+  chronon count for linear time, and the position within the cycle for
+  cyclical time) rather than the vecvec index. This needs vecvec \>=
+  1.5.0 (older versions still work, without this).
+  [`is.numeric()`](https://rdrr.io/r/base/numeric.html) is `TRUE` for
+  mixtime vectors.
 - [`as.numeric()`](https://rdrr.io/r/base/numeric.html) and
   [`as.integer()`](https://rdrr.io/r/base/integer.html) of cyclical time
   now give the position within the cycle counted from its first label
