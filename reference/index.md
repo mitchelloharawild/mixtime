@@ -120,6 +120,17 @@ Methods for comparing time vectors.
 
   Comparison operators for cyclical time (`mt_cyclical`)
 
+- [`` `==`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-compare.md)
+  [`` `!=`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-compare.md)
+  [`` `<`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-compare.md)
+  [`` `<=`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-compare.md)
+  [`` `>`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-compare.md)
+  [`` `>=`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-compare.md)
+  :
+
+  Comparison operators for underspecified cyclical time
+  (`mt_cyclical_free`)
+
 - [`` `%p%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
   [`` `%pi%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
   [`` `%m%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
@@ -134,6 +145,34 @@ Methods for comparing time vectors.
   [`` `%fi%` ``](https://pkg.mitchelloharawild.com/mixtime/reference/allen-interval-algebra.md)
   : Allen's interval algebra for time vectors
 
+- [`xtfrm()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime-order.md)
+  [`sort()`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime-order.md)
+  : Ordering of mixtime vectors
+
+### Arithmetic operators
+
+Methods for shifting time points and combining durations.
+
+- [`` `+`( ``*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-arithmetic.md)
+  [`` `-`( ``*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-arithmetic.md)
+  :
+
+  Arithmetic for time points (`mt_time`)
+
+- [`` `+`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_duration-arithmetic.md)
+  [`` `-`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_duration-arithmetic.md)
+  [`` `*`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_duration-arithmetic.md)
+  [`` `/`( ``*`<mt_duration>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_duration-arithmetic.md)
+  :
+
+  Arithmetic for durations (`mt_duration`)
+
+- [`` `+`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-arithmetic.md)
+  [`` `-`( ``*`<mt_cyclical_free>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-arithmetic.md)
+  :
+
+  Arithmetic for underspecified cyclical time (`mt_cyclical_free`)
+
 ### Time Components
 
 Functions for extracting and referring to linear and cyclical components
@@ -145,15 +184,16 @@ of time.
   : Compose a linear time vector from linear and cyclical components
 - [`lin()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)
   [`cyc()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)
-  : Linear and cyclical component helpers
+  [`dur()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)
+  : Linear, cyclical and duration component helpers
 
 ## Parsing and Formatting Time
 
 Functions for converting between character strings and time vectors.
 
 - [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
-  : Parse text into a time point
-- [`format(`*`<mt_time>`*`)`](https://pkg.mitchelloharawild.com/mixtime/reference/format.mt_time.md)
+  : Parse text into time points or durations
+- [`format()`](https://pkg.mitchelloharawild.com/mixtime/reference/format.mt_time.md)
   : Format mixtime vectors
 
 ## Calendar Systems
@@ -259,20 +299,16 @@ multiple time granularities.
   : Create a mixtime vector
 - [`new_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_mixtime.md)
   : Constructor for mixtime vectors
-- [`class_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/class_mixtime.md)
+- [`class_mixtime`](https://pkg.mitchelloharawild.com/mixtime/reference/class_mixtime.md)
   : Base S7 class for mixtime vector objects
-- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md)
-  **\[defunct\]** : Constructor for mixtime time vectors
 - [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
   : Convert a time class into a mixtime
 - [`is_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_mixtime.md)
   : Check if an object is a mixtime
 - [`time_is_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
   [`time_is_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
+  [`time_is_cyclical_free()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
   [`time_is_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
-  [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
-  [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
-  [`is_time_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
   : Check the time type of values
 - [`time_is_determinate_at()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_is_determinate_at.md)
   : Test whether time is determinate at a granule's precision
@@ -309,19 +345,23 @@ units and calendars.
   : Create a new time unit class
 - [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_calendar.md)
   : Create a new calendar
+- [`mt_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_calendar.md)
+  : Base S7 class for calendars
 - [`mt_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
   [`mt_loc_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
   [`mt_tz_unit()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.md)
   : Base S7 class for creating new time units
-- [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
-  [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
-  [`mt_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
+- [`mt_cyclical_free()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
   : Time vector classes
 
 ### Calendar arithmetic
 
 - [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
   : Cardinality between time granules
+- [`chronon_cardinality_is_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_is_fixed.md)
+  : Test whether the cardinality between time granules is fixed
+- [`chronon_traverse()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_traverse.md)
+  : Traverse the graph of time unit relationships
 - [`chronon_divmod()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.md)
   : Convert between chronons of different time granules
 - [`chronon_epoch()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_epoch.md)
@@ -331,10 +371,9 @@ units and calendars.
 
 ### Time labels and formatting
 
-- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
-  [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
-  [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
-  : Time units as a string
+- [`unit_scheme()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md)
+  [`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md)
+  : Describe a time unit's naming scheme
 
 - [`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)
   [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)

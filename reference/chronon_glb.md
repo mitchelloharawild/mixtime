@@ -64,24 +64,28 @@ A time granule object representing the common chronon.
 # The finest common chronon between a year-month and a day is a day
 chronon_glb(c(yearmonth(Sys.Date()), date(Sys.Date())))
 #> <mixtime::tu_day>
-#>  @ n : int 1
-#>  @ tz: chr NA
+#>  @ n       : int 1
+#>  @ calendar: <cal_gregorian>
+#>  @ tz      : chr NA
 
 # The finest common chronon between a Gregorian month and an ISO week is a day
 chronon_glb(c(yearweek(Sys.Date()), yearmonth(Sys.Date())))
 #> <mixtime::tu_day>
-#>  @ n : int 1
-#>  @ tz: chr NA
+#>  @ n       : int 1
+#>  @ calendar: NULL
+#>  @ tz      : chr NA
 
 # The finest common chronon between a ISO week and an hour is an hour
 chronon_glb(c(yearweek(Sys.Date()), linear_time(Sys.time(), hour(1L))))
 #> <mixtime::tu_hour>
-#>  @ n : int 1
-#>  @ tz: chr NA
+#>  @ n       : int 1
+#>  @ calendar: NULL
+#>  @ tz      : chr NA
 
 # The coarsest common chronon between a second and a minute is a minute
 chronon_lub(c(linear_time(Sys.time(), second(1L)), linear_time(Sys.time(), minute(1L))))
 #> <mixtime::tu_minute>
-#>  @ n : int 1
-#>  @ tz: chr "UTC"
+#>  @ n       : int 1
+#>  @ calendar: <cal_gregorian>
+#>  @ tz      : chr "UTC"
 ```

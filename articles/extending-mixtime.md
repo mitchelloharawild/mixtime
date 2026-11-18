@@ -38,8 +38,7 @@ The extension points covered are:
 - [Labels](#labels) for displaying time, defined by:
   - [Time units](#display-time-units): temporal properties
     (e.g. interval) and user messages with
-    [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md),
-    [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
+    [`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md)
   - [Time labels](#time-labels): labelling granular components of time
     with
     [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md),
@@ -101,19 +100,21 @@ for developers.
 new_time_unit("tu_symmetry454_year",  parent = mt_tz_unit)
 #> <tu_symmetry454_year> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(...) {...}
+#> @ constructor: function(n, tz, calendar) {...}
 #> @ validator  : <NULL>
 #> @ properties :
-#>  $ n : <integer> or <double>
-#>  $ tz: <character>
+#>  $ n       : <integer> or <double>             
+#>  $ calendar: <NULL> or S3<mixtime::mt_calendar>
+#>  $ tz      : <character>
 new_time_unit("tu_symmetry454_month", parent = mt_tz_unit)
 #> <tu_symmetry454_month> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(...) {...}
+#> @ constructor: function(n, tz, calendar) {...}
 #> @ validator  : <NULL>
 #> @ properties :
-#>  $ n : <integer> or <double>
-#>  $ tz: <character>
+#>  $ n       : <integer> or <double>             
+#>  $ calendar: <NULL> or S3<mixtime::mt_calendar>
+#>  $ tz      : <character>
 ```
 
 These time units are typically exported within a calendar object (shown
@@ -142,24 +143,22 @@ cal_symmetry454 <- new_calendar(
   week  = cal_isoweek$week,
   # Inherit civil-time units (day, hour, minute, second, ...)
   inherit = cal_time_civil,
-  class = "cal_symmetry454"
+  name = "cal_symmetry454"
 )
 
 cal_symmetry454
 #> <cal_symmetry454>
-#> Time units:
-#>   - year
-#>   - month
-#>   - week
-#>   - day
-#>   - ampm
-#>   - hour
-#>   - minute
-#>   - second
-#>   - millisecond
-#>   - microsecond
-#>   - nanosecond
+#> Time units: year, month, week, day, ampm, hour, minute, second, millisecond,
+#>   microsecond, nanosecond
 ```
+
+The `name` identifies the calendar. Time units created from a calendar
+record its name (along with the package that defines it), rather than a
+copy of the calendar itself, which keeps time objects small and allows
+their calendar to be found again after being saved and restored.
+Calendars defined in a package should be assigned to a variable of the
+same name in the package namespace. Each calendar is an S7 object of its
+own class, so methods can also be dispatched on the calendar.
 
 In this case, the time unit for weeks exactly matches the ISO week unit,
 so we can reuse the existing `cal_isoweek$week` unit rather than
@@ -175,13 +174,15 @@ Unit constructors are now accessible via `$`:
 ``` r
 
 cal_symmetry454$year(1L)
-#> <tu_symmetry454_year>
-#>  @ n : int 1
-#>  @ tz: 'mt_naive' chr NA
+#> <::tu_symmetry454_year>
+#>  @ n       : int 1
+#>  @ calendar: <cal_symmetry454>
+#>  @ tz      : 'mt_naive' chr NA
 cal_symmetry454$month(1L, tz = "UTC")
-#> <tu_symmetry454_month>
-#>  @ n : int 1
-#>  @ tz: chr "UTC"
+#> <::tu_symmetry454_month>
+#>  @ n       : int 1
+#>  @ calendar: <cal_symmetry454>
+#>  @ tz      : chr "UTC"
 ```
 
 These time units can be used as chronons/cycles within
@@ -613,17 +614,28 @@ the final labels.
 
 ### Time units
 
-Each time unit has two format methods:
+Each time unit is named by a unit scheme, registered as a
+[`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md)
+method with
+[`unit_scheme()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md).
+A unit scheme shares the `vocab` and `locale` fields of a label scheme
+(see
+[`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md)),
+and adds a `symbol`:
 
-- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
-  returns the full name of the unit, optionally with cli plural marker
-  (e.g. `"Symmetry454 year{?/s}"`)
-- [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
-  returns the short abbreviation of the unit (e.g. “Y”)
+- `vocab` gives the full name of the unit for each locale, as a cli
+  plural template (e.g. `"Symmetry454 year{?/s}"`).
+  [`vocab_table()`](https://pkg.mitchelloharawild.com/mixtime/reference/vocab_table.md)
+  builds this from a plain table, with the `"wide"` type giving the full
+  name.
+- `symbol` is a short identifier for the unit (e.g. `"Y"`)
 
-The full name is used in messages (e.g. “Can’t convert from Symmetry454
-year to day”) and the abbreviation is used for displaying time intervals
-and durations.
+The name is used in messages (e.g. “Can’t convert from Symmetry454 year
+to day”), granule labels and durations (e.g. “3 Symmetry454 years”). The
+symbol is used as the prefix of default time formatting strings and for
+compact displays like tsibble intervals (e.g. “5Y”). Symbols are
+identifiers rather than localised abbreviations, so they should be
+distinct across units (e.g. `"M"` for month and `"m"` for minute).
 
 The plural marker uses `{?singular_suffix/plural_suffix}` syntax.
 Irregular plurals use the full form, e.g. `"centur{?y/ies}"`. The
@@ -631,13 +643,17 @@ default is to suffix with “s” for plurals (i.e. `{?/s}`).
 
 ``` r
 
-method(time_unit_full, cal_symmetry454$year)  <- function(x) "Symmetry454 year{?/s}"
-method(time_unit_abbr, cal_symmetry454$year)  <- function(x) "Y"
-method(time_unit_full, cal_symmetry454$month) <- function(x) "Symmetry454 month{?/s}"
-method(time_unit_abbr, cal_symmetry454$month) <- function(x) "M"
+method(unit_labels, cal_symmetry454$year) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "Symmetry454 year{?/s}")),
+  symbol = "Y"
+)
+method(unit_labels, cal_symmetry454$month) <- unit_scheme(
+  vocab = vocab_table(`en-GB` = list(wide = "Symmetry454 month{?/s}")),
+  symbol = "M"
+)
 ```
 
-The time unit abbreviations are also used in the default time formatting
+The time unit symbols are also used in the default time formatting
 string, so we can now create and view a Symmetry454 linear time vector:
 
 ``` r
@@ -913,13 +929,13 @@ method(
 # Display weeks as week in month in year (e.g. "1970-01-W1", "1970-01-W2", ...)
 method(
   chronon_format_linear,
-  list(cal_symmetry454$week, S7::new_S3_class("cal_symmetry454"))
+  list(cal_symmetry454$week, S7::S7_class(cal_symmetry454))
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}"
 
 # Format days as day in week in month in year (e.g. "1970-Jan-W1-Mon", "1970-Jan-W1-Tue", ...)
 method(
   chronon_format_linear,
-  list(cal_symmetry454$day, S7::new_S3_class("cal_symmetry454"))
+  list(cal_symmetry454$day, S7::S7_class(cal_symmetry454))
 ) <- function(x, cal) "{lin(year(1L))}-{cyc(month(1L), year(1L), label=TRUE, abbreviate=TRUE)}-W{cyc(week(1L), month(1L))}-{cyc(day(1L), week(1L), label=TRUE, abbreviate=TRUE)}"
 ```
 
@@ -984,8 +1000,8 @@ Duration vectors (created with
 are formatted using
 [`chronon_format_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.md),
 which dispatches on the chronon. The default method is usually
-sufficient, which uses
-[`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
+sufficient, which uses the unit scheme’s full name (from
+[`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md))
 to produce a label for the duration.
 
 ``` r

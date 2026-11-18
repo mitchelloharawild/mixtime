@@ -22,6 +22,7 @@ linear and cyclical granules.
 |----|----|
 | `lin(granule)` | A linear granularity is typically used for the coarsest granule (e.g. years). |
 | `cyc(granule, cycle)` | A cyclical granularity displays finer granules within a coarser cycle (e.g. months within years). |
+| `dur(granule)` | A duration displayed as a count of granules (e.g. “3 days”), see [Durations](#durations). |
 
 The `granule` and `cycle` arguments accept time granules from a
 calendar, for example the format codes for
@@ -33,7 +34,7 @@ are combined in the time format string with glue substitutions:
 ``` r
 
 format(date(Sys.Date()), format = "{lin(year(1L))}-{cyc(month(1L), year(1L))}")
-#> [1] "2026-10"
+#> [1] "2026-11"
 ```
 
 The linear labels are produced by
@@ -55,7 +56,7 @@ are forwarded to the label helper functions. Common arguments include
 ``` r
 
 format(date(Sys.Date()), format = "{lin(year)} {cyc(month, year, label = TRUE, abbreviate = TRUE)}")
-#> [1] "2026 Oct"
+#> [1] "2026 Nov"
 ```
 
 Default format strings for each chronon (and cycle) are provided by
@@ -71,7 +72,7 @@ is `"{lin(year)}-{cyc(month, year)}"`:
 ``` r
 
 format(linear_time(Sys.Date(), chronon = cal_gregorian$month(1L)))
-#> [1] "2026 Oct"
+#> [1] "2026 Nov"
 ```
 
 The granules used in the format string are calendar-aware, so they
@@ -92,12 +93,43 @@ named phase:
 fmt_date  <- "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}"
 fmt_lunar <- "{with(cal_time_lunar, cyc(phase, month, label = TRUE, type = \"emoji\"))}"
 format(date(Sys.Date()), format = paste(fmt_date, fmt_lunar))
-#> [1] "2026-10-13 🌑"
+#> [1] "2026-11-18 🌓"
 ```
 
 This makes the relationship between the format string and the calendar
 structure transparent, and means the same format-string idiom works
 unchanged across calendars.
+
+## Durations
+
+Durations (see
+[`duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/duration.md))
+have no position in a calendar, so they’re formatted with their own
+`dur(granule)` code rather than
+[`lin()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)/[`cyc()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md).
+It displays the duration as a count of `granule` units, and must be the
+only time component code in the format string.
+
+``` r
+
+format(hours(c(2L, 30L)), format = "{dur(minute)} elapsed")
+#> [1] "120 minutes elapsed"  "1800 minutes elapsed"
+```
+
+The same format string parses text back into durations with
+[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md).
+The unit name after the number is optional, and may be singular, plural
+or abbreviated. Fractional magnitudes require `discrete = FALSE`.
+
+``` r
+
+time_parse(c("3 days", "1 day", "2D", "5"), format = "{dur(day)}")
+#> <mixtime[4]>
+#> [1] 3 days 1 day  2 days 5 days
+time_parse("1.5 days", format = "{dur(day)}", discrete = FALSE)
+#> <mixtime[1]>
+#> [1] 1.5 days
+```
 
 ## Advanced time formatting
 
@@ -138,9 +170,9 @@ combinations of granules.
 
 # YYYY-MM-DD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-{cyc(month, year)}-{cyc(day, month)}")
-#> [1] "2026-10-13"
+#> [1] "2026-11-18"
 format(Sys.Date(), format = "%Y-%m-%d")
-#> [1] "2026-10-13"
+#> [1] "2026-11-18"
 ```
 
 This simplifies the construction of less common time formats, for
@@ -152,9 +184,9 @@ example the year-day format (`YYYY-DDD`), which is
 
 # YYY-DDD format for a Gregorian date
 format(date(Sys.Date()), format = "{lin(year)}-D{cyc(day, year)}")
-#> [1] "2026-D286"
+#> [1] "2026-D322"
 format(Sys.Date(), format = "%Y-D%j")
-#> [1] "2026-D286"
+#> [1] "2026-D322"
 ```
 
 Format strings for non-Gregorian calendars are also more intuitive,
@@ -173,9 +205,9 @@ format(
   date(Sys.Date(), calendar = cal_isoweek),
   format = "{lin(year)}-W{cyc(week, year)}-{cyc(day, week, label = TRUE)}"
 )
-#> [1] "2026-W42-Tue"
+#> [1] "2026-W47-Wed"
 format(Sys.Date(), format = "%G-W%V-%a")
-#> [1] "2026-W42-Tue"
+#> [1] "2026-W47-Wed"
 ```
 
 The table below maps every `strftime`/`strptime` conversion

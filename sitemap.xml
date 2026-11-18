@@ -20,12 +20,14 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/calendar_time_solar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_fixed.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_is_fixed.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_divmod.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_epoch.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_format_attr.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_parse.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/chronon_traverse.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/circsum.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/class_mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.html</loc></url>
@@ -41,12 +43,18 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/linear_time.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mixtime-order.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mixtime-package.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mixtime_location.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_calendar.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical-compare.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-arithmetic.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_cyclical_free-compare.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_duration-arithmetic.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_duration-compare.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_linear-compare.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-arithmetic.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/mt_unit.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/new_calendar.html</loc></url>
@@ -54,7 +62,6 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/new_duration_fn.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/new_linear_time_fn.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/new_mixtime.html</loc></url>
-<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/new_time.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/new_time_unit.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/parse_format.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/seq.mixtime.html</loc></url>
@@ -73,6 +80,7 @@
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/tz_name.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/tz_offset.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/tz_transitions.html</loc></url>
+<url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.html</loc></url>
 <url><loc>https://pkg.mitchelloharawild.com/mixtime/reference/vocab_table.html</loc></url>
 </urlset>
 

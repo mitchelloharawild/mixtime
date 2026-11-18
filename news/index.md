@@ -1,6 +1,172 @@
 # Changelog
 
+## mixtime 0.5.0
+
+### Breaking changes
+
+- Base R and C code that reads a mixtime vector directly, such as
+  [`lm()`](https://rdrr.io/r/stats/lm.html),
+  [`prcomp()`](https://rdrr.io/r/stats/prcomp.html) and
+  [`data.matrix()`](https://rdrr.io/r/base/data.matrix.html) on data
+  frames with mixtime columns, now uses the numbers that
+  [`as.numeric()`](https://rdrr.io/r/base/numeric.html) gives (the
+  chronon count for linear time, and the position within the cycle for
+  cyclical time) rather than the vecvec index. This needs vecvec \>=
+  1.5.0 (older versions still work, without this).
+  [`is.numeric()`](https://rdrr.io/r/base/numeric.html) is `TRUE` for
+  mixtime vectors.
+- [`as.numeric()`](https://rdrr.io/r/base/numeric.html) and
+  [`as.integer()`](https://rdrr.io/r/base/integer.html) of cyclical time
+  now give the position within the cycle counted from its first label
+  (`month_of_year(8)` is 8, and `time_of_day(0)` is 0), so
+  `cyclical_time(as.numeric(x))` round trips.
+
+### New features
+
+- Added underspecified cyclical time (`mt_cyclical_free`), a position
+  within a cycle whose enclosing cycle is unknown, e.g. “day 60 of the
+  year”
+  ([\#47](https://github.com/mitchelloharawild/mixtime/issues/47)). It
+  is created from bare numbers (e.g. `month_of_year(3)`), or by
+  [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_compose.md)/[`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
+  without a
+  [`lin()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)
+  component. It sorts, compares and subtracts by position within the
+  cycle, and arithmetic wraps around fixed-length cycles
+  (`month_of_year(12) + 1` is January). Use
+  [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_compose.md)
+  to locate it in a cycle for variable-length cycles, such as
+  [`day_of_month()`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time_helpers.md).
+  See
+  [`?cyclical_time`](https://pkg.mitchelloharawild.com/mixtime/reference/cyclical_time.md)
+  for details.
+- Added
+  [`time_is_cyclical_free()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md),
+  alongside the other `time_is_*()` predicates.
+- Added
+  [`chronon_traverse()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_traverse.md),
+  which walks to coarser or finer time units, accumulating a value until
+  a predicate is satisfied.
+- Added
+  [`chronon_cardinality_is_fixed()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality_is_fixed.md),
+  which tests whether the number of one time unit in another is constant
+  (e.g. months in a year, but not days in a month).
+- [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_compose.md)
+  gains `on_ambiguous` and `offset` arguments to resolve local times
+  that occur twice when daylight saving ends. Without them, the earliest
+  time is used with a warning. The `mixtime.on_ambiguous` option sets
+  the default.
+- Added a
+  [`dur()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)
+  format token for formatting and parsing durations, e.g.
+  `format(x, "{dur(day)}")` and
+  `time_parse("3 days", format = "{dur(day)}")`. Parsing accepts an
+  optional unit name (`"3 days"`, `"3D"`, `"3"`), and fractional
+  magnitudes with `discrete = FALSE`. Unit names are English-only for
+  now.
+
+### Deprecated
+
+- `new_calendar(class)` is deprecated in favour of `new_calendar(name)`.
+- [`chronon_common()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  now warns on every use. Use
+  [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  instead.
+- The defunct `new_time()`, `is_time_linear()`, `is_time_cyclical()` and
+  `is_time_duration()` have been removed.
+
+### Breaking changes
+
+- Calendars are now S7 objects, so methods dispatch on
+  `S7::S7_class(cal_gregorian)` rather than
+  `S7::new_S3_class("cal_gregorian")`.
+  [`new_calendar()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_calendar.md)
+  now requires a `name`.
+- Time units now refer to their calendar by identifier rather than
+  storing a copy, which greatly reduces the size of serialised time
+  objects. Custom unit constructors should default to
+  `calendar = attr(sys.function(), "cal")`. Time objects saved by
+  mixtime 0.4.0 or earlier can’t be used with this version.
+- Converting a discrete time to a chronon it doesn’t nest within (e.g.
+  `yearmonth(yearweek(x))`) is now an error, as deprecated in 0.4.0.
+- [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+  between time units that don’t nest (e.g. weeks and quarters) is now an
+  error.
+- [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_compose.md)
+  and
+  [`time_parse()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_parse.md)
+  without a
+  [`lin()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)
+  component only combine components with fixed lengths, so day 15 of
+  March is now an error (its day of the year depends on the year).
+- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md),
+  [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
+  and
+  [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_unit_labels.md)
+  are replaced by a single unit scheme per time unit, registered with
+  `method(unit_labels, <unit>) <- unit_scheme(vocab, symbol, locale)`.
+  Like
+  [`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/reference/label_scheme.md),
+  names come from a `vocab` function (e.g.
+  `` vocab_table(`en-GB` = list(wide = "day{?/s}")) ``). Unit names are
+  shared by duration formatting and parsing, granule labels, tsibble
+  intervals and messages. The old functions remain as soft-deprecated
+  wrappers for this release.
+
+### Improvements
+
+- Compatibility with development S7.
+- mixtime now requires vecvec (\>= 1.4.0), fixing
+  [`c()`](https://rdrr.io/r/base/c.html) of a single empty mixtime
+  vector.
+- [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+  has better support for a time-classed `at`.
+- [`sort()`](https://rdrr.io/r/base/sort.html) gains `align_discrete`,
+  which sets the instant within a discrete time span used to order it
+  against time of another chronon
+  ([\#103](https://github.com/mitchelloharawild/mixtime/issues/103)).
+
+### Bug fixes
+
+- [`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_compose.md)
+  now composes time zone aware components in local time, and keeps the
+  order of components stored out of order.
+- [`time_components()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_components.md)
+  no longer applies the UTC offset twice to components finer than a day.
+- [`zoo::yearmon()`](https://rdrr.io/pkg/zoo/man/yearmon.html) and
+  [`zoo::yearqtr()`](https://rdrr.io/pkg/zoo/man/yearqtr.html) values
+  now convert to the correct months and quarters, and
+  [`as_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/as_mixtime.md)
+  now supports them and tsibble’s
+  [`yearweek()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md),
+  [`yearmonth()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  and
+  [`yearquarter()`](https://pkg.mitchelloharawild.com/mixtime/reference/linear_time_helpers.md)
+  (tidyverts/tsibble#272).
+- [`min()`](https://rdrr.io/r/base/Extremes.html),
+  [`max()`](https://rdrr.io/r/base/Extremes.html) and
+  [`range()`](https://rdrr.io/r/base/range.html) now correctly order
+  mixed chronons and other time classes. Other `Summary` generics
+  (e.g. [`sum()`](https://rdrr.io/r/base/sum.html)) give an informative
+  error for time points (tidyverts/tsibble#272).
+- Whole-number granule sizes are now always stored as integers, so
+  equivalent chronons built from doubles and integers are identical.
+- Fixed
+  [`chronon_cardinality()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_cardinality.md)
+  along paths with irregular steps.
+- [`chronon_glb()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  and
+  [`chronon_lub()`](https://pkg.mitchelloharawild.com/mixtime/reference/chronon_glb.md)
+  of chronons from different calendars no longer return a bound with an
+  arbitrary calendar.
+- Subtracting a time point from a number or duration, or negating it, is
+  now an error rather than giving a meaningless time point.
+- The ratio of two durations (e.g. `weeks(1) / days(1)`) is now a plain
+  number rather than a mixtime vector.
+
 ## mixtime 0.4.0
+
+CRAN release: 2026-10-13
 
 ### New features
 
@@ -54,8 +220,7 @@
   `chronon_convert()` gains an `allow_indeterminate` argument, which
   still allows it by default.
 
-- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md),
-  deprecated in 0.3.0, is now defunct. Use
+- `new_time()`, deprecated in 0.3.0, is now defunct. Use
   [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md),
   [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md),
   or
@@ -315,9 +480,9 @@ CRAN release: 2026-08-24
 
 ### Deprecated
 
-- [`new_time()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_time.md),
-  the low-level constructor for `mt_time` vectors, is deprecated in
-  favour of calling the concrete time class constructors directly:
+- `new_time()`, the low-level constructor for `mt_time` vectors, is
+  deprecated in favour of calling the concrete time class constructors
+  directly:
   [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md),
   [`mt_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md),
   and
@@ -339,10 +504,7 @@ CRAN release: 2026-08-24
   requested chronon’s own format (e.g. `yearmonth("2026 Feb")` now
   works, but `yearmonth("2026-02-14")`, now errors).
 
-- [`is_time_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md),
-  [`is_time_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md),
-  and
-  [`is_time_duration()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md)
+- `is_time_linear()`, `is_time_cyclical()`, and `is_time_duration()`
   have been renamed to
   [`time_is_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md),
   [`time_is_cyclical()`](https://pkg.mitchelloharawild.com/mixtime/reference/is_time.md),

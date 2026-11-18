@@ -1,20 +1,15 @@
 # Time units as a string
 
-These S7 generic functions provide the full and abbreviated names for
-time units. `time_unit_full()` is used in messages and durations (e.g.,
-"2 months"). `time_unit_abbr()` is used for tsibble index interval
-displays (e.g., "1M"). `time_unit_plural()` pluralises the full unit
-name for a given quantity using cli-style pluralisation (e.g.,
-`"year{?/s}"` becomes `"year"` or `"years"`).
+**\[deprecated\]**
 
 ## Usage
 
 ``` r
-time_unit_full(x, ...)
+time_unit_full(x)
 
 time_unit_plural(x, n = 2L)
 
-time_unit_abbr(x, ...)
+time_unit_abbr(x)
 ```
 
 ## Arguments
@@ -22,10 +17,6 @@ time_unit_abbr(x, ...)
 - x:
 
   A time granule object (e.g., `cal_gregorian$month(1L)`)
-
-- ...:
-
-  Additional arguments for methods.
 
 - n:
 
@@ -35,15 +26,13 @@ time_unit_abbr(x, ...)
 
 A string representing the time unit
 
-## Examples
+## Details
 
-``` r
-time_unit_full(cal_gregorian$year(1L))
-#> [1] "year{?/s}"
-time_unit_plural(cal_gregorian$year(1L), 1L)
-#> [1] "year"
-time_unit_plural(cal_gregorian$year(1L), 2L)
-#> [1] "years"
-time_unit_abbr(cal_gregorian$year(1L))
-#> [1] "Y"
-```
+These functions are superseded by
+[`unit_labels()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md)
+and
+[`unit_scheme()`](https://pkg.mitchelloharawild.com/mixtime/reference/unit_scheme.md),
+and are only kept as thin wrappers for backwards compatibility.
+`time_unit_full()` returns the full unit name template (e.g.
+`"year{?/s}"`), `time_unit_plural()` pluralises it for a quantity, and
+`time_unit_abbr()` returns the unit symbol (e.g. `"Y"`).

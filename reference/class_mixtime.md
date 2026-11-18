@@ -9,28 +9,6 @@ using the
 [`mixtime::mixtime`](https://pkg.mitchelloharawild.com/mixtime/reference/mixtime.md)
 class.
 
-## Usage
-
-``` r
-class_mixtime(x = list(), i = seq_len(sum(lengths(x))))
-```
-
-## Arguments
-
-- x:
-
-  A list of `"mt_time"` vectors, see
-  [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
-  for details.
-
-- i:
-
-  A vector of integers specifying the location of each element in `x` as
-  if they were combined in order. The values in `i` must be between 1
-  and the total number of elements across all vectors in `x`, and can
-  contain duplicates. If not provided, it defaults to a sequence from 1
-  to the total number of elements across all vectors in `x`.
-
 ## Value
 
 When used as a class definition (e.g., in
@@ -46,6 +24,20 @@ structure. End users should prefer
 or
 [`new_mixtime()`](https://pkg.mitchelloharawild.com/mixtime/reference/new_mixtime.md)
 for construction.
+
+## Details
+
+When called as a constructor, its arguments are passed to the
+[`vecvec::class_vecvec()`](https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html)
+constructor:
+
+- `x`: A list of `"mt_time"` vectors, see
+  [`mt_linear()`](https://pkg.mitchelloharawild.com/mixtime/reference/mt_time-class.md)
+  for details.
+
+- `i`: A vector of integers specifying the location of each element in
+  `x` as if they were combined in order. Defaults to a sequence from 1
+  to the total number of elements across all vectors in `x`.
 
 ## See also
 

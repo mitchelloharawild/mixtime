@@ -352,14 +352,100 @@ date("2021-01-31") + months(1L)
 #>   them to valid time points instead.
 ```
 
+## Composing time from components
+
+[`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_compose.md)
+builds time points from their components, such as the day, hour and
+minute from
+[`time_components()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_components.md).
+Time zone aware components are composed in local time, so they meet the
+same daylight saving problems as calendar arithmetic.
+
+A local time in the hour repeated when daylight saving ends is
+ambiguous.
+[`time_compose()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_compose.md)
+resolves it to its earliest occurrence, the same as
+[`time_shift()`](https://pkg.mitchelloharawild.com/mixtime/reference/time_shift.md),
+but warns when the components don’t say which occurrence was meant,
+since the components alone describe both.
+
+``` r
+
+x <- datetime("2026-04-05 01:30:00", tz = "Australia/Melbourne") + hours(c(1L, 2L))
+x
+#> <mixtime[2]>
+#> [1] 2026-04-05 02:30:00 AEDT 2026-04-05 02:30:00 AEST
+parts <- time_components(x, d = lin(day), h = cyc(hour, day), m = cyc(minute, hour))
+time_compose(parts$d, parts$h, parts$m)
+#> Warning: 2 composed times are ambiguous in time zone "Australia/Melbourne" and were
+#> resolved to their earliest occurrence.
+#> ℹ They occur twice, in local time repeated by a time zone change (e.g. when
+#>   daylight saving ends), at positions 1 and 2.
+#> ℹ To avoid the ambiguity:
+#> • Supply the UTC offset or time zone abbreviation of each time with `offset`,
+#>   e.g. `offset = tz_offset(x)` or `offset = c("AEDT", "AEST")`.
+#> • Include a time zone aware `lin()` component finer than the repeated time,
+#>   such as `lin(hour)` from `time_components()`.
+#> • Compose in UTC, or a time zone without daylight saving.
+#> • Choose a strategy with `on_ambiguous` (or the `mixtime.on_ambiguous` option)
+#>   to silence this warning.
+#> <mixtime[2]>
+#> [1] 2026-04-05 02:30 AEDT 2026-04-05 02:30 AEDT
+```
+
+The warning lists ways to avoid the ambiguity. The most direct is to
+give the UTC offset of each time with `offset`, either as a duration or
+as a time zone abbreviation.
+
+``` r
+
+time_compose(parts$d, parts$h, parts$m, offset = tz_offset(x))
+#> <mixtime[2]>
+#> [1] 2026-04-05 02:30 AEDT 2026-04-05 02:30 AEST
+time_compose(parts$d, parts$h, parts$m, offset = c("AEDT", "AEST"))
+#> <mixtime[2]>
+#> [1] 2026-04-05 02:30 AEDT 2026-04-05 02:30 AEST
+```
+
+A time zone aware
+[`lin()`](https://pkg.mitchelloharawild.com/mixtime/reference/component_helpers.md)
+component finer than the repeated time, such as `lin(hour)`, already
+identifies the occurrence, so it needs no offset.
+
+``` r
+
+parts <- time_components(x, h = lin(hour), m = cyc(minute, hour))
+time_compose(parts$h, parts$m)
+#> <mixtime[2]>
+#> [1] 2026-04-05 02:30 AEDT 2026-04-05 02:30 AEST
+```
+
+Otherwise, `on_ambiguous` chooses the occurrence: `"earliest"` or
+`"latest"`, or `"reject"` and `"error"` to refuse. Choosing it, or
+setting the `mixtime.on_ambiguous` option, silences the warning.
+
+``` r
+
+parts <- time_components(x, d = lin(day), h = cyc(hour, day), m = cyc(minute, hour))
+time_compose(parts$d, parts$h, parts$m, on_ambiguous = "latest")
+#> <mixtime[2]>
+#> [1] 2026-04-05 02:30 AEST 2026-04-05 02:30 AEST
+```
+
+A local time skipped when daylight saving starts is resolved by the
+`mixtime.on_invalid` option, as described above. With an `offset`, it is
+the instant that offset describes: 02:30 AEST, on the day Melbourne’s
+clocks skip from 02:00 AEST to 03:00 AEDT, is 03:30 AEDT.
+
 ## Costs of resolving invalid time points
 
 Every strategy that produces a result changes the behaviour of the
 arithmetic, in ways worth knowing when choosing one.
 
-Calendar arithmetic is not associative. Adding one month twice clamps in
-February, and the lost days aren’t recovered in March, whereas adding
-two months at once never passes through February.
+Calendar arithmetic involving invalid dates is not associative. Adding
+one month twice clamps in February, and the lost days aren’t recovered
+in March, whereas adding two months at once never passes through
+February.
 
 ``` r
 
