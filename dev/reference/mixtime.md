@@ -60,7 +60,7 @@ mixtime(Sys.Date())
 # Create a mixtime for the current date and time
 mixtime(Sys.time())
 #> <mixtime[1]>
-#> [1] 2026-11-18 04:39:44
+#> [1] 2026-11-18 09:24:54
 
 # Convert time from tsibble classes to mixtime
 mixtime(tsibble::yearmonth("2024 Jan"))
@@ -70,18 +70,18 @@ mixtime(tsibble::yearmonth("2024 Jan"))
 # Create a mixtime for the time of day (cyclical time)
 mixtime(Sys.time(), cycle = cal_gregorian$day(1L))
 #> <mixtime[1]>
-#> [1] 04:39:44
+#> [1] 09:24:54
 
 # Specify a timezone for the chronon
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = Sys.timezone()))
 #> <mixtime[1]>
-#> [1] 2026-11-18 04:39:44
+#> [1] 2026-11-18 09:24:54
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = "Pacific/Honolulu"))
 #> <mixtime[1]>
-#> [1] 2026-11-17 18:39:44 HST
+#> [1] 2026-11-17 23:24:54 HST
 mixtime(Sys.time(), chronon = cal_gregorian$second(1L, tz = "Australia/Melbourne"))
 #> <mixtime[1]>
-#> [1] 2026-11-18 15:39:44 AEDT
+#> [1] 2026-11-18 20:24:54 AEDT
 
 # Dates (and all granularities) can have timezones
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = Sys.timezone()))
@@ -97,7 +97,7 @@ mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = "Australia/Melbourne"))
 # Continuous time tracks progress within the chronon
 mixtime(Sys.time(), chronon = cal_gregorian$day(1L, tz = Sys.timezone()), discrete = FALSE)
 #> <mixtime[1]>
-#> [1] 2026-11-18 19.4%
+#> [1] 2026-11-18 39.2%
 
 # Mixtime can combine different granularities and timezones in a vector
 now <- Sys.time()
@@ -110,5 +110,5 @@ c(
   mixtime(now, chronon = cal_gregorian$month(1L))
 )
 #> <mixtime[3]>
-#> [1] 2026-11-18 04:39:44 2026-11-18 04:39    2026 Nov           
+#> [1] 2026-11-18 09:24:55 2026-11-18 09:24    2026 Nov           
 ```

@@ -15,7 +15,7 @@ class."><meta property="og:image" content="https://pkg.mitchelloharawild.com/mix
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,18 +56,6 @@ class.</p>
 
 
     <div class="section level2">
-    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-
-
-<dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Passed to the <code><a href="https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html" class="external-link">vecvec::class_vecvec()</a></code> constructor:</p><ul><li><p><code>x</code>: A list of <code>"mt_time"</code> vectors, see <code><a href="mt_time-class.html">mt_linear()</a></code> for details.</p></li>
-<li><p><code>i</code>: A vector of integers specifying the location of each element in
-<code>x</code> as if they were combined in order. Defaults to a sequence from 1 to
-the total number of elements across all vectors in <code>x</code>.</p></li>
-</ul></dd>
-
-</dl></div>
-    <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>When used as a class definition (e.g., in <code>S7::method(generic, class_mixtime)</code>), an S7 class object representing the <code>mixtime</code> class,
 inheriting from <a href="https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html" class="external-link">vecvec::class_vecvec</a>. When called as a constructor
@@ -76,6 +64,14 @@ inheriting from <a href="https://pkg.mitchelloharawild.com/vecvec/reference/clas
 of time vectors as a <a href="https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html" class="external-link">vecvec::class_vecvec</a> structure. End users should
 prefer <code><a href="mixtime.html">mixtime()</a></code> or <code><a href="new_mixtime.html">new_mixtime()</a></code> for construction.</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>When called as a constructor, its arguments are passed to the
+<code><a href="https://pkg.mitchelloharawild.com/vecvec/reference/class_vecvec.html" class="external-link">vecvec::class_vecvec()</a></code> constructor:</p><ul><li><p><code>x</code>: A list of <code>"mt_time"</code> vectors, see <code><a href="mt_time-class.html">mt_linear()</a></code> for details.</p></li>
+<li><p><code>i</code>: A vector of integers specifying the location of each element in
+<code>x</code> as if they were combined in order. Defaults to a sequence from 1 to
+the total number of elements across all vectors in <code>x</code>.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="mixtime.html">mixtime()</a></code> for creating mixtime vectors, and <code><a href="new_mixtime.html">new_mixtime()</a></code> for

@@ -2,6 +2,8 @@
 
 ## mixtime (development version)
 
+## mixtime 0.5.0
+
 ### Breaking changes
 
 - Base R and C code that reads a mixtime vector directly, such as

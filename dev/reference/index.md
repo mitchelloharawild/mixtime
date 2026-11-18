@@ -351,12 +351,7 @@ units and calendars.
   [`mt_loc_unit()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
   [`mt_tz_unit()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
   : Base S7 class for creating new time units
-- [`mt_time-class`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
-  [`mt_time`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
-  [`mt_linear`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
-  [`mt_duration`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
-  [`mt_cyclical`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
-  [`mt_cyclical_free`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
+- [`mt_cyclical_free()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_time-class.md)
   : Time vector classes
 
 ### Calendar arithmetic

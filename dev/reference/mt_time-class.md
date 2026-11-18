@@ -31,6 +31,12 @@ The underlying data can be either **integer** (discrete time) or
 [mt_unit](https://pkg.mitchelloharawild.com/mixtime/dev/reference/mt_unit.md)
 object.
 
+## Usage
+
+``` r
+mt_cyclical_free(..., chronon = mt_unit(1L), cycle = mt_unit(1L))
+```
+
 ## Arguments
 
 - ...:
