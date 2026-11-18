@@ -14,7 +14,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/mitchelloharawild/mixtime/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/mitchelloharawild/mixtime/blob/v0.5.0/DESCRIPTION)
 
 O'Hara-Wild M (2026). *mixtime: Mixed Temporal Vectors and Operations*.
 R package version 0.5.0, <https://pkg.mitchelloharawild.com/mixtime/>.
