@@ -266,12 +266,30 @@ test_that("as.numeric() of cyclical time is the position by label start", {
   expect_equal(as.numeric(x), 10:12)
 })
 
-test_that("mixtime is not numeric", {
-  expect_false(is.numeric(month_of_year(3)))
-  expect_false(is.numeric(yearmonth(0:2)))
-  d <- data.frame(a = c(.3, .1, .9), p = month_of_year(c(8, 3, 12)))
-  expect_error(prcomp(d), "numeric")
-  # `data.matrix()` is not tested: R >= 4.6 passes through any column where the
-  # primitive `is.integer()` is TRUE (it can't be overridden), so it reads the
-  # integer vecvec index storage rather than calling `as.double()`.
+test_that("base numeric consumers read mixtime as as.numeric() does", {
+  skip_if(packageVersion("vecvec") < "1.5.0")
+  set.seed(1)
+  n <- 40
+  d <- as.Date("2020-01-01") + seq_len(n)
+  cols <- list(
+    lin = as_mixtime(d), cyc = month_of_year(d), cyc2 = day_of_month(d),
+    free = month_of_year(rep(1:12, length.out = n))
+  )
+  y <- rnorm(n)
+  z <- rnorm(n)
+  for (k in names(cols)) {
+    df <- data.frame(y = y, z = z)
+    df[[k]] <- cols[[k]]
+    dfp <- data.frame(y = y, z = z)
+    dfp[[k]] <- as.numeric(cols[[k]])
+    expect_true(is.numeric(cols[[k]]))
+    expect_equal(
+      unname(coef(lm(reformulate(c(k, "z"), "y"), df))),
+      unname(coef(lm(reformulate(c(k, "z"), "y"), dfp)))
+    )
+    expect_equal(
+      prcomp(reformulate(c(k, "z")), df, scale. = TRUE)$sdev,
+      prcomp(reformulate(c(k, "z")), dfp, scale. = TRUE)$sdev
+    )
+  }
 })

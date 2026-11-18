@@ -85,7 +85,7 @@ props_equal <- function(x, y) {
     a <- x[[nm]]
     b <- y[[nm]]
     same <- if (is.numeric(a) && is.numeric(b)) {
-      identical(as.double(a), as.double(b))
+      identical(as.double(vec_data(a)), as.double(vec_data(b)))
     } else {
       identical(a, b)
     }

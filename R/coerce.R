@@ -8,11 +8,18 @@ S7::method(as.integer, mt_time) <- function(x, ...) {
 }
 #' @export
 S7::method(as.double, mt_time) <- function(x, ...) as.double(time_as_number(x))
+# vecvec's ALTREP base reads stored times with `as.double()` (see
+# `as.double.mixtime::mt_time()` below), so base R and C code (`lm()`,
+# `prcomp()`) sees cyclical time as its position in the cycle, as `as.numeric()`
+# does.
 #' @method as.integer mixtime::mixtime
 #' @export
 `as.integer.mixtime::mixtime` <- function(x, ...) {
   as.integer(vecvec::unvecvec(vecvec::vecvec_apply(x, time_as_number), ptype = double()))
 }
+#' @method as.double mixtime::mt_time
+#' @export
+`as.double.mixtime::mt_time` <- function(x, ...) as.double(time_as_number(x))
 #' @method as.double mixtime::mixtime
 #' @export
 `as.double.mixtime::mixtime` <- function(x, ...) {
@@ -36,13 +43,6 @@ time_as_number <- function(x) {
     vctrs::vec_data(x)
   }
 }
-
-# Mixtime is not numeric, as base R's date-time classes (Date, POSIXct, difftime)
-# are not: `prcomp()` errors loudly rather than reading the vecvec index
-# storage. (`data.matrix()` still reads it on R >= 4.6, as the primitive
-# `is.integer()` is TRUE for the integer storage and can't be overridden.)
-#' @export
-S7::method(is.numeric, class_mixtime) <- function(x) FALSE
 #' @export
 S7::method(as.Date, mt_linear) <- function(x, ...) vctrs::vec_cast(x, vctrs::new_date())
 #' @export

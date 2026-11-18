@@ -2,11 +2,12 @@
 
 ## Breaking changes
 
-* `is.numeric()` is now `FALSE` for mixtime vectors, as for `Date`, `POSIXct`
-  and `difftime`. Numeric consumers such as `prcomp()`, `cor()` and
-  `where(is.numeric)` no longer silently use the underlying vecvec index
-  storage, and `data.matrix()` converts with `as.double()`. Models such as
-  `lm()` read the base data directly, so use `lm(y ~ as.numeric(x))`.
+* Base R and C code that reads a mixtime vector directly, such as `lm()`,
+  `prcomp()` and `data.matrix()` on data frames with mixtime columns, now uses
+  the numbers that `as.numeric()` gives (the chronon count for linear time, and
+  the position within the cycle for cyclical time) rather than the vecvec index.
+  This needs vecvec >= 1.5.0 (older versions still work, without this).
+  `is.numeric()` is `TRUE` for mixtime vectors.
 * `as.numeric()` and `as.integer()` of cyclical time now give the position
   within the cycle counted from its first label (`month_of_year(8)` is 8, and
   `time_of_day(0)` is 0), so `cyclical_time(as.numeric(x))` round trips.

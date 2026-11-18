@@ -148,7 +148,7 @@ method(chronon_convert, S7::class_any) <- function(
 ) {
   from <- chronon_glb(x)
   if (!allow_indeterminate) check_convert_determinate(x, from, to)
-  chronon_convert_impl(as.numeric(x), from, to, discrete)
+  chronon_convert_impl(as.numeric(if (S7_inherits(x, mt_time)) vec_data(x) else x), from, to, discrete)
 }
 
 # A discrete time spans its whole chronon, so converting it to a chronon it

@@ -171,10 +171,10 @@
   if (missing_by) {
     arg <- list(length.out = length.out)
     if (!missing_from) {
-      arg$from <- as.numeric(from)
+      arg$from <- as.numeric(vec_data(from))
     }
     if (!missing_to) {
-      arg$to <- as.numeric(to)
+      arg$to <- as.numeric(vec_data(to))
     }
     return(vec_restore(rlang::exec(seq.int, !!!arg), ptype))
   }
@@ -184,7 +184,7 @@
     cli::cli_abort("{.var by} must be a single time duration", call. = FALSE)
   }
   if (time_is_duration(by)) {
-    by_size <- as.numeric(by)
+    by_size <- as.numeric(vec_data(by))
     by <- attr(by, "chronon")
     by@n <- by@n * by_size
   }
@@ -219,9 +219,9 @@
   # Each time point is shifted from an anchor by a whole number of `by` units
   # (`anchor + duration(k, by)`), rather than from the previous time point.
   # The anchor is `from`, or `to` (right aligned) if `from` is missing.
-  anchor <- as.numeric(ptype)
+  anchor <- as.numeric(vec_data(ptype))
   if (!missing_to) {
-    to <- as.numeric(to)
+    to <- as.numeric(vec_data(to))
   }
   local_chronon <- chronon_in_context(chronon, by)
   k <- if (missing_from) {

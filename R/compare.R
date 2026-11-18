@@ -1035,7 +1035,7 @@ method(anyDuplicated, class_mixtime) <- function(x, incomparables = FALSE, ...) 
   if (all(eq)) return(TRUE)
 
   d <- target[keep][!eq] - current[keep][!eq]
-  xy <- mean(abs(as.double(d)))
+  xy <- mean(abs(as.double(vec_data(d))))
   if (xy > tolerance) {
     sprintf("Mean absolute difference: %s", format(xy))
   } else {
