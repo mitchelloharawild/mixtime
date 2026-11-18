@@ -252,7 +252,7 @@ mt_cyclical <- S7::new_class(
 )
 
 #' @rdname mt_time-class
-#' @usage NULL
+#' @usage mt_cyclical_free(..., chronon = mt_unit(1L), cycle = mt_unit(1L))
 #' @export
 mt_cyclical_free <- S7::new_class(
   "mt_cyclical_free",
@@ -289,7 +289,8 @@ granule_drop_tz <- function(x) {
 #' mixtime vectors. S3 methods can be defined using the `mixtime::mixtime` 
 #' class.
 #' 
-#' @param ... Passed to the [vecvec::class_vecvec()] constructor:
+#' When called as a constructor, its arguments are passed to the
+#' [vecvec::class_vecvec()] constructor:
 #'   * `x`: A list of `"mt_time"` vectors, see [mt_linear()] for details.
 #'   * `i`: A vector of integers specifying the location of each element in
 #'     `x` as if they were combined in order. Defaults to a sequence from 1 to

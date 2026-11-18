@@ -8,6 +8,9 @@
 \alias{mt_cyclical}
 \alias{mt_cyclical_free}
 \title{Time vector classes}
+\usage{
+mt_cyclical_free(..., chronon = mt_unit(1L), cycle = mt_unit(1L))
+}
 \arguments{
 \item{...}{Passed to the parent constructor, typically \code{.data}: a numeric
 vector of chronon counts (integer or double).}
