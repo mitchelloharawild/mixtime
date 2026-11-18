@@ -74,7 +74,7 @@
 <li>
 <code><a href="../reference/time_compose.html">time_compose()</a></code> and <code><a href="../reference/time_parse.html">time_parse()</a></code> without a <code><a href="../reference/component_helpers.html">lin()</a></code> component only combine components with fixed lengths, so day 15 of March is now an error (its day of the year depends on the year).</li>
 <li>
-<code>time_unit_full()</code>, <code>time_unit_abbr()</code> and <code>time_unit_plural()</code> are replaced by a single unit scheme per time unit, registered with <code>method(unit_labels, &lt;unit&gt;) &lt;- unit_scheme(vocab, symbol, locale)</code>. Like <code><a href="../reference/label_scheme.html">label_scheme()</a></code>, names come from a <code>vocab</code> function (e.g. <code>vocab_table(`en-GB` = list(wide = "day{?/s}"))</code>). Unit names are shared by duration formatting and parsing, granule labels, tsibble intervals and messages.</li>
+<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code>, <code><a href="../reference/time_unit_labels.html">time_unit_abbr()</a></code> and <code><a href="../reference/time_unit_labels.html">time_unit_plural()</a></code> are replaced by a single unit scheme per time unit, registered with <code>method(unit_labels, &lt;unit&gt;) &lt;- unit_scheme(vocab, symbol, locale)</code>. Like <code><a href="../reference/label_scheme.html">label_scheme()</a></code>, names come from a <code>vocab</code> function (e.g. <code>vocab_table(`en-GB` = list(wide = "day{?/s}"))</code>). Unit names are shared by duration formatting and parsing, granule labels, tsibble intervals and messages. The old functions remain as soft-deprecated wrappers for this release.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
@@ -215,7 +215,7 @@
 <div class="section level3">
 <h3 id="improvements-0-2-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-0"></a></h3>
 <ul><li>
-<code>time_unit_full()</code> now uses cli-style pluralisation templates (e.g., <code>"year{?/s}"</code>, <code>"centur{?y/ies}"</code>), enabling accurate plural forms beyond a simple <code>s</code> suffix. A new <code>time_unit_plural(x, n)</code> helper resolves the template for a given quantity.</li>
+<code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> now uses cli-style pluralisation templates (e.g., <code>"year{?/s}"</code>, <code>"centur{?y/ies}"</code>), enabling accurate plural forms beyond a simple <code>s</code> suffix. A new <code>time_unit_plural(x, n)</code> helper resolves the template for a given quantity.</li>
 <li>Continuous time model durations now always show at least one decimal place.</li>
 <li>Added formatting support for <code>NaN</code>, <code>Inf</code>, and <code>-Inf</code> values in time types.</li>
 <li>Added time zone support for arithmetic.</li>
@@ -314,7 +314,7 @@
 <li>
 <p>Displaying time with:</p>
 <ul><li>
-<code>time_unit_abbr()</code> and <code>time_unit_full()</code> for time unit text.</li>
+<code><a href="../reference/time_unit_labels.html">time_unit_abbr()</a></code> and <code><a href="../reference/time_unit_labels.html">time_unit_full()</a></code> for time unit text.</li>
 <li>
 <code><a href="../reference/label_scheme.html">linear_labels()</a></code> and <code><a href="../reference/label_scheme.html">cyclical_labels()</a></code> for time labels (e.g. Jan, Feb, … for months of year).</li>
 <li>

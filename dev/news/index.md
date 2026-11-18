@@ -97,15 +97,19 @@
   [`lin()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/component_helpers.md)
   component only combine components with fixed lengths, so day 15 of
   March is now an error (its day of the year depends on the year).
-- `time_unit_full()`, `time_unit_abbr()` and `time_unit_plural()` are
-  replaced by a single unit scheme per time unit, registered with
+- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md),
+  [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+  and
+  [`time_unit_plural()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+  are replaced by a single unit scheme per time unit, registered with
   `method(unit_labels, <unit>) <- unit_scheme(vocab, symbol, locale)`.
   Like
   [`label_scheme()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md),
   names come from a `vocab` function (e.g.
   `` vocab_table(`en-GB` = list(wide = "day{?/s}")) ``). Unit names are
   shared by duration formatting and parsing, granule labels, tsibble
-  intervals and messages.
+  intervals and messages. The old functions remain as soft-deprecated
+  wrappers for this release.
 
 ### Improvements
 
@@ -751,10 +755,11 @@ CRAN release: 2026-06-28
 
 ### Improvements
 
-- `time_unit_full()` now uses cli-style pluralisation templates (e.g.,
-  `"year{?/s}"`, `"centur{?y/ies}"`), enabling accurate plural forms
-  beyond a simple `s` suffix. A new `time_unit_plural(x, n)` helper
-  resolves the template for a given quantity.
+- [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+  now uses cli-style pluralisation templates (e.g., `"year{?/s}"`,
+  `"centur{?y/ies}"`), enabling accurate plural forms beyond a simple
+  `s` suffix. A new `time_unit_plural(x, n)` helper resolves the
+  template for a given quantity.
 - Continuous time model durations now always show at least one decimal
   place.
 - Added formatting support for `NaN`, `Inf`, and `-Inf` values in time
@@ -920,7 +925,10 @@ granularity data.
 
 - Displaying time with:
 
-  - `time_unit_abbr()` and `time_unit_full()` for time unit text.
+  - [`time_unit_abbr()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+    and
+    [`time_unit_full()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/time_unit_labels.md)
+    for time unit text.
   - [`linear_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
     and
     [`cyclical_labels()`](https://pkg.mitchelloharawild.com/mixtime/dev/reference/label_scheme.md)
