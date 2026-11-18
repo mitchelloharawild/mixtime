@@ -69,6 +69,7 @@
   ``vocab_table(`en-GB` = list(wide = "day{?/s}"))``). Unit names are shared by
   duration formatting and parsing, granule labels, tsibble intervals and
   messages.
+  The old functions remain as soft-deprecated wrappers for this release.
 
 ## Improvements
 

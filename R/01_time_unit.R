@@ -163,6 +163,44 @@ method(unit_labels, mt_unit) <- unit_scheme(
   vocab = vocab_table(`en-GB` = list(wide = "unit{?/s}"))
 )
 
+#' Time units as a string
+#'
+#' `r lifecycle::badge("deprecated")`
+#'
+#' These functions are superseded by [unit_labels()] and [unit_scheme()], and
+#' are only kept as thin wrappers for backwards compatibility.
+#' `time_unit_full()` returns the full unit name template (e.g. `"year{?/s}"`),
+#' `time_unit_plural()` pluralises it for a quantity, and `time_unit_abbr()`
+#' returns the unit symbol (e.g. `"Y"`).
+#'
+#' @param x A time granule object (e.g., `cal_gregorian$month(1L)`)
+#' @param n Numeric quantity used to select singular or plural form.
+#'
+#' @return A string representing the time unit
+#'
+#' @keywords internal
+#' @rdname time_unit_labels
+#' @export
+time_unit_full <- function(x) {
+  lifecycle::deprecate_soft("0.5.0", "time_unit_full()", "unit_labels()")
+  scheme <- unit_labels(x)
+  scheme$vocab("wide", scheme$locale)
+}
+
+#' @rdname time_unit_labels
+#' @export
+time_unit_plural <- function(x, n = 2L) {
+  lifecycle::deprecate_soft("0.5.0", "time_unit_plural()", "unit_labels()")
+  unit_name(x, n)
+}
+
+#' @rdname time_unit_labels
+#' @export
+time_unit_abbr <- function(x) {
+  lifecycle::deprecate_soft("0.5.0", "time_unit_abbr()", "unit_labels()")
+  unit_symbol(x)
+}
+
 # The full name of a unit, pluralised for quantity `n` (e.g. "year", "years").
 # Vectorised over `n`.
 unit_name <- function(x, n = 2L, type = "wide", locale = NULL) {
