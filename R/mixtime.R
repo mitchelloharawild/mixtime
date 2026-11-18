@@ -120,6 +120,15 @@ mixtime <- function(data, chronon = time_chronon(data), cycle = time_cycle(data)
 
   # Parse text data
   if (is.character(data)) {
+    if (identical(class(chronon)[1L], "mixtime::mt_unit")) {
+      cli::cli_abort(
+        c(
+          "Can't create a {.cls mixtime} from text without knowing its time unit.",
+          i = "Supply {.arg chronon} (e.g. {.code cal_gregorian$day(1L)}) or parse with {.fn time_parse} and a {.arg format}."
+        ),
+        call = NULL
+      )
+    }
     return(time_parse(data, chronon = chronon, cycle = cycle, discrete = discrete))
   } else {
     # Apply origin offset for numeric data
