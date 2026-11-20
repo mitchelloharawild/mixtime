@@ -266,7 +266,11 @@ test_that("as.numeric() of cyclical time is the position by label start", {
   expect_equal(as.numeric(x), 10:12)
 })
 
-test_that("base numeric consumers read mixtime as as.numeric() does", {
+test_that("base numeric consumers read mixtime as they read its time vector", {
+  # vecvec passes the data of a single-type vector to base R and C code
+  # (lm(), prcomp(), ...), as for the plain time vector: the position in the
+  # cycle for free cyclical time, and the linear time for located cyclical
+  # time.
   skip_if(packageVersion("vecvec") < "1.5.0")
   set.seed(1)
   n <- 40
@@ -281,7 +285,7 @@ test_that("base numeric consumers read mixtime as as.numeric() does", {
     df <- data.frame(y = y, z = z)
     df[[k]] <- cols[[k]]
     dfp <- data.frame(y = y, z = z)
-    dfp[[k]] <- as.numeric(cols[[k]])
+    dfp[[k]] <- vecvec::unvecvec(cols[[k]])
     expect_true(is.numeric(cols[[k]]))
     expect_equal(
       unname(coef(lm(reformulate(c(k, "z"), "y"), df))),
@@ -292,4 +296,9 @@ test_that("base numeric consumers read mixtime as as.numeric() does", {
       prcomp(reformulate(c(k, "z")), dfp, scale. = TRUE)$sdev
     )
   }
+
+  # The data of linear time is its value, so models agree with as.numeric()
+  df <- data.frame(y = y, z = z, lin = cols$lin)
+  dfp <- data.frame(y = y, z = z, lin = as.numeric(cols$lin))
+  expect_equal(unname(coef(lm(y ~ lin + z, df))), unname(coef(lm(y ~ lin + z, dfp))))
 })
