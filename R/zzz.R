@@ -7,6 +7,9 @@
   }
 
   # Register vecvec methods
+  if ("vecvec_cast" %in% getNamespaceExports("vecvec")) {
+    vecvec_cast_form <<- getExportedValue("vecvec", "vecvec_cast")
+  }
   vecvec::vecvec_register(
     class_mixtime,
     f_ptype2 = vec_ptype2_mixtime,

@@ -81,5 +81,9 @@ posixct_tz <- function(x) {
 #'
 #' @export
 as_mixtime <- function(x, ...) {
-  vec_cast(x, new_mixtime())
+  out <- vec_cast(x, mixtime_any())
+  # A cast to a mixtime of any types keeps the time in the form of mixed types
+  # (as vctrs needs when combining). Slicing stores a single time type as its
+  # data, so models and vctrs read it as that type.
+  vec_slice(out, seq_along(out))
 }

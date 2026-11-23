@@ -29,10 +29,19 @@ vec_ptype2_mixtime <- function(x, y, ...) {
   }
 
   # Numbers combined with free cyclical time are positions in its cycle.
-  if (is_mixtime(x) && is_bare_numeric(y)) return(mixtime_free_ptype(x) %||% new_mixtime())
-  if (is_mixtime(y) && is_bare_numeric(x)) return(mixtime_free_ptype(y) %||% new_mixtime())
-  new_mixtime()
+  if (is_mixtime(x) && is_bare_numeric(y)) return(mixtime_free_ptype(x) %||% mixtime_any())
+  if (is_mixtime(y) && is_bare_numeric(x)) return(mixtime_free_ptype(y) %||% mixtime_any())
+  mixtime_any()
 }
+
+# An empty mixtime of any time types. It holds no types: vecvec (>= 1.5.0)
+# reads an empty mixtime holding a type as a mixtime of that type.
+mixtime_any <- function() class_mixtime()
+
+# Casts between mixtimes give the form of `to` (single or mixed time types),
+# as vctrs needs when combining them. Set in .onLoad(): vecvec < 1.5.0 has no
+# vecvec_cast(), and all mixtimes have one form.
+vecvec_cast_form <- function(x, to, ...) x
 
 # The prototype of a mixtime keeps the (empty) types of its parts, so that
 # vec_ptype2() can tell which types are being combined.
@@ -67,11 +76,11 @@ mixtime_free_ptype <- function(x) {
   new_mixtime(free)
 }
 
-# Mixtime vectors hold their parts side by side, so casting between them is
-# usually a no-op. Underspecified and located time can't stand in for each other, so a
+# Mixtime vectors hold their parts side by side, so casting between them
+# changes only their form (see `vecvec_cast_form()`). Underspecified and located time can't stand in for each other, so a
 # cast that would leave them in place of the other is an error.
 vec_cast_mixtime_mixtime <- function(x, to, ..., x_arg = "", to_arg = "") {
-  if (!length(to@x) || !length(x@x)) return(x)
+  if (!length(to@x) || !length(x@x)) return(vecvec_cast_form(x, to, ...))
   parts_are <- function(v, cls) vapply(v@x, S7_inherits, logical(1L), cls)
   x_free <- parts_are(x, mt_cyclical_free)
   if ((all(parts_are(to, mt_cyclical_free)) && !all(x_free)) ||
@@ -81,7 +90,7 @@ vec_cast_mixtime_mixtime <- function(x, to, ..., x_arg = "", to_arg = "") {
       details = free_incompatible_details
     )
   }
-  x
+  vecvec_cast_form(x, to, ...)
 }
 
 #' @importFrom vctrs vec_proxy_order
