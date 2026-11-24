@@ -7,6 +7,15 @@
   plain time vector, so cyclical time is read as its stored time rather than
   its position in the cycle. They error for mixtimes of mixed time types.
 
+## Bug fixes
+
+* `as.numeric()`, `as.double()` and `as.integer()` of mixtime vectors now give
+  the position within the cycle for cyclical time when called from outside
+  mixtime (e.g. in other packages, or at the console), not just from within it.
+  Their methods were registered out of reach of other packages' calls, so
+  `as.numeric(month_of_year(8))` gave 7 (the raw chronon count) and C code like
+  `lm()` disagreed with `as.numeric()`.
+
 # mixtime 0.5.0
 
 ## Breaking changes

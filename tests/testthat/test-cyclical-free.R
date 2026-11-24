@@ -266,6 +266,18 @@ test_that("as.numeric() of cyclical time is the position by label start", {
   expect_equal(as.numeric(x), 10:12)
 })
 
+test_that("as.numeric() of cyclical time is the position from outside mixtime", {
+  # Tests run in an environment inside the mixtime namespace, where its methods
+  # are found even when they aren't registered for other packages' calls.
+  p <- month_of_year(c(8, 3, 12))
+  outside <- function(f) eval(call(f, p), new.env(parent = globalenv()))
+  expect_equal(outside("as.numeric"), c(8, 3, 12))
+  expect_equal(outside("as.double"), c(8, 3, 12))
+  expect_equal(outside("as.integer"), c(8L, 3L, 12L))
+  expect_equal(outside("as.numeric"), outside("as.double"))
+  expect_equal(eval(quote(as.double(x@x[[1]])), list(x = p), globalenv()), c(8, 3, 12))
+})
+
 test_that("base numeric consumers read mixtime as they read its time vector", {
   # vecvec passes the data of a single-type vector to base R and C code
   # (lm(), prcomp(), ...), as for the plain time vector: the position in the

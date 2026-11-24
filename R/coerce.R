@@ -1,17 +1,24 @@
 # Coercion with `as.*()` family.
+#
+# These are plain S3 methods rather than `S7::method(as.double, ...) <-`, which
+# would bind a copy of `as.double` in the mixtime namespace. R then treats it as
+# a generic local to mixtime and registers the `S3method(as.double, ...)`
+# entries in mixtime's own S3 table, out of reach of `as.double()` calls from
+# other packages (S7 0.2.2 also registers `method(as.double, cls)` under the
+# name `as.numeric.<cls>`, which `as.double()` never dispatches to).
+#
+# vecvec's ALTREP base reads stored times with `as.double()`, so base R and C
+# code (`lm()`, `prcomp()`) sees cyclical time as its position in the cycle, as
+# `as.numeric()` does.
+#' @method as.character mixtime::mt_time
 #' @export
-S7::method(as.character, mt_time) <- function(x, ...) vctrs::vec_cast(x, character())
+`as.character.mixtime::mt_time` <- function(x, ...) vctrs::vec_cast(x, character())
+#' @method as.integer mixtime::mt_time
 #' @export
-S7::method(as.integer, mt_time) <- function(x, ...) {
+`as.integer.mixtime::mt_time` <- function(x, ...) {
   x <- time_as_number(x)
   if (is.double(x)) vctrs::vec_cast(x, integer()) else x
 }
-#' @export
-S7::method(as.double, mt_time) <- function(x, ...) as.double(time_as_number(x))
-# vecvec's ALTREP base reads stored times with `as.double()` (see
-# `as.double.mixtime::mt_time()` below), so base R and C code (`lm()`,
-# `prcomp()`) sees cyclical time as its position in the cycle, as `as.numeric()`
-# does.
 #' @method as.integer mixtime::mixtime
 #' @export
 `as.integer.mixtime::mixtime` <- function(x, ...) {
