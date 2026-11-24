@@ -100,21 +100,21 @@ for developers.
 new_time_unit("tu_symmetry454_year",  parent = mt_tz_unit)
 #> <tu_symmetry454_year> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(n, tz, calendar) {...}
+#> @ constructor: function(..., calendar) {...}
 #> @ validator  : <NULL>
 #> @ properties :
-#>  $ n       : <integer> or <double>             
-#>  $ calendar: <NULL> or S3<mixtime::mt_calendar>
-#>  $ tz      : <character>
+#>  $ n: <integer> or <double> = 1L
+#>  $ calendar: <NULL> or S3<mixtime::mt_calendar> = attr(sys.function(), "cal")
+#>  $ tz: <character> = naive_tz
 new_time_unit("tu_symmetry454_month", parent = mt_tz_unit)
 #> <tu_symmetry454_month> class
 #> @ parent     : <mixtime::mt_tz_unit>
-#> @ constructor: function(n, tz, calendar) {...}
+#> @ constructor: function(..., calendar) {...}
 #> @ validator  : <NULL>
 #> @ properties :
-#>  $ n       : <integer> or <double>             
-#>  $ calendar: <NULL> or S3<mixtime::mt_calendar>
-#>  $ tz      : <character>
+#>  $ n: <integer> or <double> = 1L
+#>  $ calendar: <NULL> or S3<mixtime::mt_calendar> = attr(sys.function(), "cal")
+#>  $ tz: <character> = naive_tz
 ```
 
 These time units are typically exported within a calendar object (shown

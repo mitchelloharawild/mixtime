@@ -143,7 +143,7 @@ cyclical_time(
   calendar = cal_isoweek
 )
 #> <mixtime[1]>
-#> [1] Wed
+#> [1] Tue
 
 # Month of year (1-12)
 cyclical_time(
@@ -162,7 +162,7 @@ cyclical_time(
   discrete = FALSE
 )
 #> <mixtime[1]>
-#> [1] Nov 56.7%
+#> [1] Nov 76.7%
 
 # Day of month with Gregorian calendar
 cyclical_time(
@@ -172,7 +172,7 @@ cyclical_time(
   calendar = cal_gregorian
 )
 #> <mixtime[1]>
-#> [1] D18
+#> [1] D24
 
 # Hours, minutes, and seconds
 cyclical_time(
@@ -181,7 +181,7 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 09:24:50
+#> [1] 08:33:57
 #' # Underspecified cyclical time from positions
 month_of_year(c(3, 12)) + 1
 #> <mixtime[2]>

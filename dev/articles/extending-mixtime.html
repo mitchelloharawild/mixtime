@@ -147,7 +147,7 @@ registering your methods with the following <a href="https://rconsortium.github.
 hook</a>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">.onLoad</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rconsortium.github.io/S7/reference/methods_register.html" class="external-link">methods_register</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rconsortium.github.io/S7/reference/S7_on_load.html" class="external-link">methods_register</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="time-units">Time units<a class="anchor" aria-label="anchor" href="#time-units"></a>
@@ -183,21 +183,21 @@ descriptive for developers.</p>
 <span><span class="fu"><a href="../reference/new_time_unit.html">new_time_unit</a></span><span class="op">(</span><span class="st">"tu_symmetry454_year"</span>,  parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;tu_symmetry454_year&gt; class</span></span>
 <span><span class="co">#&gt; @ parent     : &lt;mixtime::mt_tz_unit&gt;</span></span>
-<span><span class="co">#&gt; @ constructor: function(n, tz, calendar) {...}</span></span>
+<span><span class="co">#&gt; @ constructor: function(..., calendar) {...}</span></span>
 <span><span class="co">#&gt; @ validator  : &lt;NULL&gt;</span></span>
 <span><span class="co">#&gt; @ properties :</span></span>
-<span><span class="co">#&gt;  $ n       : &lt;integer&gt; or &lt;double&gt;             </span></span>
-<span><span class="co">#&gt;  $ calendar: &lt;NULL&gt; or S3&lt;mixtime::mt_calendar&gt;</span></span>
-<span><span class="co">#&gt;  $ tz      : &lt;character&gt;</span></span>
+<span><span class="co">#&gt;  $ n: &lt;integer&gt; or &lt;double&gt; = 1L</span></span>
+<span><span class="co">#&gt;  $ calendar: &lt;NULL&gt; or S3&lt;mixtime::mt_calendar&gt; = attr(sys.function(), "cal")</span></span>
+<span><span class="co">#&gt;  $ tz: &lt;character&gt; = naive_tz</span></span>
 <span><span class="fu"><a href="../reference/new_time_unit.html">new_time_unit</a></span><span class="op">(</span><span class="st">"tu_symmetry454_month"</span>, parent <span class="op">=</span> <span class="va">mt_tz_unit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;tu_symmetry454_month&gt; class</span></span>
 <span><span class="co">#&gt; @ parent     : &lt;mixtime::mt_tz_unit&gt;</span></span>
-<span><span class="co">#&gt; @ constructor: function(n, tz, calendar) {...}</span></span>
+<span><span class="co">#&gt; @ constructor: function(..., calendar) {...}</span></span>
 <span><span class="co">#&gt; @ validator  : &lt;NULL&gt;</span></span>
 <span><span class="co">#&gt; @ properties :</span></span>
-<span><span class="co">#&gt;  $ n       : &lt;integer&gt; or &lt;double&gt;             </span></span>
-<span><span class="co">#&gt;  $ calendar: &lt;NULL&gt; or S3&lt;mixtime::mt_calendar&gt;</span></span>
-<span><span class="co">#&gt;  $ tz      : &lt;character&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ n: &lt;integer&gt; or &lt;double&gt; = 1L</span></span>
+<span><span class="co">#&gt;  $ calendar: &lt;NULL&gt; or S3&lt;mixtime::mt_calendar&gt; = attr(sys.function(), "cal")</span></span>
+<span><span class="co">#&gt;  $ tz: &lt;character&gt; = naive_tz</span></span></code></pre></div>
 <p>These time units are typically exported within a calendar object
 (shown below) and accessed via <code>$</code> notation.</p>
 </div>

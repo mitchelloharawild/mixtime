@@ -39,9 +39,15 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
+<ul><li>Compatibility with vecvec 2.0.0, where vctrs treats a mixtime of a single time type as a vector of that type (so slicing, combining and matching it is about as fast as for the plain time vector). Base R and C code such as <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp()</a></code> read a mixtime of a single time type as they read the plain time vector, so cyclical time is read as its stored time rather than its position in the cycle. They error for mixtimes of mixed time types.</li>
+</ul><div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li>
+<code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>, <code><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double()</a></code> and <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code> of mixtime vectors now give the position within the cycle for cyclical time when called from outside mixtime (e.g. in other packages, or at the console), not just from within it. Their methods were registered out of reach of other packages’ calls, so <code>as.numeric(month_of_year(8))</code> gave 7 (the raw chronon count) and C code like <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> disagreed with <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>.</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.5.0" id="mixtime-050">mixtime 0.5.0<a class="anchor" aria-label="anchor" href="#mixtime-050"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.0" id="mixtime-050">mixtime 0.5.0<a class="anchor" aria-label="anchor" href="#mixtime-050"></a></h2><p class="text-muted">CRAN release: 2026-11-18</p>
 <div class="section level3">
 <h3 id="breaking-changes-0-5-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-5-0"></a></h3>
 <ul><li>Base R and C code that reads a mixtime vector directly, such as <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>, <code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp()</a></code> and <code><a href="https://rdrr.io/r/base/data.matrix.html" class="external-link">data.matrix()</a></code> on data frames with mixtime columns, now uses the numbers that <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> gives (the chronon count for linear time, and the position within the cycle for cyclical time) rather than the vecvec index. This needs vecvec &gt;= 1.5.0 (older versions still work, without this). <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">is.numeric()</a></code> is <code>TRUE</code> for mixtime vectors.</li>
