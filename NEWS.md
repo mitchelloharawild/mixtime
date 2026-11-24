@@ -1,6 +1,6 @@
 # mixtime (development version)
 
-* Compatibility with vecvec 1.5.0, where vctrs treats a mixtime of a single
+* Compatibility with vecvec 2.0.0, where vctrs treats a mixtime of a single
   time type as a vector of that type (so slicing, combining and matching it is
   about as fast as for the plain time vector). Base R and C code such as
   `lm()` and `prcomp()` read a mixtime of a single time type as they read the

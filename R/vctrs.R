@@ -34,12 +34,12 @@ vec_ptype2_mixtime <- function(x, y, ...) {
   mixtime_any()
 }
 
-# An empty mixtime of any time types. It holds no types: vecvec (>= 1.5.0)
+# An empty mixtime of any time types. It holds no types: vecvec (>= 2.0.0)
 # reads an empty mixtime holding a type as a mixtime of that type.
 mixtime_any <- function() class_mixtime()
 
 # Casts between mixtimes give the form of `to` (single or mixed time types),
-# as vctrs needs when combining them. Set in .onLoad(): vecvec < 1.5.0 has no
+# as vctrs needs when combining them. Set in .onLoad(): vecvec < 2.0.0 has no
 # vecvec_cast(), and all mixtimes have one form.
 vecvec_cast_form <- function(x, to, ...) x
 

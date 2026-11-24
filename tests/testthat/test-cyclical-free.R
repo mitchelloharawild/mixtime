@@ -271,7 +271,7 @@ test_that("base numeric consumers read mixtime as they read its time vector", {
   # (lm(), prcomp(), ...), as for the plain time vector: the position in the
   # cycle for free cyclical time, and the linear time for located cyclical
   # time.
-  skip_if(packageVersion("vecvec") < "1.5.0")
+  skip_if(packageVersion("vecvec") < "2.0.0")
   set.seed(1)
   n <- 40
   d <- as.Date("2020-01-01") + seq_len(n)
