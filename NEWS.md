@@ -1,4 +1,4 @@
-# mixtime (development version)
+# mixtime 0.5.1
 
 ## Breaking changes
 
