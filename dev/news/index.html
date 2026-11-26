@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixtime</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,11 +39,23 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mixtime-development-version">mixtime (development version)<a class="anchor" aria-label="anchor" href="#mixtime-development-version"></a></h2>
-<ul><li>Compatibility with vecvec 2.0.0, where vctrs treats a mixtime of a single time type as a vector of that type (so slicing, combining and matching it is about as fast as for the plain time vector). Base R and C code such as <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp()</a></code> read a mixtime of a single time type as they read the plain time vector, so cyclical time is read as its stored time rather than its position in the cycle. They error for mixtimes of mixed time types.</li>
-</ul><div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
-<ul><li><p>mixtime no longer breaks when vecvec is updated without reinstalling mixtime from source. Binaries built against an older vecvec kept that version’s layout, so mixtime vectors errored with “<code>x</code> is not a vecvec base vector”. mixtime now requires vecvec 1.5.0 or later.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>, <code><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double()</a></code> and <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code> of mixtime vectors now give the position within the cycle for cyclical time when called from outside mixtime (e.g. in other packages, or at the console), not just from within it. Their methods were registered out of reach of other packages’ calls, so <code>as.numeric(month_of_year(8))</code> gave 7 (the raw chronon count) and C code like <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> disagreed with <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>.</p></li>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.1" id="mixtime-051">mixtime 0.5.1<a class="anchor" aria-label="anchor" href="#mixtime-051"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-5-1">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-5-1"></a></h3>
+<ul><li>With vecvec 2.0.0, base R and C code such as <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp()</a></code> reads a mixtime of a single time type the same way as its underlying time vector, so cyclical time is read as its stored value rather than its position in the cycle (use <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> for that). Modelling functions now error for mixtimes of mixed time types.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-0-5-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-5-1"></a></h3>
+<ul><li>Compatibility with vecvec 2.0.0, which makes slicing, combining and matching a mixtime of a single time type about as fast as for its underlying time vector.</li>
+<li>mixtime now requires vecvec (&gt;= 1.5.0).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-5-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-1"></a></h3>
+<ul><li>Fixed “<code>x</code> is not a vecvec base vector” errors after updating vecvec without reinstalling mixtime.</li>
+<li>
+<code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code>, <code><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double()</a></code> and <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code> of cyclical time now give the position within the cycle when called from outside mixtime, so <code>as.numeric(month_of_year(8))</code> is 8 rather than 7.</li>
 </ul></div>
 </div>
     <div class="section level2">
