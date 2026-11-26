@@ -77,5 +77,5 @@ linear_time(
   chronon = cal_sym454$week(1L)
 )
 #> <mixtime[1]>
-#> [1] 2026-Nov-W4
+#> [1] 2026-Nov-W5
 ```

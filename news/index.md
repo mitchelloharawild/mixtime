@@ -1,6 +1,38 @@
 # Changelog
 
+## mixtime 0.5.1
+
+### Breaking changes
+
+- With vecvec 2.0.0, base R and C code such as
+  [`lm()`](https://rdrr.io/r/stats/lm.html) and
+  [`prcomp()`](https://rdrr.io/r/stats/prcomp.html) reads a mixtime of a
+  single time type the same way as its underlying time vector, so
+  cyclical time is read as its stored value rather than its position in
+  the cycle (use [`as.numeric()`](https://rdrr.io/r/base/numeric.html)
+  for that). Modelling functions now error for mixtimes of mixed time
+  types.
+
+### Improvements
+
+- Compatibility with vecvec 2.0.0, which makes slicing, combining and
+  matching a mixtime of a single time type about as fast as for its
+  underlying time vector.
+- mixtime now requires vecvec (\>= 1.5.0).
+
+### Bug fixes
+
+- Fixed “`x` is not a vecvec base vector” errors after updating vecvec
+  without reinstalling mixtime.
+- [`as.numeric()`](https://rdrr.io/r/base/numeric.html),
+  [`as.double()`](https://rdrr.io/r/base/double.html) and
+  [`as.integer()`](https://rdrr.io/r/base/integer.html) of cyclical time
+  now give the position within the cycle when called from outside
+  mixtime, so `as.numeric(month_of_year(8))` is 8 rather than 7.
+
 ## mixtime 0.5.0
+
+CRAN release: 2026-11-18
 
 ### Breaking changes
 
