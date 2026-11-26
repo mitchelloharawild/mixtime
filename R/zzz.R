@@ -1,4 +1,14 @@
 .onLoad <- function(...) {
+  # Rebuild class_mixtime from the installed vecvec. S7 copies the parent class
+  # into the child when the package is built, so a mixtime binary built against
+  # an older vecvec otherwise keeps that vecvec's data layout and breaks
+  # ("`x` is not a vecvec base vector") when vecvec is updated.
+  assign(
+    "class_mixtime",
+    S7::new_class("mixtime", parent = vecvec::class_vecvec, package = "mixtime"),
+    envir = topenv()
+  )
+
   # Register S7 methods
   if ("S7_on_load" %in% getNamespaceExports("S7")) {
     getExportedValue("S7", "S7_on_load")()

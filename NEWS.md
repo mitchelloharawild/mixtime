@@ -9,6 +9,11 @@
 
 ## Bug fixes
 
+* mixtime no longer breaks when vecvec is updated without reinstalling mixtime
+  from source. Binaries built against an older vecvec kept that version's
+  layout, so mixtime vectors errored with "`x` is not a vecvec base vector".
+  mixtime now requires vecvec 1.5.0 or later.
+
 * `as.numeric()`, `as.double()` and `as.integer()` of mixtime vectors now give
   the position within the cycle for cyclical time when called from outside
   mixtime (e.g. in other packages, or at the console), not just from within it.
