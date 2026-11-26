@@ -181,7 +181,7 @@ cyclical_time(
   cycle = day(1L)
 )
 #> <mixtime[1]>
-#> [1] 02:16:39
+#> [1] 02:56:39
 #' # Underspecified cyclical time from positions
 month_of_year(c(3, 12)) + 1
 #> <mixtime[2]>
