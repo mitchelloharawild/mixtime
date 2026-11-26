@@ -13,6 +13,11 @@
 
 ### Bug fixes
 
+- mixtime no longer breaks when vecvec is updated without reinstalling
+  mixtime from source. Binaries built against an older vecvec kept that
+  version’s layout, so mixtime vectors errored with “`x` is not a vecvec
+  base vector”. mixtime now requires vecvec 1.5.0 or later.
+
 - [`as.numeric()`](https://rdrr.io/r/base/numeric.html),
   [`as.double()`](https://rdrr.io/r/base/double.html) and
   [`as.integer()`](https://rdrr.io/r/base/integer.html) of mixtime
